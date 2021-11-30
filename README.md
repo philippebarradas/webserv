@@ -18,5 +18,8 @@ Install nginx:
 
 brew install nginx
 
-https://c.developpez.com/cours/sockets-c-cpp-demystifies/
+SOURCES:
 
+https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/ // select vs poll vs epoll
+https://www.csd.uoc.gr/~hy556/material/tutorials/cs556-3rd-tutorial.pdf // powerpoint detaille sur les sockets
+https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select // actual code
