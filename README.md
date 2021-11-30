@@ -17,3 +17,6 @@ brew install telnet
 Install nginx:
 
 brew install nginx
+
+https://c.developpez.com/cours/sockets-c-cpp-demystifies/
+
