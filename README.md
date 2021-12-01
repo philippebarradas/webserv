@@ -25,5 +25,6 @@ https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/ // select vs 
 https://www.csd.uoc.gr/~hy556/material/tutorials/cs556-3rd-tutorial.pdf // powerpoint detaille sur les sockets
 https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select // actual code
 
+To stop nginx:
 
 ps -lef | grep -i nginx: | awk '{ print $2}' | xargs kill -9
