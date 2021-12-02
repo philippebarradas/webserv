@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <string.h>
+#include "option.c"
 
 #define SERVER_PORT 12345
 #define TRUE 1
@@ -261,8 +262,11 @@ void ft_close(int i, int nfds, pollfd fds[200])
 
 //////////////////////////////////////////////////////////////////////
 
+
 int main (int argc, char *argv[])
 {
+	//if (ft_option(argc, argv) == 1)
+	//	return (0);
 	int	len, rc, on = 1;
 	int	listen_sd = -1, new_sd = -1;
 	int	desc_ready, end_server = FALSE, compress_array = FALSE;
