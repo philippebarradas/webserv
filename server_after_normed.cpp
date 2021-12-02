@@ -196,6 +196,7 @@ void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[2
 		/*****************************************************/
 		len = rc;
 		printf("  %d bytes received\n", len);
+		std::cout << "len = " << len << " rc = " << rc << " buffer = " << buffer << std::endl;
 
 		/*****************************************************/
 		/* Echo the data back to the client                  */
@@ -265,8 +266,6 @@ void ft_close(int i, int nfds, pollfd fds[200])
 
 int main (int argc, char *argv[])
 {
-	//if (ft_option(argc, argv) == 1)
-	//	return (0);
 	int	len, rc, on = 1;
 	int	listen_sd = -1, new_sd = -1;
 	int	desc_ready, end_server = FALSE, compress_array = FALSE;
