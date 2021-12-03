@@ -38,7 +38,6 @@ http {
 		#charset koi8-r;
 
 		#access_log  logs/host.access.log  main;
-
 		location / {
 			root   html;
 			index  index.html index.htm;

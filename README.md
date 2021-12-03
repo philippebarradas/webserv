@@ -28,4 +28,6 @@ https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select // act
 https://webdevdesigner.com/q/what-s-the-difference-between-epoll-poll-threadpool-11439/ // epoll poll/select
 https://dev.to/frevib/a-tcp-server-with-kqueue-527 // epoll
 
+https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms-fr // block nginx
+
 ps -lef | grep -i nginx: | awk '{ print $2}' | xargs kill -9
