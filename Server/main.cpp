@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 17:53:46 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/02 18:33:56 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/03 13:41:02 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 int	main( void )
 {
 	Webserv	serv;
+
+	serv.listen();
 
 	//serv.setPort(PORT);
 }
