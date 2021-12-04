@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 17:53:46 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/03 13:41:02 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/04 23:05:00 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	main( void )
 {
 	Webserv	serv;
 
-	serv.listen();
+	//serv.listen();
 
 	//serv.setPort(PORT);
 }

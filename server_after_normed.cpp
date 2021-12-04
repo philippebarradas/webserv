@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/poll.h>
+#include <sys/epoll.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
@@ -13,7 +14,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <string.h>
-#include "option.c"
+//#include "option.c"
 
 #define SERVER_PORT 12345
 #define TRUE 1
@@ -66,10 +67,10 @@ int	bind_socket(int rc, int listen_sd)
 	return (rc);
 }
 
-int	my_poll(int rc, int timeout, struct pollfd fds[200], int nfds)
+int	my_poll(int rc, int nfds)
 {
-	printf("Waiting on poll()...\n");
-	rc = poll(fds, nfds, timeout);
+	printf("Waiting on epoll()...\n");
+	rc = epoll_create(nfds);
 	/***********************************************************/
 	/* Check to see if the poll call failed.                   */
 	/***********************************************************/
@@ -96,7 +97,7 @@ int	my_poll(int rc, int timeout, struct pollfd fds[200], int nfds)
 
 
 
-int	ft_iff(int new_sd, int listen_sd, int end_server, int nfds, pollfd fds[200])
+int	ft_iff(int new_sd, int listen_sd, int end_server, int nfds, struct epoll_event events[200])
 {
 	/*******************************************************/
 	/* Listening descriptor is readable.                   */
@@ -133,8 +134,9 @@ int	ft_iff(int new_sd, int listen_sd, int end_server, int nfds, pollfd fds[200])
 		/* pollfd structure                                  */
 		/*****************************************************/
 		printf("  New incoming connection - %d\n", new_sd);
-		fds[nfds].fd = new_sd;
-		fds[nfds].events = POLLIN;
+		events[nfds].data.fd = new_sd;
+		events[nfds].events = EPOLLIN;
+		epoll_ctl(listen_sd, EPOLL_CTL_ADD, events[nfds].data.fd, &events[nfds]);
 		nfds++;
 
 		/*****************************************************/
@@ -142,7 +144,6 @@ int	ft_iff(int new_sd, int listen_sd, int end_server, int nfds, pollfd fds[200])
 		/* connection                                        */
 		/*****************************************************/
 	} while (new_sd != -1);
-
 
 	return nfds;
 
@@ -152,9 +153,9 @@ int	ft_iff(int new_sd, int listen_sd, int end_server, int nfds, pollfd fds[200])
 	/* existing connection must be readable                  */
 	/*********************************************************/
 
-void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[200], int compress_array)
+void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, struct epoll_event events[200], int compress_array)
 	{
-		printf("  Descriptor %d is readable\n", fds[i].fd);
+		printf("  Descriptor %d is readable\n", events[i].data.fd);
 		close_conn = FALSE;
 		/*******************************************************/
 		/* Receive all incoming data on this socket            */
@@ -169,7 +170,8 @@ void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[2
 		/* failure occurs, we will close the                 */
 		/* connection.                                       */
 		/*****************************************************/
-		rc = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+		epoll_wait(rc, events, 200, 10000);
+		rc = recv(events[i].data.fd, buffer, sizeof(buffer), 0);
 		if (rc < 0)
 		{
 			if (errno != EWOULDBLOCK)
@@ -180,20 +182,12 @@ void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[2
 			break;
 		}
 
-		/*****************************************************/
-		/* Check to see if the connection has been           */
-		/* closed by the client                              */
-		/*****************************************************/
 		if (rc == 0)
 		{
 			printf("  Connection closed\n");
 			close_conn = TRUE;
 			break;
 		}
-
-		/*****************************************************/
-		/* Data was received                                 */
-		/*****************************************************/
 		len = rc;
 		printf("  %d bytes received\n", len);
 		std::cout << "len = " << len << " rc = " << rc << " buffer = " << buffer << std::endl;
@@ -201,7 +195,7 @@ void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[2
 		/*****************************************************/
 		/* Echo the data back to the client                  */
 		/*****************************************************/
-		rc = send(fds[i].fd, buffer, len, 0);
+		rc = send(events[i].data.fd, buffer, len, 0);
 		if (rc < 0)
 		{
 			perror("  send() failed");
@@ -219,8 +213,8 @@ void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[2
 		/*******************************************************/
 		if (close_conn)
 		{
-			close(fds[i].fd);
-			fds[i].fd = -1;
+			close(events[i].data.fd);
+			events[i].data.fd = -1;
 			compress_array = TRUE;
 		}
 
@@ -228,18 +222,18 @@ void	ft_ellse(int close_conn, int rc, int len, char *buffer, int i, pollfd fds[2
 	}  /* End of existing connection is readable             */
 
 
-void	ft_compress_array(int compress_array, int nfds, pollfd fds[200], int i, int j, int end_server)
+void	ft_compress_array(int compress_array, int nfds, struct epoll_event events[200], int i, int j)
 {
 	if (compress_array)
 	  {
 		compress_array = FALSE;
 		for (i = 0; i < nfds; i++)
 		{
-		  if (fds[i].fd == -1)
+		  if (events[i].data.fd == -1)
 		  {
 			for(j = i; j < nfds; j++)
 			{
-			  fds[j].fd = fds[j+1].fd;
+			  events[j].data.fd = events[j + 1].data.fd;
 			}
 			i--;
 			nfds--;
@@ -249,32 +243,33 @@ void	ft_compress_array(int compress_array, int nfds, pollfd fds[200], int i, int
 }
 
 
-void ft_close(int i, int nfds, pollfd fds[200])
+void ft_close(int i, int nfds, struct epoll_event events[200])
 {
 	/*************************************************************/
 	/* Clean up all of the sockets that are open                 */
 	/*************************************************************/
 	for (i = 0; i < nfds; i++)
 	{
-	  if(fds[i].fd >= 0)
-		close(fds[i].fd);
+	  if(events[i].data.fd >= 0)
+		close(events[i].data.fd);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////
 
 
-int main (int argc, char *argv[])
+//int main (int argc, char *argv[])
+int main(void)
 {
-	int	len, rc, on = 1;
+	int	len = 0, rc = 1;
 	int	listen_sd = -1, new_sd = -1;
-	int	desc_ready, end_server = FALSE, compress_array = FALSE;
-	int	close_conn;
+	int	end_server = FALSE, compress_array = FALSE;
+	int	close_conn = 0;
 	char	buffer[80];
 	//struct	sockaddr_in   addr;
 	int	timeout;
-	struct	pollfd fds[200];
-	int	nfds = 1, current_size = 0, i, j;
+	struct	epoll_event events_var[200];
+	int	nfds = 1, current_size = 0, i = 0, j = 0;
 	/*************************************************************/
 	/* Create an AF_INET stream socket to receive incoming      */
 	/* connections on                                            */
@@ -318,12 +313,12 @@ int main (int argc, char *argv[])
 	/*************************************************************/
 	/* Initialize the pollfd structure                           */
 	/*************************************************************/
-	memset(fds, 0 , sizeof(fds));
+	memset(events_var, 0 , sizeof(events_var));
 	/*************************************************************/
 	/* Set up the initial listening socket                        */
 	/*************************************************************/
-	fds[0].fd = listen_sd;
-	fds[0].events = POLLIN;
+	events_var[0].data.fd = rc;
+	events_var[0].events = EPOLLIN;
 	/*************************************************************/
 	/* Initialize the timeout to 3 minutes. If no                */
 	/* activity after 3 minutes this program will end.           */
@@ -339,13 +334,14 @@ int main (int argc, char *argv[])
 		/***********************************************************/
 		/* Call poll() and wait 3 minutes for it to complete.      */
 		/***********************************************************/
-		rc = my_poll(rc, timeout, fds, nfds);
+		rc = my_poll(rc, nfds);
 		if (rc < 0)
 			break ;
 		/***********************************************************/
 		/* One or more descriptors are readable.  Need to          */
 		/* determine which ones they are.                          */
 		/***********************************************************/
+		std::cout << "current_size: " << current_size << std::endl;
 		current_size = nfds;
 		for (i = 0; i < current_size; i++)
 		{
@@ -354,25 +350,25 @@ int main (int argc, char *argv[])
 			/* POLLIN and determine whether it's the listening       */
 			/* or the active connection.                             */
 			/*********************************************************/
-			if(fds[i].revents == 0)
+			if(events_var[i].events == 0)
 			  continue;
 			/*********************************************************/
 			/* If revents is not POLLIN, it's an unexpected result,  */
 			/* log and end the server.                               */
 			/*********************************************************/
-			if(fds[i].revents != POLLIN)
+			if(events_var[i].events != EPOLLIN)
 			{
-			  printf("  Error! revents = %d\n", fds[i].revents);
+			  printf("  Error! revents = %d\n", events_var[i].events);
 			  end_server = TRUE;
 			  break;
 			}
-			if (fds[i].fd == listen_sd)
+			if (events_var[i].data.fd == listen_sd)
 			{
-				nfds = ft_iff(new_sd, listen_sd, end_server, nfds, fds);
+				nfds = ft_iff(new_sd, listen_sd, end_server, nfds, events_var);
 			}
 			else
 			{
-				ft_ellse(close_conn, rc, len, buffer, i, fds, compress_array);
+				ft_ellse(close_conn, rc, len, buffer, i, events_var, compress_array);
 			}
 	}
 	/* End of loop through pollable descriptors              */
@@ -385,11 +381,11 @@ int main (int argc, char *argv[])
 	/***********************************************************/
 
 	/* End of serving running.    */
-		ft_compress_array(compress_array, nfds, fds, i, j, end_server);
+		ft_compress_array(compress_array, nfds, events_var, i, j);
 
 	}	while (end_server == FALSE);
 
-	ft_close(i, nfds, fds);
+	ft_close(i, nfds, events_var);
 }
 
 //
