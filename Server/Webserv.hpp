@@ -45,7 +45,7 @@ class Webserv
 		int	port;
 		int timeout; // time before epoll expiration
 		int nfds;
-		char buffer[10];
+		char buffer[100];
 };
 
 std::ostream &			operator<<( std::ostream & o, Webserv const & i );

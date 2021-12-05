@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:58:44 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/05 01:37:00 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/05 12:43:13 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ Webserv::Webserv()
 	this->timeout	= 1;
 	this->fd_socket	= -1;
 	this->port = 5555;
+	bzero(this->buffer, sizeof(this->buffer));
 
 	fd_listen = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd_listen < 0)
@@ -141,13 +142,11 @@ void	Webserv::loop_epoll_fd_is_listening(struct epoll_event events[200], int end
 
 int	Webserv::my_read(struct epoll_event events[200], int close_conn, int i)
 {
-	char new_buf[10];
 
-	bzero(new_buf, sizeof(new_buf));
 	int nbr_bytes_read = 0;
 
-	nbr_bytes_read = recv(events[i].data.fd, new_buf, sizeof(new_buf), 0);
-	std::cout << "nbr bytes read: %d " << nbr_bytes_read << std::endl;
+	nbr_bytes_read = recv(events[i].data.fd, this->buffer, sizeof(this->buffer), 0);
+	std::cout << "nbr bytes read: " << nbr_bytes_read << std::endl;
 	if (nbr_bytes_read < 0) // nbr of bytes read
 	{
 		if (errno != EWOULDBLOCK)
@@ -182,12 +181,11 @@ void	Webserv::loop_connection(struct epoll_event events[200], int close_conn, in
 
 	bzero(this->buffer, sizeof(this->buffer));
 	epoll_wait(events[i].data.fd, events, 200, this->timeout);
-	std::cout << "this->timeout: " << this->timeout << std::endl;
 	std::cout << "Descriptor num " << events[i].data.fd << " is readable" << std::endl;
 	close_conn = 0;
 	while (1)
 	{
-		nbr_bytes_read = my_read(events, i, close_conn);
+		nbr_bytes_read = my_read(events, close_conn, i);
 		if (nbr_bytes_read == -1)
 			break ;
 		if (nbr_bytes_read == 0)
