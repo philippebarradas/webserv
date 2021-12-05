@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:58:44 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/05 12:43:13 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/05 12:51:10 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,19 @@ Webserv &				Webserv::operator=( Webserv const & rhs )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+int	Webserv::my_bind(int listen_fd, struct sockaddr_in addr)
+{
+	int ret = 0;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family      = AF_INET;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_port        = htons(this->port);
+	ret = bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr));
+	if (ret < 0)
+		throw std::runtime_error("[Error] bind() failed");
+	return (ret);
+}
+
 void	Webserv::loop_epoll_fd_is_listening(struct epoll_event events[200], int end_server)
 {
 	int new_fd = 1;
@@ -142,12 +155,10 @@ void	Webserv::loop_epoll_fd_is_listening(struct epoll_event events[200], int end
 
 int	Webserv::my_read(struct epoll_event events[200], int close_conn, int i)
 {
-
 	int nbr_bytes_read = 0;
 
 	nbr_bytes_read = recv(events[i].data.fd, this->buffer, sizeof(this->buffer), 0);
-	std::cout << "nbr bytes read: " << nbr_bytes_read << std::endl;
-	if (nbr_bytes_read < 0) // nbr of bytes read
+	if (nbr_bytes_read < 0)
 	{
 		if (errno != EWOULDBLOCK)
 		{
@@ -230,19 +241,6 @@ void	Webserv::loop_life_server(struct epoll_event events[200])
 		}
 	}
 	ft_close(this->nfds, events);
-}
-
-int	Webserv::my_bind(int listen_fd, struct sockaddr_in addr)
-{
-	int ret = 0;
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_family      = AF_INET;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port        = htons(this->port);
-	ret = bind(listen_fd, (struct sockaddr *)&addr, sizeof(addr));
-	if (ret < 0)
-		throw std::runtime_error("[Error] bind() failed");
-	return (ret);
 }
 
 /*

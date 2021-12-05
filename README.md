@@ -29,5 +29,5 @@ https://webdevdesigner.com/q/what-s-the-difference-between-epoll-poll-threadpool
 https://dev.to/frevib/a-tcp-server-with-kqueue-527 // epoll
 
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms-fr // block nginx
-
+https://www.notion.so/etelcodeDocumentation-Webserv-320727979ffd4176a7dd5ba41aaadf46 // notion sur webserv
 ps -lef | grep -i nginx: | awk '{ print $2}' | xargs kill -9

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 17:53:46 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/05 01:24:10 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/05 12:52:45 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 int	main( void )
 {
-
 	try
 	{
 		Webserv	serv;
@@ -27,6 +26,5 @@ int	main( void )
 	}
 	return (0);
 	//serv.listen();
-
 	//serv.setPort(PORT);
 }
