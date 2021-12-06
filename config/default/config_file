@@ -7,8 +7,8 @@ server {
 	root /home/user42/Bureau/webserv/config/default/html_page;
 	index index.html;
 
-	location / {
-		autoindex on;
+	location /test {
+		index index.html;
 	}
 }
 }
