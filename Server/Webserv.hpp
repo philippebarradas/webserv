@@ -2,8 +2,10 @@
 # define WEBSERV_HPP
 
 // C++
-# include <iostream>
-# include <string>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <cstring>
 
 // C
 #include <stdio.h>
