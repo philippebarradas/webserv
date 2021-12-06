@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2021/11/30 18:51:55 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/01 11:05:40 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,23 @@
 
 Config::Config()
 {
+}
+
+Config::Config( std::string const & file_name )
+{
+	std::ifstream ifs;
+
+	ifs.open (file_name, std::ifstream::in);
+
+	std::string	line;
+
+	std::cout << "hey" << std::endl;
+
+	while (std::getline(ifs, line)) {
+		std::cout << line << std::endl;
+	}
+
+	ifs.close();
 }
 
 Config::Config( const Config & src )
