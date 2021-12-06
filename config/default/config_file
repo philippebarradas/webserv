@@ -1,0 +1,14 @@
+events {}
+http {
+server {
+	server_name hello;
+	listen 8001;
+
+	root /home/user42/Bureau/webserv/config/default/html_page;
+	index index.html;
+
+	location / {
+		autoindex on;
+	}
+}
+}
