@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:58:44 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/05 12:51:10 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/06 15:55:19 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ int	Webserv::my_send(struct epoll_event events[200], int close_conn, int i,
 			int nbr_bytes_read)
 {
 	std::cout << nbr_bytes_read << " bytes received" << std::endl;
+	std::cout << "this->buffer: |" << this->buffer << "|" << std::endl;
 	int nbr_bytes_send = 0;
 
 	nbr_bytes_send = send(events[i].data.fd, this->buffer, nbr_bytes_read, 0);
@@ -183,6 +184,7 @@ int	Webserv::my_send(struct epoll_event events[200], int close_conn, int i,
 		close_conn = 1;
 		return (-1);
 	}
+	//std::cout << "this->buffer: |" << this->buffer << "|" << std::endl;
 	return (0);
 }
 
@@ -190,7 +192,7 @@ void	Webserv::loop_connection(struct epoll_event events[200], int close_conn, in
 {
 	int nbr_bytes_read = 0;
 
-	bzero(this->buffer, sizeof(this->buffer));
+	//bzero(this->buffer, sizeof(this->buffer));
 	epoll_wait(events[i].data.fd, events, 200, this->timeout);
 	std::cout << "Descriptor num " << events[i].data.fd << " is readable" << std::endl;
 	close_conn = 0;

@@ -32,8 +32,8 @@
 
 int	main (void)
 {
-	int					len, sockfd, on = 1;
-	int					listen_sd = -1, new_sd = -1;
+	int					len, sockfd, sockfd2, on2 = 1, on = 1;
+	int					listen_sd, listen_sd2 = -1, new_sd = -1;
 	int					end_server = FALSE, compress_array = FALSE;
 	int					close_conn;
 	char				buffer[80];
@@ -47,17 +47,19 @@ int	main (void)
 	/* connections on                                            */
 	/*************************************************************/
 	listen_sd = socket(AF_INET, SOCK_STREAM, 0);
+	listen_sd2 = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sd < 0)
 	{
 		perror("socket() failed");
 		exit(-1);
 	}
-
 	/*************************************************************/
 	/* Allow socket descriptor to be reuseable                   */
 	/*************************************************************/
 	sockfd = setsockopt(listen_sd, SOL_SOCKET,  SO_REUSEADDR,
 		(char *)&on, sizeof(on));
+	sockfd2 = setsockopt(listen_sd2, SOL_SOCKET,  SO_REUSEADDR,
+		(char *)&on2, sizeof(on2));
 	if (sockfd < 0)
 	{
 		perror("setsockopt() failed");
@@ -65,6 +67,7 @@ int	main (void)
 		exit(-1);
 	}
 	sockfd = fcntl(listen_sd, F_SETFL, O_NONBLOCK);
+	sockfd2 = fcntl(listen_sd2, F_SETFL, O_NONBLOCK);
 
 	/*************************************************************/
 	/* Bind the socket                                           */
@@ -72,8 +75,11 @@ int	main (void)
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family      = AF_INET;
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port        = htons(SERVER_PORT);
+	addr.sin_port        = htons(SERVER_PORT); // 12345
 	sockfd = bind(listen_sd,
+		(struct sockaddr *)&addr, sizeof(addr));
+	addr.sin_port        = htons(1111);
+	sockfd2 = bind(listen_sd2,
 		(struct sockaddr *)&addr, sizeof(addr));
 	if (sockfd < 0)
 	{
@@ -86,6 +92,7 @@ int	main (void)
 	/* Set the listen back log                                   */
 	/*************************************************************/
 	sockfd = listen(listen_sd, 32);
+	sockfd2 = listen(listen_sd2, 32);
 	if (sockfd < 0)
 	{
 		perror("listen() failed");
