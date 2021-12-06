@@ -9,6 +9,8 @@ server {
 
 	location /test {
 		index index.html;
-	}
-}
+	};
+
+};
+
 }

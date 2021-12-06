@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/01 09:18:27 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/06 20:30:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <string>
 # include <fstream>
+# include <vector>
 
 class Config
 {
@@ -30,6 +31,8 @@ class Config
 
 	private:
 		Config();
+
+		std::vector<std::string>	split_server( std::string const & fileStr ) const;
 
 };
 

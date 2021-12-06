@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/01 11:05:40 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/06 20:42:25 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,14 @@ Config::Config( std::string const & file_name )
 
 	ifs.open (file_name, std::ifstream::in);
 
-	std::string	line;
-
-	std::cout << "hey" << std::endl;
+	std::string	line, file;
 
 	while (std::getline(ifs, line)) {
-		std::cout << line << std::endl;
+		file += line;
+		file += "\n";		// to remove
 	}
+
+	split_server(file);
 
 	ifs.close();
 }
@@ -75,6 +76,17 @@ std::ostream &			operator<<( std::ostream & o, Config const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+std::vector<std::string>	Config::split_server( std::string const & fileStr ) const
+{
+	std::vector<std::string>	ret;
+	size_t						pos = 0;
+
+	while ((pos = fileStr.find("server")))
+	{
+		std::cout << "start = " << pos << std::endl;
+		return ret;
+	}
+}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
