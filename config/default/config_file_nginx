@@ -1,6 +1,8 @@
 
-server 			{
-	server_name hello1 salut 123 pli;
+events {}
+http{
+server {
+	server_name hello salut 123;
 	server_name hello2;
 	server_name hello3;
 	server_name hello4;
@@ -12,6 +14,4 @@ server 			{
 	location /test {
 		index index.html;
 	}
-	sdfjkbfsjkbfs;
-	jbkfsjdsfklnf;
-};
+}}

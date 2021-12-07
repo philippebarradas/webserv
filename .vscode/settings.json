@@ -63,6 +63,9 @@
 		"deque": "cpp",
 		"fstream": "cpp",
 		"iomanip": "cpp",
-		"stack": "cpp"
+		"stack": "cpp",
+		"__tree": "cpp",
+		"set": "cpp",
+		"filesystem": "cpp"
 	}
 }

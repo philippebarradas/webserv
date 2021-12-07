@@ -1,31 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/07 13:35:20 by tsannie          ###   ########.fr       */
+/*   Created: 2021/12/07 14:01:52 by tsannie           #+#    #+#             */
+/*   Updated: 2021/12/07 14:01:53 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Config.hpp"
+#ifndef LOCATION_HPP
+# define LOCATION_HPP
 
-int	main( int ac, char *av[] )
+# include <iostream>
+# include <string>
+
+class Location
 {
-	if (ac != 2)
-		return (1);
-	try
-	{
-		Config		conf((std::string(av[1])));
-	}
-	catch( std::exception const & e )
-	{
-		std::cerr << "An error has been found on the config file:" << std::endl;
-		std::cerr << e.what() << std::endl;
-		return 1;
-	}
-	std::cout << "c carre" << std::endl;
 
-}
+	public:
+
+		Location();
+		Location( Location const & src );
+		~Location();
+
+		Location &		operator=( Location const & rhs );
+
+	private:
+
+};
+
+std::ostream &			operator<<( std::ostream & o, Location const & i );
+
+#endif /* ******************************************************** LOCATION_H */
