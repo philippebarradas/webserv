@@ -2,13 +2,16 @@
 events {}
 http{
 server {
-	server_name hello salut 123;
+	server_name hello1 hello3;
 	server_name hello2;
-	server_name hello3;
-	server_name hello4;
-	listen 8001;
+	listen 80;
 
+	autoindex on;
 	root /home/user42/Bureau/webserv/config/default/html_page;
+
+	client_max_body_size 5555;
+
+
 	index index.html;
 
 	location /test {

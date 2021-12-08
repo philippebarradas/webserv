@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/07 17:53:36 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/08 19:40:12 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,39 @@ class Server
 		Server( std::string const & src );
 		~Server();
 
+		std::set<std::string>	getName() const;
+		std::set<std::string>	getIndex() const;
+		std::string				getListen() const;
+		std::string				getRoot() const;
+		bool					getAutoindex() const;
+		unsigned int			getMaxbody() const;
+
 		Server &		operator=( Server const & rhs );
 
 	private:
-		void	setName( std::string const & src );
-
-		void	parsingAll( std::string & src );
 
 		Server();
 
-		std::set<std::string>	server_name;
+		static bool	_alreadySetListen;
+		static bool	_alreadySetRoot;
+		static bool	_alreadySetAutoindex;
+		static bool	_alreadySetMaxbody;
 
+		void	setName( std::vector<std::string> const & src );
+		void	setIndex( std::vector<std::string> const & src );
+		void	setListen( std::vector<std::string> const & src );
+		void	setRoot( std::vector<std::string> const & src );
+		void	setAutoindex( std::vector<std::string> const & src );
+		void	setMaxbody( std::vector<std::string> const & src );
+
+		void	parsingAll( std::set< std::vector<std::string> > const & src );
+
+		std::set<std::string>	_server_name;
+		std::set<std::string>	_index;
+		std::string				_listen;
+		std::string				_root;
+		bool					_autoindex;
+		unsigned int			_maxbody;
 
 
 };

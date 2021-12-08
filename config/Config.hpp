@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/07 19:04:10 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/08 19:16:57 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define CONFIG_HPP
 
 # include <iostream>
+# include <sstream>
 # include <string>
 # include <cctype>
 # include <exception>
@@ -46,6 +47,9 @@ class Config
 
 std::ostream &			operator<<( std::ostream & o, Config const & i );
 
-std::vector< std::vector<std::string> >	sortInVec( std::string const & src );
+std::set< std::vector<std::string> >	sortInVec( std::string const & src );
+
+void	checkRedefinition( bool const & toCheck, std::string const & name );
+void	checkNbArg( size_t const & toCheck, size_t const & size, std::string const & name );
 
 #endif /* ********************************************************** CONFIG_H */

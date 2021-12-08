@@ -6,8 +6,11 @@ server 			{
 	server_name hello4;
 	listen 8001;
 
+	client_max_body_size	50;
+
 	root /home/user42/Bureau/webserv/config/default/html_page;
 	index index.html;
+	autoindex on;
 
 	location /test {
 		index index.html;
