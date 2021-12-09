@@ -7,14 +7,17 @@ server {
 	listen 80;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/config/default/html_page;
+	root /Users/tsannie/Desktop/webserv/config/default/html_page;
 
 	client_max_body_size 5555;
-
-
 	index index.html;
+	error_page 404 /test_404.html;
+
+	location /test_404.html {
+		root /Users/tsannie/Desktop/webserv/config/default/html_page;
+	}
 
 	location /test {
-		index index.html;
+		fastcgi_pass unix:/does/not/exist;
 	}
 }}

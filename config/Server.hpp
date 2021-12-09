@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/08 19:40:12 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 15:03:00 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@ class Server
 		Server( std::string const & src );
 		~Server();
 
-		std::set<std::string>	getName() const;
-		std::set<std::string>	getIndex() const;
-		std::string				getListen() const;
-		std::string				getRoot() const;
-		bool					getAutoindex() const;
-		unsigned int			getMaxbody() const;
+		std::set<std::string>				getName() const;
+		std::set<std::string>				getIndex() const;
+		std::string							getListen() const;
+		std::string							getRoot() const;
+		bool								getAutoindex() const;
+		unsigned int						getMaxbody() const;
+		std::map<unsigned int, std::string>	getError() const;
 
 		Server &		operator=( Server const & rhs );
 
@@ -52,15 +53,17 @@ class Server
 		void	setRoot( std::vector<std::string> const & src );
 		void	setAutoindex( std::vector<std::string> const & src );
 		void	setMaxbody( std::vector<std::string> const & src );
+		void	setError( std::vector<std::string> const & src );
 
 		void	parsingAll( std::set< std::vector<std::string> > const & src );
 
-		std::set<std::string>	_server_name;
-		std::set<std::string>	_index;
-		std::string				_listen;
-		std::string				_root;
-		bool					_autoindex;
-		unsigned int			_maxbody;
+		std::set<std::string>				_server_name;
+		std::set<std::string>				_index;
+		std::string							_listen;
+		std::string							_root;
+		bool								_autoindex;
+		unsigned int						_maxbody;
+		std::map<unsigned int, std::string>	_error;
 
 
 };

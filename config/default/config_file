@@ -11,6 +11,7 @@ server 			{
 	root /home/user42/Bureau/webserv/config/default/html_page;
 	index index.html;
 	autoindex on;
+	error_page /home/user42/Bureau/webserv/config/default/html_page/error;
 
 	location /test {
 		index index.html;

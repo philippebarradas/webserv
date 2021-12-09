@@ -6,11 +6,36 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/08 19:16:27 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 15:18:15 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
+
+unsigned int	stoui_size( size_t const & len, size_t const & max,
+	std::string const & nb, std::string const & name )
+{
+	std::string::const_iterator	it, end;
+	std::stringstream	conv;
+	unsigned int				ret;
+
+	end = nb.end();
+	for (it = nb.begin() ; it != end && std::isdigit(*it) ; ++it) {}
+
+	conv << nb;
+	conv >> ret;
+
+	if (nb.size() > len || it != end || ret > max)
+	{
+		std::string thr("[Error] invalid arguments in \'");
+		thr += name;
+		thr += "\' (\'";
+		thr += nb;
+		thr += "\' is not un valid number).";
+		throw std::invalid_argument(thr);
+	}
+	return (ret);
+}
 
 void	checkRedefinition( bool const & toCheck, std::string const & name )
 {

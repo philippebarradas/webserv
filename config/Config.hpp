@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/08 19:16:57 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 15:17:37 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <fstream>
 # include <vector>
 # include <set>
+# include <map>
 # include "Server.hpp"
 # include "Location.hpp"
 
@@ -49,7 +50,10 @@ std::ostream &			operator<<( std::ostream & o, Config const & i );
 
 std::set< std::vector<std::string> >	sortInVec( std::string const & src );
 
-void	checkRedefinition( bool const & toCheck, std::string const & name );
-void	checkNbArg( size_t const & toCheck, size_t const & size, std::string const & name );
-
+void			checkRedefinition( bool const & toCheck,
+					std::string const & name );
+void			checkNbArg( size_t const & toCheck, size_t const & size,
+					std::string const & name );
+unsigned int	stoui_size( size_t const & len, size_t const & max,
+					std::string const & nb, std::string const & name );
 #endif /* ********************************************************** CONFIG_H */

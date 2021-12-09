@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/08 19:58:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 15:23:09 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,11 @@ unsigned int			Server::getMaxbody() const
 	return (this->_maxbody);
 }
 
+std::map<unsigned int, std::string>	Server::getError() const
+{
+	return (this->_error);
+}
+
 void	Server::setName( std::vector<std::string> const & src )
 {
 	std::vector<std::string>::const_iterator	it, end;
@@ -228,13 +233,10 @@ void	Server::setAutoindex( std::vector<std::string> const & src )
 
 void	Server::setMaxbody( std::vector<std::string> const & src )
 {
-	std::stringstream	conv;
-
 	checkRedefinition(_alreadySetMaxbody, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 
-	conv << src[1];
-	conv >> this->_maxbody;
+	this->_maxbody = stoui_size(3, 100, src[1], src[0]);
 
 	_alreadySetMaxbody = true;
 }
