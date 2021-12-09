@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 16:40:16 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 22:05:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,33 @@ unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 		conv_max << max;
 		conv_min << min;
 		std::string thr("[Error] invalid arguments in \'");
-		thr += name + "\' (\'" + nb +"\' is too high. Must be between "
+		thr += name + "\' (\'" + nb +"\' code is not valid. Must be between "
 			+ conv_min.str() + " and " + conv_max.str() + ").";
 
 		throw std::invalid_argument(thr);
 	}
 	return (ret);
+}
+
+void	checkNotValidDirective( std::vector<std::string> const & src )
+{
+	checkNbArgMin(src.size(), 2, src[0]);
+
+	std::vector<std::string>::const_iterator	it, end;
+
+	end = src.end();
+	for (it = src.begin() + 1 ; it != end ; ++it)
+	{
+		if ((src[0] != "location") && (((*it).find('{') != std::string::npos)
+									|| ((*it).find('}') != std::string::npos)))
+		{
+			std::string thr("[Error] unexpected \'");
+			thr += (((*it).find('{') == std::string::npos) ? "}" : "{");
+			thr += "\'.";
+			throw std::invalid_argument(thr);
+		}
+	}
+
 }
 
 void	checkRedefinition( bool const & toCheck, std::string const & name )
@@ -59,6 +80,18 @@ void	checkNbArg( size_t const & toCheck, size_t const & size,
 	std::string const & name )
 {
 	if (toCheck != size)
+	{
+		std::string thr("[Error] invalid number of arguments in \'");
+		thr += name;
+		thr += "\'.";
+		throw std::invalid_argument(thr);
+	}
+}
+
+void	checkNbArgMin( size_t const & toCheck, size_t const & size,
+	std::string const & name )
+{
+	if (toCheck < size)
 	{
 		std::string thr("[Error] invalid number of arguments in \'");
 		thr += name;

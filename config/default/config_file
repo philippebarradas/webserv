@@ -2,24 +2,22 @@
 server 			{
 	server_name hello1 salut 123 pli;
 	server_name hello2;
-	server_name hello3;
+	server_name h}ello3;
 	server_name hello4;
 	listen 8001;
 
 	client_max_body_size	20;
 
-	accepted_methods	POST GET DELETE;
+	cgi .py cgi_python;
 
-	cgi		.py		cgi_python;
+	accepted_methods	POST GET DELETE;
 
 	root /home/user42/Bureau/webserv/config/default/html_page;
 	index index.html;
 	autoindex on;
-	error_page 300 405 599 460 /salut;
+	error_page 300 bfg;
 
 	location /test {
 		index index.html;
 	}
-	sdfjkbfsjkbfs;
-	jbkfsjdsfklnf;
 };

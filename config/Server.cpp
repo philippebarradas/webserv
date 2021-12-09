@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 19:11:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 21:46:36 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,8 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 	<< i.getMaxbody() << std::endl;
 	o << "error     : ";
 	printContainers(i.getError(), o);
+	o << "cgi       : ";
+	printContainers(i.getCgi(), o);
 	return o;
 }
 
@@ -136,10 +138,12 @@ typedef void ( Server::*allFunction )( std::vector<std::string> const & );
 void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
 {
 	std::string	nameAllowed[] = {"server_name", "index", "accepted_methods",
-		"listen", "root", "autoindex", "client_max_body_size", "error_page"};
+		"listen", "root", "autoindex", "client_max_body_size", "error_page",
+		"cgi"};
 	allFunction	setFunct[] = {&Server::setName, &Server::setIndex,
 		&Server::setMethods, &Server::setListen, &Server::setRoot,
-		&Server::setAutoindex, &Server::setMaxbody, &Server::setError};
+		&Server::setAutoindex, &Server::setMaxbody, &Server::setError,
+		&Server::setCgi};
 	std::set< std::vector<std::string> >::const_iterator	it, end;
 	bool		found;
 	size_t		len, i;
@@ -153,14 +157,18 @@ void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
 		{
 			if (*((*it).begin()) == nameAllowed[i])
 			{
+				checkNotValidDirective(*it);
 				(this->*setFunct[i])(*it);
 				found = true;
 			}
 		}
-		/*if (!found) // if vec.size < 2 // brackets
-			std::cout << *((*it).begin()) << " is not found." << std::endl;
-		else
-			std::cout << *((*it).begin()) << " is found." << std::endl;*/
+		std::cout << "found = " << found << std::endl;
+		/*if (!found)
+		{
+			std::string thr;
+			thr = "[Error] unknown directive \'" + *((*it).begin()) + "\'.";
+			throw std::invalid_argument(thr);
+		}*/
 	}
 }
 
@@ -207,6 +215,12 @@ std::map<unsigned int, std::string>	Server::getError() const
 {
 	return (this->_error);
 }
+
+std::map<std::string, std::string>	Server::getCgi() const
+{
+	return (this->_cgi);
+}
+
 
 void	Server::setName( std::vector<std::string> const & src )
 {
@@ -286,6 +300,7 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 
 void	Server::setError( std::vector<std::string> const & src )
 {
+	checkNbArg(src.size(), 3, src[0]);
 	std::pair<std::map<unsigned int, std::string>::iterator, bool>	ret;
 	std::vector<std::string>::const_iterator	it, end;
 
@@ -294,6 +309,25 @@ void	Server::setError( std::vector<std::string> const & src )
 	{
 		ret = this->_error.insert(std::make_pair( stoui_size(300, 599, *it,
 			src[0]), *(end - 1) ));
+		if (ret.second == false)
+		{
+			std::string thr("[Error] page for error code \'");
+			thr += *it + "\' is already defined in \'" + src[0] + "\'.";
+			throw std::invalid_argument(thr);
+		}
+	}
+}
+
+void	Server::setCgi( std::vector<std::string> const & src )
+{
+	checkNbArg(src.size(), 3, src[0]);
+	std::pair<std::map<std::string, std::string>::iterator, bool>	ret;
+	std::vector<std::string>::const_iterator	it, end;
+
+	end = src.end();
+	for (it = src.begin() + 1 ; it + 1 != end ; ++it)
+	{
+		ret = this->_cgi.insert(std::make_pair(src[1], src[2]));
 		if (ret.second == false)
 		{
 			std::string thr("[Error] page for error code \'");

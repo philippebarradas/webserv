@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 19:01:51 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 20:59:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Server
 		bool								getAutoindex() const;
 		unsigned int						getMaxbody() const;
 		std::map<unsigned int, std::string>	getError() const;
+		std::map<std::string, std::string>	getCgi() const;
 
 		Server &		operator=( Server const & rhs );
 
@@ -57,6 +58,7 @@ class Server
 		void	setAutoindex( std::vector<std::string> const & src );
 		void	setMaxbody( std::vector<std::string> const & src );
 		void	setError( std::vector<std::string> const & src );
+		void	setCgi( std::vector<std::string> const & src );
 
 		void	parsingAll( std::set< std::vector<std::string> > const & src );
 
@@ -68,6 +70,7 @@ class Server
 		bool								_autoindex;
 		unsigned int						_maxbody;
 		std::map<unsigned int, std::string>	_error;
+		std::map<std::string, std::string>	_cgi;
 
 
 
