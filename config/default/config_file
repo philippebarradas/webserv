@@ -6,12 +6,16 @@ server 			{
 	server_name hello4;
 	listen 8001;
 
-	client_max_body_size	50;
+	client_max_body_size	20;
+
+	accepted_methods	POST GET DELETE;
+
+	cgi		.py		cgi_python;
 
 	root /home/user42/Bureau/webserv/config/default/html_page;
 	index index.html;
 	autoindex on;
-	error_page /home/user42/Bureau/webserv/config/default/html_page/error;
+	error_page 300 405 599 460 /salut;
 
 	location /test {
 		index index.html;

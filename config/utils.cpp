@@ -6,17 +6,17 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 15:18:15 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 16:40:16 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 
-unsigned int	stoui_size( size_t const & len, size_t const & max,
+unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 	std::string const & nb, std::string const & name )
 {
 	std::string::const_iterator	it, end;
-	std::stringstream	conv;
+	std::stringstream			conv, conv_max, conv_min;
 	unsigned int				ret;
 
 	end = nb.end();
@@ -25,13 +25,20 @@ unsigned int	stoui_size( size_t const & len, size_t const & max,
 	conv << nb;
 	conv >> ret;
 
-	if (nb.size() > len || it != end || ret > max)
+	if (nb.size() > 9 || it != end)
 	{
 		std::string thr("[Error] invalid arguments in \'");
-		thr += name;
-		thr += "\' (\'";
-		thr += nb;
-		thr += "\' is not un valid number).";
+		thr += name + "\' (\'" + nb + "\' is not un valid number).";
+		throw std::invalid_argument(thr);
+	}
+	else if (ret > max || ret < min)
+	{
+		conv_max << max;
+		conv_min << min;
+		std::string thr("[Error] invalid arguments in \'");
+		thr += name + "\' (\'" + nb +"\' is too high. Must be between "
+			+ conv_min.str() + " and " + conv_max.str() + ").";
+
 		throw std::invalid_argument(thr);
 	}
 	return (ret);

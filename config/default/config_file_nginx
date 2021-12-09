@@ -12,6 +12,7 @@ server {
 	client_max_body_size 5555;
 	index index.html;
 	error_page 404 /test_404.html;
+	error_page 45604 /test_404plotjjfd.html;
 
 	location /test_404.html {
 		root /Users/tsannie/Desktop/webserv/config/default/html_page;

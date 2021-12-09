@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 15:03:00 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 19:01:51 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Server
 
 		std::set<std::string>				getName() const;
 		std::set<std::string>				getIndex() const;
+		std::set<std::string>				getMethods() const;
 		std::string							getListen() const;
 		std::string							getRoot() const;
 		bool								getAutoindex() const;
@@ -42,6 +43,7 @@ class Server
 
 		Server();
 
+		static bool	_alreadySetMethods;
 		static bool	_alreadySetListen;
 		static bool	_alreadySetRoot;
 		static bool	_alreadySetAutoindex;
@@ -49,6 +51,7 @@ class Server
 
 		void	setName( std::vector<std::string> const & src );
 		void	setIndex( std::vector<std::string> const & src );
+		void	setMethods( std::vector<std::string> const & src );
 		void	setListen( std::vector<std::string> const & src );
 		void	setRoot( std::vector<std::string> const & src );
 		void	setAutoindex( std::vector<std::string> const & src );
@@ -59,11 +62,13 @@ class Server
 
 		std::set<std::string>				_server_name;
 		std::set<std::string>				_index;
+		std::set<std::string>				_methods;
 		std::string							_listen;
 		std::string							_root;
 		bool								_autoindex;
 		unsigned int						_maxbody;
 		std::map<unsigned int, std::string>	_error;
+
 
 
 };

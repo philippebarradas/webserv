@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 15:23:09 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 19:11:05 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
+bool	Server::_alreadySetMethods   = false;
 bool	Server::_alreadySetListen    = false;
 bool	Server::_alreadySetRoot      = false;
 bool	Server::_alreadySetAutoindex = false;
@@ -76,19 +77,32 @@ Server &				Server::operator=( Server const & rhs )
 		this->_root        = rhs.getRoot();
 		this->_autoindex   = rhs.getAutoindex();
 		this->_maxbody     = rhs.getMaxbody();
+		this->_error       = rhs.getError();
 	}
 	return *this;
 }
 
 template <typename T>
-void	printContainers(T const & set, std::ostream & o)
+void	printContainers(T const & ctn, std::ostream & o)
 {
 	typename	T::const_iterator	it, end;
 
 	o << "[ ";
-	end = set.end();
-	for (it = set.begin() ; it != end ; ++it)
+	end = ctn.end();
+	for (it = ctn.begin() ; it != end ; ++it)
 		o << "\'" << *it << "\' ";
+	o << "]" << std::endl;
+}
+
+template <typename T1, typename T2>
+void	printContainers(std::map<T1, T2> const & map, std::ostream & o)
+{
+	typename	std::map<T1, T2>::const_iterator	it, end;
+
+	o << "[ ";
+	end = map.end();
+	for (it = map.begin() ; it != end ; ++it)
+		o << "{\'" << it->first << "\' => \'" << it->second << "\'} ";
 	o << "]" << std::endl;
 }
 
@@ -98,6 +112,8 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 	printContainers(i.getName(), o);
 	o << "index     : ";
 	printContainers(i.getIndex(), o);
+	o << "methods   : ";
+	printContainers(i.getMethods(), o);
 	o << "listen    : "
 	<< i.getListen() << std::endl;
 	o << "root      : "
@@ -106,6 +122,8 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 	<< ((i.getAutoindex() ? "on" : "off")) << std::endl;
 	o << "max_body  : "
 	<< i.getMaxbody() << std::endl;
+	o << "error     : ";
+	printContainers(i.getError(), o);
 	return o;
 }
 
@@ -117,11 +135,11 @@ typedef void ( Server::*allFunction )( std::vector<std::string> const & );
 
 void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
 {
-	std::string	nameAllowed[]= {"server_name", "index", "listen", "root",
-		"autoindex", "client_max_body_size"};
+	std::string	nameAllowed[] = {"server_name", "index", "accepted_methods",
+		"listen", "root", "autoindex", "client_max_body_size", "error_page"};
 	allFunction	setFunct[] = {&Server::setName, &Server::setIndex,
-		&Server::setListen, &Server::setRoot, &Server::setAutoindex,
-		&Server::setMaxbody};
+		&Server::setMethods, &Server::setListen, &Server::setRoot,
+		&Server::setAutoindex, &Server::setMaxbody, &Server::setError};
 	std::set< std::vector<std::string> >::const_iterator	it, end;
 	bool		found;
 	size_t		len, i;
@@ -139,7 +157,7 @@ void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
 				found = true;
 			}
 		}
-		/*if (!found)
+		/*if (!found) // if vec.size < 2 // brackets
 			std::cout << *((*it).begin()) << " is not found." << std::endl;
 		else
 			std::cout << *((*it).begin()) << " is found." << std::endl;*/
@@ -158,6 +176,11 @@ std::set<std::string>	Server::getName() const
 std::set<std::string>	Server::getIndex() const
 {
 	return (this->_index);
+}
+
+std::set<std::string>	Server::getMethods() const
+{
+	return (this->_methods);
 }
 
 std::string				Server::getListen() const
@@ -203,6 +226,26 @@ void	Server::setIndex( std::vector<std::string> const & src )
 		this->_index.insert(*it);
 }
 
+void	Server::setMethods( std::vector<std::string> const & src )
+{
+	checkRedefinition(_alreadySetMethods, src[0]);
+	std::string	methodsAllowed[] = {"GET", "POST", "DELETE"};
+	std::vector<std::string>::const_iterator	it, end;
+	size_t	len, i;
+
+	len = sizeof(methodsAllowed) / sizeof(std::string);
+	end = src.end();
+	for (it = src.begin() + 1 ; it != end ; ++it)
+	{
+		for (i = 0 ; i < len && *it != methodsAllowed[i] ; ++i) {}
+		if (i == len)
+			throw std::invalid_argument("[Error] invalid arguments "
+				"in \'accepted_methods\'.");
+		this->_methods.insert(*it);
+	}
+	_alreadySetMethods = true;
+}
+
 void	Server::setListen( std::vector<std::string> const & src )
 {
 	checkRedefinition(_alreadySetListen, src[0]);
@@ -218,7 +261,7 @@ void	Server::setRoot( std::vector<std::string> const & src )
 	checkNbArg(src.size(), 2, src[0]);
 	if (src.size() != 2)
 		throw std::invalid_argument("[Error] invalid number of "
-			"arguments in \"root\".");
+			"arguments in \'root\'.");
 	_alreadySetRoot = true;
 	this->_root = *(++(src.begin()));
 }
@@ -236,10 +279,28 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 	checkRedefinition(_alreadySetMaxbody, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 
-	this->_maxbody = stoui_size(3, 100, src[1], src[0]);
+	this->_maxbody = stoui_size(0, 100, src[1], src[0]);
 
 	_alreadySetMaxbody = true;
 }
 
+void	Server::setError( std::vector<std::string> const & src )
+{
+	std::pair<std::map<unsigned int, std::string>::iterator, bool>	ret;
+	std::vector<std::string>::const_iterator	it, end;
+
+	end = src.end();
+	for (it = src.begin() + 1 ; it + 1 != end ; ++it)
+	{
+		ret = this->_error.insert(std::make_pair( stoui_size(300, 599, *it,
+			src[0]), *(end - 1) ));
+		if (ret.second == false)
+		{
+			std::string thr("[Error] page for error code \'");
+			thr += *it + "\' is already defined in \'" + src[0] + "\'.";
+			throw std::invalid_argument(thr);
+		}
+	}
+}
 
 /* ************************************************************************** */

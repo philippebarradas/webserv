@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 15:17:37 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/09 16:34:45 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,6 @@ void			checkRedefinition( bool const & toCheck,
 					std::string const & name );
 void			checkNbArg( size_t const & toCheck, size_t const & size,
 					std::string const & name );
-unsigned int	stoui_size( size_t const & len, size_t const & max,
+unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 					std::string const & nb, std::string const & name );
 #endif /* ********************************************************** CONFIG_H */
