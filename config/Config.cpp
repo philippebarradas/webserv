@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/07 16:42:17 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/10 19:25:03 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,18 @@ Config::Config()
 
 Config::Config( std::string const & file_name )
 {
-	/*size_t i;
-	for (i = 0 ; isspace(fileStr[i]) ; ++i) {}
-	if (fileStr[i] != '{')
-		throw std::invalid_argument("[Error] invalid number of arguments in \"server\".");*/
-
+	std::vector< std::vector<std::string> >	toParce;
 	std::ifstream ifs;
-
-	ifs.open (file_name, std::ifstream::in);
-
 	std::string	line, file;
 
-	while (std::getline(ifs, line)) {
+	ifs.open(file_name, std::ifstream::in);
+	if (!ifs.is_open())
+		throw std::invalid_argument("[Error] opening file");
+	while (std::getline(ifs, line))
 		file += line;
-		file += "\n";		// to remove
-	}
 
-	split_server(file);
+	toParce = sortInVec(file);
+	this->split_server(toParce);
 
 	ifs.close();
 }
@@ -81,34 +76,23 @@ std::ostream &			operator<<( std::ostream & o, Config const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Config::split_server( std::string & fileStr )
+void	Config::split_server( std::vector< std::vector<std::string> > const & src )
 {
-	size_t						pos = 0, end_pos = 0;
+	std::vector< std::vector<std::string> >::const_iterator	it, end;
+	size_t		i;
 
-	while ((pos = fileStr.find("server")) != std::string::npos)
+	end = src.end();
+	for (it = src.begin() ; it != end ; ++it)
 	{
-		end_pos = fileStr.find("};");
-
-		if (end_pos == std::string::npos)
-			throw std::invalid_argument("[Error] a block server "
-				"must be closed with '};'.");
-		else if (end_pos < pos)
-			throw std::invalid_argument("[Error] logic problem on the "
-				"brackets '{}'.");
-
-		std::string		to_push(fileStr.begin() + pos + 6, fileStr.begin() + end_pos);
-		this->serv.push_back(Server(to_push));
-		fileStr.erase(fileStr.begin() + pos, fileStr.begin() + end_pos + 2);
-	}
-
-	for (size_t i = 0 ; fileStr[i] ; ++i)
-	{
-		if (!isspace(fileStr[i]))
+		if (*((*it).begin()) == "server")
 		{
-			std::string thr("[Error] invalid characters have been found '");
-			for (; !isspace(fileStr[i]) && fileStr[i]; ++i)
-				thr += fileStr[i];
-			thr += "'.";
+			checkNotValidDirective(*it);
+			Server(*((*it).begin() + 1));
+		}
+		else
+		{
+			std::string thr;
+			thr = "[Error] unknown directive \'" + *((*it).begin()) + "\'.";
 			throw std::invalid_argument(thr);
 		}
 	}

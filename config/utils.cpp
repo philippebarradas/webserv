@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 22:05:24 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/10 19:05:00 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,14 @@ unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 void	checkNotValidDirective( std::vector<std::string> const & src )
 {
 	checkNbArgMin(src.size(), 2, src[0]);
-
 	std::vector<std::string>::const_iterator	it, end;
 
 	end = src.end();
 	for (it = src.begin() + 1 ; it != end ; ++it)
 	{
-		if ((src[0] != "location") && (((*it).find('{') != std::string::npos)
-									|| ((*it).find('}') != std::string::npos)))
+		if ((src[0] != "location" && src[0] != "server")
+			&& (((*it).find('{') != std::string::npos)
+			|| ((*it).find('}') != std::string::npos)))
 		{
 			std::string thr("[Error] unexpected \'");
 			thr += (((*it).find('{') == std::string::npos) ? "}" : "{");
@@ -100,20 +100,43 @@ void	checkNbArgMin( size_t const & toCheck, size_t const & size,
 	}
 }
 
+std::string	parceBrackets( std::string const & src, size_t & i, std::string & ret )
+{
+	size_t brackets_open;
+
+	if (ret.size() != 0)
+		return (ret);
+
+	ret += src[i];
+	brackets_open = 1;
+	for (i = i + 1 ; brackets_open && src[i] ; ++i)
+	{
+		if (src[i] == '{')
+			++brackets_open;
+		else if (src[i] == '}')
+			--brackets_open;
+		ret += src[i];
+	}
+	std::cout << "brackets_open" << brackets_open << std::endl;
+	if (!brackets_open)
+	{
+		--i;
+		return (ret);
+	}
+	else
+		throw std::invalid_argument("[Error] incorrect bracket syntax.");
+}
+
 std::string	nextWord( std::string const & src, size_t & i )
 {
 	std::string	ret;
 
 	for (; isspace(src[i]) && src[i] ; ++i) {}
-	for (; !isspace(src[i]) && src[i] != ';' && src[i] != '}' && src[i] ; ++i)
+	//std::cout << "start with " << src[i] << std::endl;
+	for (; !isspace(src[i]) && src[i] != ';' && src[i] ; ++i)
 	{
 		if (src[i] == '{')
-		{
-			for (; src[i] != '}' && src[i] ; ++i)
-				ret += src[i];
-			ret += src[i];
-			--i;
-		}
+			return (parceBrackets(src, i, ret));
 		else
 			ret += src[i];
 	}
@@ -121,11 +144,9 @@ std::string	nextWord( std::string const & src, size_t & i )
 	return (ret);
 }
 
-std::set< std::vector<std::string> >	sortInVec( std::string const & src )
+std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 {
-	std::set< std::vector<std::string> >			ret;
-	std::pair<std::set<
-		std::vector<std::string> >::iterator, bool>	itret;
+	std::vector< std::vector<std::string> >			ret;
 	std::vector<std::string>						tmp;
 	std::string	nxt;
 	size_t	i = 0;
@@ -134,18 +155,17 @@ std::set< std::vector<std::string> >	sortInVec( std::string const & src )
 	{
 		nxt = nextWord(src, i);
 		tmp.push_back(nxt);
-		if (src[i] == ';' || src[i] == '}')
+		if (src[i] == ';' || src[i] == '}' || !src[i])
 		{
-			itret = ret.insert(tmp);
-			if (itret.second == false)
-				checkRedefinition(true, *(tmp.begin()));
+			ret.push_back(tmp);
 			tmp.clear();
 			++i;
 		}
 	}
 
 	// print content (to delete)
-	std::set< std::vector<std::string> >::const_iterator	it, end;
+	std::cout << "start print:" << std::endl;
+	std::vector< std::vector<std::string> >::const_iterator	it, end;
 	std::vector<std::string>::const_iterator	sit, send;
 	int j = 0;
 
@@ -155,7 +175,7 @@ std::set< std::vector<std::string> >	sortInVec( std::string const & src )
 		std::cout << ++j << std::endl;
 		send = (*it).end();
 		for (sit = (*it).begin() ; sit != send ; ++sit)
-			std::cout << *sit << "\n";
+			std::cout << "-" << *sit << "\n";
 		std::cout << "\n";
 	}
 	return (ret);

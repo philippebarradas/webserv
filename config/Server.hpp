@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 20:59:24 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/10 18:40:55 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,6 @@ class Server
 
 		Server();
 
-		static bool	_alreadySetMethods;
-		static bool	_alreadySetListen;
-		static bool	_alreadySetRoot;
-		static bool	_alreadySetAutoindex;
-		static bool	_alreadySetMaxbody;
-
 		void	setName( std::vector<std::string> const & src );
 		void	setIndex( std::vector<std::string> const & src );
 		void	setMethods( std::vector<std::string> const & src );
@@ -60,7 +54,14 @@ class Server
 		void	setError( std::vector<std::string> const & src );
 		void	setCgi( std::vector<std::string> const & src );
 
-		void	parsingAll( std::set< std::vector<std::string> > const & src );
+		void	parsingAll( std::vector< std::vector<std::string> > const & src );
+		void	initAlreadySet();
+
+		bool	_alreadySetMethods;
+		bool	_alreadySetListen;
+		bool	_alreadySetRoot;
+		bool	_alreadySetAutoindex;
+		bool	_alreadySetMaxbody;
 
 		std::set<std::string>				_server_name;
 		std::set<std::string>				_index;

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 21:46:36 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/10 19:23:57 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,17 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-bool	Server::_alreadySetMethods   = false;
-bool	Server::_alreadySetListen    = false;
-bool	Server::_alreadySetRoot      = false;
-bool	Server::_alreadySetAutoindex = false;
-bool	Server::_alreadySetMaxbody   = false;
-
 Server::Server()
 {
 }
 
 Server::Server( std::string const & src )
 {
+	this->initAlreadySet();
 	size_t	i;
-	std::set< std::vector<std::string> >	toParce;
-	std::string	strParce;
+	std::vector< std::vector<std::string> >	toParce;
+	std::string	strParce(src.begin() + 1, src.end() - 1);
 
-	for (i = 0 ; isspace(src[i]) && src[i] ; ++i) {}
-	if (src[i] != '{')
-	{
-		std::string thr("[Error] invalid characters after server bloc '");
-		for (; !isspace(src[i]) && src[i] != '{' && src[i]; ++i)
-			thr += src[i];
-		thr += "'.";
-		throw std::invalid_argument(thr);
-	}
-	strParce = std::string(&src[i + 1]);
 	toParce = sortInVec(strParce);
 	this->parsingAll(toParce);
 
@@ -133,9 +118,18 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+void	Server::initAlreadySet()
+{
+	_alreadySetMethods   = false;
+	_alreadySetListen    = false;
+	_alreadySetRoot      = false;
+	_alreadySetAutoindex = false;
+	_alreadySetMaxbody   = false;
+}
+
 typedef void ( Server::*allFunction )( std::vector<std::string> const & );
 
-void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
+void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 {
 	std::string	nameAllowed[] = {"server_name", "index", "accepted_methods",
 		"listen", "root", "autoindex", "client_max_body_size", "error_page",
@@ -144,7 +138,7 @@ void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
 		&Server::setMethods, &Server::setListen, &Server::setRoot,
 		&Server::setAutoindex, &Server::setMaxbody, &Server::setError,
 		&Server::setCgi};
-	std::set< std::vector<std::string> >::const_iterator	it, end;
+	std::vector< std::vector<std::string> >::const_iterator	it, end;
 	bool		found;
 	size_t		len, i;
 
@@ -162,7 +156,7 @@ void	Server::parsingAll( std::set< std::vector<std::string> > const & src )
 				found = true;
 			}
 		}
-		std::cout << "found = " << found << std::endl;
+		//std::cout << "found = " << found << std::endl;
 		/*if (!found)
 		{
 			std::string thr;

@@ -1,7 +1,7 @@
 
 events {}
 http{
-server {
+server{
 	server_name hello1 hello3;
 	server_name hello2;
 	listen 80;

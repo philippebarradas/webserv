@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/09 21:44:41 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/10 17:58:54 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,16 @@ class Config
 	private:
 		Config();
 
-		void	split_server( std::string & fileStr );
+		void	split_server( std::vector<
+					std::vector<std::string> > const & src );
+
 
 		std::vector<Server>		serv;
 };
 
 std::ostream &			operator<<( std::ostream & o, Config const & i );
 
-std::set< std::vector<std::string> >	sortInVec( std::string const & src );
+std::vector< std::vector<std::string> >	sortInVec( std::string const & src );
 
 void			checkRedefinition( bool const & toCheck,
 					std::string const & name );
