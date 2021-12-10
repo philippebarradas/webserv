@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2021/12/10 16:57:05 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/10 17:52:42 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,74 @@ void	set_first_poll_events(int listen_fd, struct pollfd fds_events[200])
 	fds_events[0].events = POLLIN;
 }
 
+// Accept connexions, create new socket connected and put it at the end of events pollfd
+int	accept_connexions(int listen_fd, int nbr_connexions, struct pollfd fds_events[200])
+{
+	int new_socket = 0;
+
+	new_socket = accept(listen_fd, NULL, NULL);
+	std::cout << "new_socket = " << new_socket << std::endl;
+	if (new_socket < 0)
+		throw std::runtime_error("[Error] accept_connexions() failed");
+	fds_events[nbr_connexions + 1].fd = new_socket;
+	fds_events[nbr_connexions + 1].events = POLLIN;
+	return (new_socket);
+}
+
+// Read data from buffer for now (after it will be the request send by client)
+void	read_data(int i_conn, struct pollfd fds_events[200])
+{
+	int valread = 0;
+	char buffer[10000];
+
+	bzero(&buffer, sizeof(buffer));
+	std::cout << "else i_conn = " << i_conn << std::endl;
+	valread = recv(fds_events[i_conn].fd, buffer, sizeof(buffer), 0);
+	if (valread == -1)
+		throw std::runtime_error("[Error] recv() failed");
+	if (valread == 0)
+		throw std::runtime_error("[Error] recv() finished");
+}
+
+// Send data to the client (telnet or browser)
+void	send_data(int i_conn, struct pollfd fds_events[200])
+{
+	std::ifstream ifs;
+	std::string	line, file;
+
+	ifs.open("to_delete.html", std::ifstream::in);
+	while (std::getline(ifs, line))
+	{
+		file += line;
+		file += '\n';
+	}
+	ifs.close();
+	fds_events[i_conn].events = POLLOUT;
+	int nbr_bytes_send = 0;
+	nbr_bytes_send = send(fds_events[i_conn].fd, file.c_str(), file.size(), 0);
+	if (nbr_bytes_send == -1)
+		throw std::runtime_error("[Error] sent() failed");
+	std::cout << "Hello message sent" << std::endl;
+}
+
+// Close connexions after sent and contract array
+void	close_and_contract_array(int i_conn, int nbr_connexions, struct pollfd fds_events[200])
+{
+	close(fds_events[i_conn].fd);
+	int j = 0;
+	for (j = 0; j < i_conn; j++){}
+	for (j = i_conn; fds_events[j + 1].fd > 0 && j < nbr_connexions; j++){}
+		fds_events[j].fd = fds_events[j + 1].fd;
+}
+
+// I/O processing (read, send and close and contract array after closing connexions)
+void	io_processing(int i_conn, int nbr_connexions, struct pollfd fds_events[200])
+{
+	read_data(i_conn, fds_events);
+	send_data(i_conn, fds_events);
+	close_and_contract_array(i_conn, nbr_connexions, fds_events);
+}
+
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
@@ -91,8 +159,7 @@ Webserv &				Webserv::operator=( Webserv const & rhs )
 */
 
 /* cree la socket -> set la socket -> donne un nom a la socket ->
-mets la socket comme passive -> set le premier events fd avec la socket passive */
-
+	mets la socket comme passive -> set le premier events fd avec la socket passive */
 void	Webserv::setup_socket_server()
 {
 	this->listen_fd = create_socket();
@@ -102,92 +169,9 @@ void	Webserv::setup_socket_server()
 	set_first_poll_events(this->listen_fd, this->fds_events);
 }
 
-void	loop_accept(int listen_fd, int new_socket, int i_conn, struct pollfd fds_events[200])
-{
-	int nbr_connexions = 1;
-	for (int nbr_connexions = 1; nbr_connexions < 4; nbr_connexions++) // 3 est fixe
-	{
-		new_socket = accept(listen_fd, NULL, NULL);
-		std::cout << "new_socket = " << new_socket << std::endl;
-		if (new_socket < 0)
-		{
-			perror("accept");
-			break ;
-		}
-		fds_events[nbr_connexions].fd = new_socket;
-		fds_events[nbr_connexions].events = POLLIN;
-	}
-}
-
-int	accept_connexions(int listen_fd, int nbr_connexions, struct pollfd fds_events[200])
-{
-	int new_socket = 0;
-
-	new_socket = accept(listen_fd, NULL, NULL);
-	std::cout << "new_socket = " << new_socket << std::endl;
-	if (new_socket < 0)
-		throw std::runtime_error("[Error] accept_connexions() failed");
-	fds_events[nbr_connexions + 1].fd = new_socket;
-	fds_events[nbr_connexions + 1].events = POLLIN;
-	return (new_socket);
-}
-
-// Read data from buffer for now (after it will be the request send by client)
-
-void	read_data(int i_conn, struct pollfd fds_events[200])
-{
-	int valread = 0;
-	char buffer[10000];
-
-	bzero(&buffer, sizeof(buffer));
-	std::cout << "else i_conn = " << i_conn << std::endl;
-	valread = recv(fds_events[i_conn].fd, buffer, sizeof(buffer), 0);
-	if (valread == -1)
-		throw std::runtime_error("[Error] recv() failed");
-	if (valread == 0)
-		throw std::runtime_error("[Error] recv() finished");
-}
-
-// Send data to the client (telnet or browser)
-void	send_data(int i_conn, struct pollfd fds_events[200])
-{
-	std::ifstream ifs;
-	std::string	line, file;
-
-	ifs.open("to_delete.html", std::ifstream::in);
-	while (std::getline(ifs, line))
-	{
-		file += line;
-		file += '\n';
-	}
-	ifs.close();
-	//std::cout << file << std::endl;
-	fds_events[i_conn].events = POLLOUT;
-	int nbr_bytes_send = 0;
-	nbr_bytes_send = send(fds_events[i_conn].fd, file.c_str(), file.size(), 0);
-	if (nbr_bytes_send == -1)
-		throw std::runtime_error("[Error] sent() failed");
-	std::cout << "Hello message sent" << std::endl;
-}
-
-void	close_and_contract_array(int i_conn, int nbr_connexions, struct pollfd fds_events[200])
-{
-	close(fds_events[i_conn].fd);
-	int j = 0;
-	for (j = 0; j < i_conn; j++){}
-	for (j = i_conn; fds_events[j + 1].fd > 0 && j < nbr_connexions; j++){}
-		fds_events[j].fd = fds_events[j + 1].fd;
-}
-
-void	io_processing(int i_conn, int nbr_connexions, struct pollfd fds_events[200])
-{
-	read_data(i_conn, fds_events);
-	send_data(i_conn, fds_events);
-	close_and_contract_array(i_conn, nbr_connexions, fds_events);
-}
-
 void	Webserv::loop_server(int listen_fd)
 {
+	//this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	this->nbr_connexions = 0;
 	int valread = 0;
 	int i_conn = 0;
@@ -199,7 +183,6 @@ void	Webserv::loop_server(int listen_fd)
 			std::cout << "fds_events[" << i << "] = " << this->fds_events[i].fd << std::endl;
 		poll(fds_events, 200, -1); // -1 = delai en ms infini
 		if (this->fds_events[i_conn].fd == listen_fd)
-		//if (fds_events[i_conn].events == POLLIN)
 		{
 			new_socket = accept_connexions(listen_fd, this->nbr_connexions, this->fds_events);
 			this->nbr_connexions++;
@@ -213,7 +196,6 @@ void	Webserv::loop_server(int listen_fd)
 		std::cout << "nbr_connexions = " << nbr_connexions << std::endl;
 		i_conn++;
 	}
-	//send(new_socket , hello , strlen(hello) , 0 );
 }
 
 int	main( void )
