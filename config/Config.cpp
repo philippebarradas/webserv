@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/10 19:25:03 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 20:30:33 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,14 @@ Config::Config( std::string const & file_name )
 		file += line;
 
 	toParce = sortInVec(file);
-	this->split_server(toParce);
+	this->parsingAll(toParce);
 
 	ifs.close();
 }
 
 Config::Config( const Config & src )
 {
+	*this = src;
 }
 
 
@@ -58,16 +59,23 @@ Config::~Config()
 
 Config &				Config::operator=( Config const & rhs )
 {
-	//if ( this != &rhs )
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if ( this != &rhs )
+	{
+		this->_config = rhs.getConfig();
+	}
 	return *this;
 }
 
 std::ostream &			operator<<( std::ostream & o, Config const & i )
 {
-	//o << "Value = " << i.getValue();
+	std::vector<Server>::const_iterator	it, end;
+
+	it = i.getConfig().begin();
+	o << *(it);
+
+	/*end = i.getConfig().end();
+	for (it = i.getConfig().begin() ; it != end ; ++it)
+		o << *it << std::setfill('-') << std::setw(30) << std::endl;*/
 	return o;
 }
 
@@ -76,10 +84,9 @@ std::ostream &			operator<<( std::ostream & o, Config const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Config::split_server( std::vector< std::vector<std::string> > const & src )
+void	Config::parsingAll( std::vector< std::vector<std::string> > const & src )
 {
 	std::vector< std::vector<std::string> >::const_iterator	it, end;
-	size_t		i;
 
 	end = src.end();
 	for (it = src.begin() ; it != end ; ++it)
@@ -87,7 +94,7 @@ void	Config::split_server( std::vector< std::vector<std::string> > const & src )
 		if (*((*it).begin()) == "server")
 		{
 			checkNotValidDirective(*it);
-			Server(*((*it).begin() + 1));
+			this->_config.push_back(Server(*((*it).begin() + 1)));
 		}
 		else
 		{
@@ -102,5 +109,9 @@ void	Config::split_server( std::vector< std::vector<std::string> > const & src )
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
+std::vector<Server>	Config::getConfig() const
+{
+	return (this->_config);
+}
 
 /* ************************************************************************** */

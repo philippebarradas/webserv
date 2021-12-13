@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 15:31:18 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 17:48:05 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ std::string	parceBrackets( std::string const & src, size_t & i, std::string & re
 			--brackets_open;
 		ret += src[i];
 	}
-	std::cout << "brackets_open" << brackets_open << std::endl;
 	if (!brackets_open)
 	{
 		--i;
@@ -166,7 +165,7 @@ std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 	}
 
 	// print content (to delete)
-	std::cout << "start print:" << std::endl;
+	/*std::cout << "start print:" << std::endl;
 	std::vector< std::vector<std::string> >::const_iterator	it, end;
 	std::vector<std::string>::const_iterator	sit, send;
 	int j = 0;
@@ -179,6 +178,6 @@ std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 		for (sit = (*it).begin() ; sit != send ; ++sit)
 			std::cout << "-" << *sit << "\n";
 		std::cout << "\n";
-	}
+	}*/
 	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 15:35:24 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 20:23:10 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,24 +22,27 @@ Server::Server()
 
 Server::Server( std::vector< std::vector<std::string> > const & src )
 {
-	this->initAlreadySet();
+	std::cout << "HERE2" << std::endl;
+	this->initServ();
 	this->parsingAll(src);
 }
 
 Server::Server( std::string const & src )
 {
-	this->initAlreadySet();
+	std::cout << "HERE1" << std::endl;
+	this->initServ();
 	std::vector< std::vector<std::string> >	toParce;
 	std::string	strParce(src.begin() + 1, src.end() - 1);
 
 	toParce = sortInVec(strParce);
 	this->parsingAll(toParce);
 
-	std::cout << std::endl << *this << std::endl;
+	//std::cout << std::endl << *this << std::endl;
 }
 
 Server::Server( Server const & src )
 {
+	std::cout << "HERE0" << std::endl;
 	*this = src;
 }
 
@@ -61,7 +64,7 @@ Server &				Server::operator=( Server const & rhs )
 {
 	if ( this != &rhs )
 	{
-		this->_server_name = rhs.getName();
+		this->_name        = rhs.getName();
 		this->_index       = rhs.getIndex();
 		this->_methods     = rhs.getMethods();
 		this->_listen      = rhs.getListen();
@@ -70,6 +73,7 @@ Server &				Server::operator=( Server const & rhs )
 		this->_maxbody     = rhs.getMaxbody();
 		this->_error       = rhs.getError();
 		this->_cgi         = rhs.getCgi();
+		this->_location    = rhs.getLocation();
 		// cpy alreadySet ??
 	}
 	return *this;
@@ -77,6 +81,7 @@ Server &				Server::operator=( Server const & rhs )
 
 std::ostream &			operator<<( std::ostream & o, Server const & i )
 {
+	std::cout << "crash" << i.getName().empty() << std::endl;
 	printType(i.getName(), o, "name");
 	printType(i.getIndex(), o, "index");
 	printType(i.getMethods(), o, "methods");
@@ -96,13 +101,21 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Server::initAlreadySet()
+void	Server::initServ()
 {
-	_alreadySetMethods   = false;
-	_alreadySetListen    = false;
-	_alreadySetRoot      = false;
-	_alreadySetAutoindex = false;
-	_alreadySetMaxbody   = false;
+	this->_autoindex = false;
+	this->_maxbody   = 1;
+
+	// default listen is *:8000 and *:80 ?
+
+	this->_index.insert(std::string("index.html"));
+	this->_root = "html";
+
+	this->_alreadySetMethods   = false;
+	this->_alreadySetListen    = false;
+	this->_alreadySetRoot      = false;
+	this->_alreadySetAutoindex = false;
+	this->_alreadySetMaxbody   = false;
 }
 
 typedef void ( Server::*allFunction )( std::vector<std::string> const & );
@@ -125,7 +138,7 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 	for (it = src.begin() ; it != end ; ++it)
 	{
 		found = false;
-		for (i = 0 ; i < len && !found ; i++)
+		for (i = 0 ; i < len && !found ; ++i)
 		{
 			if (*((*it).begin()) == nameAllowed[i])
 			{
@@ -149,7 +162,7 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 
 std::set<std::string>	Server::getName() const
 {
-	return (this->_server_name);
+	return (this->_name);
 }
 
 std::set<std::string>	Server::getIndex() const
@@ -204,7 +217,7 @@ void	Server::setName( std::vector<std::string> const & src )
 
 	end = src.end();
 	for (it = src.begin() + 1 ; it != end ; ++it)
-		this->_server_name.insert(*it);
+		this->_name.insert(*it);
 }
 
 void	Server::setIndex( std::vector<std::string> const & src )
@@ -261,6 +274,9 @@ void	Server::setAutoindex( std::vector<std::string> const & src )
 	checkRedefinition(_alreadySetAutoindex, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 	_alreadySetAutoindex = true;
+	if (*(++(src.begin())) != "on" && *(++(src.begin())) != "off")
+		throw std::invalid_argument("[Error] invalid arguments "
+			"in \'autoindex\'.");
 	this->_autoindex = (*(++(src.begin())) == "on" ? true : false);
 }
 
@@ -317,20 +333,36 @@ void	Server::setLocation( std::vector<std::string> const & src )
 {
 	checkNbArg(src.size(), 3, src[0]);
 	std::pair<std::map<std::string, Server>::iterator, bool>	ret;
-	std::vector<std::string>::const_iterator	it, end;
+	std::vector< std::vector<std::string> >::const_iterator	it, end;
 
 	std::string	strParce(src[2].begin() + 1, src[2].end() - 1);
 	std::vector< std::vector<std::string> >		newConstruct;
-
-	std::cout << "my string is: |" << strParce << "|" << std::endl;
+	std::string	nameForbidden[] = {"server_name", "listen", "location"};
+	size_t		len, i;
 
 	newConstruct = sortInVec(strParce);
+
+	len = sizeof(nameForbidden) / sizeof(std::string);
+	end = newConstruct.end();
+	for (it = newConstruct.begin() ; it != end ; ++it)
+	{
+		for (i = 0 ; i < len ; ++i)
+		{
+			if (*((*it).begin()) == nameForbidden[i])
+			{
+				std::string thr("[Error] \'");
+				thr += nameForbidden[i] + "\' directive cannot be defined in location.";
+				throw std::invalid_argument(thr);
+			}
+		}
+	}
+
 	ret = this->_location.insert(std::make_pair(src[1], Server(newConstruct)));
 	if (ret.second == false)
 	{
-		std::string thr("[Error] page location \'");
+		/*std::string thr("[Error] page location \'");
 		thr += *it + "\' is already defined in \'" + src[0] + "\'.";
-		throw std::invalid_argument(thr);
+		throw std::invalid_argument(thr);*/
 	}
 
 }

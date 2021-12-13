@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 15:44:03 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 20:30:25 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define CONFIG_HPP
 
 # include <iostream>
+# include <iomanip>
 # include <sstream>
 # include <string>
 # include <cctype>
@@ -32,20 +33,21 @@ class Config
 
 	public:
 
+		Config();
 		Config( Config const & src );
 		Config( std::string const & file_name );
 		~Config();
 
 		Config &		operator=( Config const & rhs );
 
-	private:
-		Config();
+		std::vector<Server>	getConfig() const;
 
-		void	split_server( std::vector<
+	private:
+
+		void	parsingAll( std::vector<
 					std::vector<std::string> > const & src );
 
-
-		std::vector<Server>		serv;
+		std::vector<Server>		_config;
 };
 
 std::ostream &			operator<<( std::ostream & o, Config const & i );

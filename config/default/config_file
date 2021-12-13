@@ -17,9 +17,8 @@ server {
 	autoindex on;
 	error_page 300 bfg;
 
-	location /test {
-		index index.html;
-		server_name hello6;
+	location /teste  {
+
 	}
 }
 

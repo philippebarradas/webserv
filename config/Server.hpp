@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 13:22:04 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 20:05:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class Server
 		void	setLocation( std::vector<std::string> const & src );
 
 		void	parsingAll( std::vector< std::vector<std::string> > const & src );
-		void	initAlreadySet();
+		void	initServ();
 
 		bool	_alreadySetMethods;
 		bool	_alreadySetListen;
@@ -65,7 +65,7 @@ class Server
 		bool	_alreadySetAutoindex;
 		bool	_alreadySetMaxbody;
 
-		std::set<std::string>				_server_name;
+		std::set<std::string>				_name;
 		std::set<std::string>				_index;
 		std::set<std::string>				_methods;
 		std::string							_listen;
