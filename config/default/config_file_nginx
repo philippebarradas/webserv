@@ -11,13 +11,18 @@ server{
 	client_max_body_size 5555;
 	index index.html;
 	error_page 404 /test_404.html;
-	error_page 456 /test_404plotjjfd.html;
+	error_page 456 /test_404.html;
 
 	location /test_404.html {
 		root /Users/tsannie/Desktop/webserv/config/default/html_page;
 	}
 
 	location /test {
+		index index.html;
+		error_page 459 /test_404.html;
+		autoindex on;
+		root /Users/tsannie/Desktop/webserv/config/default/html_pagee;
+		client_max_body_size 55559;
 		fastcgi_pass unix:/does/not/exist;
 	}
 }}

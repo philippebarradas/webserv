@@ -6,11 +6,11 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/10 19:05:00 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 15:31:18 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Config.hpp"
+#include "utils.hpp"
 
 unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 	std::string const & nb, std::string const & name )
@@ -154,12 +154,14 @@ std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 	while (src[i])
 	{
 		nxt = nextWord(src, i);
-		tmp.push_back(nxt);
-		if (src[i] == ';' || src[i] == '}' || !src[i])
+		if (nxt.size())
+			tmp.push_back(nxt);
+		if ((src[i] == ';' || src[i] == '}' || !src[i]) && tmp.size())
 		{
 			ret.push_back(tmp);
 			tmp.clear();
-			++i;
+			if (src[i])
+				++i;
 		}
 	}
 

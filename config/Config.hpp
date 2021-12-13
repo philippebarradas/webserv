@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/10 17:58:54 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 15:44:03 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <set>
 # include <map>
 # include "Server.hpp"
-# include "Location.hpp"
+# include "utils.hpp"
 
 class Server;
 
@@ -50,15 +50,5 @@ class Config
 
 std::ostream &			operator<<( std::ostream & o, Config const & i );
 
-std::vector< std::vector<std::string> >	sortInVec( std::string const & src );
 
-void			checkRedefinition( bool const & toCheck,
-					std::string const & name );
-void			checkNbArg( size_t const & toCheck, size_t const & size,
-					std::string const & name );
-void			checkNbArgMin( size_t const & toCheck, size_t const & size,
-					std::string const & name );
-unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
-					std::string const & nb, std::string const & name );
-void			checkNotValidDirective( std::vector<std::string> const & src );
 #endif /* ********************************************************** CONFIG_H */

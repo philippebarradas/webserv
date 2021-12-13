@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/10 19:23:57 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 15:35:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,15 @@ Server::Server()
 {
 }
 
+Server::Server( std::vector< std::vector<std::string> > const & src )
+{
+	this->initAlreadySet();
+	this->parsingAll(src);
+}
+
 Server::Server( std::string const & src )
 {
 	this->initAlreadySet();
-	size_t	i;
 	std::vector< std::vector<std::string> >	toParce;
 	std::string	strParce(src.begin() + 1, src.end() - 1);
 
@@ -58,59 +63,32 @@ Server &				Server::operator=( Server const & rhs )
 	{
 		this->_server_name = rhs.getName();
 		this->_index       = rhs.getIndex();
+		this->_methods     = rhs.getMethods();
 		this->_listen      = rhs.getListen();
 		this->_root        = rhs.getRoot();
 		this->_autoindex   = rhs.getAutoindex();
 		this->_maxbody     = rhs.getMaxbody();
 		this->_error       = rhs.getError();
+		this->_cgi         = rhs.getCgi();
+		// cpy alreadySet ??
 	}
 	return *this;
 }
 
-template <typename T>
-void	printContainers(T const & ctn, std::ostream & o)
-{
-	typename	T::const_iterator	it, end;
-
-	o << "[ ";
-	end = ctn.end();
-	for (it = ctn.begin() ; it != end ; ++it)
-		o << "\'" << *it << "\' ";
-	o << "]" << std::endl;
-}
-
-template <typename T1, typename T2>
-void	printContainers(std::map<T1, T2> const & map, std::ostream & o)
-{
-	typename	std::map<T1, T2>::const_iterator	it, end;
-
-	o << "[ ";
-	end = map.end();
-	for (it = map.begin() ; it != end ; ++it)
-		o << "{\'" << it->first << "\' => \'" << it->second << "\'} ";
-	o << "]" << std::endl;
-}
-
 std::ostream &			operator<<( std::ostream & o, Server const & i )
 {
-	o << "name      : ";
-	printContainers(i.getName(), o);
-	o << "index     : ";
-	printContainers(i.getIndex(), o);
-	o << "methods   : ";
-	printContainers(i.getMethods(), o);
-	o << "listen    : "
-	<< i.getListen() << std::endl;
-	o << "root      : "
-	<< i.getRoot() << std::endl;
+	printType(i.getName(), o, "name");
+	printType(i.getIndex(), o, "index");
+	printType(i.getMethods(), o, "methods");
+	printType(i.getListen(), o, "listen");
+	printType(i.getRoot(), o, "root");
 	o << "autoindex : "
 	<< ((i.getAutoindex() ? "on" : "off")) << std::endl;
 	o << "max_body  : "
 	<< i.getMaxbody() << std::endl;
-	o << "error     : ";
-	printContainers(i.getError(), o);
-	o << "cgi       : ";
-	printContainers(i.getCgi(), o);
+	printType(i.getError(), o, "error");
+	printType(i.getCgi(), o, "cgi");
+	printType(i.getLocation(), o, "location");
 	return o;
 }
 
@@ -133,11 +111,11 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 {
 	std::string	nameAllowed[] = {"server_name", "index", "accepted_methods",
 		"listen", "root", "autoindex", "client_max_body_size", "error_page",
-		"cgi"};
+		"cgi", "location"};
 	allFunction	setFunct[] = {&Server::setName, &Server::setIndex,
 		&Server::setMethods, &Server::setListen, &Server::setRoot,
 		&Server::setAutoindex, &Server::setMaxbody, &Server::setError,
-		&Server::setCgi};
+		&Server::setCgi, &Server::setLocation};
 	std::vector< std::vector<std::string> >::const_iterator	it, end;
 	bool		found;
 	size_t		len, i;
@@ -156,13 +134,12 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 				found = true;
 			}
 		}
-		//std::cout << "found = " << found << std::endl;
-		/*if (!found)
+		if (!found)
 		{
 			std::string thr;
 			thr = "[Error] unknown directive \'" + *((*it).begin()) + "\'.";
 			throw std::invalid_argument(thr);
-		}*/
+		}
 	}
 }
 
@@ -213,6 +190,11 @@ std::map<unsigned int, std::string>	Server::getError() const
 std::map<std::string, std::string>	Server::getCgi() const
 {
 	return (this->_cgi);
+}
+
+std::map<std::string, Server>	Server::getLocation() const
+{
+	return (this->_location);
 }
 
 
@@ -330,5 +312,28 @@ void	Server::setCgi( std::vector<std::string> const & src )
 		}
 	}
 }
+
+void	Server::setLocation( std::vector<std::string> const & src )
+{
+	checkNbArg(src.size(), 3, src[0]);
+	std::pair<std::map<std::string, Server>::iterator, bool>	ret;
+	std::vector<std::string>::const_iterator	it, end;
+
+	std::string	strParce(src[2].begin() + 1, src[2].end() - 1);
+	std::vector< std::vector<std::string> >		newConstruct;
+
+	std::cout << "my string is: |" << strParce << "|" << std::endl;
+
+	newConstruct = sortInVec(strParce);
+	ret = this->_location.insert(std::make_pair(src[1], Server(newConstruct)));
+	if (ret.second == false)
+	{
+		std::string thr("[Error] page location \'");
+		thr += *it + "\' is already defined in \'" + src[0] + "\'.";
+		throw std::invalid_argument(thr);
+	}
+
+}
+
 
 /* ************************************************************************** */

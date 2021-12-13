@@ -19,10 +19,10 @@ server {
 
 	location /test {
 		index index.html;
+		server_name hello6;
 	}
 }
-server
-{}
+
 
 
 

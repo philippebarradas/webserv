@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/10 18:40:55 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/13 13:22:04 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <iostream>
 # include <string>
 # include <set>
-# include "Location.hpp"
 # include "Config.hpp"
 
 class Server
@@ -37,12 +36,14 @@ class Server
 		unsigned int						getMaxbody() const;
 		std::map<unsigned int, std::string>	getError() const;
 		std::map<std::string, std::string>	getCgi() const;
+		std::map<std::string, Server>		getLocation() const;
 
 		Server &		operator=( Server const & rhs );
 
 	private:
 
 		Server();
+		Server( std::vector< std::vector<std::string> > const & src );
 
 		void	setName( std::vector<std::string> const & src );
 		void	setIndex( std::vector<std::string> const & src );
@@ -53,6 +54,7 @@ class Server
 		void	setMaxbody( std::vector<std::string> const & src );
 		void	setError( std::vector<std::string> const & src );
 		void	setCgi( std::vector<std::string> const & src );
+		void	setLocation( std::vector<std::string> const & src );
 
 		void	parsingAll( std::vector< std::vector<std::string> > const & src );
 		void	initAlreadySet();
@@ -72,6 +74,7 @@ class Server
 		unsigned int						_maxbody;
 		std::map<unsigned int, std::string>	_error;
 		std::map<std::string, std::string>	_cgi;
+		std::map<std::string, Server>		_location;
 
 
 
