@@ -18,7 +18,7 @@
 // Socket
 #include <sys/ioctl.h>
 #include <sys/poll.h>
-//#include <sys/epoll.h> not on mac
+#include <sys/epoll.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
@@ -37,7 +37,7 @@
 #define END	"\033[0m"
 
 // Utils macro
-#define PORT 8080
+#define PORT 12345
 #define TRUE 1
 #define FALSE 0
 #define MAX_EVENTS 200
@@ -52,7 +52,8 @@ class Webserv
 		void	loop_server(int listen_fd);
 		Webserv &		operator=( Webserv const & rhs );
 	private:
-		struct pollfd fds_events[200];
+		struct epoll_event fds_events[200];
+		int epfd;
 		int i_conn;
 		int nbr_connexions;
 		int	fd_socket;
