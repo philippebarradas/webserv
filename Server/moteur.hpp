@@ -40,7 +40,7 @@
 #define PORT 12345
 #define TRUE 1
 #define FALSE 0
-#define MAX_EVENTS 200
+#define MAX_EVENTS 300
 
 class Webserv
 {
@@ -52,11 +52,8 @@ class Webserv
 		void	loop_server(int listen_fd);
 		Webserv &		operator=( Webserv const & rhs );
 	private:
-		struct epoll_event fds_events[200];
+		struct epoll_event fds_events[MAX_EVENTS];
 		int epfd;
-		int i_conn;
-		int nbr_connexions;
-		int	fd_socket;
 		int	listen_fd;
 		int	port;
 		int timeout; // time before poll expiration
