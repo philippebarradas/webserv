@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 20:30:33 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/14 20:56:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Config::Config()
 {
 }
 
-Config::Config( std::string const & file_name )
+Config::Config( const char *file_name )
 {
 	std::vector< std::vector<std::string> >	toParce;
 	std::ifstream ifs;

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 20:23:10 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/14 21:07:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,11 @@ Server &				Server::operator=( Server const & rhs )
 
 std::ostream &			operator<<( std::ostream & o, Server const & i )
 {
-	std::cout << "crash" << i.getName().empty() << std::endl;
-	printType(i.getName(), o, "name");
-	printType(i.getIndex(), o, "index");
+	//std::cout << "crash" << i.getName().empty() << std::endl;
+	//printType(i.getName(), o, "name");
+	//printType(i.getIndex(), o, "index");
 	printType(i.getMethods(), o, "methods");
-	printType(i.getListen(), o, "listen");
+	/*printType(i.getListen(), o, "listen");
 	printType(i.getRoot(), o, "root");
 	o << "autoindex : "
 	<< ((i.getAutoindex() ? "on" : "off")) << std::endl;
@@ -93,7 +93,7 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 	<< i.getMaxbody() << std::endl;
 	printType(i.getError(), o, "error");
 	printType(i.getCgi(), o, "cgi");
-	printType(i.getLocation(), o, "location");
+	printType(i.getLocation(), o, "location");*/
 	return o;
 }
 

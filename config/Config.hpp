@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 20:30:25 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/14 20:55:28 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Config
 
 		Config();
 		Config( Config const & src );
-		Config( std::string const & file_name );
+		Config( const char *file_name );
 		~Config();
 
 		Config &		operator=( Config const & rhs );
