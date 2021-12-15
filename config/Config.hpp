@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/14 20:55:28 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/15 09:48:43 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 # include <map>
 # include "Server.hpp"
 # include "utils.hpp"
-
 class Server;
 
 class Config

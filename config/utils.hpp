@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:27:37 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 18:51:37 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/15 10:41:11 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,37 @@
 
 #include "Config.hpp"
 
+# define BRED		"\033[1;31m"
+# define BGREEN		"\033[1;32m"
+# define BYELLOW	"\033[1;33m"
+# define BBLUE		"\033[1;34m"
+# define BPURPLE	"\033[1;35m"
+# define BCYAN		"\033[1;36m"
+# define BWHITE		"\033[1;37m"
+# define END		"\033[0m"
+
 template <typename T>
 inline void	printContainers( T const & ctn, std::ostream & o )
 {
 	typename	T::const_iterator	it, end;
 
-	o << "[ ";
 	end = ctn.end();
+	o << BWHITE "[ " BBLUE;
 	for (it = ctn.begin() ; it != end ; ++it)
-		o << "\'" << *it << "\' ";
-	o << "]" << std::endl;
+		o << BWHITE "\'" BBLUE << *it << BWHITE "\' " END;
+	o << BWHITE  "]" END << std::endl;
 }
 
 inline void	printContainers( std::string const & ctn, std::ostream & o )
 {
 	std::string::const_iterator	it, end;
 
-	o << "[ ";
 	end = ctn.end();
+
+	o << BBLUE;
 	for (it = ctn.begin() ; it != end ; ++it)
 		o << *it;
-	o << " ]" << std::endl;
+	o << END << std::endl;
 }
 
 template <typename T1, typename T2>
@@ -43,11 +53,10 @@ inline void	printContainers( std::map<T1, T2> const & map, std::ostream & o )
 {
 	typename	std::map<T1, T2>::const_iterator	it, end;
 
-	o << "[ ";
 	end = map.end();
 	for (it = map.begin() ; it != end ; ++it)
-		o << "{\'" << it->first << "\' => \'" << it->second << "\'} ";
-	o << "]" << std::endl;
+		o << BWHITE "{\'" BRED << it->first << BWHITE "\' => \'" BBLUE
+			<< it->second << BWHITE "\'} " END << std::endl;
 }
 
 template <typename T>
@@ -55,7 +64,21 @@ void	printType( T const &type, std::ostream & o, std::string const & name )
 {
 	if (!type.size())
 		return ;
-	o << name << std::setw(12 - name.size()) << ": ";
+
+	if (name == "location")
+	{
+		o << std::endl << BWHITE;
+		for (size_t y = 0 ; y < 30 ; ++y)
+		{
+			if (y == 15)
+				o << BYELLOW << name << BWHITE;
+			o << '-';
+		}
+		o << END << std::endl;
+	}
+	else
+		o << BYELLOW << name << std::setw(16 - name.size()) << ": " END;
+
 	printContainers(type, o);
 }
 

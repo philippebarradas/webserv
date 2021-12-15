@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/14 21:07:42 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/15 10:44:57 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,12 @@ Server::Server()
 
 Server::Server( std::vector< std::vector<std::string> > const & src )
 {
-	std::cout << "HERE2" << std::endl;
 	this->initServ();
 	this->parsingAll(src);
 }
 
 Server::Server( std::string const & src )
 {
-	std::cout << "HERE1" << std::endl;
 	this->initServ();
 	std::vector< std::vector<std::string> >	toParce;
 	std::string	strParce(src.begin() + 1, src.end() - 1);
@@ -42,7 +40,6 @@ Server::Server( std::string const & src )
 
 Server::Server( Server const & src )
 {
-	std::cout << "HERE0" << std::endl;
 	*this = src;
 }
 
@@ -74,26 +71,24 @@ Server &				Server::operator=( Server const & rhs )
 		this->_error       = rhs.getError();
 		this->_cgi         = rhs.getCgi();
 		this->_location    = rhs.getLocation();
-		// cpy alreadySet ??
 	}
 	return *this;
 }
 
 std::ostream &			operator<<( std::ostream & o, Server const & i )
 {
-	//std::cout << "crash" << i.getName().empty() << std::endl;
-	//printType(i.getName(), o, "name");
-	//printType(i.getIndex(), o, "index");
+	printType(i.getName(), o, "name");
+	printType(i.getIndex(), o, "index");
 	printType(i.getMethods(), o, "methods");
-	/*printType(i.getListen(), o, "listen");
+	printType(i.getListen(), o, "listen");
 	printType(i.getRoot(), o, "root");
-	o << "autoindex : "
-	<< ((i.getAutoindex() ? "on" : "off")) << std::endl;
-	o << "max_body  : "
-	<< i.getMaxbody() << std::endl;
+	o << BYELLOW "autoindex : " BBLUE
+		<< ((i.getAutoindex() ? "on" : "off")) << END << std::endl;
+	o << BYELLOW "max_body  : " BBLUE
+		<< i.getMaxbody() << END << std::endl;
 	printType(i.getError(), o, "error");
 	printType(i.getCgi(), o, "cgi");
-	printType(i.getLocation(), o, "location");*/
+	printType(i.getLocation(), o, "location");
 	return o;
 }
 
@@ -292,7 +287,7 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 
 void	Server::setError( std::vector<std::string> const & src )
 {
-	checkNbArg(src.size(), 3, src[0]);
+	checkNbArgMin(src.size(), 3, src[0]);
 	std::pair<std::map<unsigned int, std::string>::iterator, bool>	ret;
 	std::vector<std::string>::const_iterator	it, end;
 
@@ -360,9 +355,9 @@ void	Server::setLocation( std::vector<std::string> const & src )
 	ret = this->_location.insert(std::make_pair(src[1], Server(newConstruct)));
 	if (ret.second == false)
 	{
-		/*std::string thr("[Error] page location \'");
-		thr += *it + "\' is already defined in \'" + src[0] + "\'.";
-		throw std::invalid_argument(thr);*/
+		std::string thr("[Error] location \'");
+		thr += src[1] + "\' is duplicate.";
+		throw std::invalid_argument(thr);
 	}
 
 }

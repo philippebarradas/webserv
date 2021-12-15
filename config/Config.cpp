@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/14 20:56:42 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/15 10:46:13 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,16 @@ Config &				Config::operator=( Config const & rhs )
 
 std::ostream &			operator<<( std::ostream & o, Config const & i )
 {
-	std::vector<Server>::const_iterator	it, end;
-
-	it = i.getConfig().begin();
-	o << *(it);
-
-	/*end = i.getConfig().end();
-	for (it = i.getConfig().begin() ; it != end ; ++it)
-		o << *it << std::setfill('-') << std::setw(30) << std::endl;*/
+	size_t e, y;
+	for (e = 0 ; e < i.getConfig().size() ; ++e)
+	{
+		std::cout << BGREEN "Config server #" << (e + 1)
+			<< ":\n" END << std::endl;
+		o << i.getConfig()[e] << std::endl;
+		for (y = 0 ; y < 50 ; ++y)
+			o << '-';
+		std::cout << std::endl;
+	}
 	return o;
 }
 
