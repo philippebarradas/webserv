@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2021/12/14 23:06:40 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/16 14:30:56 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ int	create_socket()
 // Set socket file descriptor to be reusable
 void	set_socket(int listen_fd)
 {
-	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
 	int opt = 1;
+	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
 	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
 		throw std::runtime_error("[Error] set_socket() failed");
 }
@@ -46,7 +46,7 @@ void	bind_socket(int listen_fd)
 // Make the socket passive, waiting to accept
 void	listen_socket(int listen_fd)
 {
-	if (listen(listen_fd, 3) < 0)
+	if (listen(listen_fd, MAX_EVENTS) < 0)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
@@ -74,7 +74,7 @@ int	accept_connexions(int listen_fd, int nbr_connexions, struct epoll_event fds_
 void	read_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 {
 	int valread = 0;
-	char buffer[10000];
+	char buffer[100000];
 
 	bzero(&buffer, sizeof(buffer));
 	valread = recv(fds_events[i].data.fd, buffer, sizeof(buffer), 0);
@@ -89,7 +89,6 @@ void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 {
 	std::ifstream ifs;
 	std::string	line, file;
-
 	ifs.open("to_delete.html", std::ifstream::in);
 	while (std::getline(ifs, line))
 	{
@@ -142,6 +141,7 @@ Webserv &				Webserv::operator=( Webserv const & rhs )
 	mets la socket comme passive -> set le premier events fd avec la socket passive */
 void	Webserv::setup_socket_server()
 {
+	this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	this->listen_fd = create_socket();
 	this->epfd = epoll_create(1);
 	if (this->epfd < 0)
@@ -159,12 +159,11 @@ void	Webserv::setup_socket_server()
 // loop server with EPOLLING events
 void	Webserv::loop_server(int listen_fd)
 {
-	//this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	int k = 0;
 	int new_socket = 0;
 	while (TRUE)
 	{
-		if ((k = epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, -1)) < 0)
+		if ((k = epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		for (int i = 0; this->fds_events[i].data.fd > 0; i++)
 			std::cout << PURPLE2 << "fds_events[" << i << "] = " << this->fds_events[i].data.fd << std::endl;
