@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:58:44 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/06 20:36:54 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/08 18:08:36 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,8 @@ int	Webserv::my_read(struct epoll_event events[200], int close_conn, int j)
 {
 	int nbr_bytes_read = 0;
 
+
+	std::cout << "je suis dans read" << std::endl;
 	nbr_bytes_read = recv(events[j].data.fd, this->buffer, sizeof(this->buffer), 0);
 	if (nbr_bytes_read < 0)
 	{
@@ -217,20 +219,6 @@ void	Webserv::loop_connection(struct epoll_event events[200], int close_conn, in
 		k = epoll_wait(this->fd_socket, events, 200, this->timeout);
 		std::cout << "k: " << k << std::endl;
 		std::cout << "Descriptor num " << events[i].data.fd << " is readable" << std::endl;
-		for (int j = 0; j < k; i++)
-		{
-			nbr_bytes_read = my_read(events, close_conn, i);
-			if (nbr_bytes_read == -1)
-				break ;
-			if (nbr_bytes_read == 0)
-			{
-				std::cout << "Connection closed" << std::endl;
-				close_conn = 1;
-				break ;
-			}
-			if (my_send(events, close_conn, i, nbr_bytes_read) == -1)
-				break ;
-		}
 	}
 }
 
@@ -261,7 +249,7 @@ void	Webserv::loop_life_server(struct epoll_event events[200])
 				events[i].data.fd = -1;
 				compress_array = 1;
 			}
-			ft_compress_array(compress_array, this->nfds, events, i);
+			//ft_compress_array(compress_array, this->nfds, events, i);
 		}
 	}
 	ft_close(this->nfds, events);
