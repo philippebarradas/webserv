@@ -71,24 +71,23 @@ int	accept_connexions(int listen_fd, int nbr_connexions, struct epoll_event fds_
 }
 
 // Read data from buffer for now (after it will be the request send by client)
-void	read_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+
+
+// Send data to the client (telnet or browser)
+void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 {
 	int valread = 0;
 	char buffer[100000];
-
+	std::ifstream ifs;
+	std::string	line, file;
+	
 	bzero(&buffer, sizeof(buffer));
 	valread = recv(fds_events[i].data.fd, buffer, sizeof(buffer), 0);
 	if (valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
 	if (valread == 0)
 		throw std::runtime_error("[Error] recv() finished");
-}
-
-// Send data to the client (telnet or browser)
-void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
-{
-	std::ifstream ifs;
-	std::string	line, file;
+	std::cout << "||" << buffer << "||" << std::endl;
 	ifs.open("to_delete.html", std::ifstream::in);
 	while (std::getline(ifs, line))
 	{
@@ -181,8 +180,7 @@ void	Webserv::loop_server(int listen_fd)
 			}
 			else
 			{
-				read_data(i, fds_events);
-				send_data(i, fds_events);
+				read_send_data(i, fds_events);
 				close(fds_events[i].data.fd);
 			}
 		}
