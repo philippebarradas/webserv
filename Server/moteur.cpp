@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   moteur.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2021/12/17 18:58:04dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/20 16:37:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,24 +73,23 @@ int	accept_connexions(int listen_fd, int nbr_connexions, struct epoll_event fds_
 }
 
 // Read data from buffer for now (after it will be the request send by client)
-void	read_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+
+
+// Send data to the client (telnet or browser)
+/* void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 {
 	int valread = 0;
 	char buffer[100000];
-
+	std::ifstream ifs;
+	std::string	line, file;
+	
 	bzero(&buffer, sizeof(buffer));
 	valread = recv(fds_events[i].data.fd, buffer, sizeof(buffer), 0);
 	if (valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
 	if (valread == 0)
 		throw std::runtime_error("[Error] recv() finished");
-}
-
-// Send data to the client (telnet or browser)
-void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
-{
-	std::ifstream ifs;
-	std::string	line, file;
+	std::cout << "||" << buffer << "||" << std::endl;
 	ifs.open("to_delete.html", std::ifstream::in);
 	while (std::getline(ifs, line))
 	{
@@ -102,7 +101,39 @@ void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 	nbr_bytes_send = send(fds_events[i].data.fd, file.c_str(), file.size(), 0);
 	if (nbr_bytes_send == -1)
 		throw std::runtime_error("[Error] sent() failed");
-	//std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+} */
+
+#include "../method/method.hpp"
+#include <stdlib.h>
+
+void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+{
+	int valread = 0;
+	size_t buff_size = 1000000;
+	char buff[buff_size];
+	std::string buff_send;
+
+	
+	Method meth;
+	
+	bzero(&buff, sizeof(buff));
+	valread = recv(fds_events[i].data.fd, buff, buff_size, 0);
+	if (valread == -1)
+		throw std::runtime_error("[Error] recv() failed");
+	if (valread == 0)
+		throw std::runtime_error("[Error] recv() finished");
+	std::cout << "((" << buff << "))" << std::endl;
+
+	buff_send = meth.is_method(buff);
+	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
+	std::cout << "{{" << buff_send << "}}" << std::endl;
+
+	int nbr_bytes_send = 0;
+	nbr_bytes_send = send(fds_events[i].data.fd, buff_send.c_str(), buff_send.size(), 0);
+	if (nbr_bytes_send == -1)
+		throw std::runtime_error("[Error] sent() failed");
+	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 }
 
 /*
@@ -211,8 +242,7 @@ void	LaunchServ::loop_server()
 			}
 			else
 			{
-				read_data(i, fds_events);
-				send_data(i, fds_events);
+				read_send_data(i, fds_events);
 				close(fds_events[i].data.fd);
 			}
 		}
@@ -220,6 +250,20 @@ void	LaunchServ::loop_server()
 			//break ;
 		//this->i_server++;
 	}
+}
+
+
+int	main( void )
+{
+	try
+	{
+		Webserv	serv;
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	return (0);
 }
 
 /*
