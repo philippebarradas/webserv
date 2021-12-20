@@ -39,7 +39,7 @@ server {
 
 server {
 	server_name serv2;
-	listen 8001;
+	listen 8002;
 
 	client_max_body_size	50;
 }

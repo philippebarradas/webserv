@@ -1,5 +1,5 @@
-#ifndef MOTEUR_HPP
-# define MOTEUR_HPP
+#ifndef LaunchServ_HPP
+# define LaunchServ_HPP
 
 // C++
 #include <iostream>
@@ -42,15 +42,21 @@
 #define FALSE 0
 #define MAX_EVENTS 300
 
-class Webserv
+// My class
+#include "../config/Server.hpp"
+
+class Server;
+
+class LaunchServ
 {
 	public:
-		Webserv();
-		Webserv( Webserv const & src );
-		~Webserv();
-		void	setup_socket_server();
+		LaunchServ();
+		LaunchServ(const Server & src);
+		LaunchServ( LaunchServ const & src );
+		~LaunchServ();
+		void	setup_socket_server(const Server & src);
 		void	loop_server(int listen_fd);
-		Webserv &		operator=( Webserv const & rhs );
+		LaunchServ &		operator=( LaunchServ const & rhs );
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
 		int epfd;
@@ -59,6 +65,6 @@ class Webserv
 		int timeout; // time before poll expiration
 };
 
-std::ostream &			operator<<( std::ostream & o, Webserv const & i );
+std::ostream &			operator<<( std::ostream & o, LaunchServ const & i );
 
-#endif /* ********************************************************* WEBSERV_H */
+#endif /* ********************************************************* MOTEUR_H */

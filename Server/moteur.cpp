@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2021/12/16 14:30:56 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/17 18:58:04dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,17 @@ void	set_socket(int listen_fd)
 }
 
 // Put a name to a socket
-void	bind_socket(int listen_fd)
+void	bind_socket(int listen_fd, const Server & src)
 {
+	int port = std::stoi(src.getListen());
 	struct sockaddr_in address;
 
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(PORT);
+	address.sin_port = htons(port);
+	std::cout << GREEN << "Port: " << port << std::endl << END;
 	if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-		throw std::runtime_error("[Error] bind_socket() failed");
+		throw std::runtime_error("[Error] Port already attribute");
 }
 
 // Make the socket passive, waiting to accept
@@ -100,17 +102,24 @@ void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 	nbr_bytes_send = send(fds_events[i].data.fd, file.c_str(), file.size(), 0);
 	if (nbr_bytes_send == -1)
 		throw std::runtime_error("[Error] sent() failed");
-	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+	//std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 }
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Webserv::Webserv()
+LaunchServ::LaunchServ()
+{
+	//std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
+	//setup_socket_server();
+	//loop_server(this->listen_fd);
+}
+
+LaunchServ::LaunchServ(const Server & src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
-	setup_socket_server();
+	setup_socket_server(src);
 	loop_server(this->listen_fd);
 }
 
@@ -118,7 +127,7 @@ Webserv::Webserv()
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
-Webserv::~Webserv()
+LaunchServ::~LaunchServ()
 {
 	std::cout << GREEN << "----------------- End of server -----------------" << END << std::endl << std::endl;
 }
@@ -127,7 +136,7 @@ Webserv::~Webserv()
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-Webserv &				Webserv::operator=( Webserv const & rhs )
+LaunchServ&				LaunchServ::operator=( LaunchServ const & rhs )
 {
 	(void)rhs;
 	return *this;
@@ -139,7 +148,7 @@ Webserv &				Webserv::operator=( Webserv const & rhs )
 
 /* cree la socket -> set la socket -> donne un nom a la socket ->
 	mets la socket comme passive -> set le premier events fd avec la socket passive */
-void	Webserv::setup_socket_server()
+void	LaunchServ::setup_socket_server(const Server & src)
 {
 	this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	this->listen_fd = create_socket();
@@ -151,13 +160,13 @@ void	Webserv::setup_socket_server()
 	if (epoll_ctl(this->epfd, EPOLL_CTL_ADD, listen_fd, &fds_events[0]) == -1)
 		throw std::runtime_error("[Error] epoll_ctl_add() failed");
 	set_socket(this->listen_fd);
-	bind_socket(this->listen_fd);
+	bind_socket(this->listen_fd, src);
 	listen_socket(this->listen_fd);
 	set_first_poll_events(this->fds_events);
 }
 
 // loop server with EPOLLING events
-void	Webserv::loop_server(int listen_fd)
+void	LaunchServ::loop_server(int listen_fd)
 {
 	int k = 0;
 	int new_socket = 0;
@@ -165,11 +174,11 @@ void	Webserv::loop_server(int listen_fd)
 	{
 		if ((k = epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
-		for (int i = 0; this->fds_events[i].data.fd > 0; i++)
-			std::cout << PURPLE2 << "fds_events[" << i << "] = " << this->fds_events[i].data.fd << std::endl;
+		//for (int i = 0; this->fds_events[i].data.fd > 0; i++)
+			//std::cout << PURPLE2 << "fds_events[" << i << "] = " << this->fds_events[i].data.fd << std::endl;
 		for (int i = 0; i < k; i++)
 		{
-			std::cout << YELLOW << "k = " << k << std::endl << END;
+			//std::cout << YELLOW << "k = " << k << std::endl << END;
 			if (this->fds_events[i].data.fd == listen_fd)
 			{
 				new_socket = accept_connexions(listen_fd, k, this->fds_events);
@@ -189,18 +198,18 @@ void	Webserv::loop_server(int listen_fd)
 	}
 }
 
-int	main( void )
+/* int	main( void )
 {
 	try
 	{
-		Webserv	serv;
+		LaunchServ serv;
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 	}
 	return (0);
-}
+} */
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
