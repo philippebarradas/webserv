@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   method.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/20 14:31:39 by user42            #+#    #+#             */
+/*   Updated: 2021/12/20 16:46:08 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 
 #ifndef METHOD_HPP
@@ -34,11 +44,12 @@ class Method
 		Method(const Method &method);		//can
 		Method &operator=(const Method &pt);	//can
 
-		int is_method(std::string name_cmd, std::string method);
+		std::string is_method(std::string full_cmd);
+		std::string is_bad_request(std::string buff);
 
-		void ft_get(std::string full_cmd);
-		void ft_post(std::string full_cmd);
-		void ft_delete(std::string full_cmd);
+		std::string ft_get(std::string full_cmd);
+		std::string ft_post(std::string full_cmd);
+		std::string ft_delete(std::string full_cmd);
 
 	private:
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   moteur.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2021/12/16 14:30:56 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/20 16:37:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	accept_connexions(int listen_fd, int nbr_connexions, struct epoll_event fds_
 
 
 // Send data to the client (telnet or browser)
-void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+/* void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 {
 	int valread = 0;
 	char buffer[100000];
@@ -97,6 +97,38 @@ void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 	ifs.close();
 	int nbr_bytes_send = 0;
 	nbr_bytes_send = send(fds_events[i].data.fd, file.c_str(), file.size(), 0);
+	if (nbr_bytes_send == -1)
+		throw std::runtime_error("[Error] sent() failed");
+	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+} */
+
+#include "../method/method.hpp"
+#include <stdlib.h>
+
+void	read_send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+{
+	int valread = 0;
+	size_t buff_size = 1000000;
+	char buff[buff_size];
+	std::string buff_send;
+
+	
+	Method meth;
+	
+	bzero(&buff, sizeof(buff));
+	valread = recv(fds_events[i].data.fd, buff, buff_size, 0);
+	if (valread == -1)
+		throw std::runtime_error("[Error] recv() failed");
+	if (valread == 0)
+		throw std::runtime_error("[Error] recv() finished");
+	std::cout << "((" << buff << "))" << std::endl;
+
+	buff_send = meth.is_method(buff);
+	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
+	std::cout << "{{" << buff_send << "}}" << std::endl;
+
+	int nbr_bytes_send = 0;
+	nbr_bytes_send = send(fds_events[i].data.fd, buff_send.c_str(), buff_send.size(), 0);
 	if (nbr_bytes_send == -1)
 		throw std::runtime_error("[Error] sent() failed");
 	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
@@ -186,6 +218,7 @@ void	Webserv::loop_server(int listen_fd)
 		}
 	}
 }
+
 
 int	main( void )
 {
