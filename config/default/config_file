@@ -21,7 +21,7 @@ server {
 		error_page 500 400 300 hbfdhbkfd;
 		error_page 303 salut;
 	}
-	location /teste  {
+	location /test  {
 		error_page 500 400 300 hbfdhbkfd;
 		error_page 303 salut;
 	}

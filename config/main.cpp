@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/20 09:17:46 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/20 12:25:09 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,11 @@ int	main( int ac, char *av[] )
 	}
 	try
 	{
-		std::vector<Server>::const_iterator it;
+		std::vector<Server> vec_serv;
+		int nbr_servers = conf.getConfig().size();
 
-		for (it = conf.getConfig().begin() ; it != conf.getConfig().end() ; ++it)
-		{
-			LaunchServ serv(*it);
-		}
+		vec_serv = conf.getConfig();
+		LaunchServ serv(vec_serv, nbr_servers);
 	}
 	catch( std::exception const & e )
 	{

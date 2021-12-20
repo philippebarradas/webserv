@@ -34,13 +34,13 @@
 #define PURPLE2 "\033[1;35m"
 #define CYAN	"\033[1;36m"
 #define WHITE	"\033[1;37m"
-#define END	"\033[0m"
+#define END		"\033[0m"
 
 // Utils macro
-#define PORT 12345
 #define TRUE 1
 #define FALSE 0
 #define MAX_EVENTS 300
+#define MAX_SERVERS 10
 
 // My class
 #include "../config/Server.hpp"
@@ -51,16 +51,18 @@ class LaunchServ
 {
 	public:
 		LaunchServ();
-		LaunchServ(const Server & src);
+		LaunchServ(std::vector<Server> src, int nbr_servers);
 		LaunchServ( LaunchServ const & src );
 		~LaunchServ();
-		void	setup_socket_server(const Server & src);
-		void	loop_server(int listen_fd);
+		void	setup_socket_server(std::vector<Server> src);
+		void	loop_server();
 		LaunchServ &		operator=( LaunchServ const & rhs );
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
-		int epfd;
-		int	listen_fd;
+		int i_server;
+		int nbr_servers;
+		int epfd[MAX_SERVERS];
+		int	listen_fd[MAX_SERVERS];
 		int	port;
 		int timeout; // time before poll expiration
 };
