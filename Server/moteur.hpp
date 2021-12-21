@@ -40,7 +40,7 @@
 #define TRUE 1
 #define FALSE 0
 #define MAX_EVENTS 300
-#define MAX_SERVERS 10
+#define MAX_SERVERS 100
 
 // My class
 #include "../config/Server.hpp"
@@ -61,7 +61,7 @@ class LaunchServ
 		struct epoll_event fds_events[MAX_EVENTS];
 		int i_server;
 		int nbr_servers;
-		int epfd[MAX_SERVERS];
+		int epfd;
 		int	listen_fd[MAX_SERVERS];
 		int	port;
 		int timeout; // time before poll expiration

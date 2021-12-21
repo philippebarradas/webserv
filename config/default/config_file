@@ -44,8 +44,9 @@ server {
 	client_max_body_size	50;
 }
 
+server {
+	server_name serv3;
+	listen 8003;
 
-
-
-
-
+	client_max_body_size	20;
+}
