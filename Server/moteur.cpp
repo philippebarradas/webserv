@@ -34,7 +34,8 @@ void	set_socket(int listen_fd)
 // Put a name to a socket
 void	bind_socket(int listen_fd, std::vector<Server>::iterator it)
 {
-	int port = std::stoi((*it).getListen());
+	int port = 0;
+	std::istringstream((*it).getListen()) >> port;
 	struct sockaddr_in address;
 
 	address.sin_family = AF_INET;
@@ -73,8 +74,8 @@ void	read_data(int fd)
 	valread = recv(fd, buffer, sizeof(buffer), 0);
 	if (valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
-	if (valread == 0)
-		throw std::runtime_error("[Error] recv() finished");
+	//if (valread == 0) // a voir quoi faire avec cette erreur
+		//throw std::runtime_error("[Error] recv() finished");
 }
 
 // Send data to the client (telnet or browser)
@@ -117,7 +118,6 @@ LaunchServ::LaunchServ()
 LaunchServ::LaunchServ(std::vector<Server> src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
-	this->epfd = -1;
 	setup_socket_server(src);
 	loop_server();
 }
@@ -153,12 +153,8 @@ void	LaunchServ::setup_socket_server(std::vector<Server> src)
 	this->nbr_servers = src.size();
 	this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	this->epfd = epoll_create(MAX_EVENTS);
-	for (int i = 0; i < this->nbr_servers; i++) // init all fd to -1
-		this->listen_fd[i] = -1;
 	if (this->epfd < 0)
 		throw std::runtime_error("[Error] epoll_create() failed");
-	for (int i = 0; i < MAX_EVENTS; i++) // init all fd to -1
-		fds_events[i].data.fd = -1;
 	std::vector<Server>::iterator it = src.begin();
 	for (it = src.begin() ; it != src.end(); it++, this->i_server++)
 	{
