@@ -64,13 +64,13 @@ int	accept_connexions(int listen_fd)
 }
 
 // Read data from buffer for now (after it will be the request send by client)
-void	read_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+void	read_data(int fd)
 {
 	int valread = 0;
 	char buffer[100000];
 
 	bzero(&buffer, sizeof(buffer));
-	valread = recv(fds_events[i].data.fd, buffer, sizeof(buffer), 0);
+	valread = recv(fd, buffer, sizeof(buffer), 0);
 	if (valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
 	if (valread == 0)
@@ -78,7 +78,7 @@ void	read_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 }
 
 // Send data to the client (telnet or browser)
-void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
+void	send_data(int fd)
 {
 	std::ifstream ifs;
 	std::string	line, file;
@@ -90,10 +90,20 @@ void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 	}
 	ifs.close();
 	int nbr_bytes_send = 0;
-	nbr_bytes_send = send(fds_events[i].data.fd, file.c_str(), file.size(), 0);
+	nbr_bytes_send = send(fd, file.c_str(), file.size(), 0);
 	if (nbr_bytes_send == -1)
 		throw std::runtime_error("[Error] sent() failed");
-	//std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+}
+
+// savoir si le fd dans le epoll est un listener (socket d'un port) ou non
+bool	is_listener(int fd, int *tab_fd, int nbr_servers)
+{
+	for (int i = 0; i < nbr_servers; i++)
+	{
+		if (fd == tab_fd[i])
+			return (TRUE);
+	}
+	return (FALSE);
 }
 
 /*
@@ -102,18 +112,12 @@ void	send_data(int i, struct epoll_event fds_events[MAX_EVENTS])
 
 LaunchServ::LaunchServ()
 {
-	//std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
-	//setup_socket_server();
-	//loop_server(this->listen_fd);
 }
 
-LaunchServ::LaunchServ(std::vector<Server> src, int arg_nbr_servers)
+LaunchServ::LaunchServ(std::vector<Server> src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
-	this->nbr_servers = arg_nbr_servers;
 	this->epfd = -1;
-	for (int i = 0; i < this->nbr_servers; i++) // init all fd to -1
-		this->listen_fd[i] = -1;
 	setup_socket_server(src);
 	loop_server();
 }
@@ -148,19 +152,20 @@ void	LaunchServ::setup_socket_server(std::vector<Server> src)
 	this->i_server = 0;
 	this->nbr_servers = src.size();
 	this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
-	this->epfd = epoll_create(MAX_SERVERS);
+	this->epfd = epoll_create(MAX_EVENTS);
+	for (int i = 0; i < this->nbr_servers; i++) // init all fd to -1
+		this->listen_fd[i] = -1;
 	if (this->epfd < 0)
 		throw std::runtime_error("[Error] epoll_create() failed");
-	std::cout << BLUE << "epfd = " << this->epfd << std::endl;
-	std::vector<Server>::iterator it = src.begin();
 	for (int i = 0; i < MAX_EVENTS; i++) // init all fd to -1
 		fds_events[i].data.fd = -1;
+	std::vector<Server>::iterator it = src.begin();
 	for (it = src.begin() ; it != src.end(); it++, this->i_server++)
 	{
 		this->listen_fd[this->i_server] = create_socket();
-		fds_events[this->i_server].data.fd = this->listen_fd[this->i_server];
-		fds_events[this->i_server].events = EPOLLIN;
-		if (epoll_ctl(this->epfd, EPOLL_CTL_ADD, this->listen_fd[this->i_server], &fds_events[0]) == -1)
+		this->fds_events[this->i_server].data.fd = this->listen_fd[this->i_server];
+		this->fds_events[this->i_server].events = EPOLLIN;
+		if (epoll_ctl(this->epfd, EPOLL_CTL_ADD, this->listen_fd[this->i_server], &fds_events[this->i_server]) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 		set_socket(this->listen_fd[this->i_server]);
 		bind_socket(this->listen_fd[this->i_server], it);
@@ -173,22 +178,15 @@ void	LaunchServ::loop_server()
 {
 	int nbr_connexions = 0;
 	int new_socket = 0;
-	this->i_server = 0;
 	while (TRUE)
 	{
 		if ((nbr_connexions = epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
-		//std::cout << BLACK << "nbr_connexions = " << nbr_connexions << std::endl;
-		//for (int i = 0; this->fds_events[i].data.fd > 0; i++)
-			//std::cout << PURPLE2 << "fds_events[" << i << "] = " << this->fds_events[i].data.fd << std::endl;
-		//std::cout << "--------------------" << std::endl << std::endl;
 		for (int i = 0; i < nbr_connexions; i++)
 		{
-			//std::cout << PURPLE2 << "fds_events[" << i << "] = " << this->fds_events[i].data.fd << std::endl;
-			//std::cout << RED << "listen_fd[" << this->i_server << "] = " << this->listen_fd[this->i_server] << std::endl;
-			if (this->fds_events[i].data.fd == this->listen_fd[this->i_server])
+			if (is_listener(this->fds_events[i].data.fd, this->listen_fd, this->nbr_servers))
 			{
-				new_socket = accept_connexions(this->listen_fd[this->i_server]);
+				new_socket = accept_connexions(this->fds_events[i].data.fd);
 				fcntl(new_socket, F_SETFL, O_NONBLOCK);
 				this->fds_events[i].events = EPOLLIN;
 				this->fds_events[i].data.fd = new_socket;
@@ -197,14 +195,11 @@ void	LaunchServ::loop_server()
 			}
 			else
 			{
-				read_data(i, fds_events);
-				send_data(i, fds_events);
-				close(fds_events[i].data.fd);
+				read_data(this->fds_events[i].data.fd);
+				send_data(this->fds_events[i].data.fd);
+				close(this->fds_events[i].data.fd);
 			}
 		}
-		//if (this->i_server == this->nbr_servers)
-			//this->i_server = -1;
-		//this->i_server++;
 	}
 }
 

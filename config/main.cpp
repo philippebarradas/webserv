@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/21 13:50:09 by dodjian          ###   ########.fr       */
+/*   Updated: 2021/12/22 15:48:18 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,9 @@ int	main( int ac, char *av[] )
 	try
 	{
 		std::vector<Server> vec_serv;
-		int nbr_servers = conf.getConfig().size();
 
 		vec_serv = conf.getConfig();
-		LaunchServ serv(vec_serv, nbr_servers);
+		LaunchServ serv(vec_serv);
 	}
 	catch( std::exception const & e )
 	{

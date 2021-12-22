@@ -51,7 +51,7 @@ class LaunchServ
 {
 	public:
 		LaunchServ();
-		LaunchServ(std::vector<Server> src, int nbr_servers);
+		LaunchServ(std::vector<Server> src);
 		LaunchServ( LaunchServ const & src );
 		~LaunchServ();
 		void	setup_socket_server(std::vector<Server> src);
