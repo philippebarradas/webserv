@@ -1,5 +1,5 @@
-#ifndef MOTEUR_HPP
-# define MOTEUR_HPP
+#ifndef LaunchServ_HPP
+# define LaunchServ_HPP
 
 // C++
 #include <iostream>
@@ -34,31 +34,39 @@
 #define PURPLE2 "\033[1;35m"
 #define CYAN	"\033[1;36m"
 #define WHITE	"\033[1;37m"
-#define END	"\033[0m"
+#define END		"\033[0m"
 
 // Utils macro
-#define PORT 12345
 #define TRUE 1
 #define FALSE 0
 #define MAX_EVENTS 300
+#define MAX_SERVERS 100
 
-class Webserv
+// My class
+#include "../config/Server.hpp"
+
+class Server;
+
+class LaunchServ
 {
 	public:
-		Webserv();
-		Webserv( Webserv const & src );
-		~Webserv();
-		void	setup_socket_server();
-		void	loop_server(int listen_fd);
-		Webserv &		operator=( Webserv const & rhs );
+		LaunchServ();
+		LaunchServ(std::vector<Server> src);
+		LaunchServ( LaunchServ const & src );
+		~LaunchServ();
+		void	setup_socket_server(std::vector<Server> src);
+		void	loop_server();
+		LaunchServ &		operator=( LaunchServ const & rhs );
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
+		int i_server;
+		int nbr_servers;
 		int epfd;
-		int	listen_fd;
+		int	listen_fd[MAX_SERVERS];
 		int	port;
 		int timeout; // time before poll expiration
 };
 
-std::ostream &			operator<<( std::ostream & o, Webserv const & i );
+std::ostream &			operator<<( std::ostream & o, LaunchServ const & i );
 
-#endif /* ********************************************************* WEBSERV_H */
+#endif /* ********************************************************* MOTEUR_H */

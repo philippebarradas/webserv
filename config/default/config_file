@@ -4,7 +4,7 @@ server {
 	server_name hello2;
 	server_name hello3;
 	server_name hello4;
-	listen 8001;
+	listen 8004;
 
 	client_max_body_size	20;
 
@@ -21,7 +21,7 @@ server {
 		error_page 500 400 300 hbfdhbkfd;
 		error_page 303 salut;
 	}
-	location /teste  {
+	location /test  {
 		error_page 500 400 300 hbfdhbkfd;
 		error_page 303 salut;
 	}
@@ -39,13 +39,14 @@ server {
 
 server {
 	server_name serv2;
-	listen 8001;
+	listen 8005;
 
 	client_max_body_size	50;
 }
 
+server {
+	server_name serv3;
+	listen 8006;
 
-
-
-
-
+	client_max_body_size	20;
+}

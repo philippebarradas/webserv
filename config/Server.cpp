@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/15 10:44:57 by tsannie          ###   ########.fr       */
+/*   Updated: 2021/12/17 15:57:28 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ Server::Server( std::string const & src )
 
 	toParce = sortInVec(strParce);
 	this->parsingAll(toParce);
-
+	
 	//std::cout << std::endl << *this << std::endl;
 }
 
