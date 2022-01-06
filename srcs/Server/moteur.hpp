@@ -43,7 +43,7 @@
 #define MAX_SERVERS 100
 
 // My class
-#include "../config/Server.hpp"
+#include "../Config/Server.hpp"
 
 class Server;
 
