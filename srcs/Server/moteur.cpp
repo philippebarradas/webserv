@@ -83,7 +83,7 @@ void	send_data(int fd)
 {
 	std::ifstream ifs;
 	std::string	line, file;
-	ifs.open("to_delete.html", std::ifstream::in);
+	ifs.open("srcs/Server/to_delete.html", std::ifstream::in);
 	while (std::getline(ifs, line))
 	{
 		file += line;
