@@ -13,7 +13,7 @@
 #include "moteur.hpp"
 
 // Creating socket file descriptor
-int	create_socket()
+int	LaunchServ::create_socket()
 {
 	int listen_fd = 0;
 	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -23,7 +23,7 @@ int	create_socket()
 }
 
 // Set socket file descriptor to be reusable
-void	set_socket(int listen_fd)
+void	LaunchServ::set_socket(int listen_fd)
 {
 	int opt = 1;
 	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
@@ -32,10 +32,10 @@ void	set_socket(int listen_fd)
 }
 
 // Put a name to a socket
-void	bind_socket(int listen_fd, std::vector<Server>::iterator it)
+void	LaunchServ::bind_socket(const std::vector<Server> & src, int listen_fd, size_t i)
 {
 	int port = 0;
-	std::istringstream((*it).getListen()) >> port;
+	std::istringstream(src[i].getListen()) >> port;
 	struct sockaddr_in address;
 
 	address.sin_family = AF_INET;
@@ -47,14 +47,14 @@ void	bind_socket(int listen_fd, std::vector<Server>::iterator it)
 }
 
 // Make the socket passive, waiting to accept
-void	listen_socket(int listen_fd)
+void	LaunchServ::listen_socket(int listen_fd)
 {
 	if (listen(listen_fd, MAX_EVENTS) < 0)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
 // Accept connexion and return socket accepted
-int	accept_connexions(int listen_fd)
+int	LaunchServ::accept_connexions(int listen_fd)
 {
 	int new_socket = 0;
 
@@ -65,7 +65,7 @@ int	accept_connexions(int listen_fd)
 }
 
 // Read data from buffer for now (after it will be the request send by client)
-void	read_data(int fd)
+void	LaunchServ::read_data(int fd)
 {
 	int valread = 0;
 	char buffer[100000];
@@ -79,7 +79,7 @@ void	read_data(int fd)
 }
 
 // Send data to the client (telnet or browser)
-void	send_data(int fd)
+void	LaunchServ::send_data(int fd)
 {
 	std::ifstream ifs;
 	std::string	line, file;
@@ -97,7 +97,7 @@ void	send_data(int fd)
 }
 
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
-bool	is_listener(int fd, int *tab_fd, int nbr_servers)
+bool	LaunchServ::is_listener(int fd, int *tab_fd, int nbr_servers)
 {
 	for (int i = 0; i < nbr_servers; i++)
 	{
@@ -115,7 +115,7 @@ LaunchServ::LaunchServ()
 {
 }
 
-LaunchServ::LaunchServ(std::vector<Server> src)
+LaunchServ::LaunchServ(const std::vector<Server> & src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
 	setup_socket_server(src);
@@ -147,16 +147,15 @@ LaunchServ&				LaunchServ::operator=( LaunchServ const & rhs )
 
 /* cree la socket -> set la socket -> donne un nom a la socket ->
 	mets la socket comme passive -> set le premier events fd avec la socket passive */
-void	LaunchServ::setup_socket_server(std::vector<Server> src)
+void	LaunchServ::setup_socket_server(const std::vector<Server> & src)
 {
-	this->i_server = 0;
 	this->nbr_servers = src.size();
 	this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	this->epfd = epoll_create(MAX_EVENTS);
 	if (this->epfd < 0)
 		throw std::runtime_error("[Error] epoll_create() failed");
-	std::vector<Server>::iterator it = src.begin();
-	for (it = src.begin() ; it != src.end(); it++, this->i_server++)
+	//std::vector<Server>::iterator it = src.begin();
+	for (this->i_server = 0; this->i_server < src.size(); this->i_server++)
 	{
 		this->listen_fd[this->i_server] = create_socket();
 		this->fds_events[this->i_server].data.fd = this->listen_fd[this->i_server];
@@ -164,7 +163,7 @@ void	LaunchServ::setup_socket_server(std::vector<Server> src)
 		if (epoll_ctl(this->epfd, EPOLL_CTL_ADD, this->listen_fd[this->i_server], &fds_events[this->i_server]) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 		set_socket(this->listen_fd[this->i_server]);
-		bind_socket(this->listen_fd[this->i_server], it);
+		bind_socket(src, this->listen_fd[this->i_server], this->i_server);
 		listen_socket(this->listen_fd[this->i_server]);
 	}
 }

@@ -51,20 +51,30 @@ class LaunchServ
 {
 	public:
 		LaunchServ();
-		LaunchServ(std::vector<Server> src);
+		LaunchServ(const std::vector<Server> & src);
 		LaunchServ( LaunchServ const & src );
 		~LaunchServ();
-		void	setup_socket_server(std::vector<Server> src);
+		void	setup_socket_server(const std::vector<Server> & src);
 		void	loop_server();
 		LaunchServ &		operator=( LaunchServ const & rhs );
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
-		int i_server;
+		size_t i_server;
 		int nbr_servers;
 		int epfd;
 		int	listen_fd[MAX_SERVERS];
 		int	port;
 		int timeout; // time before poll expiration
+		// private methods
+
+		int		create_socket();
+		void	set_socket(int listen_fd);
+		void	bind_socket(const std::vector<Server> & src, int listen_fd, size_t i);
+		void	listen_socket(int listen_fd);
+		int		accept_connexions(int listen_fd);
+		void	read_data(int fd);
+		void	send_data(int fd);
+		bool	is_listener(int fd, int *tab_fd, int nbr_servers);
 };
 
 std::ostream &			operator<<( std::ostream & o, LaunchServ const & i );
