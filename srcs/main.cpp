@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/10 15:15:32 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/11 17:05:03 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main( int ac, char *av[] )
 		conf = Config(av[1]);
 		vec_serv = conf.getConfig();
 
-		LaunchServ serv(vec_serv);
+		Moteur serv(vec_serv);
 	}
 	catch( std::exception const & e )
 	{

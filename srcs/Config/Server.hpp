@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/17 19:19:37 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/11 17:05:03 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include "Config.hpp"
 # include "../Server/moteur.hpp"
 
-class LaunchServ;
+class Moteur;
 
 class Server
 {

@@ -11,9 +11,11 @@
 /* ************************************************************************** */
 
 #include "moteur.hpp"
+#include "../method/method.hpp"
+#include <stdlib.h>
 
 // Creating socket file descriptor
-int	LaunchServ::create_socket()
+int	Moteur::create_socket()
 {
 	int listen_fd = 0;
 	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -23,7 +25,7 @@ int	LaunchServ::create_socket()
 }
 
 // Set socket file descriptor to be reusable
-void	LaunchServ::set_socket(int listen_fd)
+void	Moteur::set_socket(int listen_fd)
 {
 	int opt = 1;
 	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
@@ -32,29 +34,29 @@ void	LaunchServ::set_socket(int listen_fd)
 }
 
 // Put a name to a socket
-void	LaunchServ::bind_socket(const std::vector<Server> & src, int listen_fd, size_t i)
+void	Moteur::bind_socket(int listen_fd, const std::vector<Server> & src)
 {
-	int port = 0;
-	std::istringstream(src[i].getListen()) >> port;
 	struct sockaddr_in address;
+	int port_config = 0;
 
+	std::istringstream(src[this->i_server].getListen()) >> port_config;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(port);
-	std::cout << GREEN << "Port: " << port << std::endl << END;
+	address.sin_port = htons(port_config);
+	std::cout << GREEN << "Port: " << port_config << std::endl << END;
 	if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 		throw std::runtime_error("[Error] Port already attribute");
 }
 
 // Make the socket passive, waiting to accept
-void	LaunchServ::listen_socket(int listen_fd)
+void	Moteur::listen_socket(int listen_fd)
 {
 	if (listen(listen_fd, MAX_EVENTS) < 0)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
 // Accept connexion and return socket accepted
-int	LaunchServ::accept_connexions(int listen_fd)
+int	Moteur::accept_connexions(int listen_fd)
 {
 	int new_socket = 0;
 
@@ -64,45 +66,16 @@ int	LaunchServ::accept_connexions(int listen_fd)
 	return (new_socket);
 }
 
-// Read data from buffer for now (after it will be the request send by client)
-/* void	LaunchServ::read_data(int fd)
-{
-	int valread = 0;
-	char buffer[100000];
-
-	bzero(&buffer, sizeof(buffer));
-	valread = recv(fd, buffer, sizeof(buffer), 0);
-	if (valread == -1)
-		throw std::runtime_error("[Error] recv() failed");
-	//if (valread == 0) // a voir quoi faire avec cette erreur
-		//throw std::runtime_error("[Error] recv() finished");
-}
-
-// Send data to the client (telnet or browser)
-void	LaunchServ::send_data(int fd)
-{
-	std::ifstream ifs;
-	std::string	line, file;
-	ifs.open("srcs/Server/to_delete.html", std::ifstream::in);
-	while (std::getline(ifs, line))
-	{
-		file += line;
-		file += '\n';
-	}
-	ifs.close();
-	int nbr_bytes_send = 0;
-	nbr_bytes_send = send(fd, file.c_str(), file.size(), 0);
-	if (nbr_bytes_send == -1)
-		throw std::runtime_error("[Error] sent() failed");
-} */
-
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
-bool	LaunchServ::is_listener(int fd, int *tab_fd, int nbr_servers)
+bool	Moteur::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src)
 {
 	for (int i = 0; i < nbr_servers; i++)
 	{
 		if (fd == tab_fd[i])
+		{
+			std::istringstream(src[i].getListen()) >> this->port;
 			return (TRUE);
+		}
 	}
 	return (FALSE);
 }
@@ -111,11 +84,11 @@ bool	LaunchServ::is_listener(int fd, int *tab_fd, int nbr_servers)
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-LaunchServ::LaunchServ()
+Moteur::Moteur()
 {
 }
 
-LaunchServ::LaunchServ(const std::vector<Server> & src)
+Moteur::Moteur(const std::vector<Server> & src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
 	setup_socket_server(src);
@@ -126,7 +99,7 @@ LaunchServ::LaunchServ(const std::vector<Server> & src)
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
-LaunchServ::~LaunchServ()
+Moteur::~Moteur()
 {
 	std::cout << GREEN << "----------------- End of server -----------------" << END << std::endl << std::endl;
 }
@@ -135,7 +108,7 @@ LaunchServ::~LaunchServ()
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-LaunchServ&				LaunchServ::operator=( LaunchServ const & rhs )
+Moteur&				Moteur::operator=( Moteur const & rhs )
 {
 	(void)rhs;
 	return *this;
@@ -147,15 +120,15 @@ LaunchServ&				LaunchServ::operator=( LaunchServ const & rhs )
 
 /* cree la socket -> set la socket -> donne un nom a la socket ->
 	mets la socket comme passive -> set le premier events fd avec la socket passive */
-void	LaunchServ::setup_socket_server(const std::vector<Server> & src)
+void	Moteur::setup_socket_server(const std::vector<Server> & src)
 {
+	this->port = 0;
 	this->nbr_servers = src.size();
 	this->timeout = 3 * 60 * 1000; // 3 min de timeout (= keepalive nginx ?)
 	this->epfd = epoll_create(MAX_EVENTS);
 	if (this->epfd < 0)
 		throw std::runtime_error("[Error] epoll_create() failed");
-	//std::vector<Server>::iterator it = src.begin();
-	for (this->i_server = 0; this->i_server < src.size(); this->i_server++)
+	for (this->i_server = 0; this->i_server < this->nbr_servers; this->i_server++)
 	{
 		this->listen_fd[this->i_server] = create_socket();
 		this->fds_events[this->i_server].data.fd = this->listen_fd[this->i_server];
@@ -163,20 +136,17 @@ void	LaunchServ::setup_socket_server(const std::vector<Server> & src)
 		if (epoll_ctl(this->epfd, EPOLL_CTL_ADD, this->listen_fd[this->i_server], &fds_events[this->i_server]) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 		set_socket(this->listen_fd[this->i_server]);
-		bind_socket(src, this->listen_fd[this->i_server], this->i_server);
+		bind_socket(this->listen_fd[this->i_server], src);
 		listen_socket(this->listen_fd[this->i_server]);
 	}
 }
-
-#include "../method/method.hpp"
-#include <stdlib.h>
 
 int		buff_is_valid(char *buff)
 {
 	return (0);
 }
 
-void	read_send_data(int fd, const std::vector<Server> & src)
+void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	int valread = 0;
 	size_t buff_size = 1000;
@@ -185,11 +155,12 @@ void	read_send_data(int fd, const std::vector<Server> & src)
 	std::string all_buff;
 	std::string buff_send;
 
-	
+
+	std::cout << "this->port = " << this->port << std::endl;
 	Method meth;
-	
+
 	bzero(&buff, sizeof(buff));
-	
+
 	valread = recv(fd, buff, buff_size, 0);
 	if (valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
@@ -202,12 +173,12 @@ void	read_send_data(int fd, const std::vector<Server> & src)
 		valread = recv(fd, buff, buff_size, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
-		
+
 		std::cout << "((" << buff << "))" << std::endl;
 		x++;
 	} */
 
-	
+
 	buff_send = meth.is_method(buff, src);
 	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
 	//std::cout << "{{" << buff_send << "}}" << std::endl;
@@ -221,7 +192,7 @@ void	read_send_data(int fd, const std::vector<Server> & src)
 
 
 // loop server with EPOLLING events
-void	LaunchServ::loop_server(const std::vector<Server> & src)
+void	Moteur::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;
 	int new_socket = 0;
@@ -231,7 +202,7 @@ void	LaunchServ::loop_server(const std::vector<Server> & src)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		for (int i = 0; i < nbr_connexions; i++)
 		{
-			if (is_listener(this->fds_events[i].data.fd, this->listen_fd, this->nbr_servers))
+			if (is_listener(this->fds_events[i].data.fd, this->listen_fd, this->nbr_servers, src))
 			{
 				new_socket = accept_connexions(this->fds_events[i].data.fd);
 				fcntl(new_socket, F_SETFL, O_NONBLOCK);
@@ -243,8 +214,6 @@ void	LaunchServ::loop_server(const std::vector<Server> & src)
 			else
 			{
 				read_send_data(this->fds_events[i].data.fd, src);
-				//read_data(this->fds_events[i].data.fd);
-				//send_data(this->fds_events[i].data.fd);
 				close(this->fds_events[i].data.fd);
 			}
 		}
