@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -81,8 +82,8 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 	for(src.begin(); f < src.size() &&
 	src[f].getListen().compare(0 , act_listen.size(), act_listen) != 0 ; ++f)
 	{
-			std::cout << "get [" << src[f].getListen() << "]" << std::endl;
-			std::cout << "act [" << act_listen << "]" << std::endl;
+		//	std::cout << "get [" << src[f].getListen() << "]" << std::endl;
+		//	std::cout << "act [" << act_listen << "]" << std::endl;
 
 	}
 	return (f);
@@ -91,23 +92,22 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 std::string Method::is_method(std::string buff, std::vector<Server> src) // true or false
 {
 	int e = 0;
-	std::cout << "\n\n BUFF =" << buff << std::endl;
-		std::cout << "ici" << std::endl;
+	//std::cout << "\n\n BUFF =" << buff << std::endl;
 
 	std::string act_listen = get_actual_listen(buff);
 	//std::cout << "ici" << std::endl;
 
-	std::cout << "listen|" << act_listen  << "|xxx" << std::endl << std::endl;
+	//std::cout << "listen|" << act_listen  << "|xxx" << std::endl << std::endl;
 	//std::cout << "ici" << std::endl;
 
 	size_t j = get_listen_vector(src, act_listen);
 
-	std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
+	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
 	if (j == src.size() || act_listen.size() == 0)
 		return (is_bad_request(buff));
 
 
-	std::cout << src[j] << std::endl;
+	//std::cout << src[j] << std::endl;
 
 	std::set<std::string>				_methods;
 	std::map<std::string, Server>		_location;
@@ -135,7 +135,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
 	{
 		if ((*it_method).compare(0 , (*it_method).size(), act_method) == 0)
 			i = true;
-		std::cout << (*it_method) << std::endl;
+		//std::cout << (*it_method) << std::endl;
 	}
 	if (i == false)
 	{
@@ -148,7 +148,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
 
 	this->act_index = (*it_index);
 
-/* 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+/* 	for (it_index = _index.begin(st) ; it_index != _index.end(); it_index++)
 	{
 		std::cout  << "it index = " << (*it_index) << std::endl;
 	} */

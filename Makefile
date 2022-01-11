@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/11 13:50:10 by user42           ###   ########.fr        #
+#    Updated: 2022/01/11 18:46:49 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,12 +43,15 @@ CONFIG		= Config.cpp Server.cpp utils.cpp
 
 SERVER		= moteur.cpp
 
+PARSE_HEADER = parse_header.cpp
+
 METHOD		= bad_request.cpp method.cpp delete/delete.cpp get/get.cpp post/post.cpp 
 
 MAIN		= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/method/, $(METHOD)) \
+				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/, $(MAIN))
 
