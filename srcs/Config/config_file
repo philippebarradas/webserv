@@ -1,0 +1,40 @@
+
+server {
+	server_name hello1 salut 123 pli;
+	server_name hello2;
+	server_name hello3;
+	server_name hello4;
+	listen 8001;
+
+	client_max_body_size	20;
+
+	cgi .py cgi_python;
+
+	accepted_methods	GET POST DELETE;
+
+	root /home/user42/webserv/config/default/html_page;
+	index index.html;
+	autoindex on;
+	error_page 400 /400_bad_request.html;
+	error_page 404 /404_not_found.html;
+	error_page 405 /405_not_allowed.html;
+}
+
+server {
+	server_name serv2;
+	listen 8005;
+
+	client_max_body_size	50;
+	error_page 400 /400.html;
+	error_page 404 /404_not_found.html;
+	error_page 405 /405_not_allowed.html;
+}
+
+server {
+	server_name serv3;
+	listen 8006;
+
+	client_max_body_size	20;
+}
+
+

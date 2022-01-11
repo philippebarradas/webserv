@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
+#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/10 13:50:34 by dodjian          ###   ########.fr        #
+#    Updated: 2022/01/11 13:50:10 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME			= webserv
 CC				= @clang++
-CFLAGS			= -Wall -Wextra -Werror -std=c++98
+CFLAGS			= #-Wall -Wextra -Werror -std=c++98
 RM				= @rm -rf
 
 ######################################################################
@@ -43,9 +43,12 @@ CONFIG		= Config.cpp Server.cpp utils.cpp
 
 SERVER		= moteur.cpp
 
+METHOD		= bad_request.cpp method.cpp delete/delete.cpp get/get.cpp post/post.cpp 
+
 MAIN		= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
+				$(addprefix srcs/method/, $(METHOD)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/, $(MAIN))
 
