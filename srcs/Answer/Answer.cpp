@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/10 16:53:48 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/11 09:19:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 
 Answer::Answer( unsigned int const & code, std::string const & page )
 {
-	unsigned int accept[] = {200};
-	std::string status[] = {"OK"};
+	setRequestStatus(code);
+	this->_server_name = "webserv/0.1 (Ubuntu)";
+	setDate();
+
 }
 
 Answer::Answer()
@@ -64,10 +66,50 @@ std::ostream &			operator<<( std::ostream & o, Answer const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+void	Answer::writeRequestStatus( unsigned int const & code )
+{
+	unsigned int	all_code[] = {200, 404};
+	std::string		all_status[] = {"OK", "Not Found"};
+	stringstream	conv;
+	size_t			len, i;
+
+	conv << code;
+	this->_header += "HTTP/1.1 " + conv.str();
+
+	len = sizeof(all_code) / sizeof(unsigned int);
+
+	for (i = 0 ; i < len ; ++i)
+	{
+		if (all_code[i] == code)
+		{
+
+		}
+	}
+}
+
+void	Answer::writeDate( void )
+{
+	char		buffer[200];
+	time_t		rawtime;
+	struct tm	*timeinfo;
+
+	time (&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, 200, "%a, %d %b %G %T %Z",timeinfo);
+	this->_header += std::string(buffer);
+}
+
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+
+std::string	Answer::getHeader( void ) const
+{
+	return (this->_header);
+}
 
 
 /* ************************************************************************** */
