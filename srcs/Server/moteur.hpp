@@ -55,7 +55,7 @@ class LaunchServ
 		LaunchServ( LaunchServ const & src );
 		~LaunchServ();
 		void	setup_socket_server(const std::vector<Server> & src);
-		void	loop_server();
+		void	loop_server(const std::vector<Server> & src);
 		LaunchServ &		operator=( LaunchServ const & rhs );
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];

@@ -65,7 +65,7 @@ int	LaunchServ::accept_connexions(int listen_fd)
 }
 
 // Read data from buffer for now (after it will be the request send by client)
-void	LaunchServ::read_data(int fd)
+/* void	LaunchServ::read_data(int fd)
 {
 	int valread = 0;
 	char buffer[100000];
@@ -94,7 +94,7 @@ void	LaunchServ::send_data(int fd)
 	nbr_bytes_send = send(fd, file.c_str(), file.size(), 0);
 	if (nbr_bytes_send == -1)
 		throw std::runtime_error("[Error] sent() failed");
-}
+} */
 
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
 bool	LaunchServ::is_listener(int fd, int *tab_fd, int nbr_servers)
@@ -119,7 +119,7 @@ LaunchServ::LaunchServ(const std::vector<Server> & src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
 	setup_socket_server(src);
-	loop_server();
+	loop_server(src);
 }
 
 /*
@@ -168,8 +168,60 @@ void	LaunchServ::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
+#include "../method/method.hpp"
+#include <stdlib.h>
+
+int		buff_is_valid(char *buff)
+{
+	return (0);
+}
+
+void	read_send_data(int fd, const std::vector<Server> & src)
+{
+	int valread = 0;
+	size_t buff_size = 1000;
+	char buff[buff_size];
+
+	std::string all_buff;
+	std::string buff_send;
+
+	
+	Method meth;
+	
+	bzero(&buff, sizeof(buff));
+	
+	valread = recv(fd, buff, buff_size, 0);
+	if (valread == -1)
+		throw std::runtime_error("[Error] recv() failed");
+	std::cout << "((" << buff << "))" << std::endl;
+
+	size_t x = 0;
+
+/* 	while (buff_is_valid(buff) == 0 && x < 1)
+	{
+		valread = recv(fd, buff, buff_size, 0);
+		if (valread == -1)
+			throw std::runtime_error("[Error] recv() failed");
+		
+		std::cout << "((" << buff << "))" << std::endl;
+		x++;
+	} */
+
+	
+	buff_send = meth.is_method(buff, src);
+	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
+	//std::cout << "{{" << buff_send << "}}" << std::endl;
+
+	int nbr_bytes_send = 0;
+	nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
+	if (nbr_bytes_send == -1)
+		throw std::runtime_error("[Error] sent() failed");
+	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+}
+
+
 // loop server with EPOLLING events
-void	LaunchServ::loop_server()
+void	LaunchServ::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;
 	int new_socket = 0;
@@ -190,8 +242,9 @@ void	LaunchServ::loop_server()
 			}
 			else
 			{
-				read_data(this->fds_events[i].data.fd);
-				send_data(this->fds_events[i].data.fd);
+				read_send_data(this->fds_events[i].data.fd, src);
+				//read_data(this->fds_events[i].data.fd);
+				//send_data(this->fds_events[i].data.fd);
 				close(this->fds_events[i].data.fd);
 			}
 		}

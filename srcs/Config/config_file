@@ -12,7 +12,7 @@ server {
 
 	accepted_methods	GET POST DELETE;
 
-	root /home/user42/webserv/config/default/html_page;
+	root /home/user42/webserv/srcs/Config/default/html_page;
 	index index.html;
 	autoindex on;
 	error_page 400 /400_bad_request.html;
@@ -25,6 +25,12 @@ server {
 	listen 8005;
 
 	client_max_body_size	50;
+
+	accepted_methods	GET ;
+
+	root /home/user42/webserv/srcs/Config/default/html_page;
+	index test_404.html;
+
 	error_page 400 /400.html;
 	error_page 404 /404_not_found.html;
 	error_page 405 /405_not_allowed.html;

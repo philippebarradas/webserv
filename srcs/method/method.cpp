@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:58:14 by user42            #+#    #+#             */
-/*   Updated: 2022/01/11 13:24:44 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/11 15:49:49 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
 		return (is_bad_request(buff));
 
 
-	//std::cout << src[j] << std::endl;
+	std::cout << src[j] << std::endl;
 
 	std::set<std::string>				_methods;
 	std::map<std::string, Server>		_location;
@@ -138,11 +138,22 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
 		std::cout << (*it_method) << std::endl;
 	}
 	if (i == false)
+	{
+		std::cout << "false method" << std::endl;
 		return (is_not_allowed(buff));
-
+	}
 	
-	//std::cout << (*it).getMethods() << std::endl;
+	std::set<std::string>				_index = src[j].getIndex();
+	std::set<std::string>::iterator		it_index = _index.begin();
 
+	this->act_index = (*it_index);
+
+/* 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+	{
+		std::cout  << "it index = " << (*it_index) << std::endl;
+	} */
+
+	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
 		return ft_get(buff);
 	else if (buff.compare("POST") == 0)

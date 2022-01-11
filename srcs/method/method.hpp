@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:39 by user42            #+#    #+#             */
-/*   Updated: 2022/01/11 13:48:41 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/11 16:00:22 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 
 #include "../Config/Server.hpp"
 
-std::string file_to_string(std::string file_path);
+std::string file_to_string(std::string file_path, std::string buff);
 
 class Server;
 
@@ -56,6 +56,7 @@ class Method
 
 		std::string is_bad_request(std::string buff);
 		std::string is_not_allowed(std::string buff);
+		std::string is_not_found(std::string buff);
 
 		std::string ft_get(std::string full_cmd);
 		std::string ft_post(std::string full_cmd);
@@ -67,7 +68,7 @@ class Method
 
 
 		std::vector<std::string> _header;
-
+		std::string act_index;
 	private:
 
 		std::string _request_status;

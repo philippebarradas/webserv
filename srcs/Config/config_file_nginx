@@ -6,21 +6,21 @@ server{
 	listen 7777;
 
 	autoindex on;
-	root /home/user42/webpush2/config/default/html_page;
+	root /home/user42/webserv/config/default/html_page;
 	client_max_body_size 5555;
 	error_page 400 /400.html;
 	error_page 404 /404_not_found.html;
 	error_page 405 /405_not_allowed.html;
 
 	location /test_404.html {
-		root /home/user42/webpush2/config/default/html_page;
+		root /home/user42/webserv/config/default/html_page;
 	}
 }
 server{
 	server_name hello4 hello5;
 	listen 8012;
 	autoindex on;
-	root /home/user42/webpush2/config/default/html_page;
+	root /home/user42/webserv/config/default/html_page;
 	error_page 400 /400_bad_request.html;
 
 	
