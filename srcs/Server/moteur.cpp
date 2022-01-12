@@ -147,13 +147,12 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
-	int valread = 0;
+	int valread = -1;
 
 	size_t buff_size = 1000;
 	
 	char buff[buff_size];
-	
-	std::string buff_send;
+
 
 	Method meth;
 	Parse_header parse_head;
@@ -165,46 +164,65 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	bzero(&buff, sizeof(buff));
 	
 
- 	while (parse_head.buff_is_valid(buff) == 1)
+    while (parse_head.buff_is_valid(buff) == 1 && valread != 0)
 	{
-		valread = recv(fd, buff + recv_len, buff_size - recv_len, 0);
+		//std::cout << std::endl << "buff = " << buff << " fd = " << fd << " buff_size - recv_len" << buff_size - recv_len << std::endl;
+		//if (x == 0 || std::strcmp(buff, buff_old) != 0)
+		//std::cout << "valread = " << valread << std::endl;
+
+		//std::cout << std::endl << "buff = " << buff << " fd = " << fd << " buff_size - recv_len" << buff_size - recv_len<< std::endl;
+		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
-			;//throw std::runtime_error("[Error] recv() failed");
+			std::cout << "valread == -1" << std::endl;//	std::cout << "error" << std::endl;
 		else
-		{
 			recv_len += valread;
-			//std::cout << "buff = " << buff << std::endl;
-		}
+
+		std::cout << "buff = " << buff << std::endl;
+
+		if (parse_head.buff_is_valid(buff) == 1)	
+			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 	}
-	//std::cout << "((" << buff << "))" << std::endl;
+	std::cout << "((" << buff << "))" << std::endl;
 
-	//all_buff = buff;
-	//std::cout << "all buff = " << all_buff << std::endl;
 
-	
-	buff_send = meth.is_method(buff, src);
+ 	if (valread != 0)
+	{
+		this->buff_send = meth.is_method(buff, src);
+		int nbr_bytes_send = 0;
+		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
+		if (nbr_bytes_send == -1)
+			throw std::runtime_error("[Error] sent() failed");
+		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+	} 
+	close(fd);
+}
+
+/* void	Moteur::send_and_close(int fd, const std::vector<Server> & src)
+{
+
 	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
 	//std::cout << "{{" << buff_send << "}}" << std::endl;
 
 	int nbr_bytes_send = 0;
-	nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
+	nbr_bytes_send = send(fd, this->buff_send.c_str(), this->buff_send.size(), 0);
 	if (nbr_bytes_send == -1)
 		throw std::runtime_error("[Error] sent() failed");
 	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+	close(fd);
 }
-
-
-
+ */
 // loop server with EPOLLING events
 void	Moteur::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;
 	int new_socket = 0;
+	int i = 0;
+
 	while (TRUE)
 	{
 		if ((nbr_connexions = epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
-		for (int i = 0; i < nbr_connexions; i++)
+		for (i = 0; i < nbr_connexions; i++)
 		{
 			if (is_listener(this->fds_events[i].data.fd, this->listen_fd, this->nbr_servers, src))
 			{
@@ -218,9 +236,10 @@ void	Moteur::loop_server(const std::vector<Server> & src)
 			else
 			{
 				read_send_data(this->fds_events[i].data.fd, src);
-				close(this->fds_events[i].data.fd);
+				//break ;
 			}
 		}
+		//send_and_close(this->fds_events[i].data.fd, src);
 	}
 }
 

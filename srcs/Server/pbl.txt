@@ -1,0 +1,35 @@
+else
+			{
+				bzero(&buff, sizeof(buff));
+				while (parse_head.buff_is_valid(buff) == 1 && valread != 0)
+				{
+					//std::cout << std::endl << "buff = " << buff << " fd = " << fd << " buff_size - recv_len" << buff_size - recv_len << std::endl;
+					//if (x == 0 || std::strcmp(buff, buff_old) != 0)
+						valread = recv(this->fds_events[i].data.fd, &buff[recv_len], buff_size - recv_len, 0);
+					//std::cout << "valread = " << valread << std::endl;
+
+					//std::cout << std::endl << "buff = " << buff << " fd = " << fd << " buff_size - recv_len" << buff_size - recv_len<< std::endl;
+					std::cout << "buff = " << buff << std::endl;
+					if (valread == -1)
+						std::cout << "valread == -1" << std::endl;//	std::cout << "error" << std::endl;
+					else
+						recv_len += valread;
+					//if (parse_head.buff_is_valid(buff) == 1)
+					//	epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
+				}
+				std::cout << "((" << buff << "))" << std::endl;
+				if (valread != 0)
+				{
+					this->buff_send = meth.is_method(buff, src);
+					int nbr_bytes_send = 0;
+					nbr_bytes_send = send(this->fds_events[i].data.fd, buff_send.c_str(), buff_send.size(), 0);
+					if (nbr_bytes_send == -1)
+						throw std::runtime_error("[Error] sent() failed");
+					std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+				} 
+				close(this->fds_events[i].data.fd);
+				//read_send_data(this->fds_events[i].data.fd, src);
+				//break ;
+			}
+		}
+		//send_and_close(this->fds_events[i].data.fd, src);

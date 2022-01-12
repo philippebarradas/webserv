@@ -57,6 +57,9 @@ class Moteur
 		void	setup_socket_server(const std::vector<Server> & src);
 		void	loop_server(const std::vector<Server> & src);
 		Moteur &		operator=( Moteur const & rhs );
+		void	send_and_close(int fd, const std::vector<Server> & src);
+
+		
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
 		size_t i_server;
@@ -66,6 +69,7 @@ class Moteur
 		int	port;
 		int timeout; // time before poll expiration
 		// private methods
+		std::string buff_send;
 
 		int		create_socket();
 		void	set_socket(int listen_fd);

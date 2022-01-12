@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/11 18:47:30 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/12 10:52:21 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ std::string Method::ft_get(std::string full_cmd)//, [loca])
 {
     std::cout << "DANS LE GET" << std::endl;
 
+    std::cout << "act index = " << this->act_index << std::endl;
     std::string	file = file_to_string("srcs/Config/default/html_page/" + this->act_index, full_cmd);
 
     _request_status = "HTTP/1.1 200 OK";

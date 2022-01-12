@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:57:30 by user42            #+#    #+#             */
-/*   Updated: 2022/01/11 18:45:32 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/12 10:42:04 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ std::string file_to_string(std::string file_path, std::string buff)
 
 	getcwd(pwd, 100);
 
-	//std::cout << pwd << std::endl;
-	//std::cout << file_path << std::endl;
+	std::cout << pwd << std::endl;
+	std::cout << file_path << std::endl;
 
     ifs.open(file_path, std::ifstream::in);
 	if (!(ifs.is_open()))

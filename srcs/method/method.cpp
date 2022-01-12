@@ -127,7 +127,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
  	std::set<std::string>::iterator it_method;
 	std::string act_method = buff.substr(0, buff.find(" "));
 
-	//std::cout << "act_method = |" << act_method << "|" << std::endl;
+	std::cout << "act_method = |" << act_method << "|" << std::endl;
 
 	bool i = false;
 	
@@ -146,12 +146,8 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
 	std::set<std::string>				_index = src[j].getIndex();
 	std::set<std::string>::iterator		it_index = _index.begin();
 
-	this->act_index = (*it_index);
-
-/* 	for (it_index = _index.begin(st) ; it_index != _index.end(); it_index++)
-	{
-		std::cout  << "it index = " << (*it_index) << std::endl;
-	} */
+ 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+	{	this->act_index = (*it_index);} 
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
