@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/14 18:16:32 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/14 18:36:01 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,36 @@ int		Parse_header::parse_first_line(std::string buffer)
 	return (full_size);
 }
 
+void	Parse_header::fill_elements(int pos, std::string str)
+{
+	if (pos == 0)
+		_host = str;
+	if (pos == 1)
+		_user_agent = str;
+	if (pos == 2)
+		_accept = str;
+	if (pos == 3)
+		_accept_language = str;
+	if (pos == 4)
+		_accept_encoding = str;
+	if (pos == 5)
+		_method_charset = str;
+	if (pos == 6)
+		_keep_alive = str;
+	if (pos == 7)
+		_connection = str;
+
+	std::cout << "_host = [" << _host << "]" << std::endl;
+	std::cout << "_user_agent = [" << _user_agent << "]" << std::endl;
+	std::cout << "_accept = [" << _accept << "]"<< std::endl;
+	std::cout << "_accept_language = [" << _accept_language << "]"<< std::endl;
+	std::cout << "_accept_encoding = [" << _accept_encoding << "]"<< "]"<< std::endl;
+	std::cout << "_method_charset = [" << _method_charset << std::endl;
+	std::cout << "_keep_alive = [" << _keep_alive << "]"<< std::endl;
+	std::cout << "_connection = [" << _connection << "]"<< std::endl;
+}
+
+
 int		Parse_header::buff_is_valid(char *buff)
 {
 	std::string buffer = buff;
@@ -172,6 +202,7 @@ int		Parse_header::buff_is_valid(char *buff)
 				<< " final_pose = [" << final_pose << "]"
 				<< std::endl;
 
+				fill_elements(pos, buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())));
 				//all_header["host:"] = buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size()));
 			}
 			pos++;

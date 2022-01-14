@@ -183,6 +183,15 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	//std::cout << "full buff = ((" << buff << "))" << std::endl;
 
 
+	std::cout << "_host = [" << parse_head.get_host() << "]" << std::endl;
+	std::cout << "_user_agent = [" << parse_head.get_user_agent() << "]" << std::endl;
+	std::cout << "_accept = [" << parse_head.get_accept() << "]"<< std::endl;
+	std::cout << "_accept_language = [" << parse_head.get_accept_language() << "]"<< std::endl;
+	std::cout << "_accept_encoding = [" << parse_head.get_accept_encoding() << "]"<< "]"<< std::endl;
+	std::cout << "_method_charset = [" << parse_head.get_method_charset() << std::endl;
+	std::cout << "_keep_alive = [" << parse_head.get_keep_alive() << "]"<< std::endl;
+	std::cout << "_connection = [" << parse_head.get_connection() << "]"<< std::endl;
+
  	if (valread != 0)
 	{
 		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
