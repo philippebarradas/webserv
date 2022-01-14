@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/14 11:31:25 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/14 18:01:39 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
+#include <map>
 
 // C
 #include <stdio.h>
@@ -27,15 +28,6 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-
-// Socket
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
 
 // Colors
 #define PURPLE	"\033[0;35m"
@@ -52,13 +44,11 @@
 // Utils macro
 #define TRUE 1
 #define FALSE 0
-#define MAX_EVENTS 300
-#define MAX_SERVERS 100
 
 // My class
-//#include "../Config/Server.hpp"
+#include "../Config/Server.hpp"
 
-//class Server;
+class Server;
 class Request;
 
 class Cgi
@@ -66,15 +56,21 @@ class Cgi
 	public:
 
 		Cgi();
+		Cgi(const Server & src); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
-		Cgi(std::vector<std::string> v); // pour l'instant
 		Cgi(Cgi const & src);
 		~Cgi();
 
+		void	exec_cgi(const Server & src);
+		std::vector<std::pair<std::string, std::string>>	getEnv() const;
 		Cgi &		operator=( Cgi const & rhs );
 
 	private:
 
+		void	createEnv(const Server & src);
+
+		int	pid;
+		std::vector<std::pair<std::string, std::string>>	env;
 };
 
 std::ostream &			operator<<( std::ostream & o, Cgi const & i );
