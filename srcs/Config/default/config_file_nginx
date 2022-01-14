@@ -6,6 +6,7 @@ server{
 	listen 7777;
 
 	location / {
+		dav_methods PUT DELETE;
 		root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 		error_page 400 /error_page/400.html;
 		error_page 404 /error_page/404.html;
