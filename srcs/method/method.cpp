@@ -105,17 +105,17 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
 	if (parse_head.get_request_status() == 400)//j == src.size() || act_listen.size() == 0)
 	{
-		std::cout << "bad request" << std::endl;
+		std::cout << "x bad request" << std::endl;
 		return (is_bad_request(buff));
 	}
 	if (parse_head.get_request_status() == 404)//j == src.size() || act_listen.size() == 0)
 	{
-		std::cout << "not found" << std::endl;
+		std::cout << "x not found" << std::endl;
 		return (is_not_found(buff));
 	}
 	if (parse_head.get_request_status() == 405)//j == src.size() || act_listen.size() == 0)
 	{
-		std::cout << "not allowed" << std::endl;
+		std::cout << "x not allowed" << std::endl;
 		return (is_not_allowed(buff));
 	}
 	//std::cout << src[j] << std::endl;

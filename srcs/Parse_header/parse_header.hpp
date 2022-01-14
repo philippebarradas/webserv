@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/14 15:09:34 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/14 16:37:57 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Parse_header
 
 
 		std::vector<std::string> all_header;
+		
 
 		std::string get_method() const {return _method;};
 		std::string get_path() const {return _path;};

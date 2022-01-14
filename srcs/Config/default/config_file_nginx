@@ -6,25 +6,29 @@ server{
 	listen 7777;
 
 	autoindex on;
-	root /home/user42/webserv/Config/default/html_page;
+	root /home/user42/webserv/srcs/Config/default/html_page;
 	
 	index index.html;
 
 	
 	client_max_body_size 5555;
 	error_page 400 /400.html;
-	error_page 404 /404_not_found.html;
+	error_page 404 /index.html;
 	error_page 405 /405_not_allowed.html;
 
 	location /index.html {
-		root /home/user42/webserv/Config/default/html_page;
+		root /home/user42/webserv/srcs/Config/default/html_page;
 	}
 }
 server{
 	server_name hello4 hello5;
 	listen 8012;
 	autoindex on;
-	root /home/user42/webserv/Config/default/html_page;
+
+	root /home/user42/webserv/srcs/Config/default/html_page;
+	
+	index my_index.html;
+
 	error_page 400 /400_bad_request.html;
 
 	

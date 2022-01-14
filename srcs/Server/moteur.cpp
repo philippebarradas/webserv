@@ -180,7 +180,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			break;
 	}
 
-	std::cout << "full buff = ((" << buff << "))" << std::endl;
+	//std::cout << "full buff = ((" << buff << "))" << std::endl;
 
 
  	if (valread != 0)
