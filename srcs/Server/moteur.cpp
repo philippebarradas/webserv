@@ -156,6 +156,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
 	Method meth;
 	Parse_header parse_head;
+	parse_head.set_nbr_line(0);
 	
 
 	size_t recv_len = 0;
@@ -163,31 +164,28 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
 	bzero(&buff, sizeof(buff));
 	
-
-    while (parse_head.buff_is_valid(buff) == 1 && valread != 0)
+    while (valread != 0)
 	{
-		//std::cout << std::endl << "buff = " << buff << " fd = " << fd << " buff_size - recv_len" << buff_size - recv_len << std::endl;
-		//if (x == 0 || std::strcmp(buff, buff_old) != 0)
-		//std::cout << "valread = " << valread << std::endl;
-
-		//std::cout << std::endl << "buff = " << buff << " fd = " << fd << " buff_size - recv_len" << buff_size - recv_len<< std::endl;
 		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
 			std::cout << "valread == -1" << std::endl;//	std::cout << "error" << std::endl;
 		else
 			recv_len += valread;
 
-		std::cout << "buff = " << buff << std::endl;
+		std::cout << "buff = [" << buff << "]" << std::endl;
 
-		if (parse_head.buff_is_valid(buff) == 1)	
+		if (parse_head.buff_is_valid(buff) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
+		else
+			break;
 	}
-	std::cout << "((" << buff << "))" << std::endl;
+
+	std::cout << "full buff = ((" << buff << "))" << std::endl;
 
 
  	if (valread != 0)
 	{
-		this->buff_send = meth.is_method(buff, src);
+		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
 		int nbr_bytes_send = 0;
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)

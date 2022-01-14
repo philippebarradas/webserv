@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:39 by user42            #+#    #+#             */
-/*   Updated: 2022/01/11 16:00:22 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/14 15:01:02 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,12 @@
 #include <sys/types.h>
 
 #include "../Config/Server.hpp"
+#include "../Parse_header/parse_header.hpp"
 
 std::string file_to_string(std::string file_path, std::string buff);
 
 class Server;
+class Parse_header;
 
 class Method
 {
@@ -50,7 +52,7 @@ class Method
 		Method(const Method &method);		//can
 		Method &operator=(const Method &pt);	//can
 
-		std::string is_method(std::string full_cmd, std::vector<Server> src);
+		std::string is_method(std::string full_cmd, std::vector<Server> src, int port, const Parse_header & parse_head);
 		
 		std::string build_header(std::string buff);
 

@@ -89,24 +89,35 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 	return (f);
 }
 
-std::string Method::is_method(std::string buff, std::vector<Server> src) // true or false
+std::string Method::is_method(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
 {
 	int e = 0;
 	//std::cout << "\n\n BUFF =" << buff << std::endl;
 
-	std::string act_listen = get_actual_listen(buff);
+	std::string act_listen = std::to_string(port);//get_actual_listen(buff);
 	//std::cout << "ici" << std::endl;
 
-	//std::cout << "listen|" << act_listen  << "|xxx" << std::endl << std::endl;
+	std::cout << "listen|" << act_listen  << "|xxx" << std::endl << std::endl;
 	//std::cout << "ici" << std::endl;
 
 	size_t j = get_listen_vector(src, act_listen);
 
 	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
-	if (j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request_status() == 400)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "bad request" << std::endl;
 		return (is_bad_request(buff));
-
-
+	}
+	if (parse_head.get_request_status() == 404)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "not found" << std::endl;
+		return (is_not_found(buff));
+	}
+	if (parse_head.get_request_status() == 405)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "not allowed" << std::endl;
+		return (is_not_allowed(buff));
+	}
 	//std::cout << src[j] << std::endl;
 
 	std::set<std::string>				_methods;
