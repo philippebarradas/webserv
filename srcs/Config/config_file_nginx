@@ -1,27 +1,32 @@
 
+user www-data;
+
 events {}
 http{
 server{
 	server_name hello1 hello3;
 	listen 7777;
 
-	autoindex on;
-	root /home/user42/webserv/config/default/html_page;
-	client_max_body_size 5555;
-	error_page 400 /400.html;
-	error_page 404 /404_not_found.html;
-	error_page 405 /405_not_allowed.html;
+	autoindex off;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	location /test_404.html {
-		root /home/user42/webserv/config/default/html_page;
+	index hello.php;
+
+	location ~ \.php$ {
+		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+		fastcgi_index hello.php;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include /etc/nginx/fastcgi_params;
 	}
+
 }
 server{
+
 	server_name hello4 hello5;
 	listen 8012;
 	autoindex on;
 	root /home/user42/webserv/config/default/html_page;
 	error_page 400 /400_bad_request.html;
 
-	
+
 }}
