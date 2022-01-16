@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/14 18:01:39 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/16 18:50:50 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,19 @@ class Cgi
 		Cgi(Cgi const & src);
 		~Cgi();
 
+
+		void	initEnv(const Server & src);
+		char **Convert_env(std::vector<std::pair<std::string, std::string>>);
+		std::vector<std::pair<std::string, std::string>> createEnv(const Server & src);
 		void	exec_cgi(const Server & src);
 		std::vector<std::pair<std::string, std::string>>	getEnv() const;
 		Cgi &		operator=( Cgi const & rhs );
 
 	private:
 
-		void	createEnv(const Server & src);
 
-		int	pid;
-		std::vector<std::pair<std::string, std::string>>	env;
+		int	_pid;
+		std::vector<std::pair<std::string, std::string>>	_env;
 };
 
 std::ostream &			operator<<( std::ostream & o, Cgi const & i );
