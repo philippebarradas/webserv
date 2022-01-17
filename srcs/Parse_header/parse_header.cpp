@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 12:46:35 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 13:10:52 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,20 +106,7 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 
 	size_t start = 0;
 	
-
 	this->incr_nbr_line();
-
-
-
-   	all_header.push_back("Host:");
-  	all_header.push_back("User_agent:");
-  	all_header.push_back("Accept:");
-  	all_header.push_back("Accept Language:");
-  	all_header.push_back("Accept Encoding:");
-  	all_header.push_back("Method Charset:");
-  	all_header.push_back("Keep Alive:");
-  	all_header.push_back("Connection:");
-
 	if (get_nbr_line() == 1)
 	{
 		if ((start = parse_first_line(buffer)) == -1)
@@ -128,23 +115,14 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 			return (0);
 		else
 			buffer = buffer.substr(start, buffer.size() - start);;
-		//std::cout << "start = " << start << " -- [" << buffer.at(start - 1) << "]" <<  std::endl;
 	}
 
 
-	size_t	found = 0;
 	size_t	final_pose = 0;
-
+	size_t	found = 0;
 	size_t	pos = 0;
+	bool	bn = false;
 
-	bool bn = false;
-	std::cout << std::endl << "buffer = [" << buffer << "]" << std::endl; 
-	std::cout << std::endl << "line = [" << line << "]" << std::endl; 
-
-/* 	for (int x = 0; line[x]; x++)
-	{
-		printf("line[x] = %d\n", line[x]);
-	} */
 
 	if (buffer_line.compare("\r\n") == 0)
 	{
@@ -160,9 +138,7 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 		if (found != std::string::npos)
 		{
 			final_pose = 0;
-			//space = 0;
 			bn = false;
-			//stop = false;
 			for (std::string::iterator it = buffer.begin(); it != buffer.end() && bn == false; ++it)
 			{
 				final_pose++;
@@ -170,17 +146,7 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 				if (final_pose > found && cmp.compare("\n") == 0)
 					bn = true;
 			}
-
-/* 			std::cout << "[" << *ith << "] at = [" << found << "]"
-			<< " = ["
-			<< buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size()))
-			<< "]"
-			<< " final_pose = [" << final_pose << "]"
-			<< std::endl; */
-
 			fill_elements(pos, buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())));
-			//all_header["host:"] = buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size()));
-			
 		}
 		pos++;
 	}
@@ -201,6 +167,14 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 
 Parse_header::Parse_header()
 {
+   	all_header.push_back("Host:");
+  	all_header.push_back("User_agent:");
+  	all_header.push_back("Accept:");
+  	all_header.push_back("Accept Language:");
+  	all_header.push_back("Accept Encoding:");
+  	all_header.push_back("Method Charset:");
+  	all_header.push_back("Keep Alive:");
+  	all_header.push_back("Connection:");
 }
 
 /*
