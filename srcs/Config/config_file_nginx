@@ -11,6 +11,7 @@ server{
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
 	index hello.php;
+	dav_methods DELETE;
 
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
