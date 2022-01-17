@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
+#    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/17 13:03:18 by user42           ###   ########.fr        #
+#    Updated: 2022/01/12 10:12:42 by tsannie          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,15 +39,16 @@ NAMEC			= ${BLUE}${BOLD}$(NAME)${END}
 #                            Source Files                            #
 ######################################################################
 
-CONFIG		= Config.cpp Server.cpp utils.cpp
+CONFIG			= Config.cpp Server.cpp utils.cpp
 
-SERVER		= moteur.cpp
+SERVER			= moteur.cpp
 
-PARSE_HEADER = parse_header.cpp
+PARSE_HEADER	= parse_header.cpp
 
-METHOD		= bad_request.cpp method.cpp delete/delete.cpp get/get.cpp post/post.cpp 
+METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
+					get/get.cpp post/post.cpp
 
-MAIN		= main.cpp
+MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/method/, $(METHOD)) \
