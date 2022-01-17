@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_header.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 13:53:32 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 17:43:24 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ class Parse_header
 
 		Parse_header &		operator=( Parse_header const & rhs );
 
+		void	display_content_header();
 		void	fill_variables();
-        
+
 		int		buff_is_valid(char *buff, char *line);
 		int		parse_first_line();
 
 		std::vector<std::string> all_header;
-		
+
 
 		std::string get_method() const {return _method;};
 		std::string get_path() const {return _path;};
@@ -41,7 +42,7 @@ class Parse_header
 
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		size_t	get_request_status() const {return this->_request_status;};
-		
+
 		void	incr_nbr_line(){this->_nbr_line++;};
 
 	private:
@@ -57,10 +58,10 @@ class Parse_header
 		std::string	_protocol;
 
 		// request header
-		
+
 		std::string _host;
 		std::string _user_agent;
-		
+
 		std::string _accept;
 		std::string _accept_language;
 		std::string _accept_encoding;
@@ -86,10 +87,10 @@ class Parse_header
 		std::string	get_protocol(){return _protocol;};
 
 		// request header
-		
+
 		std::string get_host(){return _host;};
 		std::string get_user_agent(){return _user_agent;};
-		
+
 		std::string get_accept(){return _accept;};
 		std::string get_accept_language(){return _accept_language;};
 		std::string get_accept_encoding(){return _accept_encoding;};

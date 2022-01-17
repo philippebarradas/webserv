@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_header.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 13:56:29 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 17:45:28 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 /**
  * Initialise le comparateur
  **/
- 
+
 Parse_header::Parse_header() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
@@ -64,7 +64,7 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 	std::string buffer_line = line;
 	size_t	found = 0;
 	size_t start = 0;
-	
+
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
@@ -128,13 +128,13 @@ int		Parse_header::parse_first_line()
 	&& get_method().compare("DELETE") != 0) || (get_path().at(0) != '/'))
 	{
 		std::cout << "ici 1" << std::endl;
-		this->_request_status = 400; 
+		this->_request_status = 400;
 		return (-1);
 	}
 	else if (get_protocol().compare("HTTP/1.1") != 0)
 	{
 		std::cout << "ici 2" << std::endl;
-		this->_request_status = 404; 
+		this->_request_status = 404;
 		return (-1);
 	}
 	else
@@ -201,4 +201,22 @@ void	Parse_header::fill_elements(int pos, std::string str)
 		_content_type = str;
 	else if (pos == 9)
 		_content_length = str;
+}
+
+void	Parse_header::display_content_header()
+{
+	std::cout << YELLOW << "----------------- Start of display content header -----------------" << std::endl << std::endl << END;
+	std::cout << "_request_status = [" << this->get_request_status() << "]" << std::endl;
+	std::cout << "_method = [" << this->get_method() << "]" << std::endl;
+	std::cout << "_path = [" << this->get_path() << "]" << std::endl;
+	std::cout << "_protocol = [" << this->get_protocol() << "]"<< std::endl;
+	std::cout << "_host = [" << this->get_host() << "]" << std::endl;
+	std::cout << "_user_agent = [" << this->get_user_agent() << "]" << std::endl;
+	std::cout << "_accept = [" << this->get_accept() << "]"<< std::endl;
+	std::cout << "_accept_language = [" << this->get_accept_language() << "]"<< std::endl;
+	std::cout << "_accept_encoding = [" << this->get_accept_encoding() << "]" << std::endl;
+	std::cout << "_method_charset = [" << this->get_method_charset() << "]" << std::endl;
+	std::cout << "_keep_alive = [" << this->get_keep_alive() << "]"<< std::endl;
+	std::cout << "_connection = [" << this->get_connection() << "]"<< std::endl;
+	std::cout << std::endl << YELLOW << "----------------- End of display content header -----------------" << END << std::endl << std::endl;
 }

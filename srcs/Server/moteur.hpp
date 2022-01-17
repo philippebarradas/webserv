@@ -58,9 +58,8 @@ class Moteur
 		void	setup_socket_server(const std::vector<Server> & src);
 		void	loop_server(const std::vector<Server> & src);
 		Moteur &		operator=( Moteur const & rhs );
-		void	send_and_close(int fd, const std::vector<Server> & src);
 
-		
+
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
 		size_t i_server;
@@ -77,6 +76,8 @@ class Moteur
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
+		int		read_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head);
+		int		send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head);
 		void	read_send_data(int fd, const std::vector<Server> & src);
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
