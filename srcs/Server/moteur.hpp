@@ -41,12 +41,13 @@
 #define FALSE 0
 #define MAX_EVENTS 300
 #define MAX_SERVERS 100
+#define BUFFER_SIZE 1000
 
 // My class
 #include "../Config/Server.hpp"
 #include "../Parse_header/parse_header.hpp"
-class Server;
 class Parse_header;
+class Server;
 
 class Moteur
 {
@@ -61,24 +62,25 @@ class Moteur
 
 
 	private:
-		struct epoll_event fds_events[MAX_EVENTS];
-		size_t i_server;
-		size_t nbr_servers;
-		int epfd;
-		int	listen_fd[MAX_SERVERS];
-		int	port;
-		int timeout; // time before poll expiration
+		struct epoll_event _fds_events[MAX_EVENTS];
+		size_t _i_server;
+		size_t _nbr_servers;
+		int _epfd;
+		int	_listen_fd[MAX_SERVERS];
+		int	_port;
+		int	_timeout; // time before poll expiration
+		int	_valread;
+		char	_buff[BUFFER_SIZE];
+		std::string _buff_send;
 		// private methods
-		std::string buff_send;
 
 		int		create_socket();
 		void	set_socket(int listen_fd);
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
-		int		read_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head);
-		int		send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head);
-		void	read_send_data(int fd, const std::vector<Server> & src);
+		void	read_data(int fd, const std::vector<Server> & src, Parse_header & parse_head);
+		void	send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head);
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 

@@ -881,8 +881,8 @@ $_SERVER['PHP_SELF'] => /home/user42/Bureau/webserv/srcs/Config/default/html_pag
 $_SERVER['SCRIPT_NAME'] => /home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php
 $_SERVER['PATH_TRANSLATED'] => /home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php
 $_SERVER['DOCUMENT_ROOT'] => 
-$_SERVER['REQUEST_TIME_FLOAT'] => 1642437954.8367
-$_SERVER['REQUEST_TIME'] => 1642437954
+$_SERVER['REQUEST_TIME_FLOAT'] => 1642442958.3718
+$_SERVER['REQUEST_TIME'] => 1642442958
 $_SERVER['argv'] => Array
 (
     [0] => /home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php

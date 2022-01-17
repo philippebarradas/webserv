@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/17 17:39:46 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/17 19:10:44 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ std::ostream &			operator<<( std::ostream & o, Cgi const & i )
 
 bool	Cgi::is_cgi(const Parse_header & src)
 {
-	std::cout << "path = |" << src.get_path() << "" << std::endl;
+	std::cout << "path = |" << src.get_path() << "|" << std::endl;
 	return (TRUE);
 }
 
