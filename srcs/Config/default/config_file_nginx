@@ -5,6 +5,7 @@ server{
 	server_name hello1 hello3;
 	listen 7777;
 
+
 	location / {
 		dav_methods PUT DELETE;
 		root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
@@ -18,6 +19,7 @@ server{
 	server_name hello4 hello5;
 	listen 8012;
 	autoindex on;
+
 	root /home/user42/webserv/config/default/html_page;
 	error_page 400 /400_bad_request.html;
 

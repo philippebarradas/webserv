@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/11 15:41:26 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/12 10:51:26 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	Server::initServ()
 
 	// default listen is *:8000 and *:80 ?
 
-	//this->_index.insert(std::string("index.html"));
+	this->_index.insert(std::string("index.html"));
 	this->_root = "html";
 
 	this->_alreadySetMethods   = false;
