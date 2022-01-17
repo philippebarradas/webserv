@@ -13,6 +13,8 @@
 #include "moteur.hpp"
 #include "../Cgi/Cgi.hpp"
 #include "../method/method.hpp"
+#include "../Parse_header/parse_header.hpp"
+
 #include <stdlib.h>
 
 // Creating socket file descriptor
@@ -142,45 +144,46 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-int		buff_is_valid(char *buff)
-{
-	return (0);
-}
+
 
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	int valread = 0;
+
 	size_t buff_size = 1000;
+
 	char buff[buff_size];
 
-	std::string all_buff;
 	std::string buff_send;
 
-
-	std::cout << "this->port = " << this->port << std::endl;
 	Method meth;
+	Parse_header parse_head;
+
+
+	size_t recv_len = 0;
+	size_t x = 0;
 
 	bzero(&buff, sizeof(buff));
 
-	valread = recv(fd, buff, buff_size, 0);
-	if (valread == -1)
-		throw std::runtime_error("[Error] recv() failed");
-	std::cout << "((" << buff << "))" << std::endl;
 
-	size_t x = 0;
-
-/* 	while (buff_is_valid(buff) == 0 && x < 1)
+ 	while (parse_head.buff_is_valid(buff) == 1)
 	{
-		valread = recv(fd, buff, buff_size, 0);
+		valread = recv(fd, buff + recv_len, buff_size - recv_len, 0);
 		if (valread == -1)
-			throw std::runtime_error("[Error] recv() failed");
+			;//throw std::runtime_error("[Error] recv() failed");
+		else
+		{
+			recv_len += valread;
+			//std::cout << "buff = " << buff << std::endl;
+		}
+	}
+	//std::cout << "((" << buff << "))" << std::endl;
 
-		std::cout << "((" << buff << "))" << std::endl;
-		x++;
-	} */
+	//all_buff = buff;
+	//std::cout << "all buff = " << all_buff << std::endl;
 
-	//Cgi		obj_cgi(src.front());
-	//buff_send = meth.is_method(buff, src);
+
+	buff_send = meth.is_method(buff, src);
 	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
 	//std::cout << "{{" << buff_send << "}}" << std::endl;
 
@@ -190,6 +193,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 		throw std::runtime_error("[Error] sent() failed");
 	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 }
+
 
 
 // loop server with EPOLLING events
