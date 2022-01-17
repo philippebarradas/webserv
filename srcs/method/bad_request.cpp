@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:57:30 by user42            #+#    #+#             */
-/*   Updated: 2022/01/12 10:42:04 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 11:36:38 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ std::string file_to_string(std::string file_path, std::string buff)
 {
     std::ifstream ifs;
 	std::string	line, file;
-
+	buff = "sal";
 	char pwd[100];
 
 	getcwd(pwd, 100);
@@ -25,7 +25,7 @@ std::string file_to_string(std::string file_path, std::string buff)
 	std::cout << pwd << std::endl;
 	std::cout << file_path << std::endl;
 
-    ifs.open(file_path, std::ifstream::in);
+    ifs.open(file_path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
 		return ("not found");
 	while (std::getline(ifs, line))
@@ -52,6 +52,7 @@ std::string	Method::get_date()
 	return (actual_time);
 }
 
+#include <sstream>
 
 std::string Method::is_not_found(std::string buff)
 {
@@ -61,7 +62,7 @@ std::string Method::is_not_found(std::string buff)
     _server = "webcerveau/1.0";
     _date = get_date();
     _content_type = "Content-Type: text/html";
-    _content_length = "Content-Length: " + std::to_string(file.size());
+    _content_length = "Content-Length: " + static_cast<ostringstream*>( &(ostringstream() << file.size());
     _connection = "Connection: keep-alive";
 
 

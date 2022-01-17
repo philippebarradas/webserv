@@ -97,7 +97,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 	std::string act_listen = std::to_string(port);//get_actual_listen(buff);
 	//std::cout << "ici" << std::endl;
 
-	std::cout << "listen|" << act_listen  << "|xxx" << std::endl << std::endl;
+	std::cout << "listen = " << act_listen << std::endl << std::endl;
 	//std::cout << "ici" << std::endl;
 
 	size_t j = get_listen_vector(src, act_listen);
