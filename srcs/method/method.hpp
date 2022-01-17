@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:39 by user42            #+#    #+#             */
-/*   Updated: 2022/01/14 15:01:02 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 12:44:09 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@
 #include <iostream>
 #include <string.h>
 #include <sys/types.h>
+#include <sstream>
+
 
 #include "../Config/Server.hpp"
 #include "../Parse_header/parse_header.hpp"
@@ -71,6 +73,7 @@ class Method
 
 		std::vector<std::string> _header;
 		std::string act_index;
+
 	private:
 
 		std::string _request_status;

@@ -64,7 +64,7 @@ class Moteur
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
 		size_t i_server;
-		int nbr_servers;
+		size_t nbr_servers;
 		int epfd;
 		int	listen_fd[MAX_SERVERS];
 		int	port;

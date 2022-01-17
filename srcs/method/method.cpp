@@ -24,7 +24,7 @@ std::string Method::build_header(std::string buff)
 {
 	std::string full_header;
 	//std::cout << "buff = [" << buff << "]" << std::endl;
-
+	buff = "wait";
   	//for (int i=1; i<=5; i++)
   	_header.push_back(_request_status);
   	_header.push_back(_server);
@@ -91,14 +91,10 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 
 std::string Method::is_method(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
 {
-	int e = 0;
-	//std::cout << "\n\n BUFF =" << buff << std::endl;
 
-	std::string act_listen = std::to_string(port);//get_actual_listen(buff);
-	//std::cout << "ici" << std::endl;
+	std::string act_listen = static_cast<std::ostringstream*>( &(std::ostringstream() << port))->str();//get_actual_listen(buff);
 
 	std::cout << "listen = " << act_listen << std::endl << std::endl;
-	//std::cout << "ici" << std::endl;
 
 	size_t j = get_listen_vector(src, act_listen);
 
@@ -193,5 +189,6 @@ Method::Method(Method const & Method)
 
 Method	&Method::operator=(const Method &pt)
 {
+	this->_request_status = pt._request_status;
 	return (*this);
 }

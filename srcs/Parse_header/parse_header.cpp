@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 11:12:21 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 12:46:35 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,7 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 	std::string cmp;
 
 	size_t start = 0;
-	size_t size = 0;
-	size_t full_size = 0;
 	
-	size_t rank = 0;
 
 	this->incr_nbr_line();
 

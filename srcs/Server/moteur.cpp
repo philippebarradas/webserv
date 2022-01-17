@@ -161,7 +161,6 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	size_t buff_len = 0;
 	size_t old_len = 0;
 	size_t recv_len = 0;
-	size_t x = 0;
 
 	bzero(&buff, sizeof(buff));
 	
