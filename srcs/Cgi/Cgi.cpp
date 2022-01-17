@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/17 13:17:50 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/17 14:20:53 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,22 @@ Cgi::Cgi()
 
 Cgi::Cgi(const Server & src)
 {
-	initEnv(src);
-	exec_cgi(src);
+	init_env(src);
+	char **env = this->convert_env(this->_env);
+	char **argv = this->create_argv();
+	exec_cgi(src, argv, env);
+	for (int i = 0; i < 10 && env[i]; i++)
+	{
+		delete [] env[i];
+		delete [] argv[i];
+	}
+	delete [] env;
+	delete [] argv;
 }
 
 Cgi::Cgi( const Cgi & src )
 {
+	*this = src;
 }
 
 /* Cgi::Cgi(std::vector<std::string> v) // recevoir ma requete deja valide et parser
@@ -57,6 +67,7 @@ Cgi::~Cgi()
 
 Cgi &				Cgi::operator=( Cgi const & rhs )
 {
+	(void)rhs;
 	//if ( this != &rhs )
 	//{
 		//this->_value = rhs.getValue();
@@ -66,6 +77,7 @@ Cgi &				Cgi::operator=( Cgi const & rhs )
 
 std::ostream &			operator<<( std::ostream & o, Cgi const & i )
 {
+	(void)i;
 	//o << "Value = " << i.getValue();
 	return o;
 }
@@ -75,9 +87,9 @@ std::ostream &			operator<<( std::ostream & o, Cgi const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Cgi::initEnv(const Server & src)
+void	Cgi::init_env(const Server & src)
 {
-	std::map<std::string , std::string>::iterator it_cgi;
+	std::map<std::string, std::string>::iterator it_cgi;
 
 	it_cgi = src.getCgi().begin();
 	std::string	nameVar[] = {"REQUEST_METHOD", "SCRIPT_FILENAME", "SERVER_PORT"};
@@ -87,11 +99,11 @@ void	Cgi::initEnv(const Server & src)
 		this->_env.insert(std::make_pair(nameVar[i], valueVar[i]));
 }
 
-char **Cgi::Convert_env(std::map<std::string, std::string>)
+char **Cgi::convert_env(std::map<std::string, std::string>)
 {
 	std::map<std::string, std::string>::iterator it_env;
-	char **env = new char *[this->_env.size() + 1];
-	int j = 0;
+	char	**env = new char *[this->_env.size() + 1];
+	int	j = 0;
 	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 	{
 		std::string	content = it_env->first + "=" + it_env->second;
@@ -103,38 +115,36 @@ char **Cgi::Convert_env(std::map<std::string, std::string>)
 	return (env);
 }
 
-void	Cgi::exec_cgi(const Server & src)
+char	**Cgi::create_argv()
 {
-	char *const *nul = NULL;
-	char **env;
+	int	nbr_argv = 2;
+	char	**argv;// = new char *[nbr_argv + 1];
+	std::string nul_str = "";
+	std::string b = "/home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php";
 
-	env = this->Convert_env(this->_env);
+	argv[0] = new char[1];
+	strcpy(argv[0], nul_str.c_str());
+	argv[1] = new char[b.size() + 1];
+	strcpy(argv[1], b.c_str());
+	argv[2] = NULL;
+	int j = 0;
+	while (j < 2)
+	{
+		std::cout << "argv[j] = |" << argv[j] << "|" << std::endl;
+		j++;
+	}
+	return (argv);
+}
+
+void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
+{
+	std::string exec_path = "/usr/bin/php";
 	int i = 0;
-	while (env[i] != NULL)
+	while (env[i])
 	{
 		std::cout << "env[i] = " << env[i] << std::endl;
 		i++;
 	}
-	std::string a = "feefw";
-	std::string b = "/home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php";
-	int size = 10;
-	char **argv = create;
-
-	argv[0] = strdup(a.c_str());
-	argv[1] = strdup(b.c_str());
-	argv[2] = 0;
-	int j = 0;
-	std::cout << "fewefwe" << std::endl;
-	while (argv[j])
-	{
-		std::cout << "argv[j] = " << argv[j] << std::endl;
-		j++;
-	}
-	std::string exec_path = "/usr/bin/php";
-	//std::string path_cgi = "/usr/bin/python3";
-	//std::string path_file = " /home/user42/Bureau/webserv/srcs/Config/default/html_page/cgi_python.py";
-	//exec_path += " /home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php";
-	std::cout << exec_path << std::endl;
 	this->_pid = fork();
 	if (this->_pid == 0)
 	{

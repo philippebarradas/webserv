@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/17 13:17:37 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/17 14:03:18 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,10 @@ class Cgi
 		~Cgi();
 
 
-		void	initEnv(const Server & src);
-		char **Convert_env(std::map<std::string, std::string>);
-		std::map<std::string, std::string> createEnv(const Server & src);
-		char **create_env();
-		void	exec_cgi(const Server & src);
+		void	init_env(const Server & src);
+		char **convert_env(std::map<std::string, std::string>);
+		char **create_argv();
+		void	exec_cgi(const Server & src, char **argv, char **env);
 		void	redirect_result_cgi();
 		std::map<std::string, std::string>	getEnv() const;
 		Cgi &		operator=( Cgi const & rhs );
