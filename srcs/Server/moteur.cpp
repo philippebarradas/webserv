@@ -158,7 +158,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	Parse_header parse_head;
 	parse_head.set_nbr_line(0);
 	
-
+	size_t buff_len = 0;
+	size_t old_len = 0;
 	size_t recv_len = 0;
 	size_t x = 0;
 
@@ -166,15 +167,18 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	
     while (valread != 0)
 	{
+		old_len = std::strlen(buff);
 		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
 			std::cout << "valread == -1" << std::endl;//	std::cout << "error" << std::endl;
 		else
 			recv_len += valread;
+		buff_len = std::strlen(buff) - old_len;
 
-		std::cout << "buff = [" << buff << "]" << std::endl;
+		//std::cout << "buff = [" << buff << "]" << std::endl;
+		//std::cout << "len = [" << buff + buff_len << "]" << std::endl;
 
-		if (parse_head.buff_is_valid(buff) == 0)	
+		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 		else
 			break;
@@ -182,7 +186,11 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
 	//std::cout << "full buff = ((" << buff << "))" << std::endl;
 
-
+	std::cout << std::endl << std::endl << std::endl;
+	std::cout << "_requesr_status = [" << parse_head.get_request_status() << "]" << std::endl;
+	std::cout << "_method = [" << parse_head.get_method() << "]" << std::endl;
+	std::cout << "_path = [" << parse_head.get_path() << "]" << std::endl;
+	std::cout << "_protocol = [" << parse_head.get_protocol() << "]"<< std::endl;
 	std::cout << "_host = [" << parse_head.get_host() << "]" << std::endl;
 	std::cout << "_user_agent = [" << parse_head.get_user_agent() << "]" << std::endl;
 	std::cout << "_accept = [" << parse_head.get_accept() << "]"<< std::endl;
@@ -191,6 +199,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	std::cout << "_method_charset = [" << parse_head.get_method_charset() << std::endl;
 	std::cout << "_keep_alive = [" << parse_head.get_keep_alive() << "]"<< std::endl;
 	std::cout << "_connection = [" << parse_head.get_connection() << "]"<< std::endl;
+	std::cout << std::endl << std::endl << std::endl;
 
  	if (valread != 0)
 	{
@@ -200,25 +209,11 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
-	} 
-	close(fd);
+	}
+	if (parse_head.get_request_status() != 200)
+		close(fd);
 }
 
-/* void	Moteur::send_and_close(int fd, const std::vector<Server> & src)
-{
-
-	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
-	//std::cout << "{{" << buff_send << "}}" << std::endl;
-
-	int nbr_bytes_send = 0;
-	nbr_bytes_send = send(fd, this->buff_send.c_str(), this->buff_send.size(), 0);
-	if (nbr_bytes_send == -1)
-		throw std::runtime_error("[Error] sent() failed");
-	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
-	close(fd);
-}
- */
-// loop server with EPOLLING events
 void	Moteur::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;

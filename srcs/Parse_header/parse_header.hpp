@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/14 18:37:39 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/17 07:44:14 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class Parse_header
 
 		Parse_header &		operator=( Parse_header const & rhs );
 
-        int		buff_is_valid(char *buff);
+        int		buff_is_valid(char *buff, char *line);
 		int		parse_first_line(std::string buffer);
 		void	fill_elements(int pos, std::string str);
 
@@ -71,40 +71,40 @@ class Parse_header
 
 		// representation header
 
-		std::string content_type;
-		std::string	content_length;
+		std::string _content_type;
+		std::string	_content_length;
 
 		std::string _pragma;
 		std::string _cache_control;
 
 	public :
-		std::string get_method(){return _method};
-		std::string get_path(){return _method};
-		std::string	get_protocol(){return _method};
+		std::string get_method(){return _method;};
+		std::string get_path(){return _path;};
+		std::string	get_protocol(){return _protocol;};
 
 		// request header
 		
-		std::string get_host(){return _method};
-		std::string get_user_agent(){return _method};
+		std::string get_host(){return _host;};
+		std::string get_user_agent(){return _user_agent;};
 		
-		std::string get_accept(){return _method};
-		std::string get_accept_language(){return _method};
-		std::string get_accept_encoding(){return _method};
-		std::string get_method_charset(){return _method};
+		std::string get_accept(){return _accept;};
+		std::string get_accept_language(){return _accept_language;};
+		std::string get_accept_encoding(){return _accept_encoding;};
+		std::string get_method_charset(){return _method_charset;};
 
 		//general headers
 
-		std::string get_keep_alive(){return _method};
-		std::string get_connection(){return _method};
-		std::string get_upgrade_insecure_requests(){return _method};
+		std::string get_keep_alive(){return _keep_alive;};
+		std::string get_connection(){return _connection;};
+		std::string get_upgrade_insecure_requests(){return _upgrade_insecure_requests;};
 
 		// representation header
 
-		std::string get_content_type(){return _method};
-		std::string	get_content_length(){return _method};
+		std::string get_content_type(){return _content_type;};
+		std::string	get_content_length(){return _content_length;};
 
-		std::string get_pragma(){return _method};
-		std::string get_cache_control(){return _method};
+		std::string get_pragma(){return _pragma;};
+		std::string get_cache_control(){return _cache_control;};
 
 };
 
