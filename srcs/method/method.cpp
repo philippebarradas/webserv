@@ -17,7 +17,6 @@
 #define TRUE 1
 #define FALSE 0
 #include <vector>
-#include <type_traits>
 
 
 std::string Method::build_header(std::string buff)
@@ -92,7 +91,77 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 std::string Method::is_method(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
 {
 
+	std::string act_listen = static_cast<std::ostringstream*>( &(std::ostringstream() << port))->str();//get_actual_listen(buff);
 
+	std::cout << "listen = " << act_listen << std::endl << std::endl;
+
+	size_t j = get_listen_vector(src, act_listen);
+
+	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
+	if (parse_head.get_request_status() == 400)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x bad request" << std::endl;
+		return (is_bad_request(buff));
+	}
+	if (parse_head.get_request_status() == 404)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x not found" << std::endl;
+		return (is_not_found(buff));
+	}
+	if (parse_head.get_request_status() == 405)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x not allowed" << std::endl;
+		return (is_not_allowed(buff));
+	}
+	//std::cout << src[j] << std::endl;
+
+	std::set<std::string>				_methods;
+	std::map<std::string, Server>		_location;
+	_methods = src[j].getMethods();
+	_location = src[j].getLocation();
+
+	//std::cout << "ici" << std::endl;
+
+
+
+	std::map<std::string, Server>::iterator it_location = _location.begin();
+	for(it_location = _location.begin(); it_location != _location.end(); ++it_location)
+	{
+		//std::cout << "-->" << (it_location->first) << "<--" << std::endl;
+	}
+	//std::cout << _methods << std::endl;
+ 	std::set<std::string>::iterator it_method;
+	std::string act_method = buff.substr(0, buff.find(" "));
+
+	std::cout << "act_method = |" << act_method << "|" << std::endl;
+
+	bool i = false;
+	
+	for (it_method = _methods.begin() ; it_method != _methods.end(); it_method++)
+	{
+		if ((*it_method).compare(0 , (*it_method).size(), act_method) == 0)
+			i = true;
+		//std::cout << (*it_method) << std::endl;
+	}
+	if (i == false)
+	{
+		std::cout << "false method" << std::endl;
+		return (is_not_allowed(buff));
+	}
+	
+	std::set<std::string>				_index = src[j].getIndex();
+	std::set<std::string>::iterator		it_index = _index.begin();
+
+ 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+	{	this->act_index = (*it_index);} 
+
+	//std::cout << "file = " << src[j].getIndex() << std::endl;
+	if (act_method.compare("GET") == 0)
+		return ft_get(buff);
+	else if (buff.compare("POST") == 0)
+		return ft_post(buff);
+	else if (buff.compare("DELETE") == 0)
+		return ft_delete(buff);
 
 	//return (ft_get(buff));
 	
