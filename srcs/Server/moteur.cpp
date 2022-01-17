@@ -147,43 +147,32 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
-	int valread = -1;
-
-	size_t buff_size = 1000;
+	Method			meth;
+	Parse_header	parse_head;
 	
-	char buff[buff_size];
-
-
-	Method meth;
-	Parse_header parse_head;
-	parse_head.set_nbr_line(0);
+	size_t	buff_size = 1000;
+	char	buff[buff_size];
+	int		valread = -1;
 	
-	size_t buff_len = 0;
-	size_t old_len = 0;
-	size_t recv_len = 0;
+	int		nbr_bytes_send = 0;
+	bool	is_valid = true;
+	size_t	old_len = 0;
+	size_t	recv_len = 0;
 
 	bzero(&buff, sizeof(buff));
-	
-    while (valread != 0)
+    while (valread != 0 && is_valid == true)
 	{
 		old_len = std::strlen(buff);
 		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
-			std::cout << "valread == -1" << std::endl;//	std::cout << "error" << std::endl;
+			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-		buff_len = std::strlen(buff) - old_len;
-
-		//std::cout << "buff = [" << buff << "]" << std::endl;
-		//std::cout << "len = [" << buff + buff_len << "]" << std::endl;
-
 		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 		else
-			break;
+			is_valid = false;
 	}
-
-	//std::cout << "full buff = ((" << buff << "))" << std::endl;
 
 	std::cout << std::endl << std::endl << std::endl;
 	std::cout << "_requesr_status = [" << parse_head.get_request_status() << "]" << std::endl;
@@ -203,7 +192,6 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
  	if (valread != 0)
 	{
 		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
-		int nbr_bytes_send = 0;
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
