@@ -9,6 +9,7 @@ server {
 	client_max_body_size	20;
 
 	cgi .py cgi_python;
+	cgi .php cgi_python;
 
 	accepted_methods	GET POST DELETE;
 

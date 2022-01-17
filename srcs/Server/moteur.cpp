@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "moteur.hpp"
+#include "../Cgi/Cgi.hpp"
 #include "../method/method.hpp"
 #include <stdlib.h>
 
@@ -178,8 +179,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 		x++;
 	} */
 
-
-	buff_send = meth.is_method(buff, src);
+	//Cgi		obj_cgi(src.front());
+	//buff_send = meth.is_method(buff, src);
 	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
 	//std::cout << "{{" << buff_send << "}}" << std::endl;
 

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/16 21:08:39 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/17 13:17:50 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,19 +84,19 @@ void	Cgi::initEnv(const Server & src)
 	std::string	valueVar[] = {"GET", it_cgi->second.c_str(), "7777"};
 
 	for (size_t i = 0; i < 3; i++)
-		this->_env.push_back(std::make_pair(nameVar[i], valueVar[i]));
+		this->_env.insert(std::make_pair(nameVar[i], valueVar[i]));
 }
 
-char **Cgi::Convert_env(std::vector<std::pair<std::string, std::string>>)
+char **Cgi::Convert_env(std::map<std::string, std::string>)
 {
-	std::vector<std::pair<std::string, std::string>>::iterator it_env;
+	std::map<std::string, std::string>::iterator it_env;
 	char **env = new char *[this->_env.size() + 1];
 	int j = 0;
 	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 	{
 		std::string	content = it_env->first + "=" + it_env->second;
 		env[j] = new char[content.size() + 1];
-		env[j] = strcpy(env[j], (const char*)content.c_str());
+		env[j] = strcpy(env[j], content.c_str());
 		j++;
 	}
 	env[j] = NULL;
@@ -107,7 +107,6 @@ void	Cgi::exec_cgi(const Server & src)
 {
 	char *const *nul = NULL;
 	char **env;
-	std::map<std::string , std::string>::iterator it_cgi;
 
 	env = this->Convert_env(this->_env);
 	int i = 0;
@@ -116,28 +115,52 @@ void	Cgi::exec_cgi(const Server & src)
 		std::cout << "env[i] = " << env[i] << std::endl;
 		i++;
 	}
+	std::string a = "feefw";
+	std::string b = "/home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php";
+	int size = 10;
+	char **argv = create;
 
-	it_cgi = src.getCgi().begin();
-	//this->_pid = fork();
-	//if (this->_pid == 0)
-	//{
-
-	while (1)
+	argv[0] = strdup(a.c_str());
+	argv[1] = strdup(b.c_str());
+	argv[2] = 0;
+	int j = 0;
+	std::cout << "fewefwe" << std::endl;
+	while (argv[j])
 	{
-		int a = execve("/home/dodjian/Desktop/42/sixth_circle/webserv/srcs/Config/lol.py", nul, env);
-		std::cout << "a = " << a << std::endl;
+		std::cout << "argv[j] = " << argv[j] << std::endl;
+		j++;
 	}
-		//std::cout << "getcgi = " << src.getCgi() << std::endl;
-		//execv(str.c_str(), )
-		//execl(str.c_str(), NULL);
-	//}
+	std::string exec_path = "/usr/bin/php";
+	//std::string path_cgi = "/usr/bin/python3";
+	//std::string path_file = " /home/user42/Bureau/webserv/srcs/Config/default/html_page/cgi_python.py";
+	//exec_path += " /home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php";
+	std::cout << exec_path << std::endl;
+	this->_pid = fork();
+	if (this->_pid == 0)
+	{
+		if (execve(exec_path.c_str(), argv, env) == -1)
+			std::cout << "error execve cgi" << std::endl;
+		//redirect_result_cgi();
+	}
+}
+
+void	Cgi::redirect_result_cgi()
+{
+	std::string line;
+	std::string ret;
+	while (std::getline(std::cin, line))
+	{
+		ret += line;
+		ret += '\n';
+		std::cout << "ret = " << ret;
+	}
 }
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-std::vector<std::pair<std::string, std::string>> Cgi::getEnv() const
+std::map<std::string, std::string> Cgi::getEnv() const
 {
 	return (this->_env);
 }
