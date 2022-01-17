@@ -17,14 +17,13 @@
 #define TRUE 1
 #define FALSE 0
 #include <vector>
-#include <type_traits>
 
 
 std::string Method::build_header(std::string buff)
 {
 	std::string full_header;
 	//std::cout << "buff = [" << buff << "]" << std::endl;
-
+	buff = "wait";
   	//for (int i=1; i<=5; i++)
   	_header.push_back(_request_status);
   	_header.push_back(_server);
@@ -89,24 +88,31 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 	return (f);
 }
 
-std::string Method::is_method(std::string buff, std::vector<Server> src) // true or false
+std::string Method::is_method(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
 {
-	int e = 0;
-	//std::cout << "\n\n BUFF =" << buff << std::endl;
 
-	std::string act_listen = get_actual_listen(buff);
-	//std::cout << "ici" << std::endl;
+	std::string act_listen = static_cast<std::ostringstream*>( &(std::ostringstream() << port))->str();//get_actual_listen(buff);
 
-	//std::cout << "listen|" << act_listen  << "|xxx" << std::endl << std::endl;
-	//std::cout << "ici" << std::endl;
+	std::cout << "listen = " << act_listen << std::endl << std::endl;
 
 	size_t j = get_listen_vector(src, act_listen);
 
 	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
-	if (j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request_status() == 400)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x bad request" << std::endl;
 		return (is_bad_request(buff));
-
-
+	}
+	if (parse_head.get_request_status() == 404)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x not found" << std::endl;
+		return (is_not_found(buff));
+	}
+	if (parse_head.get_request_status() == 405)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x not allowed" << std::endl;
+		return (is_not_allowed(buff));
+	}
 	//std::cout << src[j] << std::endl;
 
 	std::set<std::string>				_methods;
@@ -127,7 +133,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
  	std::set<std::string>::iterator it_method;
 	std::string act_method = buff.substr(0, buff.find(" "));
 
-	//std::cout << "act_method = |" << act_method << "|" << std::endl;
+	std::cout << "act_method = |" << act_method << "|" << std::endl;
 
 	bool i = false;
 	
@@ -146,12 +152,8 @@ std::string Method::is_method(std::string buff, std::vector<Server> src) // true
 	std::set<std::string>				_index = src[j].getIndex();
 	std::set<std::string>::iterator		it_index = _index.begin();
 
-	this->act_index = (*it_index);
-
-/* 	for (it_index = _index.begin(st) ; it_index != _index.end(); it_index++)
-	{
-		std::cout  << "it index = " << (*it_index) << std::endl;
-	} */
+ 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+	{	this->act_index = (*it_index);} 
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
@@ -186,5 +188,6 @@ Method::Method(Method const & Method)
 
 Method	&Method::operator=(const Method &pt)
 {
+	this->_request_status = pt._request_status;
 	return (*this);
 }
