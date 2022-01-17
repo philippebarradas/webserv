@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/17 14:20:53 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/17 17:21:40 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,12 @@ std::ostream &			operator<<( std::ostream & o, Cgi const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+bool	Cgi::is_cgi(const Server & src, const Parse_header & src_header)
+{
+	std::cout << "path = " << src_header.get_path() << std::endl;
+	return (TRUE);
+}
+
 void	Cgi::init_env(const Server & src)
 {
 	std::map<std::string, std::string>::iterator it_cgi;
@@ -118,52 +124,57 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 char	**Cgi::create_argv()
 {
 	int	nbr_argv = 2;
-	char	**argv;// = new char *[nbr_argv + 1];
+	char	**argv = new char *[nbr_argv + 1];
 	std::string nul_str = "";
+	std::string a = "/usr/bin/php";
 	std::string b = "/home/user42/Bureau/webserv/srcs/Config/default/html_page/hello.php";
 
-	argv[0] = new char[1];
-	strcpy(argv[0], nul_str.c_str());
+	argv[0] = new char[a.size() + 1];
+	strcpy(argv[0], a.c_str());
 	argv[1] = new char[b.size() + 1];
 	strcpy(argv[1], b.c_str());
 	argv[2] = NULL;
-	int j = 0;
-	while (j < 2)
-	{
-		std::cout << "argv[j] = |" << argv[j] << "|" << std::endl;
-		j++;
-	}
 	return (argv);
 }
 
 void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 {
+	(void)src;
+	int i = 0, fd_out = 0, status = 0;
+	int pipefd[2];
 	std::string exec_path = "/usr/bin/php";
-	int i = 0;
-	while (env[i])
-	{
-		std::cout << "env[i] = " << env[i] << std::endl;
-		i++;
-	}
+	std::string path_cgi_file = "res_cgi";
+
+	pipe(pipefd);
 	this->_pid = fork();
 	if (this->_pid == 0)
 	{
+		fd_out = open(path_cgi_file.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 00666);
+		if (fd_out != -1)
+			dup2(fd_out, STDOUT_FILENO);
 		if (execve(exec_path.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
-		//redirect_result_cgi();
+		close(fd_out);
 	}
+	this->_send_content = redirect_result_cgi(path_cgi_file);
+	waitpid(this->_pid, &status, 0);
 }
 
-void	Cgi::redirect_result_cgi()
+std::string	Cgi::redirect_result_cgi(std::string path_cgi_file)
 {
-	std::string line;
-	std::string ret;
-	while (std::getline(std::cin, line))
+	std::ifstream ifs;
+	std::string	line, ret;
+
+	ifs.open(path_cgi_file, std::ifstream::in);
+	if (!ifs.is_open())
+		return (NULL);
+	while (std::getline(ifs, line))
 	{
 		ret += line;
 		ret += '\n';
-		std::cout << "ret = " << ret;
 	}
+	//std::cout << "ret = " << ret;
+	return (ret);
 }
 
 /*
@@ -173,6 +184,11 @@ void	Cgi::redirect_result_cgi()
 std::map<std::string, std::string> Cgi::getEnv() const
 {
 	return (this->_env);
+}
+
+std::string	Cgi::getSend_content() const
+{
+	return (this->_send_content);
 }
 
 /* ************************************************************************** */

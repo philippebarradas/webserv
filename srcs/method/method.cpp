@@ -41,7 +41,7 @@ std::string Method::build_header(std::string buff)
     //	std::cout << "string =|" << *it << std::endl;
 	}
 	full_header += "\n";
-	
+
 	//std::cout << "full = [" << full_header << "]" << std::endl;
 	return (full_header);
 	//return (bad_request);
@@ -49,10 +49,10 @@ std::string Method::build_header(std::string buff)
 
 
 std::string	get_actual_listen(std::string buff)
-{	
+{
 	std::string listen;
 	std::string eg;
-	
+
 	size_t size_start = 0;
 	size_t size_end = 0;
 	size_t nbr_dp = 0;
@@ -93,7 +93,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 
 	std::string act_listen = static_cast<std::ostringstream*>( &(std::ostringstream() << port))->str();//get_actual_listen(buff);
 
-	std::cout << "listen = " << act_listen << std::endl << std::endl;
+	std::cout << "listen = " << act_listen << std::endl;
 
 	size_t j = get_listen_vector(src, act_listen);
 
@@ -136,7 +136,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 	std::cout << "act_method = |" << act_method << "|" << std::endl;
 
 	bool i = false;
-	
+
 	for (it_method = _methods.begin() ; it_method != _methods.end(); it_method++)
 	{
 		if ((*it_method).compare(0 , (*it_method).size(), act_method) == 0)
@@ -148,12 +148,12 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 		std::cout << "false method" << std::endl;
 		return (is_not_allowed(buff));
 	}
-	
+
 	std::set<std::string>				_index = src[j].getIndex();
 	std::set<std::string>::iterator		it_index = _index.begin();
 
  	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
-	{	this->act_index = (*it_index);} 
+	{	this->act_index = (*it_index);}
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
@@ -164,7 +164,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 		return ft_delete(buff);
 
 	//return (ft_get(buff));
-	
+
 	//return (is_bad_request(buff));
 
 	//return ("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/17 14:03:18 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:54:29 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 // Colors
 #define PURPLE	"\033[0;35m"
@@ -54,25 +56,24 @@ class Request;
 class Cgi
 {
 	public:
-
 		Cgi();
 		Cgi(const Server & src); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
 		~Cgi();
 
-
+		bool	is_cgi(const Server & src, const Parse_header & src_header);
 		void	init_env(const Server & src);
-		char **convert_env(std::map<std::string, std::string>);
-		char **create_argv();
+		char	**convert_env(std::map<std::string, std::string>);
+		char	**create_argv();
 		void	exec_cgi(const Server & src, char **argv, char **env);
-		void	redirect_result_cgi();
+		std::string	redirect_result_cgi(std::string path_cgi_file);
 		std::map<std::string, std::string>	getEnv() const;
+		std::string	getSend_content() const;
 		Cgi &		operator=( Cgi const & rhs );
 
 	private:
-
-
+		std::string	_send_content;
 		int	_pid;
 		std::map<std::string, std::string>	_env;
 };

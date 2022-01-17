@@ -6,7 +6,7 @@
 #    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/17 15:09:21 by dodjian          ###   ########.fr        #
+#    Updated: 2022/01/17 16:26:42 by dodjian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME			= webserv
 CC				= @clang++
-CFLAGS			= -Wall -Wextra -Werror -std=c++98
+CFLAGS			= #-Wall -Wextra -Werror -std=c++98
 RM				= @rm -rf
 
 ######################################################################
@@ -44,6 +44,8 @@ CGI			= Cgi.cpp
 CONFIG		= Config.cpp Server.cpp utils.cpp
 
 SERVER			= moteur.cpp
+
+PARSE_HEADER	= parse_header.cpp
 
 METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp

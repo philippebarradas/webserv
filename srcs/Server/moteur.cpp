@@ -15,8 +15,6 @@
 #include "../method/method.hpp"
 #include "../Parse_header/parse_header.hpp"
 
-#include <stdlib.h>
-
 // Creating socket file descriptor
 int	Moteur::create_socket()
 {
@@ -150,7 +148,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Method			meth;
 	Parse_header	parse_head;
-
+	Cgi		obj_cgi(src.front());
 	size_t	buff_size = 1000;
 	char	buff[buff_size];
 	int		valread = -1;
@@ -175,8 +173,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			is_valid = false;
 	}
 
-	std::cout << std::endl << std::endl << std::endl;
-	std::cout << "_requesr_status = [" << parse_head.get_request_status() << "]" << std::endl;
+	std::cout << YELLOW << "----------------- Start of display content header -----------------" << std::endl << std::endl << END;
+	std::cout << "_request_status = [" << parse_head.get_request_status() << "]" << std::endl;
 	std::cout << "_method = [" << parse_head.get_method() << "]" << std::endl;
 	std::cout << "_path = [" << parse_head.get_path() << "]" << std::endl;
 	std::cout << "_protocol = [" << parse_head.get_protocol() << "]"<< std::endl;
@@ -188,12 +186,17 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	std::cout << "_method_charset = [" << parse_head.get_method_charset() << "]" << std::endl;
 	std::cout << "_keep_alive = [" << parse_head.get_keep_alive() << "]"<< std::endl;
 	std::cout << "_connection = [" << parse_head.get_connection() << "]"<< std::endl;
-	std::cout << std::endl << std::endl << std::endl;
+	std::cout << std::endl << YELLOW << "----------------- End of display content header -----------------" << END << std::endl << std::endl;
 
  	if (valread != 0)
 	{
 		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
-		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
+		//std::cout << RED << "buff_send = |" << this->buff_send << "|" << std::endl << END;
+		if (obj_cgi.is_cgi(src.front(), parse_head) == TRUE)
+			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
+				obj_cgi.getSend_content().size(), 0);
+		else
+			nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
