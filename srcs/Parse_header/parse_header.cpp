@@ -23,19 +23,20 @@ Parse_header::Parse_header() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
-   	all_header.push_back("Host:");
-  	all_header.push_back("User_agent:");
-  	all_header.push_back("Accept:");
-  	all_header.push_back("Accept Language:");
-  	all_header.push_back("Accept Encoding:");
-  	all_header.push_back("Method Charset:");
-  	all_header.push_back("Keep Alive:");
-  	all_header.push_back("Connection:");
-	all_header.push_back("Content Type:");
-  	all_header.push_back("Content Length:");
+    std::string  elements[34] = {"A-IM:", "Accept:", "Accept-Charset:", "Accept-Encoding:", "Accept-Language:","Accept-Datetime:",
+	"Access-Control-Request-Method:", "Access-Control-Request-Headers:", "Authorization:","Cache-Control:", "Connection:",
+	"Content-Length:", "Content-Type:", "Cookie:", "Date:", "Expect:", "Forwarded:","From:", "If-Match:", "If-Modified-Since:",
+	"If-None-Match:", "If-Range:", "If-Unmodified-Since:", "Max-Forwards:","Origin:", "Pragma:", "Proxy-Authorization:",
+	"Range:", "Referer:", "TE:", "User-Agent:", "Upgrade:", "Via:", "Warning:"};
+
+	for (size_t x = 0; x < 34; x++)
+	{
+		all_header.push_back(elements[x]);
+		_big_tab.insert(std::pair<std::string, std::string>(elements[x], ""));
+	}
 }
 
-/*
+/* 
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
@@ -60,12 +61,20 @@ Parse_header&				Parse_header::operator=( Parse_header const & rhs )
 
 int		Parse_header::buff_is_valid(char *buff, char *line)
 {
-	this->_buffer = buff;
 	std::string buffer_line = line;
+	size_t	start = 0;
 	size_t	found = 0;
-	size_t start = 0;
-	
+
+	if (init_buffer(buff) == -1)
+		return (0);
+	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
+	if (_buffer.size() > 32000)
+	{
+		_big_tab.insert(std::pair<std::string, std::string>("status", "413"));
+		return (-1);
+	}
 	this->incr_nbr_line();
+
 	if (get_nbr_line() == 1)
 	{
 		if ((start = parse_first_line()) == -1)
@@ -76,18 +85,45 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 			_buffer = _buffer.substr(start, _buffer.size() - start);;
 	}
 
-	if (buffer_line.compare("\r\n") == 0)
+	//for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+    //	std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
+
+/* 	if (buffer_line.compare("\r\n") == 0)
 	{
-		if (get_host().size() == 0)
-			_request_status = 400;
+		if (get_request("Host:").size() == 0)
+			_big_tab.insert(std::pair<std::string, std::string>("status", "400"));
 		std::cout << " == \\n" << std::endl;
 		return (1);
-	}
+	} */
 	fill_variables();
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
+	{
+		if (get_request("Host:").size() == 0)
+			_big_tab.insert(std::pair<std::string, std::string>("status", "413"));
+		std::cout << "request_status = " << _big_tab["status"] << std::endl;
 		return (1);
+	}
+	return (0);
+}
+
+int		Parse_header::init_buffer(char *buff)
+{
+	int		reset = 0;
+	size_t	x = 0;
+
+	for(size_t r = 0; r < std::strlen(buff); r += 2)
+	{
+		if (buff[r] != '\r' || buff[r + 1] != '\n')
+			reset = 1;
+		if (reset != 1 && buff[r] == '\r' && buff[r + 1] == '\n')
+			reset = 2;
+	}
+	if (this->_nbr_line == 0 && reset == 2)
+		return (-1);
+	for(x = 0; buff[x] == '\r' && buff[x + 1] == '\n' && x < std::strlen(buff); x += 2);
+	this->_buffer = buff + x;
 	return (0);
 }
 
@@ -107,15 +143,15 @@ int		Parse_header::parse_first_line()
 		else if (cmp.compare(" ") == 0 || cmp.compare("\n") == 0)
 		{
 			if (rank == 0)
-				this->_method = _buffer.substr(start, size);
+				_big_tab.insert(std::pair<std::string, std::string>("method", _buffer.substr(start, size)));
 			else if (rank == 1)
-				this->_path = _buffer.substr(start, size);
+				_big_tab.insert(std::pair<std::string, std::string>("path", _buffer.substr(start, size)));
 			else if (rank == 2)
 			{
 				if (cmp.compare("\n") == 0)
-					this->_protocol = _buffer.substr(start, size - 1);
+					_big_tab.insert(std::pair<std::string, std::string>("protocol", _buffer.substr(start, size - 1)));
 				else
-					this->_protocol = _buffer.substr(start, size);
+					_big_tab.insert(std::pair<std::string, std::string>("protocol", _buffer.substr(start, size)));
 			}
 			full_size += size + 1;
 			start = full_size;
@@ -124,21 +160,21 @@ int		Parse_header::parse_first_line()
 		}
 	}
 
-	if ((get_method().compare("GET") != 0 && get_method().compare("POST") != 0
-	&& get_method().compare("DELETE") != 0) || (get_path().at(0) != '/'))
+	if ((get_request("method").compare("GET") != 0 && get_request("method").compare("POST") != 0
+	&& get_request("method").compare("DELETE") != 0) || (get_request("path").at(0) != '/'))
 	{
 		std::cout << "ici 1" << std::endl;
-		this->_request_status = 400; 
+		_big_tab.insert(std::pair<std::string, std::string>("status", "400"));
 		return (-1);
 	}
-	else if (get_protocol().compare("HTTP/1.1") != 0)
+	else if (get_request("protocol").compare("HTTP/1.1") != 0)
 	{
 		std::cout << "ici 2" << std::endl;
-		this->_request_status = 404; 
+		_big_tab.insert(std::pair<std::string, std::string>("status", "404"));
 		return (-1);
 	}
 	else
-		this->_request_status = 200;
+		_big_tab.insert(std::pair<std::string, std::string>("status", "200"));
 	return (full_size);
 }
 
@@ -164,11 +200,30 @@ void		Parse_header::fill_variables()
 				if (final_pose > found && cmp.compare("\n") == 0)
 					bn = true;
 			}
-			fill_elements(pos, _buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())));
+			//BIG_TAB[*ith]
+			//fill_elements(pos, _buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())));
+			_big_tab.insert(std::pair<std::string, std::string>(*ith, fill_big_tab(_buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())))));
+
 		}
 		pos++;
 	}
+ 
+	for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+    	std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 }
+
+std::string	Parse_header::fill_big_tab(std::string str)
+{
+	if (!str.empty() && str[str.size() - 1] == '\n')
+		str.erase(str.size() - 1);
+	if (!str.empty() && str[str.size() - 1] == '\r')
+		str.erase(str.size() - 1);
+	while (!str.empty() && str[str.size() - 1] == ' ')
+		str.erase(str.size() - 1);
+	while (!str.empty() && str[0] == ' ')
+		str.erase(0,1);
+	return (str);
+}	
 
 void	Parse_header::fill_elements(int pos, std::string str)
 {
@@ -180,25 +235,6 @@ void	Parse_header::fill_elements(int pos, std::string str)
 		str.erase(str.size() - 1);
 	while (!str.empty() && str[0] == ' ')
 		str.erase(0,1);
-
-	if (pos == 0)
-		_host = str;
-	else if (pos == 1)
-		_user_agent = str;
-	else if (pos == 2)
-		_accept = str;
-	else if (pos == 3)
-		_accept_language = str;
-	else if (pos == 4)
-		_accept_encoding = str;
-	else if (pos == 5)
-		_method_charset = str;
-	else if (pos == 6)
-		_keep_alive = str;
-	else if (pos == 7)
-		_connection = str;
-	else if (pos == 8)
-		_content_type = str;
-	else if (pos == 9)
-		_content_length = str;
+	pos = 1;
 }
+

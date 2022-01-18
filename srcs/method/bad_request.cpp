@@ -106,3 +106,25 @@ std::string Method::is_not_allowed(std::string buff)
 
 	return (build_header(buff) + file);
 }
+
+std::string Method::is_too_large(std::string buff)
+{
+    std::string	file = file_to_string("srcs/Config/default/html_page/413_too_large.html", buff);
+	//std::cout << "seg est ici [BAD REQUEST]" << std::endl;
+    _request_status = "HTTP/1.1 400 Bad Request";
+    _server = "webcerveau/1.0";
+    _date = get_date();
+    _content_type = "Content-Type: text/html";
+    _content_length = "Content-Length: " + static_cast<std::ostringstream*>( &(std::ostringstream() << file.size()) )->str();
+    _connection = "Connection: keep-alive";
+
+	//char cwd[100];
+	//getcwd(cwd, 100);
+	//std::cout << cwd << std::endl;
+
+
+
+	//std::cout << "||||||||->" << file  << "<-||||||||" << std::endl;
+
+	return (build_header(buff) + file);
+}

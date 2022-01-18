@@ -150,10 +150,10 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	Method			meth;
 	Parse_header	parse_head;
 	
-	size_t	buff_size = 1000;
+	size_t	buff_size = 33000;
 	char	buff[buff_size];
 	int		valread = -1;
-	
+	int		result = 0;
 	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
 	size_t	old_len = 0;
@@ -168,25 +168,14 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
+		if ((result = parse_head.buff_is_valid(buff, buff + old_len)) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
-		else
+		else 
 			is_valid = false;
 	}
 
 	std::cout << std::endl << std::endl << std::endl;
-	std::cout << "_requesr_status = [" << parse_head.get_request_status() << "]" << std::endl;
-	std::cout << "_method = [" << parse_head.get_method() << "]" << std::endl;
-	std::cout << "_path = [" << parse_head.get_path() << "]" << std::endl;
-	std::cout << "_protocol = [" << parse_head.get_protocol() << "]"<< std::endl;
-	std::cout << "_host = [" << parse_head.get_host() << "]" << std::endl;
-	std::cout << "_user_agent = [" << parse_head.get_user_agent() << "]" << std::endl;
-	std::cout << "_accept = [" << parse_head.get_accept() << "]"<< std::endl;
-	std::cout << "_accept_language = [" << parse_head.get_accept_language() << "]"<< std::endl;
-	std::cout << "_accept_encoding = [" << parse_head.get_accept_encoding() << "]" << std::endl;
-	std::cout << "_method_charset = [" << parse_head.get_method_charset() << "]" << std::endl;
-	std::cout << "_keep_alive = [" << parse_head.get_keep_alive() << "]"<< std::endl;
-	std::cout << "_connection = [" << parse_head.get_connection() << "]"<< std::endl;
+
 	std::cout << std::endl << std::endl << std::endl;
 
  	if (valread != 0)
@@ -197,7 +186,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
-	if (parse_head.get_request_status() != 200)
+	if (parse_head.get_request("status").compare("200") != 0)
 		close(fd);
 }
 

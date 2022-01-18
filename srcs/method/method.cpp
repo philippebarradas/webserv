@@ -98,20 +98,25 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 	size_t j = get_listen_vector(src, act_listen);
 
 	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
-	if (parse_head.get_request_status() == 400)//j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request("status").compare("400") == 400)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x bad request" << std::endl;
 		return (is_bad_request(buff));
 	}
-	if (parse_head.get_request_status() == 404)//j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request("status").compare("404") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x not found" << std::endl;
 		return (is_not_found(buff));
 	}
-	if (parse_head.get_request_status() == 405)//j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request("status").compare("405") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x not allowed" << std::endl;
 		return (is_not_allowed(buff));
+	}
+	if (parse_head.get_request("status").compare("413") == 0)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x header or cookie too large" << std::endl;
+		return (is_too_large(buff));
 	}
 	//std::cout << src[j] << std::endl;
 
@@ -131,7 +136,7 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 	}
 	//std::cout << _methods << std::endl;
  	std::set<std::string>::iterator it_method;
-	std::string act_method = buff.substr(0, buff.find(" "));
+	std::string act_method = parse_head.get_request("method");
 
 	std::cout << "act_method = |" << act_method << "|" << std::endl;
 

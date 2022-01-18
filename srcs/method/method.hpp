@@ -61,6 +61,7 @@ class Method
 		std::string is_bad_request(std::string buff);
 		std::string is_not_allowed(std::string buff);
 		std::string is_not_found(std::string buff);
+		std::string	is_too_large(std::string buff);
 
 		std::string ft_get(std::string full_cmd);
 		std::string ft_post(std::string full_cmd);
