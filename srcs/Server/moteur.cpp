@@ -134,7 +134,7 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 		this->_listen_fd[this->_i_server] = create_socket();
 		this->_fds_events[this->_i_server].data.fd = this->_listen_fd[this->_i_server];
 		this->_fds_events[this->_i_server].events = EPOLLIN;
-		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, this->_listen_fd[this->_i_server], &_fds_events[this->_i_server]) == -1)
+		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, this->_listen_fd[this->_i_server], &this->_fds_events[this->_i_server]) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 		set_socket(this->_listen_fd[this->_i_server]);
 		bind_socket(this->_listen_fd[this->_i_server], src);
@@ -175,8 +175,7 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 		if ((*it).getListen() == port_str)
 			break ;
 	}
-
-	Cgi		obj_cgi(src.at(i_listen));
+	Cgi		obj_cgi(src.at(i_listen), parse_head);
 	int		nbr_bytes_send = 0;
 	Method			meth;
 	if (this->_valread != 0)

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 17:43:24 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/18 18:59:50 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,6 @@ class Parse_header
 		int		parse_first_line();
 
 		std::vector<std::string> all_header;
-
-
-		std::string get_method() const {return _method;};
-		std::string get_path() const {return _path;};
-		std::string get_protocol() const {return _protocol;};
-
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		size_t	get_request_status() const {return this->_request_status;};
 
@@ -82,17 +76,17 @@ class Parse_header
 		std::string _cache_control;
 
 	public :
-		std::string get_method(){return _method;};
-		std::string get_path(){return _path;};
-		std::string	get_protocol(){return _protocol;};
+		std::string get_method() const{return _method;};
+		std::string get_path() const {return _path;};
+		std::string	get_protocol() const{return _protocol;};
 
 		// request header
 
-		std::string get_host(){return _host;};
-		std::string get_user_agent(){return _user_agent;};
+		std::string get_host() const {return _host;};
+		std::string get_user_agent() const {return _user_agent;};
 
-		std::string get_accept(){return _accept;};
-		std::string get_accept_language(){return _accept_language;};
+		std::string get_accept() const {return _accept;};
+		std::string get_accept_language() const {return _accept_language;};
 		std::string get_accept_encoding(){return _accept_encoding;};
 		std::string get_method_charset(){return _method_charset;};
 
@@ -104,8 +98,8 @@ class Parse_header
 
 		// representation header
 
-		std::string get_content_type(){return _content_type;};
-		std::string	get_content_length(){return _content_length;};
+		std::string get_content_type() const {return _content_type;};
+		std::string	get_content_length() const {return _content_length;};
 
 		std::string get_pragma(){return _pragma;};
 		std::string get_cache_control(){return _cache_control;};

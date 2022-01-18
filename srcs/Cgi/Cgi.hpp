@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/17 17:39:57 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/18 17:15:47 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,17 +57,18 @@ class Cgi
 {
 	public:
 		Cgi();
-		Cgi(const Server & src); // pour l'instant
+		Cgi(const Server & src, const Parse_header & src_header); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
 		~Cgi();
 
+		std::string	to_string(size_t nb);
 		bool	is_cgi(const Parse_header & src_header);
-		void	init_env(const Server & src);
+		void	init_env(const Server & src, const Parse_header & src_header);
 		char	**convert_env(std::map<std::string, std::string>);
 		char	**create_argv();
 		void	exec_cgi(const Server & src, char **argv, char **env);
-		std::string	redirect_result_cgi(std::string path_cgi_file);
+		std::string	redirect_result_cgi(int pipefd[2]);
 		std::map<std::string, std::string>	getEnv() const;
 		std::string	getSend_content() const;
 		Cgi &		operator=( Cgi const & rhs );
