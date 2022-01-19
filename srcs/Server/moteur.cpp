@@ -147,64 +147,71 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
-	int valread = 0;
-
-	size_t buff_size = 1000;
+	Method			meth;
+	Parse_header	parse_head;
 	
-	char buff[buff_size];
+	size_t	buff_size = 1000;
+	char	buff[buff_size];
+	int		valread = -1;
 	
-	std::string buff_send;
-
-	Method meth;
-	Parse_header parse_head;
-	
-
-	size_t recv_len = 0;
-	size_t x = 0;
+	int		nbr_bytes_send = 0;
+	bool	is_valid = true;
+	size_t	old_len = 0;
+	size_t	recv_len = 0;
 
 	bzero(&buff, sizeof(buff));
-	
-
- 	while (parse_head.buff_is_valid(buff) == 1)
+    while (valread != 0 && is_valid == true)
 	{
-		valread = recv(fd, buff + recv_len, buff_size - recv_len, 0);
+		old_len = std::strlen(buff);
+		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
-			;//throw std::runtime_error("[Error] recv() failed");
+			throw std::runtime_error("[Error] recv() failed");
 		else
-		{
 			recv_len += valread;
-			//std::cout << "buff = " << buff << std::endl;
-		}
+		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
+			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
+		else
+			is_valid = false;
 	}
-	//std::cout << "((" << buff << "))" << std::endl;
 
-	//all_buff = buff;
-	//std::cout << "all buff = " << all_buff << std::endl;
+	std::cout << std::endl << std::endl << std::endl;
+	std::cout << "_requesr_status = [" << parse_head.get_request_status() << "]" << std::endl;
+	std::cout << "_method = [" << parse_head.get_method() << "]" << std::endl;
+	std::cout << "_path = [" << parse_head.get_path() << "]" << std::endl;
+	std::cout << "_protocol = [" << parse_head.get_protocol() << "]"<< std::endl;
+	std::cout << "_host = [" << parse_head.get_host() << "]" << std::endl;
+	std::cout << "_user_agent = [" << parse_head.get_user_agent() << "]" << std::endl;
+	std::cout << "_accept = [" << parse_head.get_accept() << "]"<< std::endl;
+	std::cout << "_accept_language = [" << parse_head.get_accept_language() << "]"<< std::endl;
+	std::cout << "_accept_encoding = [" << parse_head.get_accept_encoding() << "]" << std::endl;
+	std::cout << "_method_charset = [" << parse_head.get_method_charset() << "]" << std::endl;
+	std::cout << "_keep_alive = [" << parse_head.get_keep_alive() << "]"<< std::endl;
+	std::cout << "_connection = [" << parse_head.get_connection() << "]"<< std::endl;
+	std::cout << std::endl << std::endl << std::endl;
 
-	
-	buff_send = meth.is_method(buff, src);
-	//buff_send = strdup("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
-	//std::cout << "{{" << buff_send << "}}" << std::endl;
-
-	int nbr_bytes_send = 0;
-	nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
-	if (nbr_bytes_send == -1)
-		throw std::runtime_error("[Error] sent() failed");
-	std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+ 	if (valread != 0)
+	{
+		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
+		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
+		if (nbr_bytes_send == -1)
+			throw std::runtime_error("[Error] sent() failed");
+		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+	}
+	if (parse_head.get_request_status() != 200)
+		close(fd);
 }
 
-
-
-// loop server with EPOLLING events
 void	Moteur::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;
 	int new_socket = 0;
+	int i = 0;
+
 	while (TRUE)
 	{
 		if ((nbr_connexions = epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
-		for (int i = 0; i < nbr_connexions; i++)
+		for (i = 0; i < nbr_connexions; i++)
 		{
 			if (is_listener(this->fds_events[i].data.fd, this->listen_fd, this->nbr_servers, src))
 			{
@@ -218,9 +225,10 @@ void	Moteur::loop_server(const std::vector<Server> & src)
 			else
 			{
 				read_send_data(this->fds_events[i].data.fd, src);
-				close(this->fds_events[i].data.fd);
+				//break ;
 			}
 		}
+		//send_and_close(this->fds_events[i].data.fd, src);
 	}
 }
 
