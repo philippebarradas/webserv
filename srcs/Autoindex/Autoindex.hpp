@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 13:52:00 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/17 14:10:45 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/19 09:52:05 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <cstring>
 # include <dirent.h>
 # include <sys/stat.h>
+# include <sstream>
 
 
 class Autoindex

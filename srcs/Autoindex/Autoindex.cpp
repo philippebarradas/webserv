@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 10:11:41 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/17 14:24:07 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/19 10:27:33 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ Autoindex &				Autoindex::operator=( Autoindex const & rhs )
 {
 	if ( this != &rhs )
 	{
-		//this->_path = rhs._path;
+		this->_href = rhs._href;
+		this->_pathStr = rhs._pathStr;
 	}
 	return *this;
 }
@@ -74,11 +75,33 @@ std::ostream &			operator<<( std::ostream & o, Autoindex const & i )
 std::string	Autoindex::getPage( void ) const
 {
 	std::string	page;
+	std::map<std::string, std::string>::const_iterator it, end;
 
 	page = "<html>\n<head><title>Index of " + this->_pathStr
 		+ "</title></head>\n"
 		+ "<body bgcolor=\"white\">\n"
 		+ "<h1>Index of " + this->_pathStr + "</h1><hr><pre>";
+
+	end = this->_href.end();
+	for (it = this->_href.begin() ; it != end ; ++it)
+	{
+		if (it->first[it->first.length() - 1] == '/')
+		{
+			page += "<a href=\"" + it->first + "\">" + it->first + "</a>"
+				+ it->second + "\n";
+		}
+	}
+	end = this->_href.end();
+	for (it = this->_href.begin() ; it != end ; ++it)
+	{
+		if (it->first[it->first.length() - 1] != '/')
+		{
+			page += "<a href=\"" + it->first + "\">" + it->first + "</a>"
+				+ it->second + "\n";
+		}
+	}
+
+	page += "</pre><hr></body>\n</html>";
 
 	return (page);
 }
@@ -86,15 +109,29 @@ std::string	Autoindex::getPage( void ) const
 void		Autoindex::insertAlign( std::string const & path,
 	time_t const & date, off_t const & size )
 {
-	struct tm	*timeinfo;
-	char		buffer[200];
+	struct tm			*timeinfo;
+	char				buffer[30];
+	std::string			log, log_size, log_date;
 
+	bzero(&buffer, 30);
 	timeinfo = localtime(&date);
-	strftime(buffer, 200, "%d-%b-%G %T",timeinfo);
-	std::cout << path << std::endl;
-	std::cout << buffer << std::endl;
-	std::cout << size << std::endl;
-	std::cout << std::endl;
+	strftime(buffer, 30, "%d-%b-%G %T",timeinfo);
+
+	if (size >= 0)
+	{
+		std::stringstream	conv;
+		conv << size;
+		log_size = conv.str();
+	}
+	else
+		log_size = "-";
+	log_date = std::string(buffer);
+	log_date.erase(log_date.length() - 3, 3);
+
+	log = std::string(51 - path.length(), ' ') + log_date
+		+ std::string(20 - log_size.length(), ' ') + log_size;
+
+	this->_href.insert(std::make_pair(path, log));
 }
 
 void		Autoindex::setAllHref( DIR *dir )
@@ -108,8 +145,6 @@ void		Autoindex::setAllHref( DIR *dir )
 		if (pDirent->d_name[0] != '.')
 		{
 			pathfile = this->_pathStr + '/' + pDirent->d_name;
-			std::cout << pathfile << std::endl;
-
 			stat(pathfile.c_str(), &attr);
 
 			if (S_ISDIR(attr.st_mode))
@@ -121,12 +156,7 @@ void		Autoindex::setAllHref( DIR *dir )
 		}
 		else if (strcmp(pDirent->d_name, "..") == 0)
 			this->_href.insert(std::make_pair("../", ""));
-
-		//std::cout << "pDirent->d_name\t=\t" << pDirent->d_name << std::endl;
-		//std::cout << "pDirent->d_reclen\t=\t" << attr.st_size << std::endl;
-		//std::cout << "this->path\t=\t" << this->_path << std::endl;
 	}
-	std::cout << std::endl;
 }
 
 char const *Autoindex::InvalidPath::what() const throw()
