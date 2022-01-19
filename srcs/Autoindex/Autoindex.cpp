@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 10:11:41 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 10:27:33 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/19 11:01:14 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,14 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Autoindex::Autoindex(const char *path)
+Autoindex::Autoindex(const char *root, std::string const & path): _pathStr(path)
 {
 	DIR	*dir;
 
-	dir = opendir(path);
+	dir = opendir(root);
 	if (!dir)
-		throw InvalidPath();
-	this->_pathStr = std::string(path);
-	this->setAllHref(dir);
+		throw InvalidRoot();
+	this->setAllHref(dir, root);
 	closedir(dir);
 }
 
@@ -134,7 +133,7 @@ void		Autoindex::insertAlign( std::string const & path,
 	this->_href.insert(std::make_pair(path, log));
 }
 
-void		Autoindex::setAllHref( DIR *dir )
+void		Autoindex::setAllHref( DIR *dir, const char *root )
 {
 	struct dirent	*pDirent;
 	struct stat		attr;
@@ -144,7 +143,7 @@ void		Autoindex::setAllHref( DIR *dir )
 	{
 		if (pDirent->d_name[0] != '.')
 		{
-			pathfile = this->_pathStr + '/' + pDirent->d_name;
+			pathfile = std::string(root) + '/' + pDirent->d_name;
 			stat(pathfile.c_str(), &attr);
 
 			if (S_ISDIR(attr.st_mode))
@@ -159,7 +158,7 @@ void		Autoindex::setAllHref( DIR *dir )
 	}
 }
 
-char const *Autoindex::InvalidPath::what() const throw()
+char const *Autoindex::InvalidRoot::what() const throw()
 {
 	return "[Error] Cannot open directory.";
 }

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 13:52:00 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 09:52:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/19 11:00:33 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ class Autoindex
 
 	public:
 
-		class InvalidPath : public std::exception
+		class InvalidRoot : public std::exception
 		{
 			public:
 				virtual const char* what() const throw();
 		};
 
-		Autoindex(const char *path);
+		Autoindex(const char *root, std::string const & path);
 		Autoindex( Autoindex const & src );
 		~Autoindex();
 
@@ -48,7 +48,7 @@ class Autoindex
 		std::string							_pathStr;
 		std::map<std::string, std::string>	_href;
 
-		void	setAllHref( DIR *dir );
+		void	setAllHref( DIR *dir, const char *root );
 		void	insertAlign( std::string const & path,
 					time_t const & date, off_t const & size );
 
