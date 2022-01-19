@@ -13,7 +13,7 @@ server {
 
 	accepted_methods	GET POST DELETE;
 
-	root /home/user42/webserv/srcs/Config/html_page;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	index my_index.html;
 	autoindex on;
 	error_page 400 /400_bad_request.html;

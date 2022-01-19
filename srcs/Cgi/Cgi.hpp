@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/18 17:15:47 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/19 19:50:33 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,13 @@ class Cgi
 
 		std::string	to_string(size_t nb);
 		bool	is_cgi(const Parse_header & src_header);
+		void	init_path(const Server & src);
+		void	init_env_client_var(const Server & src, const Parse_header & src_header);
+		void	init_env_server_var(const Server & src, const Parse_header & src_header);
+		void	init_env_request_var(const Server & src, const Parse_header & src_header);
 		void	init_env(const Server & src, const Parse_header & src_header);
 		char	**convert_env(std::map<std::string, std::string>);
-		char	**create_argv();
+		char	**create_argv(const Server & src);
 		void	exec_cgi(const Server & src, char **argv, char **env);
 		std::string	redirect_result_cgi(int pipefd[2]);
 		std::map<std::string, std::string>	getEnv() const;
@@ -74,6 +78,7 @@ class Cgi
 		Cgi &		operator=( Cgi const & rhs );
 
 	private:
+		std::string	_path_cgi;
 		std::string	_send_content;
 		int	_pid;
 		std::map<std::string, std::string>	_env;

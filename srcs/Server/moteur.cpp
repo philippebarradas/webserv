@@ -180,12 +180,15 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 	Method			meth;
 	if (this->_valread != 0)
 	{
-		this->_buff_send = meth.is_method(this->_buff, src, this->_port, parse_head);
 		if (obj_cgi.is_cgi(parse_head) == TRUE)
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 		else
-			nbr_bytes_send = send(fd, _buff_send.c_str(), _buff_send.size(), 0);
+		{
+			this->_buff_send = meth.is_method(this->_buff, src, this->_port, parse_head);
+			std::cout << YELLOW << "buff_send = |" << this->_buff_send << "|" << END << std::endl << std::endl;
+			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+		}
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
