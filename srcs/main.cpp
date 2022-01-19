@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/11 17:05:03 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/19 12:53:01 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	main( int ac, char *av[] )
 	try
 	{
 		conf = Config(av[1]);
+		std::cout << conf << std::endl;
 		vec_serv = conf.getConfig();
 
 		Moteur serv(vec_serv);
