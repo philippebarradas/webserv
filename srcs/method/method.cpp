@@ -97,8 +97,9 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 
 	size_t j = get_listen_vector(src, act_listen);
 
+	std::cout << "xstatus = " << parse_head.get_request("status") << std::endl;
 	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
-	if (parse_head.get_request("status").compare("400") == 400)//j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request("status").compare("400") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x bad request" << std::endl;
 		return (is_bad_request(buff));

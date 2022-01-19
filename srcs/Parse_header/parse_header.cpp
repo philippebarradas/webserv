@@ -23,17 +23,16 @@ Parse_header::Parse_header() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
-    std::string  elements[34] = {"A-IM:", "Accept:", "Accept-Charset:", "Accept-Encoding:", "Accept-Language:","Accept-Datetime:",
-	"Access-Control-Request-Method:", "Access-Control-Request-Headers:", "Authorization:","Cache-Control:", "Connection:",
-	"Content-Length:", "Content-Type:", "Cookie:", "Date:", "Expect:", "Forwarded:","From:", "If-Match:", "If-Modified-Since:",
-	"If-None-Match:", "If-Range:", "If-Unmodified-Since:", "Max-Forwards:","Origin:", "Pragma:", "Proxy-Authorization:",
-	"Range:", "Referer:", "TE:", "User-Agent:", "Upgrade:", "Via:", "Warning:"};
+    std::string  elements[39] = {"status", "method", "path", "protocol","Host:","A-IM:", "Accept:",
+	"Accept-Charset:", "Accept-Encoding:", "Accept-Language:","Accept-Datetime:", "Access-Control-Request-Method:",
+	"Access-Control-Request-Headers:", "Authorization:","Cache-Control:", "Connection:", "Content-Length:",
+	"Content-Type:", "Cookie:", "Date:", "Expect:", "Forwarded:","From:", "If-Match:", "If-Modified-Since:", "If-None-Match:",
+	"If-Range:", "If-Unmodified-Since:", "Max-Forwards:","Origin:", "Pragma:", "Proxy-Authorization:", "Range:", "Referer:",
+	"TE:", "User-Agent:", "Upgrade:", "Via:", "Warning:"};
 
-	for (size_t x = 0; x < 34; x++)
-	{
-		all_header.push_back(elements[x]);
-		_big_tab.insert(std::pair<std::string, std::string>(elements[x], ""));
-	}
+	std::string empty = "";
+	for (size_t x = 0; x < 39; x++)
+		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 }
 
 /* 
@@ -61,20 +60,20 @@ Parse_header&				Parse_header::operator=( Parse_header const & rhs )
 
 int		Parse_header::buff_is_valid(char *buff, char *line)
 {
+	std::map<std::string, std::string>::iterator replace;
 	std::string buffer_line = line;
 	size_t	start = 0;
-	size_t	found = 0;
 
 	if (init_buffer(buff) == -1)
 		return (0);
-	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
 	if (_buffer.size() > 32000)
 	{
-		_big_tab.insert(std::pair<std::string, std::string>("status", "413"));
+		replace = _big_tab.find("status");
+		replace->second = "413";
 		return (-1);
 	}
+	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
 	this->incr_nbr_line();
-
 	if (get_nbr_line() == 1)
 	{
 		if ((start = parse_first_line()) == -1)
@@ -84,28 +83,29 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 		else
 			_buffer = _buffer.substr(start, _buffer.size() - start);;
 	}
-
-	//for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
-    //	std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-
-/* 	if (buffer_line.compare("\r\n") == 0)
-	{
-		if (get_request("Host:").size() == 0)
-			_big_tab.insert(std::pair<std::string, std::string>("status", "400"));
-		std::cout << " == \\n" << std::endl;
-		return (1);
-	} */
 	fill_variables();
+	return (check_header());
+}
+
+int		Parse_header::check_header()
+{
+	std::map<std::string, std::string>::iterator replace;
+	size_t	found = 0;
+
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
 	{
-		if (get_request("Host:").size() == 0)
-			_big_tab.insert(std::pair<std::string, std::string>("status", "413"));
+		std::cout << "get = [" << get_request("Host:") << "]" << "[" << _big_tab["Host:"] << "]" << std::endl;
+		if (get_request("Host:").compare("") == 0)
+		{
+			replace = _big_tab.find("status");
+			replace->second = "400";
+		}
 		std::cout << "request_status = " << _big_tab["status"] << std::endl;
 		return (1);
 	}
-	return (0);
+	return (0); 
 }
 
 int		Parse_header::init_buffer(char *buff)
@@ -134,6 +134,7 @@ int		Parse_header::parse_first_line()
 	size_t size = 0;
 	size_t full_size = 0;
 	size_t rank = 0;
+	std::map<std::string, std::string>::iterator replace;
 
 	for (std::string::iterator it = _buffer.begin(); it != _buffer.end() && rank <= 2; ++it)
 	{
@@ -143,15 +144,22 @@ int		Parse_header::parse_first_line()
 		else if (cmp.compare(" ") == 0 || cmp.compare("\n") == 0)
 		{
 			if (rank == 0)
-				_big_tab.insert(std::pair<std::string, std::string>("method", _buffer.substr(start, size)));
+			{
+				replace = _big_tab.find("method");
+				replace->second = _buffer.substr(start, size);
+			}
 			else if (rank == 1)
-				_big_tab.insert(std::pair<std::string, std::string>("path", _buffer.substr(start, size)));
+			{
+				replace = _big_tab.find("path");
+				replace->second = _buffer.substr(start, size);
+			}
 			else if (rank == 2)
 			{
+				replace = _big_tab.find("protocol");
 				if (cmp.compare("\n") == 0)
-					_big_tab.insert(std::pair<std::string, std::string>("protocol", _buffer.substr(start, size - 1)));
+					replace->second = _buffer.substr(start, size - 1);
 				else
-					_big_tab.insert(std::pair<std::string, std::string>("protocol", _buffer.substr(start, size)));
+					replace->second =  _buffer.substr(start, size);
 			}
 			full_size += size + 1;
 			start = full_size;
@@ -160,21 +168,22 @@ int		Parse_header::parse_first_line()
 		}
 	}
 
+	replace = _big_tab.find("status");
 	if ((get_request("method").compare("GET") != 0 && get_request("method").compare("POST") != 0
 	&& get_request("method").compare("DELETE") != 0) || (get_request("path").at(0) != '/'))
 	{
-		std::cout << "ici 1" << std::endl;
-		_big_tab.insert(std::pair<std::string, std::string>("status", "400"));
+		replace->second = "400";
+		std::cout << "request_status = " << _big_tab["status"] << std::endl;
 		return (-1);
 	}
 	else if (get_request("protocol").compare("HTTP/1.1") != 0)
 	{
-		std::cout << "ici 2" << std::endl;
-		_big_tab.insert(std::pair<std::string, std::string>("status", "404"));
+		replace->second = "404";
+		std::cout << "request_status = " << _big_tab["status"] << std::endl;
 		return (-1);
 	}
 	else
-		_big_tab.insert(std::pair<std::string, std::string>("status", "200"));
+		replace->second = "200";
 	return (full_size);
 }
 
@@ -183,12 +192,12 @@ void		Parse_header::fill_variables()
 	std::string cmp;
 	size_t	final_pose = 0;
 	size_t	found = 0;
-	size_t	pos = 0;
 	bool	bn = false;
 
-	for (std::vector<std::string>::iterator ith = all_header.begin() ; ith != all_header.end(); ++ith)
+	std::map<std::string, std::string>::iterator replace;
+	for (std::map<std::string, std::string>::iterator ith = _big_tab.begin() ; ith != _big_tab.end(); ++ith)
 	{
-		found = _buffer.find(*ith);
+		found = _buffer.rfind(ith->first);
 		if (found != std::string::npos)
 		{
 			final_pose = 0;
@@ -199,17 +208,20 @@ void		Parse_header::fill_variables()
 				cmp = *it;
 				if (final_pose > found && cmp.compare("\n") == 0)
 					bn = true;
-			}
-			//BIG_TAB[*ith]
-			//fill_elements(pos, _buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())));
-			_big_tab.insert(std::pair<std::string, std::string>(*ith, fill_big_tab(_buffer.substr(found + (*ith).size(), final_pose - (found + (*ith).size())))));
-
+			}			
+			replace = _big_tab.find(ith->first);
+			if (replace->first.find(":") != std::string::npos)
+				replace->second = fill_big_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
 		}
-		pos++;
 	}
  
+	//DISPLAY VALID ELEMENTS
 	for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
-    	std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
+    {
+		if (it->second.size() != 0)
+			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
+	}
+	//
 }
 
 std::string	Parse_header::fill_big_tab(std::string str)
@@ -223,18 +235,4 @@ std::string	Parse_header::fill_big_tab(std::string str)
 	while (!str.empty() && str[0] == ' ')
 		str.erase(0,1);
 	return (str);
-}	
-
-void	Parse_header::fill_elements(int pos, std::string str)
-{
-	if (!str.empty() && str[str.size() - 1] == '\n')
-		str.erase(str.size() - 1);
-	if (!str.empty() && str[str.size() - 1] == '\r')
-		str.erase(str.size() - 1);
-	while (!str.empty() && str[str.size() - 1] == ' ')
-		str.erase(str.size() - 1);
-	while (!str.empty() && str[0] == ' ')
-		str.erase(0,1);
-	pos = 1;
 }
-

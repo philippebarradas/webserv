@@ -153,7 +153,6 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	size_t	buff_size = 33000;
 	char	buff[buff_size];
 	int		valread = -1;
-	int		result = 0;
 	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
 	size_t	old_len = 0;
@@ -168,7 +167,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-		if ((result = parse_head.buff_is_valid(buff, buff + old_len)) == 0)	
+		std::cout << "avant" << std::endl;
+		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 		else 
 			is_valid = false;
@@ -186,7 +186,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
-	if (parse_head.get_request("status").compare("200") != 0)
+	if (parse_head.get_request("status").compare("200") != 0 ||
+	parse_head.get_request("Connection:").find("close") != std::string::npos)
 		close(fd);
 }
 
