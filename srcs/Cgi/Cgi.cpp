@@ -100,33 +100,45 @@ bool	Cgi::is_cgi(const Parse_header & src)
 
 void	Cgi::init_env(const Server & src, const Parse_header & src_header)
 {
+	//std::string server_software = "webserv/1.1";
 	std::string user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36(KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36";
 	std::string accept_language = "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,ru;q=0.6";
-	std::string http_accept = "text/*";
 	std::string content_type = "application/x-www-form-urlencoded";
 	std::string path_to_cgi_script = "/usr/bin/";
 	std::map<std::string, std::string>::iterator it_cgi, it_env;
+	std::map<std::string, Server>::iterator it_loc;
+	char	abs_path[BUFFER_SIZE];
 
+	if (getcwd(abs_path, BUFFER_SIZE) == NULL)
+		return ;
+	std::string new_abs_path = abs_path;
+
+	new_abs_path += "/srcs/Config/default/html_page";
+	std::cout << "new_abs_path = " << new_abs_path << std::endl;
 	it_cgi = src.getCgi().begin();
+	it_loc = src.getLocation().begin();
 	std::string script_filename = path_to_cgi_script + it_cgi->second.c_str();
-
-	// var client
+	// var server
+	//this->_env["SERVER_SOFTWARE"] = "webserv/1.1"; pas bien
+	//this->_env["SERVER_NAME"] = src_header.get_host(); pas bien
+	//this->_env["GATEWAY_INTERFACE"] = "CGI/1.1"; pas bien
+	// var from client
 	this->_env["HTTP_ACCEPT"] = src_header.get_accept();
-	//this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_accept_language();
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = accept_language;
 	this->_env["HTTP_USER_AGENT"] = user_agent;
-	//this->_env["HTTP_USER_AGENT"] = src_header.get_user_agent();
-	//this->_env["HTTP_COOKIE"] = "";
-	//this->_env["HTTP_REFERER"] = "";
-	// var server
-	this->_env["PATH_INFO"] = src_header.get_path();
+	this->_env["HTTP_COOKIE"] = "PHPSESSID=298zf09hf012fh2; csrftoken=u32t4o3tb3gg43; _gat=1";
+	this->_env["HTTP_REFERER"] = "https://developer.mozilla.org/fr/docs/Web/JavaScript";
+	// var request
+	this->_env["AUTH_TYPE"] = "HTTP";
+	this->_env["PATH_INFO"] = new_abs_path + "/hello.php"; // P_INFO + QUERY STRING = REQUEST URI
 	//this->_env["PATH_TRANSLATED"] = "";
-	this->_env["REQUEST_METHOD"] = src_header.get_method();
-	this->_env["REMOTE_HOST"] = src_header.get_host();
-	this->_env["REMOTE_HOST"] = host;
-	this->_env["SCRIPT_NAME"] = path_to_cgi_script;
-	this->_env["SCRIPT_FILENAME"] = script_filename;
+	this->_env["QUERY_STRING"] = "a=b";
+	this->_env["REQUEST_URI"] = new_abs_path + "/hello.php?a=b";
+	//this->_env["REQUEST_METHOD"] = src_header.get_method(); // pas bien
+	//this->_env["REMOTE_HOST"] = src_header.get_host(); pas bien
+	this->_env["SCRIPT_FILENAME"] = "/usr/bin/php-cgi";
 	this->_env["SERVER_PORT"] = src.getListen();
+	//this->_env["SERVER_PORT"] = it_loc->first.c_str();
 	this->_env["SERVER_PROTOCOL"] = src_header.get_protocol();
 	this->_env["REDIRECT_STATUS"] = to_string(src_header.get_request_status());
 	this->_env["CONTENT_TYPE"] = content_type;
@@ -154,12 +166,18 @@ char	**Cgi::create_argv()
 {
 	int	nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
+	char	old_path[BUFFER_SIZE];
 
-	std::string a = "/usr/bin/php-cgi";
-	std::string b = "/usr/bin/";
+	if (getcwd(old_path, BUFFER_SIZE) == NULL)
+		return (NULL);
+	std::string abs_path = old_path;
 
-	argv[0] = new char[a.size() + 1];
-	strcpy(argv[0], a.c_str());
+	std::string a = ""; // useless arg
+	abs_path += "/srcs/Config/default/html_page/hello.php";
+	std::string b = abs_path;
+
+	argv[0] = new char[1];
+	strcpy(argv[0], "");
 	argv[1] = new char[b.size() + 1];
 	strcpy(argv[1], b.c_str());
 	argv[2] = NULL;
@@ -187,19 +205,23 @@ void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 	close(pipefd[1]);
 	//std::cout << GREEN << "line = " << line << END;
 	this->_send_content = redirect_result_cgi(pipefd);
-	std::cout << GREEN << "_send_content = |" << this->_send_content << "|" << std::endl << END;
+	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::redirect_result_cgi(int pipefd[2])
 {
-	std::string ret;
 	char buf[10000];
+	std::string ret;
+
+	//ret += "Date: Mon, 18 Jul 2016 16:06:00 GMT\n\n";
+	ret = "HTTP/1.1 200 OK\n";
 
 	bzero(buf, sizeof(buf));
 	while (read(pipefd[0], buf, sizeof(buf)) > 0)
 	{
 		ret += buf;
-		bzero(buf, sizeof(buf));
+		//bzero(buf, sizeof(buf));
 	}
 	return (ret);
 }

@@ -26,16 +26,16 @@ int	Moteur::create_socket()
 }
 
 // Set socket file descriptor to be reusable
-void	Moteur::set_socket(int _listen_fd)
+void	Moteur::set_socket(int listen_fd)
 {
 	int opt = 1;
-	fcntl(_listen_fd, F_SETFL, O_NONBLOCK);
-	if (setsockopt(_listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
+	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
+	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
 		throw std::runtime_error("[Error] set_socket() failed");
 }
 
 // Put a name to a socket
-void	Moteur::bind_socket(int _listen_fd, const std::vector<Server> & src)
+void	Moteur::bind_socket(int listen_fd, const std::vector<Server> & src)
 {
 	struct sockaddr_in address;
 	int port_config = 0;
@@ -45,32 +45,32 @@ void	Moteur::bind_socket(int _listen_fd, const std::vector<Server> & src)
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(port_config);
 	std::cout << GREEN << "Port: " << port_config << std::endl << END;
-	if (bind(_listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+	if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 		throw std::runtime_error("[Error] Port already attribute");
 }
 
 // Make the socket passive, waiting to accept
-void	Moteur::listen_socket(int _listen_fd)
+void	Moteur::listen_socket(int listen_fd)
 {
-	if (listen(_listen_fd, MAX_EVENTS) < 0)
+	if (listen(listen_fd, MAX_EVENTS) < 0)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
 // Accept connexion and return socket accepted
-int	Moteur::accept_connexions(int _listen_fd)
+int	Moteur::accept_connexions(int listen_fd)
 {
 	int new_socket = 0;
 
-	new_socket = accept(_listen_fd, NULL, NULL);
+	new_socket = accept(listen_fd, NULL, NULL);
 	if (new_socket < 0)
 		throw std::runtime_error("[Error] accept_connexions() failed");
 	return (new_socket);
 }
 
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
-bool	Moteur::is_listener(int fd, int *tab_fd, int _nbr_servers, const std::vector<Server> & src)
+bool	Moteur::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src)
 {
-	for (int i = 0; i < _nbr_servers; i++)
+	for (int i = 0; i < nbr_servers; i++)
 	{
 		if (fd == tab_fd[i])
 		{
@@ -181,7 +181,6 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 	if (this->_valread != 0)
 	{
 		this->_buff_send = meth.is_method(this->_buff, src, this->_port, parse_head);
-		//std::cout << RED << "_buff_send = |" << this->_buff_send << "|" << std::endl << END;
 		if (obj_cgi.is_cgi(parse_head) == TRUE)
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
@@ -190,54 +189,11 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+		close(fd);
 	}
 	if (parse_head.get_request_status() != 200)
 		close(fd);
 }
-
-
-/* void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
-{
-	size_t	buff_size = 1000;
-	char	buff[buff_size];
-	int		_valread = -1;
-
-	bool	is_valid = true;
-	size_t	old_len = 0;
-	size_t	recv_len = 0;
-
-	bzero(&buff, sizeof(buff));
-    while (_valread != 0 && is_valid == true)
-	{
-		old_len = std::strlen(buff);
-		_valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
-		if (_valread == -1)
-			throw std::runtime_error("[Error] recv() failed");
-		else
-			recv_len += _valread;
-		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)
-			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-		else
-			is_valid = false;
-	}
-	//read_data(fd);
-	Cgi		obj_cgi(src.front());
- 	if (_valread != 0)
-	{
-		this->_buff_send = meth.is_method(buff, src, this->_port, parse_head);
-		//std::cout << RED << "_buff_send = |" << this->_buff_send << "|" << std::endl << END;
-		if (obj_cgi.is_cgi(parse_head) == TRUE)
-			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
-				obj_cgi.getSend_content().size(), 0);
-		else
-			nbr_bytes_send = send(fd, _buff_send.c_str(), _buff_send.size(), 0);
-		if (nbr_bytes_send == -1)
-			throw std::runtime_error("[Error] sent() failed");
-		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
-	}
-	if (parse_head.get_request_status() != 200)
-		close(fd);
-} */
 
 void	Moteur::loop_server(const std::vector<Server> & src)
 {
