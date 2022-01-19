@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 13:53:32 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/19 14:47:04 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,12 @@ class Parse_header
 	private:
 		std::string	fill_big_tab(std::string str);
 		int			parse_first_line();
-		void		fill_variables();
-		int			check_header();
+		int			fill_variables();
 		int			init_buffer(char *buff);
+		
+		int			check_header();
+		int			check_first_line(size_t full_size);
+		int			check_double_content_length(std::map<std::string, std::string>::iterator replace);
 
 
 		std::map<std::string, std::string> _big_tab;

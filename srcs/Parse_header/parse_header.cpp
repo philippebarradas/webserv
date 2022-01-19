@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 13:56:29 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/19 14:46:53 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ Parse_header::Parse_header() : _nbr_line(0)
 	std::string empty = "";
 	for (size_t x = 0; x < 39; x++)
 		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
+	//_big_tab.insert(std::pair<std::string, std::string>("Content-Length", "NULL"));
 }
 
 /* 
@@ -83,29 +84,9 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 		else
 			_buffer = _buffer.substr(start, _buffer.size() - start);;
 	}
-	fill_variables();
+	if (fill_variables() == -1)
+		return (-1);
 	return (check_header());
-}
-
-int		Parse_header::check_header()
-{
-	std::map<std::string, std::string>::iterator replace;
-	size_t	found = 0;
-
-
-	found = _buffer.find("\r\n\r\n");
-	if (found != std::string::npos)
-	{
-		std::cout << "get = [" << get_request("Host:") << "]" << "[" << _big_tab["Host:"] << "]" << std::endl;
-		if (get_request("Host:").compare("") == 0)
-		{
-			replace = _big_tab.find("status");
-			replace->second = "400";
-		}
-		std::cout << "request_status = " << _big_tab["status"] << std::endl;
-		return (1);
-	}
-	return (0); 
 }
 
 int		Parse_header::init_buffer(char *buff)
@@ -167,27 +148,10 @@ int		Parse_header::parse_first_line()
 			rank++;
 		}
 	}
-
-	replace = _big_tab.find("status");
-	if ((get_request("method").compare("GET") != 0 && get_request("method").compare("POST") != 0
-	&& get_request("method").compare("DELETE") != 0) || (get_request("path").at(0) != '/'))
-	{
-		replace->second = "400";
-		std::cout << "request_status = " << _big_tab["status"] << std::endl;
-		return (-1);
-	}
-	else if (get_request("protocol").compare("HTTP/1.1") != 0)
-	{
-		replace->second = "404";
-		std::cout << "request_status = " << _big_tab["status"] << std::endl;
-		return (-1);
-	}
-	else
-		replace->second = "200";
-	return (full_size);
+	return (check_first_line(full_size));
 }
 
-void		Parse_header::fill_variables()
+int		Parse_header::fill_variables()
 {
 	std::string cmp;
 	size_t	final_pose = 0;
@@ -208,8 +172,10 @@ void		Parse_header::fill_variables()
 				cmp = *it;
 				if (final_pose > found && cmp.compare("\n") == 0)
 					bn = true;
-			}			
+			}
 			replace = _big_tab.find(ith->first);
+			if (check_double_content_length(replace) == -1)
+				return (-1);
 			if (replace->first.find(":") != std::string::npos)
 				replace->second = fill_big_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
 		}
@@ -221,6 +187,7 @@ void		Parse_header::fill_variables()
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
+	return (0);
 	//
 }
 
