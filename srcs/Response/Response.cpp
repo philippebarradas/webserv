@@ -22,6 +22,7 @@ Response::Response( unsigned int const & code, std::string const & page )
 	this->_header += "webserv/1.0 (Ubuntu)";
 	this->writeDate();
 
+	this->_header += "\n" + page;
 }
 
 Response::Response()
@@ -30,6 +31,7 @@ Response::Response()
 
 Response::Response( Response const & src )
 {
+	*this = src;
 }
 
 
@@ -48,6 +50,7 @@ Response::~Response()
 
 Response &				Response::operator=( Response const & rhs )
 {
+	(void)rhs;
 	//if ( this != &rhs )
 	//{
 		//this->_value = rhs.getValue();
@@ -57,6 +60,7 @@ Response &				Response::operator=( Response const & rhs )
 
 std::ostream &			operator<<( std::ostream & o, Response const & i )
 {
+	(void)i;
 	//o << "Value = " << i.getValue();
 	return o;
 }
