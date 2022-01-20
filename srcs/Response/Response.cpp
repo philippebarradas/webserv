@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Answer.cpp                                         :+:      :+:    :+:   */
+/*   Response.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,25 +10,25 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Answer.hpp"
+#include "Response.hpp"
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Answer::Answer( unsigned int const & code, std::string const & page )
+Response::Response( unsigned int const & code, std::string const & page )
 {
-	setRequestStatus(code);
-	this->_server_name = "webserv/0.1 (Ubuntu)";
-	setDate();
+	this->writeRequestStatus(code);
+	this->_header += "webserv/1.0 (Ubuntu)";
+	this->writeDate();
 
 }
 
-Answer::Answer()
+Response::Response()
 {
 }
 
-Answer::Answer( Answer const & src )
+Response::Response( Response const & src )
 {
 }
 
@@ -37,7 +37,7 @@ Answer::Answer( Answer const & src )
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
-Answer::~Answer()
+Response::~Response()
 {
 }
 
@@ -46,7 +46,7 @@ Answer::~Answer()
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-Answer &				Answer::operator=( Answer const & rhs )
+Response &				Response::operator=( Response const & rhs )
 {
 	//if ( this != &rhs )
 	//{
@@ -55,7 +55,7 @@ Answer &				Answer::operator=( Answer const & rhs )
 	return *this;
 }
 
-std::ostream &			operator<<( std::ostream & o, Answer const & i )
+std::ostream &			operator<<( std::ostream & o, Response const & i )
 {
 	//o << "Value = " << i.getValue();
 	return o;
@@ -66,11 +66,11 @@ std::ostream &			operator<<( std::ostream & o, Answer const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Answer::writeRequestStatus( unsigned int const & code )
+void	Response::writeRequestStatus( unsigned int const & code )
 {
 	unsigned int	all_code[] = {200, 404};
 	std::string		all_status[] = {"OK", "Not Found"};
-	stringstream	conv;
+	std::stringstream	conv;
 	size_t			len, i;
 
 	conv << code;
@@ -87,7 +87,7 @@ void	Answer::writeRequestStatus( unsigned int const & code )
 	}
 }
 
-void	Answer::writeDate( void )
+void	Response::writeDate( void )
 {
 	char		buffer[200];
 	time_t		rawtime;
@@ -106,7 +106,7 @@ void	Answer::writeDate( void )
 */
 
 
-std::string	Answer::getHeader( void ) const
+std::string	Response::getHeader( void ) const
 {
 	return (this->_header);
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
+#    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/10 13:50:34 by dodjian          ###   ########.fr        #
+#    Updated: 2022/01/20 13:40:34 by tsannie          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,10 +43,13 @@ CONFIG		= Config.cpp Server.cpp utils.cpp
 
 SERVER		= moteur.cpp
 
+RESPONSE	= Response.cpp
+
 MAIN		= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
+				$(addprefix srcs/Response/, $(RESPONSE)) \
 				$(addprefix srcs/, $(MAIN))
 
 ######################################################################

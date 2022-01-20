@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Answer.hpp                                         :+:      :+:    :+:   */
+/*   Response.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ANSWER_HPP
-# define ANSWER_HPP
+#ifndef RESPONSE_HPP
+# define RESPONSE_HPP
 
 # include <iostream>
 # include <iomanip>
@@ -21,19 +21,19 @@
 # include <fstream>
 # include <exception>
 
-class Answer
+class Response
 {
 
 	public:
 
-		Answer( unsigned int const & code, std::string const & page );
-		Answer( Answer const & src );
-		~Answer();
+		Response( unsigned int const & code, std::string const & page );
+		Response( Response const & src );
+		~Response();
 
-		Answer &		operator=( Answer const & rhs );
+		Response &		operator=( Response const & rhs );
 
 	private:
-		Answer();
+		Response();
 
 		void	writeRequestStatus( unsigned int const & code );
 		void	writeDate( void );
@@ -44,6 +44,6 @@ class Answer
 
 };
 
-std::ostream &			operator<<( std::ostream & o, Answer const & i );
+std::ostream &			operator<<( std::ostream & o, Response const & i );
 
-#endif /* ********************************************************** ANSWER_H */
+#endif /* ********************************************************** RESPONSE_H */
