@@ -6,7 +6,11 @@
 #    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
+<<<<<<< HEAD
+#    Updated: 2022/01/20 13:40:34 by tsannie          ###   ########.fr        #
+=======
 #    Updated: 2022/01/19 12:18:10 by tsannie          ###   ########.fr        #
+>>>>>>> main
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +54,8 @@ METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
 
 AUTO_INDEX		= Autoindex.cpp
 
+RESPONSE		= Response.cpp
+
 MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
@@ -57,6 +63,7 @@ SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
 				$(addprefix srcs/method/, $(METHOD)) \
 				$(addprefix srcs/Autoindex/, $(AUTO_INDEX)) \
+				$(addprefix srcs/Response/, $(RESPONSE)) \
 				$(addprefix srcs/, $(MAIN))
 
 ######################################################################
