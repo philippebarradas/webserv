@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:39 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 12:44:09 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/20 08:31:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,11 @@ class Method
 		std::string is_not_allowed(std::string buff);
 		std::string is_not_found(std::string buff);
 		std::string	is_too_large(std::string buff);
+		std::string	is_precondition_failed(std::string buff);
 
-		std::string ft_get(std::string full_cmd);
-		std::string ft_post(std::string full_cmd);
-		std::string ft_delete(std::string full_cmd);
+		std::string ft_get(std::string full_cmd, const Parse_header & parse_head);
+		std::string ft_post(std::string full_cmd, const Parse_header & parse_head);
+		std::string ft_delete(std::string full_cmd, const Parse_header & parse_head);
 
 
 		std::string	get_date();

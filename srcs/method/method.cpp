@@ -106,17 +106,22 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 		std::cout << "x bad request" << std::endl;
 		return (is_bad_request(buff));
 	}
-	if (parse_head.get_request("status").compare("404") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("status").compare("404") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x not found" << std::endl;
 		return (is_not_found(buff));
 	}
-	if (parse_head.get_request("status").compare("405") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("status").compare("405") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x not allowed" << std::endl;
 		return (is_not_allowed(buff));
 	}
-	if (parse_head.get_request("status").compare("413") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("status").compare("412") == 0)//j == src.size() || act_listen.size() == 0)
+	{
+		std::cout << "x precondition failed" << std::endl;
+		return (is_precondition_failed(buff));
+	}
+	else if (parse_head.get_request("status").compare("413") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x header or cookie too large" << std::endl;
 		return (is_too_large(buff));
@@ -165,11 +170,11 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
-		return ft_get(buff);
-	else if (buff.compare("POST") == 0)
-		return ft_post(buff);
-	else if (buff.compare("DELETE") == 0)
-		return ft_delete(buff);
+		return ft_get(buff, parse_head);
+	else if (act_method.compare("POST") == 0)
+		return ft_post(buff, parse_head);
+	else if (act_method.compare("DELETE") == 0)
+		return ft_delete(buff, parse_head);
 
 	//return (ft_get(buff));
 	

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/19 14:46:36 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/20 08:58:21 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,15 @@ int		Parse_header::check_double_content_length(std::map<std::string, std::string
 	return (0);
 }
 
+int		Parse_header::check_precondition()
+{
+	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
+		return (-1);
+	if(_buffer.rfind("If-Unmodified-Since\r\n") != std::string::npos)
+		return (-1);
+	return (0);
+}
+
 int		Parse_header::check_header()
 {
 	std::map<std::string, std::string>::iterator replace;
@@ -73,14 +82,18 @@ int		Parse_header::check_header()
 			replace = _big_tab.find("status");
 			replace->second = "400";
 		}
-		std::cout << "=====" << get_request("Content-Length:").find_first_not_of("0123456789") << std::endl;
-
-		if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
+		else if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
 		|| (_buffer.rfind("Content-Length\r\n") != std::string::npos))
 		{
 			std::cout << "ERROR = BAD CONTENT LENGTH" << std::endl;
 			replace = _big_tab.find("status");
 			replace->second = "400";
+		}
+		else if (check_precondition() == -1)
+		{
+			std::cout << "ERROR = Precondition Failed" << std::endl;
+			replace = _big_tab.find("status");
+			replace->second = "412";
 		}
 		return (1);
 

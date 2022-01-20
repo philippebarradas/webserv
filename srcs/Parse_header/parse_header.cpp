@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/19 14:46:53 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/20 08:22:50 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,45 @@ Parse_header::Parse_header() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
-    std::string  elements[39] = {"status", "method", "path", "protocol","Host:","A-IM:", "Accept:",
-	"Accept-Charset:", "Accept-Encoding:", "Accept-Language:","Accept-Datetime:", "Access-Control-Request-Method:",
-	"Access-Control-Request-Headers:", "Authorization:","Cache-Control:", "Connection:", "Content-Length:",
-	"Content-Type:", "Cookie:", "Date:", "Expect:", "Forwarded:","From:", "If-Match:", "If-Modified-Since:", "If-None-Match:",
-	"If-Range:", "If-Unmodified-Since:", "Max-Forwards:","Origin:", "Pragma:", "Proxy-Authorization:", "Range:", "Referer:",
-	"TE:", "User-Agent:", "Upgrade:", "Via:", "Warning:"};
+    std::string  elements[39] = {
+		"status", //ok
+		"method", //ok
+		"path", //ok
+		"protocol",//ok
+		"Host:",//ok
+		"A-IM:", 
+		"Accept:",
+		"Accept-Charset:",
+		"Accept-Encoding:", 
+		"Accept-Language:",
+		"Accept-Datetime:", 
+		"Access-Control-Request-Method:",
+		"Access-Control-Request-Headers:", 
+		"Authorization:",
+		"Cache-Control:", 
+		"Connection:",//ok
+		"Content-Length:",//ok
+		"Content-Type:",
+		"Cookie:",
+		"Date:",
+		"Expect:",
+		"Forwarded:","From:",
+		"If-Match:",
+		"If-Modified-Since:",
+		"If-None-Match:",
+		"If-Range:",
+		"If-Unmodified-Since:", 
+		"Max-Forwards:",
+		"Origin:", 
+		"Pragma:",
+		"Proxy-Authorization:", 
+		"Range:",
+		"Referer:",
+		"TE:",
+		"User-Agent:",
+		"Upgrade:", 
+		"Via:", 
+		"Warning:"};
 
 	std::string empty = "";
 	for (size_t x = 0; x < 39; x++)
