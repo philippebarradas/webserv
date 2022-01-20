@@ -3,14 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
+#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-<<<<<<< HEAD
 #    Updated: 2022/01/20 13:40:34 by tsannie          ###   ########.fr        #
-=======
-#    Updated: 2022/01/19 12:18:10 by tsannie          ###   ########.fr        #
->>>>>>> main
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +16,7 @@
 
 NAME			= webserv
 CC				= @clang++
-CFLAGS			= -Wall -Wextra -Werror -std=c++98
+CFLAGS			=  #-std=c++98 #-Wall -Wextra -Werror
 RM				= @rm -rf
 
 ######################################################################
@@ -47,7 +43,7 @@ CONFIG			= Config.cpp Server.cpp utils.cpp
 
 SERVER			= moteur.cpp
 
-PARSE_HEADER	= parse_header.cpp
+PARSE_HEADER	= parse_header.cpp checker_header.cpp
 
 METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp

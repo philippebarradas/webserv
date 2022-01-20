@@ -12,6 +12,11 @@
 
 #include "Config/Config.hpp"
 
+std::string	int_to_string(int x)
+{
+	return (static_cast<std::ostringstream*>( &(std::ostringstream() << x))->str());
+}
+
 int	main( int ac, char *av[] )
 {
 	if (ac != 2)
