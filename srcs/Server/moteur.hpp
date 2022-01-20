@@ -1,5 +1,5 @@
-#ifndef LaunchServ_HPP
-# define LaunchServ_HPP
+#ifndef MOTEUR_HPP
+# define MOTEUR_HPP
 
 // C++
 #include <iostream>
@@ -44,39 +44,43 @@
 
 // My class
 #include "../Config/Server.hpp"
-
+#include "../Parse_header/parse_header.hpp"
 class Server;
+class Parse_header;
 
-class LaunchServ
+class Moteur
 {
 	public:
-		LaunchServ();
-		LaunchServ(const std::vector<Server> & src);
-		LaunchServ( LaunchServ const & src );
-		~LaunchServ();
+		Moteur();
+		Moteur(const std::vector<Server> & src);
+		Moteur( Moteur const & src );
+		~Moteur();
 		void	setup_socket_server(const std::vector<Server> & src);
-		void	loop_server();
-		LaunchServ &		operator=( LaunchServ const & rhs );
+		void	loop_server(const std::vector<Server> & src);
+		Moteur &		operator=( Moteur const & rhs );
+		void	send_and_close(int fd, const std::vector<Server> & src);
+
+		
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
 		size_t i_server;
-		int nbr_servers;
+		size_t nbr_servers;
 		int epfd;
 		int	listen_fd[MAX_SERVERS];
 		int	port;
 		int timeout; // time before poll expiration
 		// private methods
+		std::string buff_send;
 
 		int		create_socket();
 		void	set_socket(int listen_fd);
-		void	bind_socket(const std::vector<Server> & src, int listen_fd, size_t i);
+		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
-		void	read_data(int fd);
-		void	send_data(int fd);
-		bool	is_listener(int fd, int *tab_fd, int nbr_servers);
+		void	read_send_data(int fd, const std::vector<Server> & src);
+		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 
-std::ostream &			operator<<( std::ostream & o, LaunchServ const & i );
+std::ostream &			operator<<( std::ostream & o, Moteur const & i );
 
 #endif /* ********************************************************* MOTEUR_H */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/17 19:19:37 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/19 12:58:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include "Config.hpp"
 # include "../Server/moteur.hpp"
 
-class LaunchServ;
+class Moteur;
 
 class Server
 {
@@ -28,18 +28,18 @@ class Server
 
 		Server( Server const & src );
 		Server( std::string const & src );
-		~Server();
+		~Server( void );
 
-		std::set<std::string>				getName() const;
-		std::set<std::string>				getIndex() const;
-		std::set<std::string>				getMethods() const;
-		std::string							getListen() const;
-		std::string							getRoot() const;
-		bool								getAutoindex() const;
-		unsigned int						getMaxbody() const;
-		std::map<unsigned int, std::string>	getError() const;
-		std::map<std::string, std::string>	getCgi() const;
-		std::map<std::string, Server>		getLocation() const;
+		std::set<std::string>				getName( void ) const;
+		std::set<std::string>				getIndex( void ) const;
+		std::set<std::string>				getMethods( void ) const;
+		std::string							getListen( void ) const;
+		std::string							getRoot( void ) const;
+		bool								getAutoindex( void ) const;
+		unsigned int						getMaxbody( void ) const;
+		std::map<unsigned int, std::string>	getError( void ) const;
+		std::map<std::string, std::string>	getCgi( void ) const;
+		std::map<std::string, Server>		getLocation( void ) const;
 
 		Server &		operator=( Server const & rhs );
 
@@ -60,7 +60,7 @@ class Server
 		void	setLocation( std::vector<std::string> const & src );
 
 		void	parsingAll( std::vector< std::vector<std::string> > const & src );
-		void	initServ();
+		void	initServ( void );
 
 		bool	_alreadySetMethods;
 		bool	_alreadySetListen;
