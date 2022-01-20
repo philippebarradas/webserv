@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/19 19:50:33 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/20 20:10:49 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class Cgi
 		~Cgi();
 
 		std::string	to_string(size_t nb);
-		bool	is_cgi(const Parse_header & src_header);
+		bool	is_file_cgi(std::string path_extension);
 		void	init_path(const Server & src);
 		void	init_env_client_var(const Server & src, const Parse_header & src_header);
 		void	init_env_server_var(const Server & src, const Parse_header & src_header);

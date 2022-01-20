@@ -93,9 +93,10 @@ std::string	Cgi::to_string(size_t nb)
 	return (str);
 }
 
-bool	Cgi::is_cgi(const Parse_header & src)
+bool	Cgi::is_file_cgi(std::string path_extension)
 {
-	std::cout << "path = |" << src.get_path() << "|" << std::endl;
+	//if (path_extension.compare("html") == 0)
+		//return (FALSE);
 	return (TRUE);
 }
 

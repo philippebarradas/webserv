@@ -180,7 +180,8 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 	Method			meth;
 	if (this->_valread != 0)
 	{
-		if (obj_cgi.is_cgi(parse_head) == TRUE)
+		//if (obj_cgi.is_cgi(parse_head.get_extension()) == TRUE) idealement get_extension
+		if (obj_cgi.is_file_cgi(parse_head.get_path()) == TRUE)
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 		else
