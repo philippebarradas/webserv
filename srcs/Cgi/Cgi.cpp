@@ -24,15 +24,6 @@ Cgi::Cgi(const Server & src, const Parse_header & src_header)
 {
 	init_path(src);
 	init_env(src, src_header);
-	char **env = this->convert_env(this->_env);
-	char **argv = this->create_argv(src);
-	exec_cgi(src, argv, env);
-	for (int i = 0; env[i]; i++)
-		delete [] env[i];
-	for (int i = 0; argv[i]; i++)
-		delete [] argv[i];
-	delete [] env;
-	delete [] argv;
 }
 
 Cgi::Cgi( const Cgi & src )
@@ -67,11 +58,13 @@ Cgi::~Cgi()
 
 Cgi &				Cgi::operator=( Cgi const & rhs )
 {
-	(void)rhs;
-	//if ( this != &rhs )
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if ( this != &rhs )
+	{
+		this->_path_cgi = rhs.getPath_cgi();
+		this->_send_content = rhs.getSend_content();
+		this->_env = rhs.getEnv();
+		this->_pid = rhs.getPid();
+	}
 	return *this;
 }
 
@@ -87,6 +80,16 @@ std::ostream &			operator<<( std::ostream & o, Cgi const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+void	Cgi::delete_argv_env(char **argv, char **env)
+{
+	for (int i = 0; env[i]; i++)
+		delete [] env[i];
+	for (int i = 0; argv[i]; i++)
+		delete [] argv[i];
+	delete [] env;
+	delete [] argv;
+}
+
 std::string	Cgi::to_string(size_t nb)
 {
 	std::string str = static_cast<std::ostringstream*>( &(std::ostringstream() << nb))->str();//get_actual_listen(buff);
@@ -96,7 +99,7 @@ std::string	Cgi::to_string(size_t nb)
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
-		//return (FALSE);
+	//return (FALSE);
 	return (TRUE);
 }
 
@@ -150,8 +153,8 @@ void	Cgi::init_env(const Server & src, const Parse_header & src_header)
 	init_env_client_var(src, src_header);
 	//init_env_server_var(src, src_header);
 	init_env_request_var(src, src_header);
-	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
-		std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
+	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
+		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
 
 char **Cgi::convert_env(std::map<std::string, std::string>)
@@ -204,8 +207,9 @@ void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 	waitpid(this->_pid, &status, 0);
 	close(pipefd[1]);
 	this->_send_content = redirect_result_cgi(pipefd);
-	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	this->_send_content << "|" << std::endl << END;
+	delete_argv_env(argv, env);
+	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	//this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::redirect_result_cgi(int pipefd[2])
@@ -237,4 +241,13 @@ std::string	Cgi::getSend_content() const
 	return (this->_send_content);
 }
 
+std::string	Cgi::getPath_cgi() const
+{
+	return (this->_path_cgi);
+}
+
+int	Cgi::getPid() const
+{
+	return (this->_pid);
+}
 /* ************************************************************************** */

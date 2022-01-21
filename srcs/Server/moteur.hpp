@@ -52,16 +52,24 @@ class Server;
 class Moteur
 {
 	public:
+
+		// CONSTRUCTOR
 		Moteur();
 		Moteur(const std::vector<Server> & src);
 		Moteur( Moteur const & src );
+
+		// DESTRUCTOR
 		~Moteur();
+
+		// METHODS
 		void	setup_socket_server(const std::vector<Server> & src);
 		void	loop_server(const std::vector<Server> & src);
+
+		// OPERATORS
 		Moteur &		operator=( Moteur const & rhs );
-
-
 	private:
+
+		// VARIABLES
 		struct epoll_event _fds_events[MAX_EVENTS];
 		size_t _i_server;
 		size_t _nbr_servers;
@@ -72,8 +80,8 @@ class Moteur
 		int	_valread;
 		char	_buff[BUFFER_SIZE];
 		std::string _buff_send;
-		// private methods
 
+		// METHODS
 		int		create_socket();
 		void	set_socket(int listen_fd);
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);

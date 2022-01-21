@@ -162,7 +162,7 @@ void	Moteur::read_data(int fd, const std::vector<Server> & src, Parse_header & p
 		else
 			is_valid = false;
 	}
-	parse_head.display_content_header();
+	//parse_head.display_content_header();
 }
 
 void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head)
@@ -182,12 +182,18 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 	{
 		//if (obj_cgi.is_cgi(parse_head.get_extension()) == TRUE) idealement get_extension
 		if (obj_cgi.is_file_cgi(parse_head.get_path()) == TRUE)
+		{
+			char **env = obj_cgi.convert_env(obj_cgi.getEnv());
+			char **argv = obj_cgi.create_argv(src.at(i_listen));
+
+			obj_cgi.exec_cgi(src.at(i_listen), argv, env);
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
+		}
 		else
 		{
 			this->_buff_send = meth.is_method(this->_buff, src, this->_port, parse_head);
-			std::cout << YELLOW << "buff_send = |" << this->_buff_send << "|" << END << std::endl << std::endl;
+			//std::cout << YELLOW << "buff_send = |" << this->_buff_send << "|" << END << std::endl << std::endl;
 			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 		}
 		if (nbr_bytes_send == -1)

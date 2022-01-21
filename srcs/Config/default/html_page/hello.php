@@ -8,8 +8,6 @@
         <hr><center>webcerveau/1.0 (Ubuntu)</center>
 		<p>PRINT _GET</p>
 		<?php
-			echo $_GET['var1'];
-			echo '|';
 			print_r($_GET);
 		?>
 

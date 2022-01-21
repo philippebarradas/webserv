@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/20 20:10:49 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/21 14:27:11 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,18 @@ class Request;
 class Cgi
 {
 	public:
+
+		// CONSTRUCTOR
 		Cgi();
 		Cgi(const Server & src, const Parse_header & src_header); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
+
+		// DESTRUCTOR
 		~Cgi();
 
+		// METHODS
+		void	delete_argv_env(char **argv, char **env);
 		std::string	to_string(size_t nb);
 		bool	is_file_cgi(std::string path_extension);
 		void	init_path(const Server & src);
@@ -73,11 +79,19 @@ class Cgi
 		char	**create_argv(const Server & src);
 		void	exec_cgi(const Server & src, char **argv, char **env);
 		std::string	redirect_result_cgi(int pipefd[2]);
+
+		// GETTERS
 		std::map<std::string, std::string>	getEnv() const;
 		std::string	getSend_content() const;
+		std::string	getPath_cgi() const;
+		int	getPid() const;
+
+		// OPERATORS
 		Cgi &		operator=( Cgi const & rhs );
 
 	private:
+
+		// VARIABLES
 		std::string	_path_cgi;
 		std::string	_send_content;
 		int	_pid;
