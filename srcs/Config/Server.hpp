@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/11 17:05:03 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/21 18:07:28 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 # include <string>
 # include <set>
 # include "Config.hpp"
-# include "../Server/moteur.hpp"
+# include "../Server/Engine.hpp"
 
-class Moteur;
+class Engine;
 
 class Server
 {

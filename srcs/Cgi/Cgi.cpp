@@ -200,21 +200,21 @@ void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
 		close(pipefd[1]);
-		if (execve(this->_path_cgi.c_str(), argv, NULL) == -1)
+		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}
 	waitpid(this->_pid, &status, 0);
 	close(pipefd[1]);
-	this->_send_content = redirect_result_cgi(pipefd);
+	this->_send_content = fd_to_string(pipefd[0]);
 	delete_argv_env(argv, env);
 	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
 	//this->_send_content << "|" << std::endl << END;
 }
 
 
-std::string	Cgi::redirect_result_cgi(int pipefd[2])
+std::string	Cgi::fd_to_string(int fd)
 {
-    __gnu_cxx::stdio_filebuf<char> filebuf(pipefd[0], std::ios::in);
+    __gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
     std::istream is(&filebuf);
 	std::string ret, line;
 

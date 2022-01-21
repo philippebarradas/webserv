@@ -1,5 +1,5 @@
-#ifndef MOTEUR_HPP
-# define MOTEUR_HPP
+#ifndef ENGINE_HPP
+# define ENGINE_HPP
 
 // C++
 #include <iostream>
@@ -49,24 +49,24 @@
 class Parse_header;
 class Server;
 
-class Moteur
+class Engine
 {
 	public:
 
 		// CONSTRUCTOR
-		Moteur();
-		Moteur(const std::vector<Server> & src);
-		Moteur( Moteur const & src );
+		Engine();
+		Engine(const std::vector<Server> & src);
+		Engine( Engine const & src );
 
 		// DESTRUCTOR
-		~Moteur();
+		~Engine();
 
 		// METHODS
 		void	setup_socket_server(const std::vector<Server> & src);
 		void	loop_server(const std::vector<Server> & src);
 
 		// OPERATORS
-		Moteur &		operator=( Moteur const & rhs );
+		Engine &		operator=( Engine const & rhs );
 	private:
 
 		// VARIABLES
@@ -92,6 +92,6 @@ class Moteur
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 
-std::ostream &			operator<<( std::ostream & o, Moteur const & i );
+std::ostream &			operator<<( std::ostream & o, Engine const & i );
 
-#endif /* ********************************************************* MOTEUR_H */
+#endif /* ********************************************************* Engine_H */

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   moteur.cpp                                         :+:      :+:    :+:   */
+/*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,13 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "moteur.hpp"
+#include "Engine.hpp"
 #include "../Cgi/Cgi.hpp"
 #include "../method/method.hpp"
 #include "../Parse_header/parse_header.hpp"
 
 // Creating socket file descriptor
-int	Moteur::create_socket()
+int	Engine::create_socket()
 {
 	int _listen_fd = 0;
 	_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -26,7 +26,7 @@ int	Moteur::create_socket()
 }
 
 // Set socket file descriptor to be reusable
-void	Moteur::set_socket(int listen_fd)
+void	Engine::set_socket(int listen_fd)
 {
 	int opt = 1;
 	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
@@ -35,7 +35,7 @@ void	Moteur::set_socket(int listen_fd)
 }
 
 // Put a name to a socket
-void	Moteur::bind_socket(int listen_fd, const std::vector<Server> & src)
+void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 {
 	struct sockaddr_in address;
 	int port_config = 0;
@@ -50,14 +50,14 @@ void	Moteur::bind_socket(int listen_fd, const std::vector<Server> & src)
 }
 
 // Make the socket passive, waiting to accept
-void	Moteur::listen_socket(int listen_fd)
+void	Engine::listen_socket(int listen_fd)
 {
 	if (listen(listen_fd, MAX_EVENTS) < 0)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
 // Accept connexion and return socket accepted
-int	Moteur::accept_connexions(int listen_fd)
+int	Engine::accept_connexions(int listen_fd)
 {
 	int new_socket = 0;
 
@@ -68,7 +68,7 @@ int	Moteur::accept_connexions(int listen_fd)
 }
 
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
-bool	Moteur::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src)
+bool	Engine::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src)
 {
 	for (int i = 0; i < nbr_servers; i++)
 	{
@@ -85,11 +85,11 @@ bool	Moteur::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Moteur::Moteur()
+Engine::Engine()
 {
 }
 
-Moteur::Moteur(const std::vector<Server> & src)
+Engine::Engine(const std::vector<Server> & src)
 {
 	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
 	setup_socket_server(src);
@@ -100,7 +100,7 @@ Moteur::Moteur(const std::vector<Server> & src)
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
-Moteur::~Moteur()
+Engine::~Engine()
 {
 	std::cout << GREEN << "----------------- End of server -----------------" << END << std::endl << std::endl;
 }
@@ -109,7 +109,7 @@ Moteur::~Moteur()
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-Moteur&				Moteur::operator=( Moteur const & rhs )
+Engine&				Engine::operator=( Engine const & rhs )
 {
 	(void)rhs;
 	return *this;
@@ -121,7 +121,7 @@ Moteur&				Moteur::operator=( Moteur const & rhs )
 
 /* cree la socket -> set la socket -> donne un nom a la socket ->
 	mets la socket comme passive -> set le premier events fd avec la socket passive */
-void	Moteur::setup_socket_server(const std::vector<Server> & src)
+void	Engine::setup_socket_server(const std::vector<Server> & src)
 {
 	this->_port = 0;
 	this->_nbr_servers = src.size();
@@ -142,7 +142,7 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-void	Moteur::read_data(int fd, const std::vector<Server> & src, Parse_header & parse_head)
+void	Engine::read_data(int fd, const std::vector<Server> & src, Parse_header & parse_head)
 {
 	this->_valread = -1;
 	bool	is_valid = true;
@@ -152,32 +152,33 @@ void	Moteur::read_data(int fd, const std::vector<Server> & src, Parse_header & p
 	while (this->_valread != 0 && is_valid == true)
 	{
 		old_len = std::strlen(this->_buff);
+		std::cout << "old_len = " << old_len << std::endl;
 		this->_valread = recv(fd, &this->_buff[recv_len], BUFFER_SIZE - recv_len, 0);
 		if (this->_valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += this->_valread;
-		//if (parse_head.buff_is_valid(this->_buff, this->_buff + old_len) == 0)
-			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-		//else
-		is_valid = false;
+		//old_len = recv_len;
+		std::cout << "old_len = " << old_len << std::endl;
+		if (parse_head.buff_is_valid(this->_buff, this->_buff + old_len) == 0)
+			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+		else
+			is_valid = false;
 	}
 	//parse_head.display_content_header();
 }
 
-void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head)
+void	Engine::send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head)
 {
+	Method			meth;
 	std::string port_str = static_cast<std::ostringstream*>( &(std::ostringstream() << this->_port))->str();
 	std::vector<Server>::const_iterator it;
-	int i_listen = 0;
+	int i_listen = 0, nbr_bytes_send = 0;
+
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
-	{
 		if ((*it).getListen() == port_str)
 			break ;
-	}
 	Cgi		obj_cgi(src.at(i_listen), parse_head);
-	int		nbr_bytes_send = 0;
-	Method			meth;
 	std::cout << BLUE << "valread = " << this->_valread << END << std::endl << std::endl;
 	if (this->_valread != 0)
 	{
@@ -206,7 +207,7 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 		close(fd);
 }
 
-void	Moteur::loop_server(const std::vector<Server> & src)
+void	Engine::loop_server(const std::vector<Server> & src)
 {
 	Parse_header parse_head;
 	int nbr_connexions = 0, new_socket = 0, i = 0;
