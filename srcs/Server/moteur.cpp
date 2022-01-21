@@ -157,10 +157,10 @@ void	Moteur::read_data(int fd, const std::vector<Server> & src, Parse_header & p
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += this->_valread;
-		if (parse_head.buff_is_valid(this->_buff, this->_buff + old_len) == 0)
-			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-		else
-			is_valid = false;
+		//if (parse_head.buff_is_valid(this->_buff, this->_buff + old_len) == 0)
+			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+		//else
+		is_valid = false;
 	}
 	//parse_head.display_content_header();
 }
@@ -178,13 +178,14 @@ void	Moteur::send_data(int fd, const std::vector<Server> & src, const Parse_head
 	Cgi		obj_cgi(src.at(i_listen), parse_head);
 	int		nbr_bytes_send = 0;
 	Method			meth;
+	std::cout << BLUE << "valread = " << this->_valread << END << std::endl << std::endl;
 	if (this->_valread != 0)
 	{
 		//if (obj_cgi.is_cgi(parse_head.get_extension()) == TRUE) idealement get_extension
 		if (obj_cgi.is_file_cgi(parse_head.get_path()) == TRUE)
 		{
 			char **env = obj_cgi.convert_env(obj_cgi.getEnv());
-			char **argv = obj_cgi.create_argv(src.at(i_listen));
+			char **argv = obj_cgi.create_argv(obj_cgi.getPath_cgi(),src.at(i_listen).getRoot() + "/hello.php");
 
 			obj_cgi.exec_cgi(src.at(i_listen), argv, env);
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),

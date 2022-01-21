@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/21 14:27:11 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/21 17:02:00 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <ext/stdio_filebuf.h>
 
 // Colors
 #define PURPLE	"\033[0;35m"
@@ -76,7 +77,7 @@ class Cgi
 		void	init_env_request_var(const Server & src, const Parse_header & src_header);
 		void	init_env(const Server & src, const Parse_header & src_header);
 		char	**convert_env(std::map<std::string, std::string>);
-		char	**create_argv(const Server & src);
+		char	**create_argv(std::string path_cgi, std::string path_file_executed);
 		void	exec_cgi(const Server & src, char **argv, char **env);
 		std::string	redirect_result_cgi(int pipefd[2]);
 

@@ -159,7 +159,7 @@ void	Cgi::init_env(const Server & src, const Parse_header & src_header)
 
 char **Cgi::convert_env(std::map<std::string, std::string>)
 {
-	std::map<std::string, std::string>::iterator it_env;
+	std::map<std::string, std::string>::const_iterator it_env;
 	char	**env = new char *[this->_env.size() + 1];
 	int	j = 0;
 	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
@@ -173,17 +173,16 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 	return (env);
 }
 
-char	**Cgi::create_argv(const Server & src)
+char	**Cgi::create_argv(std::string path_cgi, std::string path_file_executed)
 {
 	int		nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
 
-	std::string a = ""; // useless arg
-	std::string path_file = src.getRoot() + "/hello.php";
+	std::string a = path_cgi; // useless arg
 	argv[0] = new char[1];
 	strcpy(argv[0], "");
-	argv[1] = new char[path_file.size() + 1];
-	strcpy(argv[1], path_file.c_str());
+	argv[1] = new char[path_file_executed.size() + 1];
+	strcpy(argv[1], path_file_executed.c_str());
 	argv[2] = NULL;
 	return (argv);
 }
@@ -201,7 +200,7 @@ void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
 		close(pipefd[1]);
-		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
+		if (execve(this->_path_cgi.c_str(), argv, NULL) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}
 	waitpid(this->_pid, &status, 0);
@@ -212,17 +211,18 @@ void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 	//this->_send_content << "|" << std::endl << END;
 }
 
+
 std::string	Cgi::redirect_result_cgi(int pipefd[2])
 {
-	char buf[10000];
-	std::string ret;
+    __gnu_cxx::stdio_filebuf<char> filebuf(pipefd[0], std::ios::in);
+    std::istream is(&filebuf);
+	std::string ret, line;
 
 	ret = "HTTP/1.1 200 OK\n";
-	bzero(buf, sizeof(buf));
-	while (read(pipefd[0], buf, sizeof(buf)) > 0)
+	while (std::getline(is, line))
 	{
-		ret += buf;
-		bzero(buf, sizeof(buf));
+		ret += line;
+		ret += '\n';
 	}
 	return (ret);
 }
