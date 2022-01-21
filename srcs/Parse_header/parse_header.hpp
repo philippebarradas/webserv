@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_header.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 08:45:40 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/21 14:27:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ class Parse_header
 		int			parse_first_line();
 		int			fill_variables();
 		int			init_buffer(char *buff);
-		
+
 		int			check_header();
 		int			check_first_line(size_t full_size);
 		int			check_double_content_length(std::map<std::string, std::string>::iterator replace);

@@ -143,13 +143,27 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
+template <typename T>
+void printMap(T & map, std::string const & name)
+{
+	typename	T::iterator	it;
+	typename	T::iterator	end;
 
+	std::cout << "----------------" << std::endl;
+	std::cout << name << " contains:" << std::endl;
+
+	end = map.end();
+	for (it = map.begin() ; it != end ; it++)
+		std::cout << it->first << " => " << it->second << std::endl;
+	std::cout << "size = " << map.size() << std::endl;
+	std::cout << "----------------\n" << std::endl;
+}
 
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Method			meth;
 	Parse_header	parse_head;
-	
+
 	size_t	buff_size = 33000;
 	char	buff[buff_size];
 	int		valread = -1;
@@ -168,13 +182,15 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 		else
 			recv_len += valread;
 		std::cout << "avant" << std::endl;
-		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
+		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
-		else 
+		else
 			is_valid = false;
 	}
 
 	std::cout << std::endl << std::endl << std::endl;
+
+	std::cout << parse_head.get_request("status") << std::endl;
 
 	std::cout << std::endl << std::endl << std::endl;
 
