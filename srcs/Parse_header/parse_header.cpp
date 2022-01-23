@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_header.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 08:22:50 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/22 10:11:33 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,27 @@
 /**
  * Initialise le comparateur
  **/
- 
+
 Parse_header::Parse_header() : _nbr_line(0)
 {
-	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
-    std::string  elements[39] = {
+	std::string  elements[39] = {
 		"status", //ok
 		"method", //ok
 		"path", //ok
 		"protocol",//ok
 		"Host:",//ok
-		"A-IM:", 
+		"A-IM:",
 		"Accept:",
 		"Accept-Charset:",
-		"Accept-Encoding:", 
+		"Accept-Encoding:",
 		"Accept-Language:",
-		"Accept-Datetime:", 
+		"Accept-Datetime:",
 		"Access-Control-Request-Method:",
-		"Access-Control-Request-Headers:", 
+		"Access-Control-Request-Headers:",
 		"Authorization:",
-		"Cache-Control:", 
+		"Cache-Control:",
 		"Connection:",//ok
 		"Content-Length:",//ok
 		"Content-Type:",
@@ -50,17 +50,17 @@ Parse_header::Parse_header() : _nbr_line(0)
 		"If-Modified-Since:",
 		"If-None-Match:",
 		"If-Range:",
-		"If-Unmodified-Since:", 
+		"If-Unmodified-Since:",
 		"Max-Forwards:",
-		"Origin:", 
+		"Origin:",
 		"Pragma:",
-		"Proxy-Authorization:", 
+		"Proxy-Authorization:",
 		"Range:",
 		"Referer:",
 		"TE:",
 		"User-Agent:",
-		"Upgrade:", 
-		"Via:", 
+		"Upgrade:",
+		"Via:",
 		"Warning:"};
 
 	std::string empty = "";
@@ -69,13 +69,13 @@ Parse_header::Parse_header() : _nbr_line(0)
 	//_big_tab.insert(std::pair<std::string, std::string>("Content-Length", "NULL"));
 }
 
-/* 
+/*
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
 Parse_header::~Parse_header()
 {
-	std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
 }
 
 /*
@@ -106,7 +106,7 @@ int		Parse_header::buff_is_valid(char *buff, char *line)
 		replace->second = "413";
 		return (-1);
 	}
-	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
+	//std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
@@ -213,13 +213,14 @@ int		Parse_header::fill_variables()
 				replace->second = fill_big_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
 		}
 	}
- 
+
 	//DISPLAY VALID ELEMENTS
-	for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
-    {
+	/*for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+	{
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
+	}*/
+
 	return (0);
 	//
 }

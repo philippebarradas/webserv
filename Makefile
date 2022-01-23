@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
+#    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/20 13:40:34 by tsannie          ###   ########.fr        #
+#    Updated: 2022/01/22 09:53:04 by tsannie          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,7 @@ METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
 
 AUTO_INDEX		= Autoindex.cpp
 
-RESPONSE		= Response.cpp
+RESPONSE		= Response.cpp TreatRequest.cpp
 
 MAIN			= main.cpp
 

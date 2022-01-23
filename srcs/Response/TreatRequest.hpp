@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/21 14:34:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/22 10:59:44 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,29 @@
 # include "../Parse_header/parse_header.hpp"
 # include <string>
 
+class	Parse_header;
+class	Server;
+
 class TreatRequest
 {
 
 	public:
 
-		TreatRequest( Parse_header const & request );
+		TreatRequest( std::vector<Server> const & conf, int const & access_port );
 		TreatRequest( TreatRequest const & src );
 		~TreatRequest();
 
 		TreatRequest &		operator=( TreatRequest const & rhs );
 
+		std::string &	exec( Parse_header const & req );
+
 	private:
 
 		TreatRequest( void );
-		Parse_header _request;
+
+		Server const *	_conf;
+
+		//Parse_header _request;
 };
 
 std::ostream &			operator<<( std::ostream & o, TreatRequest const & i );

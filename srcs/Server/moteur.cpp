@@ -143,22 +143,6 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-template <typename T>
-void printMap(T & map, std::string const & name)
-{
-	typename	T::iterator	it;
-	typename	T::iterator	end;
-
-	std::cout << "----------------" << std::endl;
-	std::cout << name << " contains:" << std::endl;
-
-	end = map.end();
-	for (it = map.begin() ; it != end ; it++)
-		std::cout << it->first << " => " << it->second << std::endl;
-	std::cout << "size = " << map.size() << std::endl;
-	std::cout << "----------------\n" << std::endl;
-}
-
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Method			meth;
@@ -181,7 +165,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-		std::cout << "avant" << std::endl;
+		//std::cout << "avant" << std::endl;
 		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 		else
@@ -190,13 +174,17 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
 	std::cout << std::endl << std::endl << std::endl;
 
-	std::cout << parse_head.get_request("status") << std::endl;
+	//std::cout << parse_head.get_request("status") << std::endl;
 
 	std::cout << std::endl << std::endl << std::endl;
 
  	if (valread != 0)
 	{
-		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
+		TreatRequest	treatment(src, this->port);
+
+		treatment.exec(parse_head);
+		buff_send = "";
+		//this->buff_send = meth.is_method(buff, src, this->port, parse_head);
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");

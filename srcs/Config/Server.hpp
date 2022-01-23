@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 12:58:32 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/22 10:26:53 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Server
 
 		Server( Server const & src );
 		Server( std::string const & src );
+
 		~Server( void );
 
 		std::set<std::string>				getName( void ) const;
@@ -45,7 +46,7 @@ class Server
 
 	private:
 
-		Server();
+		Server( void );
 		Server( std::vector< std::vector<std::string> > const & src );
 
 		void	setName( std::vector<std::string> const & src );

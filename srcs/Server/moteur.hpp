@@ -2,27 +2,32 @@
 # define MOTEUR_HPP
 
 // C++
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <cstring>
+# include <iostream>
+# include <string>
+# include <fstream>
+# include <cstring>
 
 // C
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <string.h>
+# include <errno.h>
+# include <fcntl.h>
 
 // Socket
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+# include <sys/ioctl.h>
+# include <sys/poll.h>
+# include <sys/epoll.h>
+# include <sys/socket.h>
+# include <sys/time.h>
+# include <arpa/inet.h>
+# include <netinet/in.h>
+
+// My class
+# include "../Config/Server.hpp"
+# include "../Parse_header/parse_header.hpp"
+# include "../Response/TreatRequest.hpp"
 
 // Colors
 #define PURPLE	"\033[0;35m"
@@ -42,9 +47,7 @@
 #define MAX_EVENTS 300
 #define MAX_SERVERS 100
 
-// My class
-#include "../Config/Server.hpp"
-#include "../Parse_header/parse_header.hpp"
+
 class Server;
 class Parse_header;
 
@@ -60,7 +63,7 @@ class Moteur
 		Moteur &		operator=( Moteur const & rhs );
 		void	send_and_close(int fd, const std::vector<Server> & src);
 
-		
+
 	private:
 		struct epoll_event fds_events[MAX_EVENTS];
 		size_t i_server;
