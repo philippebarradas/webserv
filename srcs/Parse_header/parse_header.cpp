@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 08:22:50 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/23 18:32:32 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,9 @@ Parse_header&				Parse_header::operator=( Parse_header const & rhs )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-int		Parse_header::buff_is_valid(char *buff, char *line)
+int		Parse_header::buff_is_valid(char *buff)
 {
 	std::map<std::string, std::string>::iterator replace;
-	std::string buffer_line = line;
 	size_t	start = 0;
 
 	if (init_buffer(buff) == -1)

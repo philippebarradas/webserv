@@ -157,20 +157,18 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	int		valread = -1;
 	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
-	size_t	old_len = 0;
 	size_t	recv_len = 0;
 
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{
-		old_len = std::strlen(buff);
 		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
 		std::cout << "avant" << std::endl;
-		if (parse_head.buff_is_valid(buff, buff + old_len) == 0)	
+		if (parse_head.buff_is_valid(buff) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 		else 
 			is_valid = false;
