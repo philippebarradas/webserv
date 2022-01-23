@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/20 15:04:49 by user42           ###   ########.fr        #
+#    Updated: 2022/01/23 17:33:33 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ SERVER			= moteur.cpp
 
 PARSE_HEADER	= parse_header.cpp checker_header.cpp
 
-TREAT_REQUEST	= bad_request.cpp threat_request.cpp delete/delete.cpp \
+TREAT_REQUEST	= bad_request.cpp treat_request.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp
 
 AUTO_INDEX		= Autoindex.cpp

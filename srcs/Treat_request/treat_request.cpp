@@ -194,12 +194,12 @@ Treat_request::~Treat_request(void)
 {
 }
 
-Treat_request::Treat_request(Method const & Method)
+Treat_request::Treat_request(Treat_request const & Method)
 {
 	*this = Method;
 }
 
-Method	&Treat_request::operator=(const Method &pt)
+Treat_request	&Treat_request::operator=(const Treat_request &pt)
 {
 	this->_request_status = pt._request_status;
 	return (*this);

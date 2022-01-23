@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 08:58:21 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/23 18:04:10 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int     Parse_header::check_first_line(size_t full_size)
 		replace->second = "404";
 		std::cout << "request_status = " << _big_tab["status"] << std::endl;
 		return (-1);
-	}
+	} 
 	else
 		replace->second = "200";
 	return (full_size);
