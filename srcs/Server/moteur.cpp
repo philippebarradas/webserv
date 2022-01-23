@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "moteur.hpp"
-#include "../method/method.hpp"
+#include "../Treat_request/treat_request.hpp"
 #include "../Parse_header/parse_header.hpp"
 
 #include <stdlib.h>
@@ -147,9 +147,11 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
-	Method			meth;
+	Treat_request	treat;
 	Parse_header	parse_head;
-	
+	std::string		file_body;
+	std::string 	buff_send;
+
 	size_t	buff_size = 33000;
 	char	buff[buff_size];
 	int		valread = -1;
@@ -180,7 +182,11 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
  	if (valread != 0)
 	{
-		this->buff_send = meth.is_method(buff, src, this->port, parse_head);
+		file_body = "<html>"; //treat.is_Treat_request(buff, src, this->port, parse_head);
+
+		//buff_send = reponse(file_body , parse_head);
+
+
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");

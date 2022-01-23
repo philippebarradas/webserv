@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/20 13:40:34 by tsannie          ###   ########.fr        #
+#    Updated: 2022/01/20 15:04:49 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ SERVER			= moteur.cpp
 
 PARSE_HEADER	= parse_header.cpp checker_header.cpp
 
-METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
+TREAT_REQUEST	= bad_request.cpp threat_request.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp
 
 AUTO_INDEX		= Autoindex.cpp
@@ -57,7 +57,7 @@ MAIN			= main.cpp
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
-				$(addprefix srcs/method/, $(METHOD)) \
+				$(addprefix srcs/Treat_request/, $(TREAT_REQUEST)) \
 				$(addprefix srcs/Autoindex/, $(AUTO_INDEX)) \
 				$(addprefix srcs/Response/, $(RESPONSE)) \
 				$(addprefix srcs/, $(MAIN))
