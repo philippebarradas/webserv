@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/23 18:34:38 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 19:03:32 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class Parse_header
 		
 		int			check_header();
 		int			check_first_line(size_t full_size);
-		int			check_double_content_length(std::map<std::string, std::string>::iterator replace);
+		int			check_double_content(std::map<std::string, std::string>::iterator replace);
 		int			check_precondition();
 
 

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 18:11:03 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 19:03:38 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ Parse_header::Parse_header() : _nbr_line(0)
 		"If-Modified-Since:",
 		"If-None-Match:",
 		"If-Range:",
-		"If-Unmodified-Since:", 
+		"If-Unmodified-Since:", //
 		"Max-Forwards:",
 		"Origin:", 
 		"Pragma:",
@@ -207,7 +207,7 @@ int		Parse_header::fill_variables()
 					bn = true;
 			}
 			replace = _big_tab.find(ith->first);
-			if (check_double_content_length(replace) == -1)
+			if (check_double_content(replace) == -1)
 				return (-1);
 			if (replace->first.find(":") != std::string::npos)
 				replace->second = fill_big_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));

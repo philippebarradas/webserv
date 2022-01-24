@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 18:48:02 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 19:11:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int     Parse_header::check_first_line(size_t full_size)
 	return (full_size);
 }
 
-int		Parse_header::check_double_content_length(std::map<std::string, std::string>::iterator replace)
+int		Parse_header::check_double_content(std::map<std::string, std::string>::iterator replace)
 {
 	size_t	pos = 0;
 
@@ -53,6 +53,31 @@ int		Parse_header::check_double_content_length(std::map<std::string, std::string
 				replace->second = "400";
 				return (-1);
 			}
+		}
+	}
+	pos = _buffer.find("If-Unmodified-Since\r\n");
+	if (pos != std::string::npos)
+	{
+		pos = _buffer.find("If-Unmodified-Since\r\n", pos + 1);
+		if (pos != std::string::npos)
+		{
+			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
+			replace = _big_tab.find("status");
+			replace->second = "400";
+			return (-1);
+		}
+	}
+
+	pos = _buffer.find("If-Modified-Since\r\n");
+	if (pos != std::string::npos)
+	{
+		pos = _buffer.find("If-Modified-Since\r\n", pos + 1);
+		if (pos != std::string::npos)
+		{
+			std::cout << "ERROR DOUBLE modified since" << std::endl;
+			replace = _big_tab.find("status");
+			replace->second = "400";
+			return (-1);
 		}
 	}
 	return (0);
@@ -74,16 +99,6 @@ int		Parse_header::check_precondition()
 	if (time_test.size() < 13)
 		return (-1);
 
-
-	struct tm * timeinfo;
-
-	char time_modified_file [200];
-
-
-	char pwd[100];
-	getcwd(pwd, 100);
-	std::cout << pwd << std::endl;
-
     std::string filename = "srcs/Config/default/html_page/404_not_found.html";
     struct stat result;
 
@@ -93,65 +108,19 @@ int		Parse_header::check_precondition()
 		return (-1);
 	}
 
+	char time_modified_file [200];
+	struct tm * timeinfo;
+	
 	timeinfo = localtime (&result.st_ctim.tv_sec);
-
 	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
 	std::string actual_time(time_modified_file);
-
-
 
     struct tm timeinfo_modif;
     struct tm timeinfo_test;
 
-
-	std::cout << "avant" << std::endl;
     strptime(time_modified_file , "%a, %d %b %G %T %Z", &timeinfo_modif);
     strptime(time_test.c_str(), "%a, %d %b %G %T %Z", &timeinfo_test);
 
-    std::cout << "\nstrings :\ncompare txt   ["
-    << time_test//parse_head.get_request("If-Unmodified-Since:").c_str()
-    << "]\nmodified_file [" << time_modified_file << "]"
-    << std::endl;
-
-    //std::cout << "time 2 = " << &timeinfo << std::endl;
-    //std::cout << "time 3 = " << &timeinfo << std::endl;
-
-
-
-
-    std::cout << "year = " << timeinfo_modif.tm_year << std::endl;
-    std::cout << "year = " << timeinfo_test.tm_year << std::endl;
-	std::cout << "day = " << timeinfo_modif.tm_yday << std::endl;
-    std::cout << "dat = " << timeinfo_test.tm_yday << std::endl;
-    std::cout << "hout = " << timeinfo_modif.tm_hour << std::endl;
-    std::cout << "hour = " << timeinfo_test.tm_hour << std::endl;
-    std::cout << "min = " << timeinfo_modif.tm_min << std::endl;
-    std::cout << "min = " << timeinfo_test.tm_min << std::endl;
-    std::cout << "sec = " << timeinfo_modif.tm_sec << std::endl;
-    std::cout << "sec = " << timeinfo_test.tm_sec << std::endl;
- 
-/*     size_t full_time_file = (timeinfo_modif.tm_year + (1 * 1000000000)) + (timeinfo_modif.tm_yday + (1 * 1000000)) + (timeinfo_modif.tm_hour + (1 * 10000)) + (timeinfo_modif.tm_min + (1 * 100))+ (timeinfo_modif.tm_sec);
-	
-	size_t full_time_test = (timeinfo_modif.tm_year + (1 * 1000000000)) + (timeinfo_test.tm_yday + (1 * 1000000)) + (timeinfo_test.tm_hour + (1 * 10000)) + (timeinfo_test.tm_min + (1 * 100)) + (timeinfo_test.tm_sec);
-
-
-    std::cout << "final modif = " << full_time_file << std::endl;
-    std::cout << "final test  = " << full_time_test << std::endl;
-
-		
-    if (full_time_file < full_time_test || timeinfo_modif.tm_year < timeinfo_test.tm_year)
-    {
-		std::cout << " ici 2" << std::endl;
-		return (-1);
-	}
-    else if (full_time_file > full_time_test)
-    {
-		std::map<std::string, std::string>::iterator replace;
-		replace = _big_tab.find("Last-Modified:");
-		replace->second = actual_time;
-		std::cout << " ici 3" << std::endl;
-		return (0);
-	} */
 
 	if (timeinfo_modif.tm_year > timeinfo_test.tm_year)
 		return (-1);
