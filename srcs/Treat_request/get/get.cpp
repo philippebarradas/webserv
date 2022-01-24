@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/23 18:09:00 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 14:52:25 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 int     precondition_vadid(std::string file, std::string date, const Parse_header & parse_head)
 {
 
-   {  (void)parse_head;
+   /* {  (void)parse_head;
     
 	time_t rawtime;
 	struct tm * timeinfo;
@@ -110,7 +110,7 @@ int     precondition_vadid(std::string file, std::string date, const Parse_heade
         
     } 
     //std::cout << "time info = ["<< timeinfo << "]"<< std::endl;
-
+ */
 
     //std::cout << "["<< actual_time << "] vs \n[" << parse_head.get_request("If-Unmodified-Since:") << "]" << std::endl;
     return (0);

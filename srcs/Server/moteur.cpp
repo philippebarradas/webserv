@@ -167,7 +167,6 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-		std::cout << "avant" << std::endl;
 		if (parse_head.buff_is_valid(buff) == 0)	
 			epoll_wait(this->epfd, this->fds_events, MAX_EVENTS, this->timeout);
 		else 
@@ -180,10 +179,9 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
  	if (valread != 0)
 	{
-		file_body = "<html>"; //treat.is_Treat_request(buff, src, this->port, parse_head);
+		//file_body = "<html>"; //treat.is_Treat_request(buff, src, this->port, parse_head);
 
-		//buff_send = reponse(file_body , parse_head);
-
+		buff_send = treat.is_Treat_request(buff, src, this->port, parse_head);
 
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
