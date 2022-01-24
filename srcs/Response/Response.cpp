@@ -16,11 +16,16 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Response::Response( unsigned int const & code, std::string const & page )
+Response::Response( Parse_header const & req, std::string const & page,
+	std::string const & extension )
 {
-	this->writeRequestStatus(code);
-	this->_header += "webserv/1.0 (Ubuntu)";
+	this->writeRequestStatus(req.get_request("status"));
+	this->_header += "Server: webserv/1.0 (Ubuntu)\n";
 	this->writeDate();
+	this->writeType(extension);
+	this->writeLenght(page);
+	this->_header += "Connection: " + req.get_request("Connection") + "\n";
+
 
 	this->_header += "\n" + page;
 }
@@ -70,25 +75,41 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Response::writeRequestStatus( unsigned int const & code )
+void	Response::writeRequestStatus( std::string const & code )
 {
-	unsigned int	all_code[] = {200, 404};
+	std::string		all_code[] = {"200", "404"};
 	std::string		all_status[] = {"OK", "Not Found"};
-	std::stringstream	conv;
 	size_t			len, i;
 
-	conv << code;
-	this->_header += "HTTP/1.1 " + conv.str();
+	this->_header += "HTTP/1.1 " + code;
 
-	len = sizeof(all_code) / sizeof(unsigned int);
-
+	len = sizeof(all_code) / sizeof(std::string);
 	for (i = 0 ; i < len ; ++i)
 	{
 		if (all_code[i] == code)
 		{
-
+			this->_header += " " + all_status[i] + "\n";
+			break;
 		}
 	}
+}
+
+void	Response::writeType( std::string const & extension )
+{
+	this->_header += "Content-Type: ";
+	if (extension == ".html")
+		this->_header += "text/html";
+	else
+		this->_header += "text/plain";
+	this->_header += "\n";
+}
+
+void	Response::writeLenght( std::string const & page )
+{
+	std::stringstream conv;
+
+	conv << page.length();
+	this->_header += "Content-Length: " + conv.str() + "\n";
 }
 
 void	Response::writeDate( void )
@@ -101,7 +122,7 @@ void	Response::writeDate( void )
 	timeinfo = localtime(&rawtime);
 
 	strftime(buffer, 200, "%a, %d %b %G %T %Z",timeinfo);
-	this->_header += std::string(buffer);
+	this->_header += "Date: " + std::string(buffer) + "\n";
 }
 
 
@@ -112,6 +133,7 @@ void	Response::writeDate( void )
 
 std::string	Response::getHeader( void ) const
 {
+	std::cout << "_header\t=\t\n" << _header << std::endl;
 	return (this->_header);
 }
 

@@ -20,25 +20,34 @@
 # include <cctype>
 # include <fstream>
 # include <exception>
+# include "../Parse_header/parse_header.hpp"
+
+class	Parse_header;
+class	Server;
 
 class Response
 {
 
 	public:
 
-		Response( unsigned int const & code, std::string const & page );
+		Response( Parse_header const & req, std::string const & page, std::string const & extension );
 		Response( Response const & src );
 		~Response();
 
 		Response &		operator=( Response const & rhs );
 
+		std::string	getHeader( void ) const;
+
 	private:
+
 		Response();
 
+		void	writeRequestStatus( std::string const & code );
 		void	writeRequestStatus( unsigned int const & code );
 		void	writeDate( void );
+		void	writeType( std::string const & extension );
+		void	writeLenght( std::string const & page );
 
-		std::string	getHeader( void ) const;
 
 		std::string _header;
 

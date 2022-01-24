@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/23 16:34:36 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/24 19:08:55 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@ TreatRequest::TreatRequest( std::vector<Server> const & conf, int const & access
 	}
 }
 
-TreatRequest::TreatRequest( const TreatRequest & src )
+TreatRequest::TreatRequest( TreatRequest const & src )
 {
+	*this = src;
 }
 
 
@@ -52,10 +53,10 @@ TreatRequest::~TreatRequest()
 
 TreatRequest &				TreatRequest::operator=( TreatRequest const & rhs )
 {
-	//if ( this != &rhs )
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if ( this != &rhs )
+	{
+		this->_conf = rhs._conf;
+	}
 	return *this;
 }
 
@@ -70,6 +71,7 @@ std::ostream &			operator<<( std::ostream & o, TreatRequest const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
+// DISPLAY (TO DELETE)
 template <typename T>
 void printMap(T & map, std::string const & name)
 {
@@ -86,10 +88,38 @@ void printMap(T & map, std::string const & name)
 	std::cout << "----------------\n" << std::endl;
 }
 
-std::string &	TreatRequest::exec( Parse_header const & req )
+std::string	TreatRequest::printError( Parse_header const & req )
 {
+	std::string	path_default_error;
+	std::ifstream ifs;
+	std::string	line, file;
+
+	path_default_error = "srcs/Config/default/html_page/error_page/"
+		+ req.get_request("status") + ".html";
+
+	std::cout << "path_default_error\t=\t" << path_default_error << std::endl;
+
+    ifs.open(path_default_error.c_str(), std::ifstream::in);
+	/*if (!(ifs.is_open()))
+		std::cout << "not found" << std::endl;*/
+	while (std::getline(ifs, line))
+		file += line + "\n";
+	ifs.close();
+	//std::cout << "file\t=\t" << file << std::endl;
+
+	Response	rep(req, file, std::string(".html"));
+	return (rep.getHeader());
+}
+
+
+std::string	TreatRequest::exec( Parse_header const & req )
+{
+	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
 	printMap(pol, "fddf");
+
+	if (req.get_request("status") != "200")
+		return (printError( req ));
 }
 
 /*

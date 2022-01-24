@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker_header.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 08:58:21 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 15:39:07 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int     Parse_header::check_first_line(size_t full_size)
 		return (-1);
 	}
 	else
-		replace->second = "200";
+		replace->second = "404";
 	return (full_size);
 }
 
@@ -98,5 +98,5 @@ int		Parse_header::check_header()
 		return (1);
 
 	}
-	return (0); 
+	return (0);
 }

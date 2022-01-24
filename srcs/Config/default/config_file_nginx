@@ -19,6 +19,7 @@ server{
 server{
 	server_name hello4 hello5;
 
+	listen 7778;
 	autoindex on;
 
 	root /home/user42/webserv/config/default/html_page;
