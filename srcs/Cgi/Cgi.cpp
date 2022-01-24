@@ -124,9 +124,11 @@ void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_heade
 // var server
 void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_header)
 {
-	//this->_env["SERVER_SOFTWARE"] = "webserv/1.1"; pas bien
-	//this->_env["SERVER_NAME"] = src_header.get_host(); pas bien
-	//this->_env["GATEWAY_INTERFACE"] = "CGI/1.1"; pas bien
+	std::set<std::string>::iterator it;
+	it = src.getName().begin();
+	//this->_env["SERVER_SOFTWARE"] = "localhost:8001/1.0";
+	//this->_env["SERVER_NAME"] = *it;
+	//this->_env["GATEWAY_INTERFACE"] = "/usr/bin/php-cgi/7.2";
 }
 
 // var request
@@ -138,7 +140,7 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	this->_env["QUERY_STRING"] = "a=b";
 	this->_env["REQUEST_URI"] = src.getRoot() + "/hello.php?a=b";
 	//this->_env["REQUEST_METHOD"] = src_header.get_method(); // pas bien
-	//this->_env["REMOTE_HOST"] = src_header.get_host(); pas bien
+	//this->_env["REMOTE_HOST"] = "127.0.0.1:8001";
 	this->_env["SCRIPT_FILENAME"] = this->_path_cgi;
 	this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["SERVER_PROTOCOL"] = src_header.get_protocol();
@@ -151,10 +153,10 @@ void	Cgi::init_env(const Server & src, const Parse_header & src_header)
 	std::map<std::string, std::string>::iterator it_env;
 
 	init_env_client_var(src, src_header);
-	//init_env_server_var(src, src_header);
+	init_env_server_var(src, src_header);
 	init_env_request_var(src, src_header);
-	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
-		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
+	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
+		std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
 
 char **Cgi::convert_env(std::map<std::string, std::string>)

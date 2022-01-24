@@ -152,14 +152,12 @@ void	Engine::read_data(int fd, const std::vector<Server> & src, Parse_header & p
 	while (this->_valread != 0 && is_valid == true)
 	{
 		old_len = std::strlen(this->_buff);
-		std::cout << "old_len = " << old_len << std::endl;
 		this->_valread = recv(fd, &this->_buff[recv_len], BUFFER_SIZE - recv_len, 0);
 		if (this->_valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += this->_valread;
 		//old_len = recv_len;
-		std::cout << "old_len = " << old_len << std::endl;
 		if (parse_head.buff_is_valid(this->_buff, this->_buff + old_len) == 0)
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 		else
