@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 15:52:17 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/24 19:34:02 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ Parse_header::Parse_header() : _nbr_line(0)
 		"Max-Forwards:",
 		"Origin:",
 		"Pragma:",
-		"Proxy-Authorization:", 
+		"Proxy-Authorization:",
 		"Range:",
 		"Referer:",
 		"TE:",
@@ -105,7 +105,7 @@ int		Parse_header::buff_is_valid(char *buff)
 		replace->second = "413";
 		return (-1);
 	}
-	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
+	//std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
@@ -214,11 +214,11 @@ int		Parse_header::fill_variables()
 	}
 
 	//DISPLAY VALID ELEMENTS
-	for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+	/* for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
+	} */
 	return (0);
 	//
 }

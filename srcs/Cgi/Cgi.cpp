@@ -119,7 +119,7 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 	it = src.getName().begin();
 	//this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
 	//this->_env["SERVER_NAME"] = *it;
-	//this->_env["GATEWAY_INTERFACE"] = "/usr/bin/php-cgi/7.2";
+	//this->_env["GATEWAY_INTERFACE"] = "CGI/7.2";
 }
 
 // var request
@@ -131,7 +131,7 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	//this->_env["PATH_TRANSLATED"] = "";
 	this->_env["QUERY_STRING"] = "";
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
-	//this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
+	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
 	this->_env["REMOTE_HOST"] = src_header.get_request("Host:");
 	this->_env["SCRIPT_FILENAME"] = this->_path_cgi;
 	this->_env["SERVER_PORT"] = src.getListen();
@@ -200,8 +200,8 @@ void	Cgi::exec_cgi(char **argv, char **env)
 	close(pipefd[1]);
 	this->_send_content = fd_to_string(pipefd[0]);
 	delete_argv_env(argv, env);
-	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	this->_send_content << "|" << std::endl << END;
+	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	//this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::fd_to_string(int fd)

@@ -184,9 +184,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		//file_body = "<html>"; //treat.is_Treat_request(buff, src, this->port, parse_head);
 		if (obj_cgi.is_file_cgi(parse_head.get_request("PATH")) == TRUE)
 		{
-			char **env = obj_cgi.convert_env(obj_cgi.getEnv());
-			char **argv = obj_cgi.create_argv(obj_cgi.getPath_cgi(),src.at(i_listen).getRoot() + "/hello.php");
-			obj_cgi.exec_cgi(argv, env);
+			obj_cgi.exec_cgi(obj_cgi.create_argv(obj_cgi.getPath_cgi(), parse_head.get_request("path")), obj_cgi.convert_env(obj_cgi.getEnv()));
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 			close(fd);
