@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 14:52:25 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 18:44:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,93 +27,99 @@
 int     precondition_vadid(std::string file, std::string date, const Parse_header & parse_head)
 {
 
-   /* {  (void)parse_head;
+ {  (void)parse_head;
     
-	time_t rawtime;
+	//time_t rawtime;
 	struct tm * timeinfo;
 
-	char time_real [200];
-    std::string time_test  = "Thu, 22 Jan 2022 10:28:47 CET";
+	char time_modified_file [200];
+    std::string time_test = parse_head.get_request("If-Unmodified-Since:");
+    //std::string time_test = "Thu, 22 Jan 2022 10:28:47 CET";
 
 
 
-   // std::cout << "raw = " << rawtime << std::endl;
+            // std::cout << "raw = " << rawtime << std::endl;
+    std::string filename = "srcs/Config/default/html_page/404_not_found.html";
+    struct stat result;
 
-	time (&rawtime);
-	timeinfo = localtime (&rawtime);
+    if(stat(filename.c_str(), &result)==0)
+    {
+        //auto mod_time = result.st_ctim; //result.st_mtime;
+        //std::cout << result.st_ctim.tv_sec << "=" << result.st_mtim.tv_sec << std::endl;
+    }
 
-	strftime(time_real, 200, "%a, %d %b %G %T %Z",timeinfo);
-	std::string actual_time(time_real);
+	//time (&rawtime);
+	timeinfo = localtime (&result.st_ctim.tv_sec);
+
+	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
+	std::string actual_time(time_modified_file);
 	
 
     
 
-    struct tm timeinfo_real;
+    struct tm timeinfo_modif;
     struct tm timeinfo_test;
 
-    strptime(time_real , "%a, %d %b %G %T %Z", &timeinfo_real);
+    strptime(time_modified_file , "%a, %d %b %G %T %Z", &timeinfo_modif);
     strptime(time_test.c_str(), "%a, %d %b %G %T %Z", &timeinfo_test);
 
-    std::cout << "\nstrings :\nwanted["
+    std::cout << "\nstrings :\ncompare txt   ["
     << time_test//parse_head.get_request("If-Unmodified-Since:").c_str()
-    << "]\nread  [" << time_real << "]"
+    << "]\nmodified_file [" << time_modified_file << "]"
     << std::endl;
 
     //std::cout << "time 2 = " << &timeinfo << std::endl;
     //std::cout << "time 3 = " << &timeinfo << std::endl;
 
-    std::cout << "\ntime 2 = " << timeinfo_real.tm_mday << std::endl;
-            std::cout << "time 3 = " << timeinfo_test.tm_mday << std::endl;
+    std::cout << "\ntime 2 = " << timeinfo_modif.tm_mday << std::endl;
+    std::cout << "time 3 = " << timeinfo_test.tm_mday << std::endl;
 
-        // if (timeinfo_real.tm_year > timeinfo_test.tm_year)
+    std::cout << "\ntime 2 = " << timeinfo_modif.tm_yday << std::endl;
+    std::cout << "time 3 = " << timeinfo_test.tm_yday << std::endl;
 
-            if (&timeinfo_real > &timeinfo_test)
-                std::cout << "\nreal time > time wanted" << std::endl;
-            else if (&timeinfo_real == &timeinfo_test)
-                std::cout << "\nreal time == time wanted" << std::endl;
-            else
-                std::cout << "\nreal time < time wanted" << std::endl;
+
+    size_t full_time_file = timeinfo_modif.tm_year;
+    size_t full_time_test = timeinfo_test.tm_year;
+
+
+    std::cout << "year = " << timeinfo_modif.tm_year << std::endl;
+    std::cout << "year = " << timeinfo_test.tm_year << std::endl;
+  std::cout << "day = " << timeinfo_modif.tm_yday << std::endl;
+    std::cout << "dat = " << timeinfo_test.tm_yday << std::endl;
+      std::cout << "hout = " << timeinfo_modif.tm_hour << std::endl;
+    std::cout << "hour = " << timeinfo_test.tm_hour << std::endl;
+      std::cout << "min = " << timeinfo_modif.tm_min << std::endl;
+    std::cout << "min = " << timeinfo_test.tm_min << std::endl;
+      std::cout << "sec = " << timeinfo_modif.tm_sec << std::endl;
+    std::cout << "sec = " << timeinfo_test.tm_sec << std::endl;
+
+    std::cout << "final modif = " << full_time_file << std::endl;
+    std::cout << "final test = " << full_time_test << std::endl;
+
+    full_time_file = (full_time_test * 1000000000 )
+                            + (timeinfo_modif.tm_yday * 1000000)
+                            + (timeinfo_modif.tm_hour * 10000)
+                            + (timeinfo_modif.tm_min * 100)
+                            + (timeinfo_modif.tm_sec);
+    full_time_test = (full_time_test * 1000000000)
+                            + (timeinfo_test.tm_yday * 1000000)
+                            + (timeinfo_test.tm_hour * 10000)
+                            + (timeinfo_test.tm_min * 100)
+                            + (timeinfo_test.tm_sec);
+
+
+    std::cout << "final modif = " << full_time_file << std::endl;
+    std::cout << "final test  = " << full_time_test << std::endl;
+        // if (timeinfo_modif.tm_year > timeinfo_test.tm_year)
+    if (full_time_file < full_time_test)
+        std::cout << time_modified_file << std::endl;
+    else if (full_time_file > full_time_test)
+        std::cout << time_test << std::endl;
+
 
         } 
 
-            {   
-                time_t rawtime;
-                struct tm timeinfo;
-
-            // memset(&timeinfo, 0, sizeof(struct tm));
-
-                char time_real [200];
-
-            
-            //strptime("Thu, 20 Jan 2022 10:31:22 CET", "%a, %d %b %G %T %Z", &timeinfo);
-                strptime(parse_head.get_request("If-Unmodified-Since:").c_str(), "%a, %d %b %G %T %Z", &timeinfo);
-
-
-                struct tm * timeinfo_real;
-                
-        //time (&rawtime);
-
-        rawtime = (time_t)&timeinfo;
-        timeinfo_real = (tm *)(&rawtime);
-        
-       // timeinfo->tm_mon = timeinfo->tm_mon -1;
-        std::cout << "\n\ntime 2 = " << &timeinfo << std::endl;
-        strftime(time_real, 200, "%a, %d %b %G %T %Z", timeinfo_real);
-        
-        std::string actual_time(time_real);
-        std::cout << "time 2 = " << actual_time << std::endl;
-
-	
-        //rawtime = mktime(&timeinfo);
-        //printf("2= %d \n", (int)rawtime); //unix time-stamp
-        //printf("2 = %s \n", ctime(&rawtime)); //human readable date 
-        
-    } 
-    //std::cout << "time info = ["<< timeinfo << "]"<< std::endl;
- */
-
-    //std::cout << "["<< actual_time << "] vs \n[" << parse_head.get_request("If-Unmodified-Since:") << "]" << std::endl;
-    return (0);
+  return (0);
 }
 
 std::string Treat_request::ft_get(std::string full_cmd, const Parse_header & parse_head)//, [loca])
@@ -121,8 +127,8 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_header & par
     std::string	file = file_to_string("srcs/Config/default/html_page/" + this->act_index, full_cmd);
 
 
-    if (precondition_vadid(file,  get_date(), parse_head) == -1)
-        return (is_precondition_failed(full_cmd));
+    //if (precondition_vadid(file,  get_date(), parse_head) == -1)
+    //   return (is_precondition_failed(full_cmd));
 
     std::cout << "DANS LE GET" << std::endl;
 

@@ -10,8 +10,11 @@ server{
 	autoindex on;
 	index notexist.html;
 
-	location / {
+
+
+	location /salut {
 		dav_methods PUT DELETE;
+		error_page 400 /404_not_found.html;
 	}
 
 

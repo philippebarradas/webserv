@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/23 18:32:32 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 18:11:03 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Parse_header::Parse_header() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
-    std::string  elements[39] = {
+    std::string  elements[40] = {
 		"status", //ok
 		"method", //ok
 		"path", //ok
@@ -60,11 +60,12 @@ Parse_header::Parse_header() : _nbr_line(0)
 		"TE:",
 		"User-Agent:",
 		"Upgrade:", 
-		"Via:", 
+		"Via:",
+		"Last-Modified:",
 		"Warning:"};
 
 	std::string empty = "";
-	for (size_t x = 0; x < 39; x++)
+	for (size_t x = 0; x < 40; x++)
 		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 	//_big_tab.insert(std::pair<std::string, std::string>("Content-Length", "NULL"));
 }
