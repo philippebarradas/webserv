@@ -87,8 +87,7 @@ class Engine
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
-		void	read_data(int fd, const std::vector<Server> & src, Parse_header & parse_head);
-		void	send_data(int fd, const std::vector<Server> & src, const Parse_header & parse_head);
+		void	read_send_data(int fd, const std::vector<Server> & src);
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 

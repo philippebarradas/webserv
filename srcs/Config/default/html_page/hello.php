@@ -25,7 +25,7 @@
 		?>
 
 		<p>TEST POST</p>
-		<form method="POST" action="">
+		<form method="POST" action="" enctype="text/plain">
 			<input type="text" name="nom"></input>
 			<input type="submit" value="phbdg valide"> </input>
 		</form>

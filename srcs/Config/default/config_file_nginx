@@ -10,7 +10,7 @@ server{
 	autoindex off;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	index phpinfo.php;
+	index hello.php;
 	dav_methods DELETE;
 
 	location ~ \.php$ {

@@ -6,7 +6,7 @@
 #    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/24 15:50:25 by dodjian          ###   ########.fr        #
+#    Updated: 2022/01/24 16:09:43 by dodjian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,7 @@ RESPONSE		= Response.cpp
 MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
+				$(addprefix srcs/Cgi/, $(CGI)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
 				$(addprefix srcs/Treat_request/, $(TREAT_REQUEST)) \

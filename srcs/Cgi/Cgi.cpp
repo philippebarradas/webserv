@@ -90,12 +90,6 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 	delete [] argv;
 }
 
-std::string	Cgi::to_string(size_t nb)
-{
-	std::string str = static_cast<std::ostringstream*>( &(std::ostringstream() << nb))->str();//get_actual_listen(buff);
-	return (str);
-}
-
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
@@ -111,14 +105,11 @@ void	Cgi::init_path(const Server & src)
 // var from client
 void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_header)
 {
-	std::string user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36(KHTML, like Gecko) Chrome/80.0.3987.162 Safari/537.36";
-	std::string accept_language = "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,ru;q=0.6";
-
-	this->_env["HTTP_ACCEPT"] = src_header.get_accept();
-	this->_env["HTTP_ACCEPT_LANGUAGE"] = accept_language;
-	this->_env["HTTP_USER_AGENT"] = user_agent;
-	this->_env["HTTP_COOKIE"] = "PHPSESSID=298zf09hf012fh2; csrftoken=u32t4o3tb3gg43; _gat=1";
-	this->_env["HTTP_REFERER"] = "https://developer.mozilla.org/fr/docs/Web/JavaScript";
+	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
+	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
+	this->_env["HTTP_USER_AGENT"] = src_header.get_request("User-Agent:");
+	this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");
+	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server
@@ -126,7 +117,7 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 {
 	std::set<std::string>::iterator it;
 	it = src.getName().begin();
-	//this->_env["SERVER_SOFTWARE"] = "localhost:8001/1.0";
+	//this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
 	//this->_env["SERVER_NAME"] = *it;
 	//this->_env["GATEWAY_INTERFACE"] = "/usr/bin/php-cgi/7.2";
 }
@@ -134,18 +125,19 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 // var request
 void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header)
 {
-	this->_env["AUTH_TYPE"] = "HTTP";
-	this->_env["PATH_INFO"] = src.getRoot() + "/hello.php"; // P_INFO + QUERY STRING = REQUEST URI
+	//this->_env["AUTH_TYPE"] = "HTTP";
+	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
+	this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
 	//this->_env["PATH_TRANSLATED"] = "";
-	this->_env["QUERY_STRING"] = "a=b";
-	this->_env["REQUEST_URI"] = src.getRoot() + "/hello.php?a=b";
-	//this->_env["REQUEST_METHOD"] = src_header.get_method(); // pas bien
-	//this->_env["REMOTE_HOST"] = "127.0.0.1:8001";
+	this->_env["QUERY_STRING"] = "";
+	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
+	//this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
+	this->_env["REMOTE_HOST"] = src_header.get_request("Host:");
 	this->_env["SCRIPT_FILENAME"] = this->_path_cgi;
 	this->_env["SERVER_PORT"] = src.getListen();
-	this->_env["SERVER_PROTOCOL"] = src_header.get_protocol();
-	this->_env["REDIRECT_STATUS"] = to_string(src_header.get_request_status());
-	this->_env["CONTENT_TYPE"] = "application/x-www-form-urlencoded";
+	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
+	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
+	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 }
 
 void	Cgi::init_env(const Server & src, const Parse_header & src_header)
@@ -189,9 +181,8 @@ char	**Cgi::create_argv(std::string path_cgi, std::string path_file_executed)
 	return (argv);
 }
 
-void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
+void	Cgi::exec_cgi(char **argv, char **env)
 {
-	(void)src;
 	int i = 0, fd_out = 0, status = 0;
 	int pipefd[2];
 
@@ -209,10 +200,9 @@ void	Cgi::exec_cgi(const Server & src, char **argv, char **env)
 	close(pipefd[1]);
 	this->_send_content = fd_to_string(pipefd[0]);
 	delete_argv_env(argv, env);
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	//this->_send_content << "|" << std::endl << END;
+	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	this->_send_content << "|" << std::endl << END;
 }
-
 
 std::string	Cgi::fd_to_string(int fd)
 {
