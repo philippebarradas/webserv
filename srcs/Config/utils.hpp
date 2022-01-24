@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:27:37 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/15 10:41:11 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/19 11:05:18 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void			checkNbArgMin( size_t const & toCheck, size_t const & size,
 unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 					std::string const & nb, std::string const & name );
 
+std::string		int_to_string(int x);
 
 
 #endif

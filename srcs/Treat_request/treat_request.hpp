@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   method.hpp                                         :+:      :+:    :+:   */
+/*   treat_request.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:39 by user42            #+#    #+#             */
-/*   Updated: 2022/01/17 12:44:09 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/20 14:38:54 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#ifndef METHOD_HPP
-# define METHOD_HPP
+#ifndef Treat_request_HPP
+# define Treat_request_HPP
 #define TRUE 1
 #define FALSE 0
 #include <iostream>
@@ -46,25 +46,27 @@ std::string file_to_string(std::string file_path, std::string buff);
 class Server;
 class Parse_header;
 
-class Method
+class Treat_request
 {
 	public:
-		Method(void); 								//can
-		~Method(void);								//can
-		Method(const Method &method);		//can
-		Method &operator=(const Method &pt);	//can
+		Treat_request(void); 								//can
+		~Treat_request(void);								//can
+		Treat_request(const Treat_request &request);		//can
+		Treat_request &operator=(const Treat_request &pt);	//can
 
-		std::string is_method(std::string full_cmd, std::vector<Server> src, int port, const Parse_header & parse_head);
+		std::string is_Treat_request(std::string full_cmd, std::vector<Server> src, int port, const Parse_header & parse_head);
 		
 		std::string build_header(std::string buff);
 
 		std::string is_bad_request(std::string buff);
 		std::string is_not_allowed(std::string buff);
 		std::string is_not_found(std::string buff);
+		std::string	is_too_large(std::string buff);
+		std::string	is_precondition_failed(std::string buff);
 
-		std::string ft_get(std::string full_cmd);
-		std::string ft_post(std::string full_cmd);
-		std::string ft_delete(std::string full_cmd);
+		std::string ft_get(std::string full_cmd, const Parse_header & parse_head);
+		std::string ft_post(std::string full_cmd, const Parse_header & parse_head);
+		std::string ft_delete(std::string full_cmd, const Parse_header & parse_head);
 
 
 		std::string	get_date();

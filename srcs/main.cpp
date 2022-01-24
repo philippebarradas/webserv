@@ -6,12 +6,17 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/21 18:07:28 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/24 15:50:41 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config/Config.hpp"
 #include "Cgi/Cgi.hpp"
+
+std::string	int_to_string(int x)
+{
+	return (static_cast<std::ostringstream*>( &(std::ostringstream() << x))->str());
+}
 
 int	main( int ac, char *av[] )
 {
@@ -24,6 +29,7 @@ int	main( int ac, char *av[] )
 	try
 	{
 		conf = Config(av[1]);
+		//std::cout << conf << std::endl;
 		vec_serv = conf.getConfig();
 
 		Engine serv(vec_serv);

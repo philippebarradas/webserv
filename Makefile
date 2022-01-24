@@ -6,7 +6,7 @@
 #    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/24 14:28:10 by dodjian          ###   ########.fr        #
+#    Updated: 2022/01/24 15:50:25 by dodjian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,18 +45,23 @@ CONFIG		= Config.cpp Server.cpp utils.cpp
 
 SERVER			= Engine.cpp
 
-PARSE_HEADER	= parse_header.cpp
+PARSE_HEADER	= parse_header.cpp checker_header.cpp
 
-METHOD			= bad_request.cpp method.cpp delete/delete.cpp \
+TREAT_REQUEST	= bad_request.cpp treat_request.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp
+
+AUTO_INDEX		= Autoindex.cpp
+
+RESPONSE		= Response.cpp
 
 MAIN			= main.cpp
 
-SRC				= $(addprefix srcs/Cgi/, $(CGI)) \
-				$(addprefix srcs/Config/, $(CONFIG)) \
-				$(addprefix srcs/method/, $(METHOD)) \
-				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
+SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
+				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
+				$(addprefix srcs/Treat_request/, $(TREAT_REQUEST)) \
+				$(addprefix srcs/Autoindex/, $(AUTO_INDEX)) \
+				$(addprefix srcs/Response/, $(RESPONSE)) \
 				$(addprefix srcs/, $(MAIN))
 
 ######################################################################

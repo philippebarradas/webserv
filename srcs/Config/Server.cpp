@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/12 10:51:26 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/19 13:05:09 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ Server::Server( std::string const & src )
 
 	toParce = sortInVec(strParce);
 	this->parsingAll(toParce);
-	
+
 	//std::cout << std::endl << *this << std::endl;
 }
 
@@ -96,13 +96,14 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Server::initServ()
+void	Server::initServ( void )
 {
 	this->_autoindex = false;
 	this->_maxbody   = 1;
 
 	// default listen is *:8000 and *:80 ?
 
+	this->_listen = std::string("80");
 	this->_index.insert(std::string("index.html"));
 	this->_root = "html";
 
@@ -155,52 +156,52 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-std::set<std::string>	Server::getName() const
+std::set<std::string>	Server::getName( void ) const
 {
 	return (this->_name);
 }
 
-std::set<std::string>	Server::getIndex() const
+std::set<std::string>	Server::getIndex( void ) const
 {
 	return (this->_index);
 }
 
-std::set<std::string>	Server::getMethods() const
+std::set<std::string>	Server::getMethods( void ) const
 {
 	return (this->_methods);
 }
 
-std::string				Server::getListen() const
+std::string				Server::getListen( void ) const
 {
 	return (this->_listen);
 }
 
-std::string				Server::getRoot() const
+std::string				Server::getRoot( void ) const
 {
 	return (this->_root);
 }
 
-bool					Server::getAutoindex() const
+bool					Server::getAutoindex( void ) const
 {
 	return (this->_autoindex);
 }
 
-unsigned int			Server::getMaxbody() const
+unsigned int			Server::getMaxbody( void ) const
 {
 	return (this->_maxbody);
 }
 
-std::map<unsigned int, std::string>	Server::getError() const
+std::map<unsigned int, std::string>	Server::getError( void ) const
 {
 	return (this->_error);
 }
 
-std::map<std::string, std::string>	Server::getCgi() const
+std::map<std::string, std::string>	Server::getCgi( void ) const
 {
 	return (this->_cgi);
 }
 
-std::map<std::string, Server>	Server::getLocation() const
+std::map<std::string, Server>	Server::getLocation( void ) const
 {
 	return (this->_location);
 }
