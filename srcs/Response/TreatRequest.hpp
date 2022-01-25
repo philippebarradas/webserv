@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/25 11:54:03 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/25 16:27:30 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,12 @@ class TreatRequest
 
 		TreatRequest( void );
 
-		Server const *	_conf;
+		 std::vector<Server>	_conf;
 
-		std::string	openAndRead( std::string const & path );
-		std::string	printError( Parse_header const & req );
+		size_t		selectConf( Parse_header const & req ) const;
+		std::string	openAndRead( std::string const & path ) const;
+		std::string	printError( Parse_header const & req,
+			size_t const & i_conf ) const
 
 		//Parse_header _request;
 };

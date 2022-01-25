@@ -16,13 +16,14 @@ server{
 
 
 }
-server{
-	server_name hello4 hello5;
 
-	listen 7778;
+server{
+	server_name hello1;
+
+	listen 7777;
 	autoindex on;
 
-	root /home/user42/webserv/config/default/html_page;
+	root /;
 	error_page 400 /400_bad_request.html;
 
 

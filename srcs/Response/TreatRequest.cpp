@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/25 12:00:13 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/25 16:27:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ TreatRequest::TreatRequest( std::vector<Server> const & conf, int const & access
 	{
 		std::stringstream(conf[i].getListen()) >> comp;
 		if (comp == access_port)
-			this->_conf = &conf[i];
+			this->_conf.push_back(conf[i]);
 	}
 }
 
@@ -88,7 +88,7 @@ void printMap(T & map, std::string const & name)
 	std::cout << "----------------\n" << std::endl;
 }
 
-std::string	TreatRequest::openAndRead( std::string const & path )
+std::string	TreatRequest::openAndRead( std::string const & path ) const
 {
 	std::ifstream ifs;
 	std::string	line, file;
@@ -103,7 +103,8 @@ std::string	TreatRequest::openAndRead( std::string const & path )
 	return (file);
 }
 
-std::string	TreatRequest::printError( Parse_header const & req )
+std::string	TreatRequest::printError( Parse_header const & req,
+	size_t const & i_conf ) const
 {
 	std::string	path_default_error, file;
 
@@ -116,12 +117,32 @@ std::string	TreatRequest::printError( Parse_header const & req )
 	return (rep.getHeader());
 }
 
+size_t		TreatRequest::selectConf( Parse_header const & req ) const
+{
+	size_t i;
+	std::set<std::string>::const_iterator	it, end;
+
+	for (i = 0 ; i < this->_conf.size() ; ++i)
+	{
+		end = this->_conf[i].getName().end();
+		for (it = this->_conf[i].getName().begin() ; it != end ; ++it)
+		{
+			if (req.get_request("Host") == *it)
+				return (i);
+		}
+	}
+	return (0);
+}
 
 std::string	TreatRequest::exec( Parse_header const & req )
 {
+	size_t	i_conf;
+
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
 	printMap(pol, "fddf");
+
+	i_conf = this->selectConf(req);
 
 	if (req.get_request("status") != "200")
 		return (printError( req ));
