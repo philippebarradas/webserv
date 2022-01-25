@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/24 18:05:24 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/25 12:25:05 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ class Cgi
 		void	init_env_request_var(const Server & src, const Parse_header & src_header);
 		void	init_env(const Server & src, const Parse_header & src_header);
 		char	**convert_env(std::map<std::string, std::string>);
-		char	**create_argv(std::string path_cgi, std::string path_file_executed);
+		char	**create_argv(std::string path_file_executed);
 		void	exec_cgi(char **argv, char **env);
 		std::string	fd_to_string(int fd);
 
@@ -85,6 +85,8 @@ class Cgi
 		std::map<std::string, std::string>	getEnv() const;
 		std::string	getSend_content() const;
 		std::string	getPath_cgi() const;
+		std::string	getUser() const;
+		std::string	getHome() const;
 		int	getPid() const;
 
 		// OPERATORS
@@ -94,6 +96,8 @@ class Cgi
 
 		// VARIABLES
 		std::string	_path_cgi;
+		std::string	_user;
+		std::string	_home;
 		std::string	_send_content;
 		int	_pid;
 		std::map<std::string, std::string>	_env;

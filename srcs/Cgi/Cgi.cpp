@@ -100,6 +100,8 @@ bool	Cgi::is_file_cgi(std::string path_extension)
 void	Cgi::init_path(const Server & src)
 {
 	this->_path_cgi = "/usr/bin/php-cgi";
+	this->_user = "user42";
+	this->_home = "/home/user42/Bureau/webserv";
 }
 
 // var from client
@@ -108,6 +110,7 @@ void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_heade
 	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
 	this->_env["HTTP_USER_AGENT"] = src_header.get_request("User-Agent:");
+	this->_env["HTTP_CONNECTION"] = src_header.get_request("Connection:");
 	this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");
 	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
@@ -117,9 +120,11 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 {
 	std::set<std::string>::iterator it;
 	it = src.getName().begin();
-	//this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
-	//this->_env["SERVER_NAME"] = *it;
-	//this->_env["GATEWAY_INTERFACE"] = "CGI/7.2";
+	this->_env["HOME"] = this->_home;
+	this->_env["USER"] = this->_user;
+	this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
+	this->_env["SERVER_NAME"] = *it;
+	this->_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 }
 
 // var request
@@ -133,11 +138,15 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
 	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
 	this->_env["REMOTE_HOST"] = src_header.get_request("Host:");
-	this->_env["SCRIPT_FILENAME"] = this->_path_cgi;
+	this->_env["SCRIPT_NAME"] = "/env.php";
+	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
+	this->_env["DOCUMENT_ROOT"] = src.getRoot();
+	this->_env["DOCUMENT_URI"] = "/env.php";
 	this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 }
 
 void	Cgi::init_env(const Server & src, const Parse_header & src_header)
@@ -147,8 +156,8 @@ void	Cgi::init_env(const Server & src, const Parse_header & src_header)
 	init_env_client_var(src, src_header);
 	init_env_server_var(src, src_header);
 	init_env_request_var(src, src_header);
-	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
-		std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
+	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
+		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
 
 char **Cgi::convert_env(std::map<std::string, std::string>)
@@ -167,12 +176,11 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 	return (env);
 }
 
-char	**Cgi::create_argv(std::string path_cgi, std::string path_file_executed)
+char	**Cgi::create_argv(std::string path_file_executed)
 {
 	int		nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
 
-	std::string a = path_cgi; // useless arg
 	argv[0] = new char[1];
 	strcpy(argv[0], "");
 	argv[1] = new char[path_file_executed.size() + 1];
@@ -236,6 +244,16 @@ std::string	Cgi::getSend_content() const
 std::string	Cgi::getPath_cgi() const
 {
 	return (this->_path_cgi);
+}
+
+std::string	Cgi::getUser() const
+{
+	return (this->_user);
+}
+
+std::string	Cgi::getHome() const
+{
+	return (this->_user);
 }
 
 int	Cgi::getPid() const

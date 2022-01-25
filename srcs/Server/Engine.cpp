@@ -181,10 +181,10 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	Cgi		obj_cgi(src.at(i_listen), parse_head);
  	if (valread != 0)
 	{
-		//file_body = "<html>"; //treat.is_Treat_request(buff, src, this->port, parse_head);
 		if (obj_cgi.is_file_cgi(parse_head.get_request("PATH")) == TRUE)
 		{
-			obj_cgi.exec_cgi(obj_cgi.create_argv(obj_cgi.getPath_cgi(), parse_head.get_request("path")), obj_cgi.convert_env(obj_cgi.getEnv()));
+			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
+			obj_cgi.convert_env(obj_cgi.getEnv()));
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 			close(fd);
@@ -199,7 +199,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
 	if (parse_head.get_request("status").compare("200") != 0 ||
-	parse_head.get_request("Connection:").find("close") != std::string::npos)
+		parse_head.get_request("Connection:").find("close") != std::string::npos)
 		close(fd);
 }
 
