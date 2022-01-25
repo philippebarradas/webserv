@@ -34,6 +34,17 @@ void	Engine::set_socket(int listen_fd)
 		throw std::runtime_error("[Error] set_socket() failed");
 }
 
+bool	Engine::is_binded(int port_config)
+{
+	std::cout << "port_config = " << port_config << std::endl;
+	for (int i = 0; i < this->_i_server; i++)
+	{
+		if (port_config == this->_port_binded[i])
+			return (TRUE);
+	}
+	return (FALSE);
+}
+
 // Put a name to a socket
 void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 {
@@ -45,8 +56,13 @@ void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(port_config);
 	std::cout << GREEN << "Port: " << port_config << std::endl << END;
-	if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-		throw std::runtime_error("[Error] Port already attribute");
+	if (this->_i_server > 0 && is_binded(port_config) == TRUE)
+	{
+		std::cout << "TRUE !" << std::endl;
+		if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+			throw std::runtime_error("[Error] Port already attribute");
+		this->_port_binded[this->_i_server - 1] = port_config;
+	}
 }
 
 // Make the socket passive, waiting to accept
@@ -181,7 +197,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	Cgi		obj_cgi(src.at(i_listen), parse_head);
  	if (valread != 0)
 	{
-		if (obj_cgi.is_file_cgi(parse_head.get_request("PATH")) == TRUE)
+		if (obj_cgi.is_file_cgi(parse_head.get_request("path")) == TRUE)
 		{
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
 			obj_cgi.convert_env(obj_cgi.getEnv()));

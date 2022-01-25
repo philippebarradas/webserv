@@ -4,13 +4,24 @@ user www-data;
 events {}
 http{
 server{
-	server_name hello1 hello3;
+
+	server_name hello4;
+
+	listen 7777;
+	autoindex on;
+	root /;
+	error_page 400 /400_bad_request.html;
+}
+
+
+server{
+	server_name hello12 hello55;
 	listen 7777;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	index phpinfo.php;
+	index env.php;
 	dav_methods DELETE;
 
 	location ~ \.php$ {
@@ -19,15 +30,4 @@ server{
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include /etc/nginx/fastcgi_params;
 	}
-
-}
-server{
-
-	server_name hello4 hello5;
-
-	autoindex on;
-	root /home/user42/webserv/config/default/html_page;
-	error_page 400 /400_bad_request.html;
-
-
 }}

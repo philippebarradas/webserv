@@ -75,6 +75,7 @@ class Engine
 		size_t _nbr_servers;
 		int _epfd;
 		int	_listen_fd[MAX_SERVERS];
+		int	_port_binded[MAX_SERVERS];
 		int	_port;
 		int	_timeout; // time before poll expiration
 		int	_valread;
@@ -84,6 +85,7 @@ class Engine
 		// METHODS
 		int		create_socket();
 		void	set_socket(int listen_fd);
+		bool	is_binded(int port_config);
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
