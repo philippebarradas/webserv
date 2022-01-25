@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/24 19:08:55 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/25 12:00:13 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,24 +88,29 @@ void printMap(T & map, std::string const & name)
 	std::cout << "----------------\n" << std::endl;
 }
 
-std::string	TreatRequest::printError( Parse_header const & req )
+std::string	TreatRequest::openAndRead( std::string const & path )
 {
-	std::string	path_default_error;
 	std::ifstream ifs;
 	std::string	line, file;
 
-	path_default_error = "srcs/Config/default/html_page/error_page/"
-		+ req.get_request("status") + ".html";
-
-	std::cout << "path_default_error\t=\t" << path_default_error << std::endl;
-
-    ifs.open(path_default_error.c_str(), std::ifstream::in);
-	/*if (!(ifs.is_open()))
-		std::cout << "not found" << std::endl;*/
+    ifs.open(path.c_str(), std::ifstream::in);
+	if (!(ifs.is_open()))
+		throw std::runtime_error("Error 404");
 	while (std::getline(ifs, line))
 		file += line + "\n";
 	ifs.close();
-	//std::cout << "file\t=\t" << file << std::endl;
+
+	return (file);
+}
+
+std::string	TreatRequest::printError( Parse_header const & req )
+{
+	std::string	path_default_error, file;
+
+
+	path_default_error = "srcs/Config/default/html_page/error_page/"
+		+ req.get_request("status") + ".html";
+	file = openAndRead(path_default_error);
 
 	Response	rep(req, file, std::string(".html"));
 	return (rep.getHeader());

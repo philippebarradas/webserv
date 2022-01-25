@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/24 17:26:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/01/25 11:54:03 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class TreatRequest
 
 		Server const *	_conf;
 
+		std::string	openAndRead( std::string const & path );
 		std::string	printError( Parse_header const & req );
 
 		//Parse_header _request;

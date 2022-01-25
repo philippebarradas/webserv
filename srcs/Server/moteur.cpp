@@ -182,8 +182,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	{
 		TreatRequest	treatment(src, this->port);
 
-		treatment.exec(parse_head);
-		buff_send = "";
+		this->buff_send = treatment.exec(parse_head);
+		//buff_send = "";
 		//this->buff_send = meth.is_method(buff, src, this->port, parse_head);
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
