@@ -100,6 +100,7 @@ bool	Cgi::is_file_cgi(std::string path_extension)
 void	Cgi::init_path(const Server & src)
 {
 	this->_path_cgi = "/usr/bin/php-cgi";
+	//this->_path_cgi = "/usr/bin/python";
 	this->_user = "user42";
 	this->_home = "/home/user42/Bureau/webserv";
 }
@@ -131,22 +132,23 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header)
 {
 	//this->_env["AUTH_TYPE"] = "HTTP";
-	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
-	this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
-	//this->_env["PATH_TRANSLATED"] = "";
-	this->_env["QUERY_STRING"] = "";
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
-	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
-	this->_env["REMOTE_HOST"] = src_header.get_request("Host:");
-	this->_env["SCRIPT_NAME"] = "/env.php";
 	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
 	this->_env["DOCUMENT_ROOT"] = src.getRoot();
 	this->_env["DOCUMENT_URI"] = "/env.php";
-	this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
-	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
+	this->_env["SERVER_PORT"] = src.getListen();
+	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
+	this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
+	//this->_env["PATH_TRANSLATED"] = "";
+	this->_env["SCRIPT_NAME"] = "/env.php";
+	this->_env["QUERY_STRING"] = "";
+	//this->_env["REMOTE_HOST"] = src_header.get_request("Host:");
+	//this->_env["REMOTE_ADDR"] = src_header.get_request("Host:");
+	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
 }
 
 void	Cgi::init_env(const Server & src, const Parse_header & src_header)
