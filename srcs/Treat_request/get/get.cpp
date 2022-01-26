@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 18:44:45 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/26 17:51:33 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
                                     strftime(time_test, 200, "%a, %d %b %G %T %Z",timeinfot); */
 
-int     precondition_vadid(std::string file, std::string date, const Parse_header & parse_head)
+int     precondition_vadid(std::string file, std::string date, const Parse_request & parse_head)
 {
 
  {  (void)parse_head;
@@ -122,7 +122,7 @@ int     precondition_vadid(std::string file, std::string date, const Parse_heade
   return (0);
 }
 
-std::string Treat_request::ft_get(std::string full_cmd, const Parse_header & parse_head)//, [loca])
+std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & parse_head)//, [loca])
 {
     std::string	file = file_to_string("srcs/Config/default/html_page/" + this->act_index, full_cmd);
 

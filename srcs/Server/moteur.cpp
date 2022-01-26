@@ -12,7 +12,7 @@
 
 #include "moteur.hpp"
 #include "../Treat_request/treat_request.hpp"
-#include "../Parse_header/parse_header.hpp"
+#include "../Parse_request/parse_request.hpp"
 
 #include <stdlib.h>
 
@@ -148,7 +148,7 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Treat_request	treat;
-	Parse_header	parse_head;
+	Parse_request	parse_head;
 	std::string		file_body;
 	std::string 	buff_send;
 
@@ -188,8 +188,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
-	if (parse_head.get_request("status").compare("200") != 0 ||
-	parse_head.get_request("Connection:").find("close") != std::string::npos)
+	//if (parse_head.get_request("Status").compare("200") != 0 ||
+	//parse_head.get_request("Connection:").find("close") != std::string::npos)
 		close(fd);
 }
 

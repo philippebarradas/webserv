@@ -44,9 +44,9 @@
 
 // My class
 #include "../Config/Server.hpp"
-#include "../Parse_header/parse_header.hpp"
+#include "../Parse_request/parse_request.hpp"
 class Server;
-class Parse_header;
+class Parse_request;
 
 class Moteur
 {

@@ -90,7 +90,7 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 
 std::string	int_to_string(int x);
 
-std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
+std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server> src, int port, const Parse_request & parse_head) // true or false
 {
 
 	std::string act_listen = int_to_string(port);//get_actual_listen(buff);
@@ -99,29 +99,29 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 
 	size_t j = get_listen_vector(src, act_listen);
 
-	std::cout << "xstatus = " << parse_head.get_request("status") << std::endl;
+	std::cout << "xstatus = " << parse_head.get_request("Status") << std::endl;
 	//std::cout << "j = " << j << " size = " << src.size() << " size listen = " << act_listen.size() << std::endl;
-	if (parse_head.get_request("status").compare("400") == 0)//j == src.size() || act_listen.size() == 0)
+	if (parse_head.get_request("Status").compare("400") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x bad request" << std::endl;
 		return (is_bad_request(buff));
 	}
-	else if (parse_head.get_request("status").compare("404") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("Status").compare("404") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x not found" << std::endl;
 		return (is_not_found(buff));
 	}
-	else if (parse_head.get_request("status").compare("405") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("Status").compare("405") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x not allowed" << std::endl;
 		return (is_not_allowed(buff));
 	}
-	else if (parse_head.get_request("status").compare("412") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("Status").compare("412") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x precondition failed" << std::endl;
 		return (is_precondition_failed(buff));
 	}
-	else if (parse_head.get_request("status").compare("413") == 0)//j == src.size() || act_listen.size() == 0)
+	else if (parse_head.get_request("Status").compare("413") == 0)//j == src.size() || act_listen.size() == 0)
 	{
 		std::cout << "x header or cookie too large" << std::endl;
 		return (is_too_large(buff));
@@ -144,7 +144,7 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 	}
 	//std::cout << _methods << std::endl;
  	std::set<std::string>::iterator it_method;
-	std::string act_method = parse_head.get_request("method");
+	std::string act_method = parse_head.get_request("Method");
 
 	std::cout << "act_method = |" << act_method << "|" << std::endl;
 

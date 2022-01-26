@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   checker_header.cpp                                 :+:      :+:    :+:   */
+/*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 19:11:37 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/26 18:05:00 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse_header.hpp"
+#include "parse_request.hpp"
 
-int     Parse_header::check_first_line(size_t full_size)
+int     Parse_request::check_first_line(size_t full_size)
 {
-    std::map<std::string, std::string>::iterator replace;
+	std::map<std::string, std::string>::iterator replace;
 
-    replace = _big_tab.find("status");
-	if ((get_request("method").compare("GET") != 0 && get_request("method").compare("POST") != 0
-	&& get_request("method").compare("DELETE") != 0) || (get_request("path").at(0) != '/'))
+    replace = _big_tab.find("Status");
+	if ((get_request("Method").compare("GET") != 0 && get_request("Method").compare("POST") != 0
+	&& get_request("Method").compare("DELETE") != 0) || (get_request("Path").at(0) != '/'))
 	{
 		replace->second = "400";
-		std::cout << "request_status = " << _big_tab["status"] << std::endl;
+		std::cout << "request_status = " << _big_tab["Status"] << std::endl;
 		return (-1);
 	}
-	else if (get_request("protocol").compare("HTTP/1.1") != 0)
+	else if (get_request("Protocol").compare("HTTP/1.1") != 0)
 	{
 		replace->second = "404";
-		std::cout << "request_status = " << _big_tab["status"] << std::endl;
+		std::cout << "request_status = " << _big_tab["Status"] << std::endl;
 		return (-1);
 	} 
 	else
@@ -35,7 +35,7 @@ int     Parse_header::check_first_line(size_t full_size)
 	return (full_size);
 }
 
-int		Parse_header::check_double_content(std::map<std::string, std::string>::iterator replace)
+int		Parse_request::check_double_content(std::map<std::string, std::string>::iterator replace)
 {
 	size_t	pos = 0;
 
@@ -49,7 +49,7 @@ int		Parse_header::check_double_content(std::map<std::string, std::string>::iter
 			if (pos != std::string::npos)
 			{
 				std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
-				replace = _big_tab.find("status");
+				replace = _big_tab.find("Status");
 				replace->second = "400";
 				return (-1);
 			}
@@ -62,12 +62,11 @@ int		Parse_header::check_double_content(std::map<std::string, std::string>::iter
 		if (pos != std::string::npos)
 		{
 			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
-			replace = _big_tab.find("status");
+			replace = _big_tab.find("Status");
 			replace->second = "400";
 			return (-1);
 		}
 	}
-
 	pos = _buffer.find("If-Modified-Since\r\n");
 	if (pos != std::string::npos)
 	{
@@ -75,7 +74,7 @@ int		Parse_header::check_double_content(std::map<std::string, std::string>::iter
 		if (pos != std::string::npos)
 		{
 			std::cout << "ERROR DOUBLE modified since" << std::endl;
-			replace = _big_tab.find("status");
+			replace = _big_tab.find("Status");
 			replace->second = "400";
 			return (-1);
 		}
@@ -84,9 +83,7 @@ int		Parse_header::check_double_content(std::map<std::string, std::string>::iter
 }
 
 #include <sys/stat.h>
-
-
-int		Parse_header::check_precondition()
+int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
 	
@@ -157,7 +154,7 @@ int		Parse_header::check_precondition()
 	return (0);
 }
 
-int		Parse_header::check_header()
+int		Parse_request::check_request()
 {
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
@@ -170,23 +167,34 @@ int		Parse_header::check_header()
 			replace = _big_tab.find("Connection:");
 			replace->second = "close";
 		}
+		else
+		{
+			replace = _big_tab.find("Connection:");
+			replace->second = "keep-alive";
+		}
 		if (get_request("Host:").compare("") == 0)
 		{
             std::cout << "ERROR = NO HOST" << std::endl;
-			replace = _big_tab.find("status");
+			replace = _big_tab.find("Status");
 			replace->second = "400";
 		}
-		else if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
+		else if (get_request("Host:").find(":") != std::string::npos)
+		{		
+			found = get_request("Host:").find(":");
+			replace = _big_tab.find("Host:");
+			replace->second = get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
+		}
+		if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
 		|| (_buffer.rfind("Content-Length\r\n") != std::string::npos))
 		{
 			std::cout << "ERROR = BAD CONTENT LENGTH" << std::endl;
-			replace = _big_tab.find("status");
+			replace = _big_tab.find("Status");
 			replace->second = "400";
 		}
 		else if (check_precondition() == -1)
 		{
 			std::cout << "ERROR = Precondition Failed" << std::endl;
-			replace = _big_tab.find("status");
+			replace = _big_tab.find("Status");
 			replace->second = "412";
 		}
 		return (1);

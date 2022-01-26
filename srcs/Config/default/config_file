@@ -36,7 +36,7 @@ server {
 	accepted_methods	GET ;
 
 	root /home/user42/webserv/srcs/Config/html_page;
-	index test_404.html;
+	index 413_too_large.html;
 
 	error_page 400 /400.html;
 	error_page 404 /404_not_found.html;
@@ -47,6 +47,8 @@ server {
 	server_name serv3;
 	listen 8006;
 	accepted_methods	GET ;
+
+	index my_index.html;
 
 	client_max_body_size	20;
 }

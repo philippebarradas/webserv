@@ -1,29 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_header.hpp                                   :+:      :+:    :+:   */
+/*   Parse_request.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 19:03:32 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/26 17:04:54 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSE_HEADER_HPP
-# define PARSE_HEADER_HPP
+#ifndef Parse_request_HPP
+# define Parse_request_HPP
 
 #include "../Config/Server.hpp"
 
 class Server;
 
-class Parse_header
+class Parse_request
 {
 	public:
-	    Parse_header();
-		Parse_header( Parse_header const & src );
-		~Parse_header();
-		Parse_header &		operator=( Parse_header const & rhs );
+	    Parse_request();
+		Parse_request( Parse_request const & src );
+		~Parse_request();
+		Parse_request &		operator=( Parse_request const & rhs );
 
 		std::string get_request(std::string request) const
 		{
@@ -46,14 +46,17 @@ class Parse_header
 	private:
 		std::string	fill_big_tab(std::string str);
 		int			parse_first_line();
+		void		parse_path();
 		int			fill_variables();
 		int			init_buffer(char *buff);
 		
-		int			check_header();
+		int			check_request();
 		int			check_first_line(size_t full_size);
 		int			check_double_content(std::map<std::string, std::string>::iterator replace);
 		int			check_precondition();
 
+
+		std::vector<std::string> full_path;
 
 		std::map<std::string, std::string> _big_tab;
 		std::string _buffer;
