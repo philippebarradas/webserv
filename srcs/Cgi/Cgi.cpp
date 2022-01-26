@@ -93,7 +93,7 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
-	//return (FALSE);
+	return (FALSE);
 	return (TRUE);
 }
 

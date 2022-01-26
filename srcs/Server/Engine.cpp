@@ -36,7 +36,6 @@ void	Engine::set_socket(int listen_fd)
 
 bool	Engine::is_binded(int port_config)
 {
-	std::cout << "port_config = " << port_config << std::endl;
 	for (int i = 0; i < this->_i_server; i++)
 	{
 		if (port_config == this->_port_binded[i])
@@ -48,19 +47,17 @@ bool	Engine::is_binded(int port_config)
 // Put a name to a socket
 void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 {
-	struct sockaddr_in address;
 	int port_config = 0;
 
 	std::istringstream(src[this->_i_server].getListen()) >> port_config;
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(port_config);
+	this->_address.sin_family = AF_INET;
+	this->_address.sin_addr.s_addr = INADDR_ANY;
+	this->_address.sin_port = htons(port_config);
 	std::cout << GREEN << "Port: " << port_config << std::endl << END;
 	if (is_binded(port_config) == FALSE)
 	{
-		std::cout << "FALSE !" << std::endl;
-		if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
-			throw std::runtime_error("[Error] Port already attribute");
+		if (bind(listen_fd, (struct sockaddr *)&this->_address, sizeof(this->_address)) < 0)
+			throw std::runtime_error("[Error] Bind failed");
 		this->_port_binded[this->_i_server] = port_config;
 	}
 }
@@ -76,8 +73,10 @@ void	Engine::listen_socket(int listen_fd)
 int	Engine::accept_connexions(int listen_fd)
 {
 	int new_socket = 0;
+	int client_len = sizeof(this->_address);
 
 	new_socket = accept(listen_fd, NULL, NULL);
+	//new_socket = accept(listen_fd, (struct sockaddr *)&this->_address, (socklen_t *)&client_len);
 	if (new_socket < 0)
 		throw std::runtime_error("[Error] accept_connexions() failed");
 	return (new_socket);
@@ -86,8 +85,10 @@ int	Engine::accept_connexions(int listen_fd)
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
 bool	Engine::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src)
 {
+	std::cout << "fd event = " << fd << std::endl;
 	for (int i = 0; i < nbr_servers; i++)
 	{
+		std::cout << "listen[i] = " << tab_fd[i] << std::endl;
 		if (fd == tab_fd[i])
 		{
 			std::istringstream(src[i].getListen()) >> this->_port;
@@ -165,7 +166,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	std::string		file_body;
 	std::string 	buff_send;
 
-	size_t	buff_size = 33000;
+	size_t	buff_size = 330000;
 	char	buff[buff_size];
 	int		valread = -1;
 	int		nbr_bytes_send = 0;
@@ -175,6 +176,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{
+		std::cout << "je suis dans read" << std::endl;
 		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
@@ -190,6 +192,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	std::vector<Server>::const_iterator it;
 	std::string port_str = static_cast<std::ostringstream*>( &(std::ostringstream() << this->_port))->str();
 
+	std::cout << "port_str = " << port_str << std::endl;
 	int i_listen = 0;
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
 		if ((*it).getListen() == port_str)
@@ -203,7 +206,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 			obj_cgi.convert_env(obj_cgi.getEnv()));
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
-			close(fd);
+			//close(fd);
 		}
 		else
 		{
@@ -214,14 +217,14 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
-	if (parse_head.get_request("status").compare("200") != 0 ||
-		parse_head.get_request("Connection:").find("close") != std::string::npos)
-		close(fd);
+	//if (parse_head.get_request("status").compare("200") != 0 ||
+		//parse_head.get_request("Connection:").find("close") != std::string::npos)
+		//close(fd);
 }
 
 void	Engine::loop_server(const std::vector<Server> & src)
 {
-	Parse_header parse_head;
+	//Parse_header parse_head;
 	int nbr_connexions = 0, new_socket = 0, i = 0;
 
 	while (TRUE)
@@ -242,6 +245,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			else
 			{
 				read_send_data(this->_fds_events[i].data.fd, src);
+				close(this->_fds_events[i].data.fd);
 				//break ;
 			}
 		}

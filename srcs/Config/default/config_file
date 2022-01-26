@@ -47,6 +47,7 @@ server {
 server {
 	server_name serv3;
 	listen 8006;
+	root /home/dodjian/Desktop/42/sixth_circle/webserv/srcs/Config/default/html_page/;
 	accepted_methods	GET ;
 
 	client_max_body_size	20;

@@ -70,6 +70,7 @@ class Engine
 	private:
 
 		// VARIABLES
+		struct sockaddr_in _address;
 		struct epoll_event _fds_events[MAX_EVENTS];
 		size_t _i_server;
 		size_t _nbr_servers;
