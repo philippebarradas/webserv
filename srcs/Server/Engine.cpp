@@ -56,12 +56,12 @@ void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 	address.sin_addr.s_addr = INADDR_ANY;
 	address.sin_port = htons(port_config);
 	std::cout << GREEN << "Port: " << port_config << std::endl << END;
-	if (this->_i_server > 0 && is_binded(port_config) == TRUE)
+	if (is_binded(port_config) == FALSE)
 	{
-		std::cout << "TRUE !" << std::endl;
+		std::cout << "FALSE !" << std::endl;
 		if (bind(listen_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 			throw std::runtime_error("[Error] Port already attribute");
-		this->_port_binded[this->_i_server - 1] = port_config;
+		this->_port_binded[this->_i_server] = port_config;
 	}
 }
 
