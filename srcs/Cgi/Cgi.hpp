@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/25 13:30:18 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/26 17:58:58 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class Cgi
 
 		// CONSTRUCTOR
 		Cgi();
-		Cgi(const Server & src, const Parse_header & src_header); // pour l'instant
+		Cgi(const Server & src, const Parse_header & src_header, const Engine & src_engine); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
 
@@ -74,8 +74,8 @@ class Cgi
 		void	init_path(const Server & src);
 		void	init_env_client_var(const Server & src, const Parse_header & src_header);
 		void	init_env_server_var(const Server & src, const Parse_header & src_header);
-		void	init_env_request_var(const Server & src, const Parse_header & src_header);
-		void	init_env(const Server & src, const Parse_header & src_header);
+		void	init_env_request_var(const Server & src, const Parse_header & src_header, const Engine & src_engine);
+		void	init_env(const Server & src, const Parse_header & src_header, const Engine & src_engine);
 		char	**convert_env(std::map<std::string, std::string>);
 		char	**create_argv(std::string path_file_executed);
 		void	exec_cgi(char **argv, char **env);

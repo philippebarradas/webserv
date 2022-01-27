@@ -13,7 +13,7 @@ server {
 
 	accepted_methods	GET POST DELETE;
 
-	root /home/dodjian/Desktop/42/sixth_circle/webserv/srcs/Config/default/html_page;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	index my_index.html;
 	autoindex on;
 	error_page 400 /400_bad_request.html;
@@ -36,7 +36,7 @@ server {
 
 	accepted_methods	GET ;
 
-	root /home/dodjian/Desktop/42/sixth_circle/webserv/srcs/Config/default/html_page;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	index test_404.html;
 
 	error_page 400 /400.html;
@@ -46,8 +46,17 @@ server {
 
 server {
 	server_name serv3;
+	listen 8001;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	accepted_methods	GET ;
+
+	client_max_body_size	20;
+}
+
+server {
+	server_name serv55;
 	listen 8006;
-	root /home/dodjian/Desktop/42/sixth_circle/webserv/srcs/Config/default/html_page/;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	accepted_methods	GET ;
 
 	client_max_body_size	20;

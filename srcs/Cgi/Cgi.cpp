@@ -20,10 +20,10 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(const Server & src, const Parse_header & src_header)
+Cgi::Cgi(const Server & src, const Parse_header & src_header, const Engine & src_engine)
 {
 	init_path(src);
-	init_env(src, src_header);
+	init_env(src, src_header, src_engine);
 }
 
 Cgi::Cgi( const Cgi & src )
@@ -31,18 +31,6 @@ Cgi::Cgi( const Cgi & src )
 	*this = src;
 }
 
-/* Cgi::Cgi(std::vector<std::string> v) // recevoir ma requete deja valide et parser
-{
-	std::vector<std::string> v2 = v;
-	std::string name_request = "GET / HTTP/1.1";
-	std::string name_host = "Host: localhost:7777";
-	v2.push_back(name_request);
-	v2.push_back(name_host);
-	std::vector<std::string>::iterator it;
-	for (it = v2.begin(); it != v2.end(); it++)
-		std::cout << "*it = " << *it << std::endl;
-}
- */
 /*
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
@@ -93,7 +81,7 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
-	return (FALSE);
+	//return (FALSE);
 	return (TRUE);
 }
 
@@ -129,8 +117,9 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 }
 
 // var request
-void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header)
+void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header, const Engine & src_engine)
 {
+	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
 	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
@@ -143,21 +132,21 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	//this->_env["PATH_TRANSLATED"] = "";
 	this->_env["SCRIPT_NAME"] = "/env.php";
 	this->_env["QUERY_STRING"] = "";
-	//this->_env["REMOTE_HOST"] = src_header.get_request("Host:");
-	//this->_env["REMOTE_ADDR"] = src_header.get_request("Host:");
+	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
+	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
 }
 
-void	Cgi::init_env(const Server & src, const Parse_header & src_header)
+void	Cgi::init_env(const Server & src, const Parse_header & src_header, const Engine & src_engine)
 {
 	std::map<std::string, std::string>::iterator it_env;
 
 	init_env_client_var(src, src_header);
 	init_env_server_var(src, src_header);
-	init_env_request_var(src, src_header);
+	init_env_request_var(src, src_header, src_engine);
 	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }

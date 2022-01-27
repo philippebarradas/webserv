@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/24 19:34:02 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/26 17:44:55 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 Parse_header::Parse_header() : _nbr_line(0)
 {
-	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
     std::string  elements[39] = {
 		"status", //ok
@@ -75,7 +75,7 @@ Parse_header::Parse_header() : _nbr_line(0)
 
 Parse_header::~Parse_header()
 {
-	std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
 }
 
 /*

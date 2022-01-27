@@ -9,14 +9,15 @@ server{
 
 	listen 7777;
 	autoindex on;
-	root /;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	index env.php
 	error_page 400 /400_bad_request.html;
 }
 
 
 server{
 	server_name hello12 hello55;
-	listen 7777;
+	listen 7778;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;

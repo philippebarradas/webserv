@@ -67,21 +67,29 @@ class Engine
 
 		// OPERATORS
 		Engine &		operator=( Engine const & rhs );
+
+		// GETTERS
+
+		std::string	GetRemote_Port() const;
+		std::string	GetRemote_Addr() const;
 	private:
 
 		// VARIABLES
-		struct sockaddr_in _address;
-		struct epoll_event _fds_events[MAX_EVENTS];
-		size_t _i_server;
-		size_t _nbr_servers;
-		int _epfd;
+		struct	sockaddr_in _addr;
+		struct	epoll_event _fds_events[MAX_EVENTS];
+		size_t	_i_server;
+		size_t	_i_server_binded;
+		size_t	_nbr_servers;
+		int	_epfd;
 		int	_listen_fd[MAX_SERVERS];
 		int	_port_binded[MAX_SERVERS];
 		int	_port;
 		int	_timeout; // time before poll expiration
 		int	_valread;
 		char	_buff[BUFFER_SIZE];
-		std::string _buff_send;
+		std::string	_buff_send;
+		std::string	_remote_port;
+		std::string	_remote_addr;
 
 		// METHODS
 		int		create_socket();
