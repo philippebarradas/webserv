@@ -165,8 +165,9 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 	std::set<std::string>				_index = src[j].getIndex();
 	std::set<std::string>::iterator		it_index = _index.begin();
 
- 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
-	{	this->act_index = (*it_index);}
+ 	//for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+	//{	this->act_index = (*it_index);}
+	this->act_index = "form.html";
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)

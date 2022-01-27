@@ -15,7 +15,7 @@
 
 
 		<p>TEST GET</p>
-		<form method="GET" action="">
+		<form method="GET" action="/env.php">
 			<input type="text" name="nom"></input>
 			<input type="submit" value="phbdg valide"> </input>
 		</form>
@@ -27,7 +27,7 @@
 		?>
 
 		<p>TEST POST</p>
-		<form method="POST" action="" enctype="text/plain">
+		<form method="POST" action="/env.php" enctype="text/plain">
 			<input type="text" name="nom"></input>
 			<input type="submit" value="phbdg valide"> </input>
 		</form>

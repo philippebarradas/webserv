@@ -17,10 +17,10 @@ server{
 	server_name hello12 hello55;
 	listen 7777;
 
-	autoindex off;
+	autoindex on;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	index env.php;
+	index form.html;
 	dav_methods DELETE;
 
 	location ~ \.php$ {

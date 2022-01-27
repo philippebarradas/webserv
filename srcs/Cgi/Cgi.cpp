@@ -100,6 +100,12 @@ void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_heade
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
 	this->_env["HTTP_USER_AGENT"] = src_header.get_request("User-Agent:");
 	this->_env["HTTP_CONNECTION"] = src_header.get_request("Connection:");
+	/*pour le post
+	this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+	this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+*/
+	this->_env["HTTP_CONTENT_TYPE"] = "text/plain";
+	this->_env["HTTP_CONTENT_LENGTH"] = "6";
 	this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");
 	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
@@ -119,24 +125,30 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 // var request
 void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header, const Engine & src_engine)
 {
-	// remplacer "/hello.php" par le bon fichier apres traitement de requete:
+	/* difference entre GET et POST sur un form html qui redirect ur env.php:
+		POST par rapport a get: + : HTTP_CONTENT_LENGTH, HTTP_CONTENT_TYPE == CONTENT_TYPE et CONTENT_LENGTH
+		- : QUERY_STRING vide et du coup REQUEST_URI vide
+	*/
+	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
-	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/hello.php";
+	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
 	this->_env["DOCUMENT_ROOT"] = src.getRoot();
-	this->_env["DOCUMENT_URI"] = "/hello.php";
+	this->_env["DOCUMENT_URI"] = "/env.php";
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
 	this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
 	this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
 	//this->_env["PATH_TRANSLATED"] = "";
-	this->_env["SCRIPT_NAME"] = "/hello.php";
+	this->_env["SCRIPT_NAME"] = "/env.php";
 	this->_env["QUERY_STRING"] = "";
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
-	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	//this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	this->_env["CONTENT_TYPE"] = "6";
+	this->_env["CONTENT_LENGTH"] = "text/plain";
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
 }
 

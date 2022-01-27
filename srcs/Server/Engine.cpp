@@ -207,6 +207,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		if ((*it).getListen() == port_str)
 			break ;
 	Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
+	Cgi		obj_cgi2(src.at(i_listen), parse_head, *this);
  	if (valread != 0)
 	{
 		if (obj_cgi.is_file_cgi(parse_head.get_request("path")) == TRUE)
@@ -220,7 +221,16 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		else
 		{
 			buff_send = treat.is_Treat_request(buff, src, this->_port, parse_head);
-			nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
+			if (parse_head.get_request("method") == "POST")
+			{
+				std::cout << "je suis dans la condition" << std::endl;
+				obj_cgi2.exec_cgi(obj_cgi2.create_argv(src.at(i_listen).getRoot() + "/env.php"),
+				obj_cgi2.convert_env(obj_cgi2.getEnv()));
+				nbr_bytes_send = send(fd, obj_cgi2.getSend_content().c_str(),
+					obj_cgi2.getSend_content().size(), 0);
+			}
+			else
+				nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		}
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
