@@ -82,7 +82,7 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 	src[f].getListen().compare(0 , act_listen.size(), act_listen) != 0 ; ++f)
 	{
 		//	std::cout << "get [" << src[f].getListen() << "]" << std::endl;
-		//	std::cout << "act [" << act_listen << "]" << std::endl;
+		std::cout << "act [" << act_listen << "]" << std::endl;
 
 	}
 	return (f);

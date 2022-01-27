@@ -20,7 +20,7 @@ server {
 	error_page 404 /404_not_found.html;
 	error_page 405 /405_not_allowed.html;
 
-		location / {
+	location / {
 		accepted_methods GET DELETE;
 		root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 		error_page 400 /error_page/400.html;

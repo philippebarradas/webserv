@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 
 <html>
-    <head><title>Webserv index.php</title></head>
-
+    <head>
+		<title>Webserv index.php</title>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	</head>
     <body bgcolor="white">
         <center><h1>Webserv index.php</h1></center>
         <hr><center>webcerveau/1.0 (Ubuntu)</center>

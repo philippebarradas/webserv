@@ -89,7 +89,6 @@ int	Engine::accept_connexions(int listen_fd)
 	ss << i_remote_port;
 	this->_remote_port = ss.str();
 	this->_remote_addr = inet_ntoa(addr_client.sin_addr);
-	std::cout << "remote port = " << this->_remote_port << std::endl;
 
 	//char ip[INET_ADDRSTRLEN];
 	//inet_ntop(AF_INET, (struct sockaddr *)&this->_addr, ip, sizeof(ip));
@@ -198,8 +197,8 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		else
 			is_valid = false;
 	}
-	std::cout << std::endl << std::endl << std::endl;
-	std::cout << std::endl << std::endl << std::endl;
+	//std::cout << std::endl << std::endl << std::endl;
+	//std::cout << std::endl << std::endl << std::endl;
 	std::vector<Server>::const_iterator it;
 	std::string port_str = static_cast<std::ostringstream*>( &(std::ostringstream() << this->_port))->str();
 
@@ -212,7 +211,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	{
 		if (obj_cgi.is_file_cgi(parse_head.get_request("path")) == TRUE)
 		{
-			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
+			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
 			obj_cgi.convert_env(obj_cgi.getEnv()));
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
@@ -245,7 +244,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
 			{
 				new_socket = accept_connexions(this->_fds_events[i].data.fd);
-				fcntl(new_socket, F_SETFL, O_NONBLOCK);
+				//fcntl(new_socket, F_SETFL, O_NONBLOCK);
 				this->_fds_events[i].events = EPOLLIN;
 				this->_fds_events[i].data.fd = new_socket;
 				if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket, &this->_fds_events[i]) == -1)

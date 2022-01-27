@@ -81,7 +81,7 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
-	//return (FALSE);
+	return (FALSE);
 	return (TRUE);
 }
 
@@ -119,18 +119,18 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 // var request
 void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header, const Engine & src_engine)
 {
-	// remplacer "/env.php" par le bon fichier apres traitement de requete:
+	// remplacer "/hello.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
-	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
+	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/hello.php";
 	this->_env["DOCUMENT_ROOT"] = src.getRoot();
-	this->_env["DOCUMENT_URI"] = "/env.php";
+	this->_env["DOCUMENT_URI"] = "/hello.php";
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
 	this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
 	this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
 	//this->_env["PATH_TRANSLATED"] = "";
-	this->_env["SCRIPT_NAME"] = "/env.php";
+	this->_env["SCRIPT_NAME"] = "/hello.php";
 	this->_env["QUERY_STRING"] = "";
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
