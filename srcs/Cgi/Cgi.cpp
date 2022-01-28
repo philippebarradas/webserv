@@ -192,16 +192,25 @@ char	**Cgi::create_argv(std::string path_file_executed)
 	return (argv);
 }
 
-void	Cgi::post_cgi(std::string body_string)
+int	Cgi::string_to_fd(std::string body_string) // body | php-cgi
 {
-	/* int pipefd[2];
+	std::cout << RED << "body_string = " << body_string << END << std::endl ;
+	int pipefds[2];
 
-	pipe(pipefd);
-	dup2(pipefd[1], STDOUT_FILENO); */
+	//dup2(pipefds[0], STDIN_FILENO);
+	//close(pipefds[0]);
+	write(pipefds[1], body_string.c_str(), sizeof(body_string));
+	close(pipefds[1]);
+	char buf[20];
+	memset(&buf, 0, 20);
+	read(pipefds[0], &buf, 20);
+	std::cout << GREEN << buf << END << std::endl;
+	return (pipefds[1]);
 }
 
 void	Cgi::exec_cgi(char **argv, char **env)
 {
+	std::string body_string = "nom=dov";
 	int i = 0, fd_out = 0, status = 0;
 	int pipefd[2];
 
@@ -209,6 +218,20 @@ void	Cgi::exec_cgi(char **argv, char **env)
 	this->_pid = fork();
 	if (this->_pid == 0)
 	{
+		std::cout << RED << "body_string = " << body_string << END << std::endl ;
+		int pipefds[2];
+
+		pipe(pipefds);
+		dup2(pipefds[0], STDIN_FILENO);
+		close(pipefds[0]);
+		write(pipefds[1], body_string.c_str(), sizeof(body_string));
+		close(pipefds[1]);
+		char buf[20];
+		memset(&buf, 0, 20);
+		read(pipefds[0], &buf, 20);
+		std::cout << RED << "BUF = " << buf << END << std::endl ;
+
+		//string_to_fd(body_string);
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
 		close(pipefd[1]);
@@ -218,6 +241,7 @@ void	Cgi::exec_cgi(char **argv, char **env)
 	waitpid(this->_pid, &status, 0);
 	close(pipefd[1]);
 	this->_send_content = fd_to_string(pipefd[0]);
+	close(pipefd[0]);
 	delete_argv_env(argv, env);
 	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
 	//this->_send_content << "|" << std::endl << END;
