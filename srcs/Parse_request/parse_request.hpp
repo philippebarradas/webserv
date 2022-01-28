@@ -15,6 +15,9 @@
 
 #include "../Config/Server.hpp"
 
+#define KEEP 0
+#define STOP -1
+
 class Server;
 
 class Parse_request

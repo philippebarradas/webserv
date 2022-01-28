@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/26 17:51:33 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/28 17:35:00 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,15 +130,35 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
     //if (precondition_vadid(file,  get_date(), parse_head) == -1)
     //   return (is_precondition_failed(full_cmd));
 
+   std::string filename = "srcs/Config/default/html_page/" + this->act_index;
+    struct stat result;
+
+  if (stat(filename.c_str(), &result) == -1)
+	{
+	    std::cout << "stat failed" << std::endl;
+	}
+
+	char time_modified_file [200];
+	struct tm * timeinfo;
+	
+	timeinfo = localtime (&result.st_ctim.tv_sec);
+	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
+	std::string actual_time(time_modified_file);
+
+    //struct tm timeinfo_modif;
+
+   // strptime(time_modified_file , "%a, %d %b %G %T %Z", &timeinfo_modif);
+
+
     std::cout << "DANS LE GET" << std::endl;
 
     std::cout << "act index = " << this->act_index << std::endl;
 
     _request_status = "HTTP/1.1 200 OK";
     _server = "webcerveau/1.0";
-    _date = get_date();
+    _date = "Date: " + get_date();
     _content_type = "Content-Type: text/html";
-    _content_length = "Content-Length: " + int_to_string(file.size());
+    _content_length = "Content-Length: " + int_to_string(file.size()) + "\nLast-Modified: " + time_modified_file;
     _connection = "Connection: keep-alive";
 
 

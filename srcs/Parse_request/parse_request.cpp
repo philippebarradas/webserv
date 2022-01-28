@@ -22,7 +22,7 @@
 Parse_request::Parse_request() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
-
+// GET /../../../Makefile HTTP/1.1 = invalid mais bon
     std::string  elements[41] = {
 		"Status", //ok
 		"Method", //ok
@@ -99,26 +99,26 @@ int		Parse_request::buff_is_valid(char *buff)
 	size_t	start = 0;
 
 	if (init_buffer(buff) == -1)
-		return (0);
+		return (KEEP);
 	if (_buffer.size() > 32000)
 	{
 		replace = _big_tab.find("Status");
 		replace->second = "413";
-		return (-1);
+		return (STOP);
 	}
 	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
 		if ((start = parse_first_line()) == -1)
-			return (-1);
+			return (STOP);
 		if (start >= _buffer.size())
-			return (0);
+			return (KEEP);
 		else
 			_buffer = _buffer.substr(start, _buffer.size() - start);;
 	}
 	if (fill_variables() == -1)
-		return (-1);
+		return (STOP);
 	return (check_request());
 }
 
@@ -221,7 +221,7 @@ int		Parse_request::fill_variables()
 			}
 			replace = _big_tab.find(ith->first);
 			if (check_double_content(replace) == -1)
-				return (-1);
+				return (STOP);
 			if (replace->first.find(":") != std::string::npos)
 				replace->second = fill_big_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
 		}
@@ -234,7 +234,7 @@ int		Parse_request::fill_variables()
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
 	//
-	return (0);
+	return (KEEP);
 }
 
 int		Parse_request::init_buffer(char *buff)
@@ -250,10 +250,10 @@ int		Parse_request::init_buffer(char *buff)
 			reset = 2;
 	}
 	if (this->_nbr_line == 0 && reset == 2)
-		return (-1);
+		return (STOP);
 	for(x = 0; buff[x] == '\r' && buff[x + 1] == '\n' && x < std::strlen(buff); x += 2);
 	this->_buffer = buff + x;
-	return (0);
+	return (KEEP);
 }
 
 std::string	Parse_request::fill_big_tab(std::string str)

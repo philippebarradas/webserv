@@ -93,9 +93,7 @@ std::string	int_to_string(int x);
 std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server> src, int port, const Parse_request & parse_head) // true or false
 {
 
-	std::string act_listen = int_to_string(port);//get_actual_listen(buff);
-
-	//std::cout << "listen = " << act_listen << std::endl << std::endl;
+	std::string act_listen = int_to_string(port);
 
 	size_t j = get_listen_vector(src, act_listen);
 
@@ -126,7 +124,6 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 		std::cout << "x header or cookie too large" << std::endl;
 		return (is_too_large(buff));
 	}
-	//std::cout << src[j] << std::endl;
 
 	std::set<std::string>				_methods;
 	std::map<std::string, Server>		_location;

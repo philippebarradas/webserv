@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/26 18:05:00 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/28 17:32:17 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ int     Parse_request::check_first_line(size_t full_size)
 	{
 		replace->second = "400";
 		std::cout << "request_status = " << _big_tab["Status"] << std::endl;
-		return (-1);
+		return (STOP);
 	}
 	else if (get_request("Protocol").compare("HTTP/1.1") != 0)
 	{
 		replace->second = "404";
 		std::cout << "request_status = " << _big_tab["Status"] << std::endl;
-		return (-1);
+		return (STOP);
 	} 
 	else
 		replace->second = "200";
@@ -51,7 +51,7 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 				std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
 				replace = _big_tab.find("Status");
 				replace->second = "400";
-				return (-1);
+				return (STOP);
 			}
 		}
 	}
@@ -64,7 +64,7 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
 			replace = _big_tab.find("Status");
 			replace->second = "400";
-			return (-1);
+			return (STOP);
 		}
 	}
 	pos = _buffer.find("If-Modified-Since\r\n");
@@ -76,10 +76,10 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 			std::cout << "ERROR DOUBLE modified since" << std::endl;
 			replace = _big_tab.find("Status");
 			replace->second = "400";
-			return (-1);
+			return (STOP);
 		}
 	}
-	return (0);
+	return (KEEP);
 }
 
 #include <sys/stat.h>
@@ -88,13 +88,13 @@ int		Parse_request::check_precondition()
     std::string time_test = get_request("If-Unmodified-Since:");
 	
 	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
-		return (-1);
+		return (STOP);
 	if(_buffer.rfind("If-Unmodified-Since\r\n") != std::string::npos)
-		return (-1);
+		return (STOP);
 	if (time_test.compare("") == 0)
-		return (0);
+		return (KEEP);
 	if (time_test.size() < 13)
-		return (-1);
+		return (STOP);
 
     std::string filename = "srcs/Config/default/html_page/404_not_found.html";
     struct stat result;
@@ -102,7 +102,7 @@ int		Parse_request::check_precondition()
    	if (stat(filename.c_str(), &result) == -1)
 	{
 	    std::cout << "stat failed" << std::endl;
-		return (-1);
+		return (STOP);
 	}
 
 	char time_modified_file [200];
@@ -120,38 +120,38 @@ int		Parse_request::check_precondition()
 
 
 	if (timeinfo_modif.tm_year > timeinfo_test.tm_year)
-		return (-1);
+		return (STOP);
 	else if (timeinfo_modif.tm_year < timeinfo_test.tm_year)
-		return (0);
+		return (KEEP);
 	else
 	{
 		if (timeinfo_modif.tm_yday > timeinfo_test.tm_yday)
-			return (-1);
+			return (STOP);
 		else if (timeinfo_modif.tm_yday < timeinfo_test.tm_yday)
-			return (0);
+			return (KEEP);
 		else
 		{
 			if (timeinfo_modif.tm_hour > timeinfo_test.tm_hour)
-				return (-1);
+				return (STOP);
 			else if (timeinfo_modif.tm_hour < timeinfo_test.tm_hour)
-				return (0);
+				return (KEEP);
 			else
 			{
 				if (timeinfo_modif.tm_min > timeinfo_test.tm_min)
-					return (-1);
+					return (STOP);
 				else if (timeinfo_modif.tm_min < timeinfo_test.tm_min)
-					return (0);
+					return (KEEP);
 				else
 				{
 					if (timeinfo_modif.tm_sec > timeinfo_test.tm_sec)
-						return (-1);
+						return (STOP);
 					else if (timeinfo_modif.tm_sec < timeinfo_test.tm_sec)
-						return (0);
+						return (KEEP);
 				}
 			}
 		}
 	} 
-	return (0);
+	return (KEEP);
 }
 
 int		Parse_request::check_request()
@@ -200,5 +200,5 @@ int		Parse_request::check_request()
 		return (1);
 
 	}
-	return (0); 
+	return (KEEP); 
 }

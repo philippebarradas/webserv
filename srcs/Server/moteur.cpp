@@ -144,7 +144,6 @@ void	Moteur::setup_socket_server(const std::vector<Server> & src)
 }
 
 
-
 void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Treat_request	treat;
@@ -160,10 +159,10 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	size_t	recv_len = 0;
 
 	bzero(&buff, sizeof(buff));
-    while (valread != 0 && is_valid == true)
+    while (valread != KEEP && is_valid == true)
 	{
 		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
-		if (valread == -1)
+		if (valread == STOP)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
@@ -177,7 +176,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 
 	std::cout << std::endl << std::endl << std::endl;
 
- 	if (valread != 0)
+ 	if (valread != KEEP)
 	{
 		//file_body = "<html>"; //treat.is_Treat_request(buff, src, this->port, parse_head);
 
@@ -186,6 +185,8 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 		nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
+		else if (nbr_bytes_send == 0)
+			std::cout << "nbr bytes send = 0" << std::endl;
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
 	//if (parse_head.get_request("Status").compare("200") != 0 ||
