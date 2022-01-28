@@ -104,8 +104,8 @@ void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_heade
 	this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 */
-	this->_env["HTTP_CONTENT_TYPE"] = "text/plain";
-	this->_env["HTTP_CONTENT_LENGTH"] = "6";
+	this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");
 	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
@@ -131,6 +131,7 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	*/
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
+	this->_env["REQUEST_SCHEME"] = "http";
 	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
 	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
 	this->_env["DOCUMENT_ROOT"] = src.getRoot();
@@ -138,17 +139,16 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
 	this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
-	this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
+	// pas de path info pour post ??
+	//this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
 	//this->_env["PATH_TRANSLATED"] = "";
 	this->_env["SCRIPT_NAME"] = "/env.php";
 	this->_env["QUERY_STRING"] = "";
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
-	//this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	this->_env["CONTENT_TYPE"] = "6";
-	this->_env["CONTENT_LENGTH"] = "text/plain";
+	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
 }
 
@@ -190,6 +190,14 @@ char	**Cgi::create_argv(std::string path_file_executed)
 	strcpy(argv[1], path_file_executed.c_str());
 	argv[2] = NULL;
 	return (argv);
+}
+
+void	Cgi::post_cgi(std::string body_string)
+{
+	/* int pipefd[2];
+
+	pipe(pipefd);
+	dup2(pipefd[1], STDOUT_FILENO); */
 }
 
 void	Cgi::exec_cgi(char **argv, char **env)

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/26 17:58:58 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/28 13:41:53 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class Cgi
 		void	init_env(const Server & src, const Parse_header & src_header, const Engine & src_engine);
 		char	**convert_env(std::map<std::string, std::string>);
 		char	**create_argv(std::string path_file_executed);
+		void	post_cgi(std::string body_string);
 		void	exec_cgi(char **argv, char **env);
 		std::string	fd_to_string(int fd);
 
