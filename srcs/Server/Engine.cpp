@@ -213,7 +213,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		if (obj_cgi.is_file_cgi(parse_head.get_request("path")) == TRUE)
 		{
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
-			obj_cgi.convert_env(obj_cgi.getEnv()));
+			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 			//close(fd);
@@ -221,11 +221,12 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		else
 		{
 			buff_send = treat.is_Treat_request(buff, src, this->_port, parse_head);
-			if (parse_head.get_request("method") == "POST")
+			if (parse_head.get_request("method").compare("POST") == 0)
+				//parse_head.get_request("method").compare("GET") == 0)
 			{
 				std::cout << "je suis dans la condition" << std::endl;
 				obj_cgi2.exec_cgi(obj_cgi2.create_argv(src.at(i_listen).getRoot() + "/env.php"),
-				obj_cgi2.convert_env(obj_cgi2.getEnv()));
+				obj_cgi2.convert_env(obj_cgi2.getEnv()), parse_head);
 				nbr_bytes_send = send(fd, obj_cgi2.getSend_content().c_str(),
 					obj_cgi2.getSend_content().size(), 0);
 			}

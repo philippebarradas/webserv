@@ -81,7 +81,7 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
-	return (FALSE);
+	//return (FALSE);
 	return (TRUE);
 }
 
@@ -192,56 +192,40 @@ char	**Cgi::create_argv(std::string path_file_executed)
 	return (argv);
 }
 
-int	Cgi::string_to_fd(std::string body_string) // body | php-cgi
+void	Cgi::string_to_fd(std::string body_string) // body | php-cgi
 {
 	std::cout << RED << "body_string = " << body_string << END << std::endl ;
-	int pipefds[2];
+	int fds_child[2];
 
-	//dup2(pipefds[0], STDIN_FILENO);
-	//close(pipefds[0]);
-	write(pipefds[1], body_string.c_str(), sizeof(body_string));
-	close(pipefds[1]);
-	char buf[20];
-	memset(&buf, 0, 20);
-	read(pipefds[0], &buf, 20);
-	std::cout << GREEN << buf << END << std::endl;
-	return (pipefds[1]);
+	pipe(fds_child);
+	dup2(fds_child[0], STDIN_FILENO);
+	close(fds_child[0]);
+	write(fds_child[1], body_string.c_str(), sizeof(body_string));
+	close(fds_child[1]);
 }
 
-void	Cgi::exec_cgi(char **argv, char **env)
+void	Cgi::exec_cgi(char **argv, char **env, const Parse_header & src_header)
 {
 	std::string body_string = "nom=dov";
 	int i = 0, fd_out = 0, status = 0;
-	int pipefd[2];
+	int fds_exec[2];
 
-	pipe(pipefd);
+	pipe(fds_exec);
 	this->_pid = fork();
 	if (this->_pid == 0)
 	{
-		std::cout << RED << "body_string = " << body_string << END << std::endl ;
-		int pipefds[2];
-
-		pipe(pipefds);
-		dup2(pipefds[0], STDIN_FILENO);
-		close(pipefds[0]);
-		write(pipefds[1], body_string.c_str(), sizeof(body_string));
-		close(pipefds[1]);
-		char buf[20];
-		memset(&buf, 0, 20);
-		read(pipefds[0], &buf, 20);
-		std::cout << RED << "BUF = " << buf << END << std::endl ;
-
-		//string_to_fd(body_string);
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
+		if (src_header.get_request("method").compare("POST") == 0)
+			string_to_fd(body_string); // for post request
+		dup2(fds_exec[1], STDOUT_FILENO);
+		close(fds_exec[0]);
+		close(fds_exec[1]);
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}
 	waitpid(this->_pid, &status, 0);
-	close(pipefd[1]);
-	this->_send_content = fd_to_string(pipefd[0]);
-	close(pipefd[0]);
+	close(fds_exec[1]);
+	this->_send_content = fd_to_string(fds_exec[0]);
+	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
 	//this->_send_content << "|" << std::endl << END;
