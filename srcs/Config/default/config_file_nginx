@@ -23,6 +23,9 @@ server{
 	index form.html;
 	dav_methods DELETE;
 
+	location /error_page {
+		index my_index.html;
+	}
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
 		fastcgi_index hello.php;

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/28 17:17:57 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/01/31 13:46:20 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ class Cgi
 		char	**create_argv(std::string path_file_executed);
 		void	exec_cgi(char **argv, char **env, const Parse_header & src_header);
 		std::string	fd_to_string(int fd);
-		void	string_to_fd(std::string body_string); // body | php-cgi
+		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
 
 		// GETTERS
 		std::map<std::string, std::string>	getEnv() const;

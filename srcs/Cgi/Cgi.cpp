@@ -81,7 +81,7 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
 	//if (path_extension.compare("html") == 0)
-	//return (FALSE);
+	return (FALSE);
 	return (TRUE);
 }
 
@@ -192,7 +192,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 	return (argv);
 }
 
-void	Cgi::string_to_fd(std::string body_string) // body | php-cgi
+void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
 	std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
@@ -215,7 +215,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_header & src_header)
 	if (this->_pid == 0)
 	{
 		if (src_header.get_request("method").compare("POST") == 0)
-			string_to_fd(body_string); // for post request
+			write_body_post_in_fd(body_string); // for post request
 		dup2(fds_exec[1], STDOUT_FILENO);
 		close(fds_exec[0]);
 		close(fds_exec[1]);
