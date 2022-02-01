@@ -173,7 +173,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 
 void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 {
-	Treat_request	treat;
+	Treat_request request;
 	Parse_request	parse_head;
 	std::string		file_body;
 	std::string 	buff_send;
@@ -207,29 +207,29 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
 		if ((*it).getListen() == port_str)
 			break ;
-	Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
-	Cgi		obj_cgi2(src.at(i_listen), parse_head, *this);
+	Cgi		obj_cgi(src.at(i_listen), parse_head, *this, request);
+	//Cgi		obj_cgi2(src.at(i_listen), parse_head, *this, request);
  	if (valread != 0)
 	{
-		if (obj_cgi.is_file_cgi(parse_head.get_request("path")) == TRUE)
+		if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
-			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
+			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 			//close(fd);
 		}
 		else
 		{
-			buff_send = treat.is_Treat_request(buff, src, this->_port, parse_head);
-			if (parse_head.get_request("method").compare("POST") == 0)
+			buff_send = request.is_Treat_request(buff, src, this->_port, parse_head);
+			if (parse_head.get_request("Method").compare("POST") == 0)
 				//parse_head.get_request("method").compare("GET") == 0)
 			{
 				std::cout << "je suis dans la condition" << std::endl;
-				obj_cgi2.exec_cgi(obj_cgi2.create_argv(src.at(i_listen).getRoot() + "/env.php"),
-				obj_cgi2.convert_env(obj_cgi2.getEnv()), parse_head);
-				nbr_bytes_send = send(fd, obj_cgi2.getSend_content().c_str(),
-					obj_cgi2.getSend_content().size(), 0);
+				obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
+				obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
+				nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
+					obj_cgi.getSend_content().size(), 0);
 			}
 			else
 				nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);

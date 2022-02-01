@@ -20,10 +20,11 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+Cgi::Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine,
+	const Treat_request & src_request)
 {
 	init_path(src);
-	init_env(src, src_header, src_engine);
+	init_env(src, src_header, src_engine, src_request);
 }
 
 Cgi::Cgi( const Cgi & src )
@@ -94,7 +95,8 @@ void	Cgi::init_path(const Server & src)
 }
 
 // var from client
-void	Cgi::init_env_client_var(const Server & src, const Parse_request & src_header)
+void	Cgi::init_env_client_var(const Server & src, const Parse_request & src_header,
+	const Treat_request & src_request)
 {
 	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
@@ -123,7 +125,8 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_request & src_head
 }
 
 // var request
-void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_header,
+	const Engine & src_engine, const Treat_request & src_request)
 {
 	/* difference entre GET et POST sur un form html qui redirect ur env.php:
 		POST par rapport a get: + : HTTP_CONTENT_LENGTH, HTTP_CONTENT_TYPE == CONTENT_TYPE et CONTENT_LENGTH
@@ -136,9 +139,9 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_hea
 	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
 	this->_env["DOCUMENT_ROOT"] = src.getRoot();
 	this->_env["DOCUMENT_URI"] = "/env.php";
-	this->_env["SERVER_PROTOCOL"] = src_header.get_request("protocol");
+	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
 	this->_env["SERVER_PORT"] = src.getListen();
-	this->_env["REQUEST_METHOD"] = src_header.get_request("method"); // pas bien
+	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	// pas de path info pour post ??
 	//this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
 	//this->_env["PATH_TRANSLATED"] = "";
@@ -149,16 +152,17 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_hea
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
+	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
-void	Cgi::init_env(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+void	Cgi::init_env(const Server & src, const Parse_request & src_header, const Engine & src_engine,
+	const Treat_request & src_request)
 {
 	std::map<std::string, std::string>::iterator it_env;
 
-	init_env_client_var(src, src_header);
+	init_env_client_var(src, src_header, src_request);
 	init_env_server_var(src, src_header);
-	init_env_request_var(src, src_header, src_engine);
+	init_env_request_var(src, src_header, src_engine, src_request);
 	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
@@ -204,9 +208,11 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 	close(fds_child[1]);
 }
 
-void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
+void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header, const Treat_request & src_request)
 {
-	std::string body_string = "nom=dov";
+	//std::string body_string = "nom=dov";
+	//std::cout << "body_string\t=\t" << body_string << std::endl;
+	std::string body_string = src_header.get_request_body();
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 
@@ -214,7 +220,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	this->_pid = fork();
 	if (this->_pid == 0)
 	{
-		if (src_header.get_request("method").compare("POST") == 0)
+		if (src_header.get_request("Method").compare("POST") == 0)
 			write_body_post_in_fd(body_string); // for post request
 		dup2(fds_exec[1], STDOUT_FILENO);
 		close(fds_exec[0]);
