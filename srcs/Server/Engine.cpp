@@ -71,27 +71,28 @@ void	Engine::listen_socket(int listen_fd)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
-// Accept connexion and return socket accepted
-int	Engine::accept_connexions(int listen_fd)
+// Set remote addr and remote port
+void	Engine::set_remote_var(struct sockaddr_in & addr_client)
 {
-	struct sockaddr_in addr_client;
-	int new_socket = 0;
-	//int client_len = sizeof(this->_addr);
-	int client_len = sizeof(addr_client);
-
-	//new_socket = accept(listen_fd, (struct sockaddr *)&this->_addr, (socklen_t *)&client_len);
-	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client, (socklen_t *)&client_len);
-	if (new_socket < 0)
-		throw std::runtime_error("[Error] accept_connexions() failed");
 	int i_remote_port = ntohs(addr_client.sin_port);
 
 	std::stringstream ss;
 	ss << i_remote_port;
 	this->_remote_port = ss.str();
 	this->_remote_addr = inet_ntoa(addr_client.sin_addr);
+}
 
-	//char ip[INET_ADDRSTRLEN];
-	//inet_ntop(AF_INET, (struct sockaddr *)&this->_addr, ip, sizeof(ip));
+// Accept connexion and return socket accepted
+int	Engine::accept_connexions(int listen_fd)
+{
+	struct sockaddr_in addr_client;
+	int new_socket = 0;
+	int client_len = sizeof(addr_client);
+
+	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client, (socklen_t *)&client_len);
+	set_remote_var(addr_client);
+	if (new_socket < 0)
+		throw std::runtime_error("[Error] accept_connexions() failed");
 	return (new_socket);
 }
 
