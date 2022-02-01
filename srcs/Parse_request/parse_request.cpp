@@ -23,7 +23,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 // GET /../../../Makefile HTTP/1.1 = invalid mais bon
-    std::string  elements[41] = {
+    std::string  elements[42] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
@@ -31,6 +31,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Protocol", //ok
 		"Host:", //ok
 		"A-IM:", 
+		"Transfer-Encoding:"
 		"Accept:",
 		"Accept-Charset:",
 		"Accept-Encoding:", 
@@ -66,7 +67,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Warning:"};
 
 	std::string empty = "";
-	for (size_t x = 0; x < 41; x++)
+	for (size_t x = 0; x < 42; x++)
 		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 }
 

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/01/28 17:32:17 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/01 12:56:40 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,14 @@ int		Parse_request::check_request()
 	size_t	found = 0;
 
 	found = _buffer.find("\r\n\r\n");
+
+	std::cout << "found = " << found << std::endl;
+	std::cout << "_buffer = " << _buffer.size() << std::endl;
+	if (_buffer.size() > found + 4)
+		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
+
+	std::cout << "string = {{{{{" << _request_body << "}}}}}}}" << std::endl;
+
 	if (found != std::string::npos)
 	{
 		if (get_request("Connection:").find("close") != std::string::npos)

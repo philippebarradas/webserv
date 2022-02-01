@@ -42,11 +42,18 @@ class Parse_request
 			return ("");
 		};
 
+		std::string get_request_body() const
+		{
+			return (_request_body);
+		}
+
+
 		int		buff_is_valid(char *buff);
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
 
 	private:
+		std::string	_request_body;
 		std::string	fill_big_tab(std::string str);
 		int			parse_first_line();
 		void		parse_path();
