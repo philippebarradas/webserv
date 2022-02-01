@@ -59,7 +59,8 @@ class Parse_request
 		void		parse_path();
 		int			fill_variables();
 		int			init_buffer(char *buff);
-		
+		void		is_body(size_t found);
+
 		int			check_request();
 		int			check_first_line(size_t full_size);
 		int			check_double_content(std::map<std::string, std::string>::iterator replace);

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/01 12:56:40 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/01 17:52:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,22 +154,85 @@ int		Parse_request::check_precondition()
 	return (KEEP);
 }
 
+size_t	hexa_to_size(std::string nbr)
+{
+	std::stringstream ss;
+	std::string hex = "0123456789ABCEDF";
+	size_t found;
+	size_t res = 0;
+	size_t p = 0;
+
+	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
+	{
+		if ((found = hex.find(*it)) == std::string::npos)
+			return (-1);
+	}
+	
+	ss << std::hex << nbr;
+	ss >> res;
+	
+	std::cout << "nbr = [" << nbr << "]" << std::endl;
+	std::cout << "res = " << res << std::endl;
+	return (res);
+}
+
+void	Parse_request::is_body(size_t found)
+{
+	size_t full_size = 0;
+	size_t line_size = 0;
+	size_t pos = 0;
+	size_t size = -1;
+	std::string body_un;
+	std::string cmp = "\r\n";
+
+	//std::cout << "found = " << found << std::endl;
+	//std::cout << "_buffer = " << _buffer.size() << std::endl;
+	if (_buffer.size() > found + 4)
+		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
+	
+	std::string split_body = _request_body;
+	//std::cout << "string = {{{{{" << _request_body << "}}}}}}}" << std::endl;
+
+	//std::cout << "transfet = " << get_request("Transfer-Encoding:") << std::endl;
+
+	if (get_request("Transfer-Encoding:").compare("chunked") == 0)
+	{
+		std::cout << "---------START----------" << std::endl;
+		while ((found = split_body.find("\r\n")) != std::string::npos)
+		{
+			found += cmp.size();
+			size = hexa_to_size(split_body.substr(0, found - cmp.size()));
+			if (size != -1)
+				full_size += size;
+			else
+				body_un += split_body.substr(0, found - cmp.size());
+			//std::cout << "-------------------" << std::endl;
+			//line_size = stoi(split_body.substr(0, found));
+			//std::cout << "found = " << found << std::endl;
+			//std::cout << "line = [" << split_body.substr(0, found - cmp.size()) << "]" << std::endl;
+			
+			//pos += found + 2;m
+			
+			split_body = split_body.substr(found, split_body.size() - found);
+			//std::cout << "split_body = [" << split_body << "]" << std::endl;
+		}
+
+		std::cout << "full_size = [" << full_size << "]" << std::endl;
+		std::cout << "body_un = [" << body_un << "]" << std::endl;
+
+		std::cout << "--------END-----------" << std::endl;
+	}
+}
+
 int		Parse_request::check_request()
 {
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
 
 	found = _buffer.find("\r\n\r\n");
-
-	std::cout << "found = " << found << std::endl;
-	std::cout << "_buffer = " << _buffer.size() << std::endl;
-	if (_buffer.size() > found + 4)
-		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
-
-	std::cout << "string = {{{{{" << _request_body << "}}}}}}}" << std::endl;
-
 	if (found != std::string::npos)
 	{
+		is_body(found);
 		if (get_request("Connection:").find("close") != std::string::npos)
 		{
 			replace = _big_tab.find("Connection:");

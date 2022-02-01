@@ -31,7 +31,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Protocol", //ok
 		"Host:", //ok
 		"A-IM:", 
-		"Transfer-Encoding:"
+		"Transfer-Encoding:",
 		"Accept:",
 		"Accept-Charset:",
 		"Accept-Encoding:", 
@@ -259,6 +259,7 @@ int		Parse_request::init_buffer(char *buff)
 
 std::string	Parse_request::fill_big_tab(std::string str)
 {
+	//std::cout << "Str = " << str << std::endl;
 	if (!str.empty() && str[str.size() - 1] == '\n')
 		str.erase(str.size() - 1);
 	if (!str.empty() && str[str.size() - 1] == '\r')
