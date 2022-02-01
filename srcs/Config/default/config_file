@@ -60,5 +60,7 @@ server {
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	accepted_methods	GET ;
 
+	index my_index.html;
+
 	client_max_body_size	20;
 }

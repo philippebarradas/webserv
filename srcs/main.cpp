@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/24 15:50:41 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/01 14:49:40 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main( int ac, char *av[] )
 	}
 	catch( std::exception const & e )
 	{
-		std::cerr << "An error has been found on the config file:" << std::endl;
+		//std::cerr << "An error has been found on the config file:" << std::endl;
 		std::cerr << e.what() << std::endl;
 		return (1);
 	}

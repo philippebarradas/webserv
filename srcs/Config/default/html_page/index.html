@@ -1,8 +1,23 @@
 <!DOCTYPE html>
+
 <html>
-<body>
-	<h1>WebCerveau</h1>
-	<h2>index.html</h2>
-	<p>@philippegrosbdg te presente la page d'accueil.</p>
-</body>
+    <head>
+        <title>Webserv form.html</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    </head>
+    <body bgcolor="white">
+        <center><h1>Webserv form.html</h1></center>
+        <hr><center>webcerveau/1.0 (Ubuntu)</center>
+        <p>PRINT _GET</p>
+        <p>TEST GET</p>
+        <form method="GET" action="/env.php">
+            <input type="text" name="nom"></input>
+            <input type="submit" value="phbdg valide"> </input>
+        </form>
+        <p>TEST POST</p>
+        <form method="POST" action="/env.php" enctype="application/x-www-form-urlencoded">
+            <input type="text" name="nom"></input>
+            <input type="submit" value="phbdg valide"> </input>
+        </form>
+    </body>
 </html>

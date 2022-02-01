@@ -12,7 +12,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include <fcntl.h>
 
 // Socket
@@ -45,9 +44,9 @@
 
 // My class
 #include "../Config/Server.hpp"
-#include "../Parse_header/parse_header.hpp"
-class Parse_header;
+#include "../Parse_request/parse_request.hpp"
 class Server;
+class Parse_request;
 
 class Engine
 {

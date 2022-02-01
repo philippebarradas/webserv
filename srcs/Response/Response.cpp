@@ -19,7 +19,7 @@
 Response::Response( unsigned int const & code, std::string const & page )
 {
 	this->writeRequestStatus(code);
-	this->_header += "webserv/1.0 (Ubuntu)" ;//+= parse_header.get_request("status") += "\n";
+	this->_header += "webserv/1.0 (Ubuntu)" ;//+= Parse_request.get_request("Status") += "\n";
 	this->writeDate();
 
 	this->_header += "\n" + page;
