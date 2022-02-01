@@ -234,6 +234,7 @@ int		Parse_request::fill_variables()
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
+	*/
 	//
 	return (KEEP);
 }

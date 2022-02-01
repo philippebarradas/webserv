@@ -20,7 +20,7 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(const Server & src, const Parse_header & src_header, const Engine & src_engine)
+Cgi::Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine)
 {
 	init_path(src);
 	init_env(src, src_header, src_engine);
@@ -94,7 +94,7 @@ void	Cgi::init_path(const Server & src)
 }
 
 // var from client
-void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_header)
+void	Cgi::init_env_client_var(const Server & src, const Parse_request & src_header)
 {
 	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
@@ -111,7 +111,7 @@ void	Cgi::init_env_client_var(const Server & src, const Parse_header & src_heade
 }
 
 // var server
-void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_header)
+void	Cgi::init_env_server_var(const Server & src, const Parse_request & src_header)
 {
 	std::set<std::string>::iterator it;
 	it = src.getName().begin();
@@ -123,7 +123,7 @@ void	Cgi::init_env_server_var(const Server & src, const Parse_header & src_heade
 }
 
 // var request
-void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_header, const Engine & src_engine)
+void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_header, const Engine & src_engine)
 {
 	/* difference entre GET et POST sur un form html qui redirect ur env.php:
 		POST par rapport a get: + : HTTP_CONTENT_LENGTH, HTTP_CONTENT_TYPE == CONTENT_TYPE et CONTENT_LENGTH
@@ -152,7 +152,7 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_header & src_head
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("status");
 }
 
-void	Cgi::init_env(const Server & src, const Parse_header & src_header, const Engine & src_engine)
+void	Cgi::init_env(const Server & src, const Parse_request & src_header, const Engine & src_engine)
 {
 	std::map<std::string, std::string>::iterator it_env;
 
@@ -204,7 +204,7 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 	close(fds_child[1]);
 }
 
-void	Cgi::exec_cgi(char **argv, char **env, const Parse_header & src_header)
+void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
 	std::string body_string = "nom=dov";
 	int i = 0, fd_out = 0, status = 0;

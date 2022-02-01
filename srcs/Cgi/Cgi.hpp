@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/01/31 13:46:20 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/01 14:56:14 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class Cgi
 
 		// CONSTRUCTOR
 		Cgi();
-		Cgi(const Server & src, const Parse_header & src_header, const Engine & src_engine); // pour l'instant
+		Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
 
@@ -72,13 +72,13 @@ class Cgi
 		std::string	to_string(size_t nb);
 		bool	is_file_cgi(std::string path_extension);
 		void	init_path(const Server & src);
-		void	init_env_client_var(const Server & src, const Parse_header & src_header);
-		void	init_env_server_var(const Server & src, const Parse_header & src_header);
-		void	init_env_request_var(const Server & src, const Parse_header & src_header, const Engine & src_engine);
-		void	init_env(const Server & src, const Parse_header & src_header, const Engine & src_engine);
+		void	init_env_client_var(const Server & src, const Parse_request & src_header);
+		void	init_env_server_var(const Server & src, const Parse_request & src_header);
+		void	init_env_request_var(const Server & src, const Parse_request & src_header, const Engine & src_engine);
+		void	init_env(const Server & src, const Parse_request & src_header, const Engine & src_engine);
 		char	**convert_env(std::map<std::string, std::string>);
 		char	**create_argv(std::string path_file_executed);
-		void	exec_cgi(char **argv, char **env, const Parse_header & src_header);
+		void	exec_cgi(char **argv, char **env, const Parse_request & src_header);
 		std::string	fd_to_string(int fd);
 		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
 

@@ -13,7 +13,7 @@
 #include "Engine.hpp"
 #include "../Treat_request/treat_request.hpp"
 #include "../Cgi/Cgi.hpp"
-#include "../Parse_header/parse_header.hpp"
+#include "../Parse_request/parse_request.hpp"
 
 // Creating socket file descriptor
 int	Engine::create_socket()
@@ -174,7 +174,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Treat_request	treat;
-	Parse_header	parse_head;
+	Parse_request	parse_head;
 	std::string		file_body;
 	std::string 	buff_send;
 
