@@ -278,7 +278,7 @@ std::string	Cgi::getUser() const
 
 std::string	Cgi::getHome() const
 {
-	return (this->_user);
+	return (this->_home);
 }
 
 int	Cgi::getPid() const
