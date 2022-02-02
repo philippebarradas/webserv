@@ -140,7 +140,20 @@ Engine::~Engine()
 
 Engine&				Engine::operator=( Engine const & rhs )
 {
-	(void)rhs;
+	if (this != &rhs)
+	{
+		this->_addr = rhs._addr;
+		this->_buff_send = rhs._buff_send;
+		this->_epfd = rhs._epfd;
+		this->_i_server = rhs._i_server;
+		this->_i_server_binded = rhs._i_server_binded;
+		this->_nbr_servers = rhs._nbr_servers;
+		this->_port = rhs._port;
+		this->_remote_addr = rhs._remote_addr;
+		this->_remote_port = rhs._remote_port;
+		this->_timeout = rhs._timeout;
+		this->_valread = rhs._valread;
+	}
 	return *this;
 }
 
@@ -173,7 +186,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 
 void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 {
-	Treat_request request;
+	Treat_request	request;
 	Parse_request	parse_head;
 	std::string		file_body;
 	std::string 	buff_send;
@@ -256,7 +269,6 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
 			{
 				new_socket = accept_connexions(this->_fds_events[i].data.fd);
-				//fcntl(new_socket, F_SETFL, O_NONBLOCK);
 				this->_fds_events[i].events = EPOLLIN;
 				this->_fds_events[i].data.fd = new_socket;
 				if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket, &this->_fds_events[i]) == -1)

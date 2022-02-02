@@ -1,7 +1,5 @@
 user www-data;
 
-user www-data;
-
 events {}
 http{
 server{
