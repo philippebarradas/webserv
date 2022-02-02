@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parse_request.cpp                                   :+:      :+:    :+:   */
+/*   parse_request.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/01/26 17:50:51 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/02 17:07:16 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 /**
  * Initialise le comparateur
  **/
- 
+
 Parse_request::Parse_request() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
@@ -27,20 +27,20 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
-		"Query", 
+		"Query",
 		"Protocol", //ok
 		"Host:", //ok
 		"A-IM:", 
 		"Transfer-Encoding:",
 		"Accept:",
 		"Accept-Charset:",
-		"Accept-Encoding:", 
+		"Accept-Encoding:",
 		"Accept-Language:",
-		"Accept-Datetime:", 
+		"Accept-Datetime:",
 		"Access-Control-Request-Method:",
-		"Access-Control-Request-Headers:", 
+		"Access-Control-Request-Headers:",
 		"Authorization:",
-		"Cache-Control:", 
+		"Cache-Control:",
 		"Connection:", //ok
 		"Content-Length:", //ok
 		"Content-Type:",
@@ -54,14 +54,14 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"If-Range:",
 		"If-Unmodified-Since:", //
 		"Max-Forwards:",
-		"Origin:", 
+		"Origin:",
 		"Pragma:",
-		"Proxy-Authorization:", 
+		"Proxy-Authorization:",
 		"Range:",
 		"Referer:",
 		"TE:",
 		"User-Agent:",
-		"Upgrade:", 
+		"Upgrade:",
 		"Via:",
 		"Last-Modified:",
 		"Warning:"};
@@ -71,13 +71,13 @@ Parse_request::Parse_request() : _nbr_line(0)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 }
 
-/* 
+/*
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
 Parse_request::~Parse_request()
 {
-	std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
 }
 
 /*
@@ -107,7 +107,7 @@ int		Parse_request::buff_is_valid(char *buff)
 		replace->second = "413";
 		return (STOP);
 	}
-	std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
+	//std::cout << "buffer == \n{"<< _buffer << "}" << std::endl;
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
@@ -227,13 +227,14 @@ int		Parse_request::fill_variables()
 				replace->second = fill_header_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
 		}
 	}
- 
+
 	//DISPLAY VALID ELEMENTS
 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
+	*/
 	//
 	return (KEEP);
 }

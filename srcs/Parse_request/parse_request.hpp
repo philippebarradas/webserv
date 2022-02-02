@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   Parse_request.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
 /*   Updated: 2022/01/26 17:04:54 by user42           ###   ########.fr       */

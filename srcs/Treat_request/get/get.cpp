@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/28 17:35:00 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/01 14:53:56 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int     precondition_vadid(std::string file, std::string date, const Parse_reque
 {
 
  {  (void)parse_head;
-    
+
 	//time_t rawtime;
 	struct tm * timeinfo;
 
@@ -53,9 +53,10 @@ int     precondition_vadid(std::string file, std::string date, const Parse_reque
 
 	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
 	std::string actual_time(time_modified_file);
-	
 
-    
+
+
+
 
     struct tm timeinfo_modif;
     struct tm timeinfo_test;
@@ -117,7 +118,7 @@ int     precondition_vadid(std::string file, std::string date, const Parse_reque
         std::cout << time_test << std::endl;
 
 
-        } 
+        }
 
   return (0);
 }
@@ -140,7 +141,7 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
 
 	char time_modified_file [200];
 	struct tm * timeinfo;
-	
+
 	timeinfo = localtime (&result.st_ctim.tv_sec);
 	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
 	std::string actual_time(time_modified_file);
@@ -164,8 +165,8 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
 
 
 
-    /* 
-    std::cout << "Full_cmd = [" << full_cmd << "]" << std::endl;   
+    /*
+    std::cout << "Full_cmd = [" << full_cmd << "]" << std::endl;
     size_t pos;
 
     std::string request_method = full_cmd.substr(0, full_cmd.find(" "));
@@ -175,7 +176,7 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
     std::string path_info = full_cmd.substr(0, full_cmd.find(" "));
     pos = full_cmd.find(" ");
     full_cmd = full_cmd.substr(pos + 1);
-   
+
     std::string server_protocol = full_cmd.substr(0, full_cmd.find(" "));
     pos = full_cmd.find(" ");
     full_cmd = full_cmd.substr(pos + 1);
@@ -190,13 +191,13 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
     //path.
 
 
-    //std::string http = NULL;    
+    //std::string http = NULL;
 
-    //std::cout << "path = [" << path << "]" << std::endl;   
-   // std::cout << "http = [" << http << "]" << std::endl;   
-   // std::cout << "Full_cmd = [" << full_cmd << "]" << std::endl;   
-    return (build_header(full_cmd) + file);  
-    
+    //std::cout << "path = [" << path << "]" << std::endl;
+   // std::cout << "http = [" << http << "]" << std::endl;
+   // std::cout << "Full_cmd = [" << full_cmd << "]" << std::endl;
+    return (build_header(full_cmd) + file);
+
     //return (full_cmd);
 
 }

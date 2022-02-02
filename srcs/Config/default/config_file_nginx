@@ -3,38 +3,32 @@ user www-data;
 events {}
 http{
 server{
-    server_name example.com;
-    listen 7778;
+	server_name hello4;
 
-    autoindex on;
-	client_max_body_size 1G;
-    root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-    error_page 400 /400_bad_request.html;
-   
-    location / {
-        proxy_buffering off;
-
-    }
-    
+	listen 7778;
+	autoindex on;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	error_page 400 /400_bad_request.html;
 }
 
 
 server{
-    server_name hello12 hello55;
-    listen 7777;
+	server_name hello12 hello55;
+	listen 7777;
 
-    proxy_buffering off;
+	autoindex on;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-    autoindex on;
-    root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	index form.html;
+	dav_methods DELETE;
 
-    index index.html;
-    dav_methods DELETE;
-
-    location ~ .php$ {
-        fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
-        fastcgi_index hello.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include /etc/nginx/fastcgi_params;
-    }
+	location /error_page {
+		index my_index.html;
+	}
+	location ~ \.php$ {
+		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+		fastcgi_index hello.php;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include /etc/nginx/fastcgi_params;
+	}
 }}

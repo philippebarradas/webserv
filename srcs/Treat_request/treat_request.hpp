@@ -54,7 +54,7 @@ class Treat_request
 		Treat_request &operator=(const Treat_request &pt);	//can
 
 		std::string is_Treat_request(std::string full_cmd, std::vector<Server> src, int port, const Parse_request & parse_head);
-		
+
 		std::string build_header(std::string buff);
 
 		std::string is_bad_request(std::string buff);
@@ -70,6 +70,7 @@ class Treat_request
 
 		std::string	get_date();
 
+		std::string	get_body_request() const;
 
 
 		std::vector<std::string> _header;
@@ -82,7 +83,9 @@ class Treat_request
 		std::string	_date;
 		std::string	_content_type;
 		std::string _content_length;
+		std::string _content_length_post;
 		std::string	_connection;
+		std::string _body_request;
 };
 
 

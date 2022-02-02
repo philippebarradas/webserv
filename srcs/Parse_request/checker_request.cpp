@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/02 14:50:33 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/02 17:07:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int     Parse_request::check_first_line(size_t full_size)
 		replace->second = "404";
 		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
 		return (STOP);
-	} 
+	}
 	else
 		replace->second = "200";
 	return (full_size);
@@ -86,7 +86,7 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
-	
+
 	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
 		return (STOP);
 	if(_buffer.rfind("If-Unmodified-Since\r\n") != std::string::npos)
@@ -107,7 +107,7 @@ int		Parse_request::check_precondition()
 
 	char time_modified_file [200];
 	struct tm * timeinfo;
-	
+
 	timeinfo = localtime (&result.st_ctim.tv_sec);
 	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
 	std::string actual_time(time_modified_file);
@@ -150,7 +150,7 @@ int		Parse_request::check_precondition()
 				}
 			}
 		}
-	} 
+	}
 	return (KEEP);
 }
 
@@ -185,8 +185,6 @@ void	Parse_request::is_body(size_t found)
 	std::string body_un;
 	std::string cmp = "\r\n";
 
-	//std::cout << "found = " << found << std::endl;
-	//std::cout << "_buffer = " << _buffer.size() << std::endl;
 	if (_buffer.size() > found + 4)
 		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
 	
@@ -250,7 +248,7 @@ int		Parse_request::check_request()
 			replace->second = "400";
 		}
 		else if (get_request("Host:").find(":") != std::string::npos)
-		{		
+		{
 			found = get_request("Host:").find(":");
 			replace = _header_tab.find("Host:");
 			replace->second = get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
@@ -271,5 +269,5 @@ int		Parse_request::check_request()
 		return (1);
 
 	}
-	return (KEEP); 
+	return (KEEP);
 }

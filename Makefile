@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
+#    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/01/26 18:00:10 by user42           ###   ########.fr        #
+#    Updated: 2022/02/01 14:49:58 by dodjian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME			= webserv
 CC				= @clang++
-CFLAGS			=  #-std=c++98 #-Wall -Wextra -Werror
+CFLAGS			= #-Wall -Wextra -Werror -std=c++98
 RM				= @rm -rf
 
 ######################################################################
@@ -39,9 +39,11 @@ NAMEC			= ${BLUE}${BOLD}$(NAME)${END}
 #                            Source Files                            #
 ######################################################################
 
-CONFIG			= Config.cpp Server.cpp utils.cpp
+CGI			= Cgi.cpp
 
-SERVER			= moteur.cpp
+CONFIG		= Config.cpp Server.cpp utils.cpp
+
+SERVER			= Engine.cpp
 
 PARSE_REQUEST	= parse_request.cpp checker_request.cpp
 
@@ -55,6 +57,7 @@ RESPONSE		= Response.cpp
 MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
+				$(addprefix srcs/Cgi/, $(CGI)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/Parse_request/, $(PARSE_REQUEST)) \
 				$(addprefix srcs/Treat_request/, $(TREAT_REQUEST)) \

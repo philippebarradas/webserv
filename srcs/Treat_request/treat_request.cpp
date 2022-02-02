@@ -41,7 +41,7 @@ std::string Treat_request::build_header(std::string buff)
     //	std::cout << "string =|" << *it << std::endl;
 	}
 	full_header += "\n";
-	
+
 	//std::cout << "full = [" << full_header << "]" << std::endl;
 	return (full_header);
 	//return (bad_request);
@@ -49,10 +49,10 @@ std::string Treat_request::build_header(std::string buff)
 
 
 std::string	get_actual_listen(std::string buff)
-{	
+{
 	std::string listen;
 	std::string eg;
-	
+
 	size_t size_start = 0;
 	size_t size_end = 0;
 	size_t nbr_dp = 0;
@@ -82,7 +82,7 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 	src[f].getListen().compare(0 , act_listen.size(), act_listen) != 0 ; ++f)
 	{
 		//	std::cout << "get [" << src[f].getListen() << "]" << std::endl;
-		//	std::cout << "act [" << act_listen << "]" << std::endl;
+		std::cout << "act [" << act_listen << "]" << std::endl;
 
 	}
 	return (f);
@@ -146,7 +146,7 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 	std::cout << "act_method = |" << act_method << "|" << std::endl;
 
 	bool i = false;
-	
+
 	for (it_method = _methods.begin() ; it_method != _methods.end(); it_method++)
 	{
 		if ((*it_method).compare(0 , (*it_method).size(), act_method) == 0)
@@ -158,12 +158,13 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 		std::cout << "false method" << std::endl;
 		return (is_not_allowed(buff));
 	}
-	
+
 	std::set<std::string>				_index = src[j].getIndex();
 	std::set<std::string>::iterator		it_index = _index.begin();
 
- 	for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
-	{	this->act_index = (*it_index);} 
+ 	//for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
+	//{	this->act_index = (*it_index);}
+	this->act_index = "form.html";
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
@@ -174,7 +175,7 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 		return ft_delete(buff, parse_head);
 
 	//return (ft_get(buff));
-	
+
 	//return (is_bad_request(buff));
 
 	//return ("HTTP/1.1 400 Bad Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>400 Bad Request</title></head>\n<body bgcolor='white'>\n<center><h1>400 Bad Request</h1></center>\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\n</body>\n</html>");
@@ -200,4 +201,9 @@ Treat_request	&Treat_request::operator=(const Treat_request &pt)
 {
 	this->_request_status = pt._request_status;
 	return (*this);
+}
+
+std::string	Treat_request::get_body_request() const
+{
+	return (this->_body_request);
 }
