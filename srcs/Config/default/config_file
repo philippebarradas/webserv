@@ -6,7 +6,7 @@ server {
 	server_name hello4;
 	listen 8001;
 
-	client_max_body_size	20;
+	client_max_body_size	1;
 
 	cgi .py cgi_python;
 

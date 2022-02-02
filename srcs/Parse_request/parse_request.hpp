@@ -30,7 +30,7 @@ class Parse_request
 
 		std::string get_request(std::string request) const
 		{
-			for (std::map<std::string, std::string>::const_iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+			for (std::map<std::string, std::string>::const_iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 			{
 				if (request.compare(it->first) == 0)
 				{
@@ -54,7 +54,7 @@ class Parse_request
 
 	private:
 		std::string	_request_body;
-		std::string	fill_big_tab(std::string str);
+		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();
 		void		parse_path();
 		int			fill_variables();
@@ -69,7 +69,7 @@ class Parse_request
 
 		std::vector<std::string> full_path;
 
-		std::map<std::string, std::string> _big_tab;
+		std::map<std::string, std::string> _header_tab;
 		std::string _buffer;
 		size_t _nbr_line;
 };

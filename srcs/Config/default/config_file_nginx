@@ -3,19 +3,27 @@ user www-data;
 events {}
 http{
 server{
-    server_name hello4;
-
+    server_name example.com;
     listen 7778;
+
     autoindex on;
-	client_max_body_size 1M;
+	client_max_body_size 1G;
     root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
     error_page 400 /400_bad_request.html;
+   
+    location / {
+        proxy_buffering off;
+
+    }
+    
 }
 
 
 server{
     server_name hello12 hello55;
     listen 7777;
+
+    proxy_buffering off;
 
     autoindex on;
     root /home/user42/Bureau/webserv/srcs/Config/default/html_page;

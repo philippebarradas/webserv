@@ -191,6 +191,7 @@ void	Moteur::read_send_data(int fd, const std::vector<Server> & src)
 	}
 	//if (parse_head.get_request("Status").compare("200") != 0 ||
 	//parse_head.get_request("Connection:").find("close") != std::string::npos)
+	if (parse_head.get_request("Expect:").compare("100-continue") != 0)
 		close(fd);
 }
 

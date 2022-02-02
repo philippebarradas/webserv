@@ -68,7 +68,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 
 	std::string empty = "";
 	for (size_t x = 0; x < 42; x++)
-		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
+		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 }
 
 /* 
@@ -103,7 +103,7 @@ int		Parse_request::buff_is_valid(char *buff)
 		return (KEEP);
 	if (_buffer.size() > 32000)
 	{
-		replace = _big_tab.find("Status");
+		replace = _header_tab.find("Status");
 		replace->second = "413";
 		return (STOP);
 	}
@@ -141,17 +141,17 @@ int		Parse_request::parse_first_line()
 		{
 			if (rank == 0)
 			{
-				replace = _big_tab.find("Method");
+				replace = _header_tab.find("Method");
 				replace->second = _buffer.substr(start, size);
 			}
 			else if (rank == 1)
 			{
-				replace = _big_tab.find("Path");
+				replace = _header_tab.find("Path");
 				replace->second = _buffer.substr(start, size);
 			}
 			else if (rank == 2)
 			{
-				replace = _big_tab.find("Protocol");
+				replace = _header_tab.find("Protocol");
 				if (cmp.compare("\n") == 0)
 					replace->second = _buffer.substr(start, size - 1);
 				else
@@ -178,9 +178,9 @@ void	Parse_request::parse_path()
 	if (get_request("Path").find("?") != std::string::npos)
 	{
 		start = get_request("Path").find("?");
-		replace = _big_tab.find("Query");
+		replace = _header_tab.find("Query");
 		replace->second = get_request("Path").substr(start + 1, get_request("Path").size() - start);
-		replace = _big_tab.find("Path");
+		replace = _header_tab.find("Path");
 		replace->second = get_request("Path").substr(0, start);
 	}
 	while ((start = path_tmp.find("/")) != std::string::npos && stop == 0)
@@ -206,7 +206,7 @@ int		Parse_request::fill_variables()
 	bool	bn = false;
 
 	std::map<std::string, std::string>::iterator replace;
-	for (std::map<std::string, std::string>::iterator ith = _big_tab.begin() ; ith != _big_tab.end(); ++ith)
+	for (std::map<std::string, std::string>::iterator ith = _header_tab.begin() ; ith != _header_tab.end(); ++ith)
 	{
 		found = _buffer.rfind(ith->first);
 		if (found != std::string::npos)
@@ -220,16 +220,16 @@ int		Parse_request::fill_variables()
 				if (final_pose > found && cmp.compare("\n") == 0)
 					bn = true;
 			}
-			replace = _big_tab.find(ith->first);
+			replace = _header_tab.find(ith->first);
 			if (check_double_content(replace) == -1)
 				return (STOP);
 			if (replace->first.find(":") != std::string::npos)
-				replace->second = fill_big_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
+				replace->second = fill_header_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
 		}
 	}
  
 	//DISPLAY VALID ELEMENTS
-	for (std::map<std::string, std::string>::iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
@@ -257,7 +257,7 @@ int		Parse_request::init_buffer(char *buff)
 	return (KEEP);
 }
 
-std::string	Parse_request::fill_big_tab(std::string str)
+std::string	Parse_request::fill_header_tab(std::string str)
 {
 	//std::cout << "Str = " << str << std::endl;
 	if (!str.empty() && str[str.size() - 1] == '\n')
