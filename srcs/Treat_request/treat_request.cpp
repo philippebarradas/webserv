@@ -202,3 +202,8 @@ Treat_request	&Treat_request::operator=(const Treat_request &pt)
 	this->_request_status = pt._request_status;
 	return (*this);
 }
+
+std::string	Treat_request::get_body_request() const
+{
+	return (this->_body_request);
+}
