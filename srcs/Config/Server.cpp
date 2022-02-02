@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/02 13:09:04 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/02 17:26:09 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 	checkRedefinition(_alreadySetMaxbody, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 
-	this->_maxbody = stoui_size(0, 100000000000 + 12, src[1], src[0]);
+	this->_maxbody = stoui_size(0, 100000, src[1], src[0]);
 
 	_alreadySetMaxbody = true;
 }

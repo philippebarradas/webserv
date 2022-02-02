@@ -18,6 +18,9 @@
 #define KEEP 0
 #define STOP -1
 
+std::string		int_to_string(int x);
+
+
 class Server;
 
 class Parse_request
@@ -47,6 +50,10 @@ class Parse_request
 			return (_request_body);
 		}
 
+		std::string get_request_body_size() const
+		{
+			return (int_to_string(_request_body_size));
+		}
 
 		int		buff_is_valid(char *buff);
 		size_t	get_nbr_line() const {return this->_nbr_line;};
@@ -54,6 +61,8 @@ class Parse_request
 
 	private:
 		std::string	_request_body;
+		size_t		_request_body_size;
+	
 		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();
 		void		parse_path();

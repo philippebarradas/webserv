@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/02 17:07:37 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/02 17:39:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ int		Parse_request::check_precondition()
 size_t	hexa_to_size(std::string nbr)
 {
 	std::stringstream ss;
-	std::string hex = "0123456789ABCEDF";
+	std::string hex = "0123456789abcdefABCDEF";
 	size_t found;
 	size_t res = 0;
 	size_t p = 0;
@@ -178,11 +178,10 @@ size_t	hexa_to_size(std::string nbr)
 
 void	Parse_request::is_body(size_t found)
 {
-	size_t full_size = 0;
 	size_t line_size = 0;
 	size_t pos = 0;
 	size_t size = -1;
-	std::string body_un;
+	std::string _request_body_unchanked;
 	std::string cmp = "\r\n";
 
 	if (_buffer.size() > found + 4)
@@ -201,9 +200,9 @@ void	Parse_request::is_body(size_t found)
 			found += cmp.size();
 			size = hexa_to_size(split_body.substr(0, found - cmp.size()));
 			if (size != -1)
-				full_size += size;
+				_request_body_size += size;
 			else
-				body_un += split_body.substr(0, found - cmp.size());
+				_request_body_unchanked += split_body.substr(0, found - cmp.size());
 			//std::cout << "-------------------" << std::endl;
 			//line_size = stoi(split_body.substr(0, found));
 			//std::cout << "found = " << found << std::endl;
@@ -215,8 +214,10 @@ void	Parse_request::is_body(size_t found)
 			//std::cout << "split_body = [" << split_body << "]" << std::endl;
 		}
 
-		std::cout << "full_size = [" << full_size << "]" << std::endl;
-		std::cout << "body_un = [" << body_un << "]" << std::endl;
+		std::cout << "_request_body_size = [" << _request_body_size << "]" << std::endl;
+		std::cout << "_request_body_unchanked = [" << _request_body_unchanked << "]" << std::endl;
+
+		_request_body = _request_body_unchanked;
 
 		std::cout << "--------END-----------" << std::endl;
 	}

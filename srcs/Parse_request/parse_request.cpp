@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/02 17:07:16 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/02 17:39:41 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ Parse_request::Parse_request() : _nbr_line(0)
 {
 	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 // GET /../../../Makefile HTTP/1.1 = invalid mais bon
-    std::string  elements[42] = {
+    _request_body_size = 0;
+	std::string  elements[42] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
@@ -234,7 +235,7 @@ int		Parse_request::fill_variables()
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
-	*/
+
 	//
 	return (KEEP);
 }
