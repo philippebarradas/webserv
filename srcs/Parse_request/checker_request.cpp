@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/02 17:39:19 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/03 14:33:31 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ void	Parse_request::is_body(size_t found)
 		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
 	
 	std::string split_body = _request_body;
-	//std::cout << "string = {{{{{" << _request_body << "}}}}}}}" << std::endl;
+	std::cout << "string = {{{{{" << _buffer << "}}}}}}}" << std::endl;
 
 	//std::cout << "transfet = " << get_request("Transfer-Encoding:") << std::endl;
 
@@ -221,6 +221,8 @@ void	Parse_request::is_body(size_t found)
 
 		std::cout << "--------END-----------" << std::endl;
 	}
+	if (_request_body_size == 0)
+		_request_body_size = _request_body.size();
 }
 
 int		Parse_request::check_request()

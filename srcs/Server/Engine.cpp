@@ -251,6 +251,11 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
+	std::cout << " ----|" << parse_head.get_request("Expect:") << "|" << std::endl;
+	if (parse_head.get_request("Expect:").compare("100-contimue") != 0)
+	{
+		close(fd);
+	}
 	//if (parse_head.get_request("status").compare("200") != 0 ||
 		//parse_head.get_request("Connection:").find("close") != std::string::npos)
 	//close(fd);
@@ -277,7 +282,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			else
 			{
 				read_send_data(this->_fds_events[i].data.fd, src);
-				close(this->_fds_events[i].data.fd);
+				//close(this->_fds_events[i].data.fd);
 			}
 		}
 	}
