@@ -28,7 +28,6 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
-#include <errno.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -39,12 +38,12 @@
 
 
 #include "../Config/Server.hpp"
-#include "../Parse_header/parse_header.hpp"
+#include "../Parse_request/parse_request.hpp"
 
 std::string file_to_string(std::string file_path, std::string buff);
 
 class Server;
-class Parse_header;
+class Parse_request;
 
 class Treat_request
 {
@@ -54,8 +53,8 @@ class Treat_request
 		Treat_request(const Treat_request &request);		//can
 		Treat_request &operator=(const Treat_request &pt);	//can
 
-		std::string is_Treat_request(std::string full_cmd, std::vector<Server> src, int port, const Parse_header & parse_head);
-		
+		std::string is_Treat_request(std::string full_cmd, std::vector<Server> src, int port, const Parse_request & parse_head);
+
 		std::string build_header(std::string buff);
 
 		std::string is_bad_request(std::string buff);
@@ -64,13 +63,14 @@ class Treat_request
 		std::string	is_too_large(std::string buff);
 		std::string	is_precondition_failed(std::string buff);
 
-		std::string ft_get(std::string full_cmd, const Parse_header & parse_head);
-		std::string ft_post(std::string full_cmd, const Parse_header & parse_head);
-		std::string ft_delete(std::string full_cmd, const Parse_header & parse_head);
+		std::string ft_get(std::string full_cmd, const Parse_request & parse_head);
+		std::string ft_post(std::string full_cmd, const Parse_request & parse_head);
+		std::string ft_delete(std::string full_cmd, const Parse_request & parse_head);
 
 
 		std::string	get_date();
 
+		std::string	get_body_request() const;
 
 
 		std::vector<std::string> _header;
@@ -83,7 +83,9 @@ class Treat_request
 		std::string	_date;
 		std::string	_content_type;
 		std::string _content_length;
+		std::string _content_length_post;
 		std::string	_connection;
+		std::string _body_request;
 };
 
 
