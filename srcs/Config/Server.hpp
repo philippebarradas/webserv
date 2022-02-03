@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/22 10:26:53 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/03 16:54:08 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Server
 
 		Server( Server const & src );
 		Server( std::string const & src );
+		Server( void );
 
 		~Server( void );
 
@@ -46,7 +47,6 @@ class Server
 
 	private:
 
-		Server( void );
 		Server( std::vector< std::vector<std::string> > const & src );
 
 		void	setName( std::vector<std::string> const & src );
@@ -61,13 +61,18 @@ class Server
 		void	setLocation( std::vector<std::string> const & src );
 
 		void	parsingAll( std::vector< std::vector<std::string> > const & src );
+		void	fillLocation( void );
 		void	initServ( void );
+		void	initLocation( void );
 
+		bool	_alreadySetIndex;
 		bool	_alreadySetMethods;
 		bool	_alreadySetListen;
 		bool	_alreadySetRoot;
 		bool	_alreadySetAutoindex;
 		bool	_alreadySetMaxbody;
+		bool	_alreadySetError;
+		bool	_alreadySetCgi;
 
 		std::set<std::string>				_name;
 		std::set<std::string>				_index;

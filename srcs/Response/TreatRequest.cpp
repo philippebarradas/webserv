@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/25 16:27:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/02 16:42:07 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ std::string	TreatRequest::exec( Parse_header const & req )
 	i_conf = this->selectConf(req);
 
 	if (req.get_request("status") != "200")
-		return (printError( req ));
+		return (printError( req, i_conf ));
 }
 
 /*

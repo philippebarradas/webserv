@@ -8,23 +8,16 @@ server{
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
 	autoindex on;
-	index notexist.html;
+	index sdsda;
+	client_max_body_size	100000000m;
 
-	location / {
-		dav_methods PUT DELETE;
+	location /hello.a {
+		alias /home/user42/Bureau/webserv/srcs/Config/default/html_page/test;
 	}
 
-
-}
-
-server{
-	server_name hello1;
-
-	listen 7777;
-	autoindex on;
-
-	root /;
-	error_page 400 /400_bad_request.html;
+	location / {
+		index index.html;
+	}
 
 
 }}

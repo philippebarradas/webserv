@@ -31,7 +31,7 @@ server {
 	server_name serv2;
 	listen 8001;
 
-	client_max_body_size	50;
+	client_max_body_size	100;
 
 	accepted_methods	GET ;
 
@@ -46,7 +46,30 @@ server {
 server {
 	server_name serv3;
 	listen 8006;
-	accepted_methods	GET ;
+	root	bjr;
 
+	index hey;
 	client_max_body_size	20;
+	autoindex on;
+	accepted_methods GET POST			  ;
+	error_page 400 404 /400.html;
+	cgi .py python;
+
+	location /test {
+		cgi .php php7.3;
+		accepted_methods DELETE;
+		autoindex off;
+		client_max_body_size	50;
+		root	salut;
+		index	my index lol;
+
+		error_page 400 /saluthtml;
+	}
+
+	location /testempty {
+	}
+}
+
+server {
+
 }

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 13:07:54 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/03 15:19:04 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ int	main( int ac, char *av[] )
 	try
 	{
 		conf = Config(av[1]);
-		//std::cout << conf << std::endl;
-		vec_serv = conf.getConfig();
+		std::cout << conf << std::endl;
+		//vec_serv = conf.getConfig();
 
-		Moteur serv(vec_serv);
+		//Moteur serv(vec_serv);
 	}
 	catch( std::exception const & e )
 	{
@@ -39,8 +39,6 @@ int	main( int ac, char *av[] )
 		std::cerr << e.what() << std::endl;
 		return (1);
 	}
-	std::cout << conf.getConfig().size() << std::endl;
-	std::cout << conf << std::endl;
 
 	return (0);
 }

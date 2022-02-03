@@ -43,7 +43,7 @@ class TreatRequest
 		size_t		selectConf( Parse_header const & req ) const;
 		std::string	openAndRead( std::string const & path ) const;
 		std::string	printError( Parse_header const & req,
-			size_t const & i_conf ) const
+			size_t const & i_conf ) const;
 
 		//Parse_header _request;
 };

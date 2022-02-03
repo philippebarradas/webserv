@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 13:05:09 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/03 16:55:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 
 Server::Server()
 {
+	this->initLocation();
 }
 
+/* CONSTRUCTOR FOR LOCATION */
 Server::Server( std::vector< std::vector<std::string> > const & src )
 {
-	this->initServ();
+	this->initLocation();
 	this->parsingAll(src);
 }
 
@@ -35,6 +37,7 @@ Server::Server( std::string const & src )
 	toParce = sortInVec(strParce);
 	this->parsingAll(toParce);
 
+	this->fillLocation();
 	//std::cout << std::endl << *this << std::endl;
 }
 
@@ -71,6 +74,15 @@ Server &				Server::operator=( Server const & rhs )
 		this->_error       = rhs.getError();
 		this->_cgi         = rhs.getCgi();
 		this->_location    = rhs.getLocation();
+
+		this->_alreadySetIndex     = rhs._alreadySetIndex;
+		this->_alreadySetMethods   = rhs._alreadySetMethods;
+		this->_alreadySetListen    = rhs._alreadySetListen;
+		this->_alreadySetRoot      = rhs._alreadySetRoot;
+		this->_alreadySetAutoindex = rhs._alreadySetAutoindex;
+		this->_alreadySetMaxbody   = rhs._alreadySetMaxbody;
+		this->_alreadySetError     = rhs._alreadySetError;
+		this->_alreadySetCgi       = rhs._alreadySetCgi;
 	}
 	return *this;
 }
@@ -96,22 +108,63 @@ std::ostream &			operator<<( std::ostream & o, Server const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	Server::initServ( void )
+void	Server::fillLocation( void )
+{
+	std::map<std::string, Server>::iterator	it, end;
+
+	end = this->_location.end();
+	if (this->_location.find("/") == end)
+		this->_location["/"];
+
+	for (it = this->_location.begin() ; it != end ; ++it)
+	{
+		std::cout << it->first << ":" << std::endl;
+		std::cout << "autoi" << it->second._alreadySetAutoindex << std::endl;
+		std::cout << "maxbod" << it->second._alreadySetMaxbody << std::endl;
+		std::cout << std::endl;
+
+		if (!it->second._alreadySetIndex)
+			it->second._index = this->_index;
+		if (!it->second._alreadySetMethods)
+			it->second._methods = this->_methods;
+		if (!it->second._alreadySetRoot)
+			it->second._root = this->_root;
+		if (!it->second._alreadySetAutoindex)
+			it->second._autoindex = this->_autoindex;
+		if (!it->second._alreadySetMaxbody)
+			it->second._maxbody = this->_maxbody;
+		if (!it->second._alreadySetError)
+			it->second._error = this->_error;
+		if (!it->second._alreadySetCgi)
+			it->second._cgi = this->_cgi;
+	}
+	std::cout << "leave" << std::endl;
+
+
+}
+
+void	Server::initLocation( void )
 {
 	this->_autoindex = false;
 	this->_maxbody   = 1;
-
-	// default listen is *:8000 and *:80 ?
-
-	this->_listen = std::string("80");
-	this->_index.insert(std::string("index.html"));
-	this->_root = "html";
-
+	this->_alreadySetIndex     = false;
 	this->_alreadySetMethods   = false;
 	this->_alreadySetListen    = false;
 	this->_alreadySetRoot      = false;
 	this->_alreadySetAutoindex = false;
 	this->_alreadySetMaxbody   = false;
+	this->_alreadySetError     = false;
+	this->_alreadySetCgi       = false;
+
+}
+
+void	Server::initServ( void )
+{
+	this->initLocation();
+
+	this->_listen = std::string("80");
+	this->_index.insert(std::string("index.html"));
+	this->_root = "html";
 }
 
 typedef void ( Server::*allFunction )( std::vector<std::string> const & );
@@ -128,6 +181,7 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 	std::vector< std::vector<std::string> >::const_iterator	it, end;
 	bool		found;
 	size_t		len, i;
+
 
 	len = sizeof(nameAllowed) / sizeof(std::string);
 	end = src.end();
@@ -220,14 +274,17 @@ void	Server::setIndex( std::vector<std::string> const & src )
 {
 	std::vector<std::string>::const_iterator	it, end;
 
+	if (!this->_alreadySetIndex)
+		this->_index.clear();
 	end = src.end();
 	for (it = src.begin() + 1 ; it != end ; ++it)
 		this->_index.insert(*it);
+	this->_alreadySetIndex = true;
 }
 
 void	Server::setMethods( std::vector<std::string> const & src )
 {
-	checkRedefinition(_alreadySetMethods, src[0]);
+	checkRedefinition(this->_alreadySetMethods, src[0]);
 	std::string	methodsAllowed[] = {"GET", "POST", "DELETE"};
 	std::vector<std::string>::const_iterator	it, end;
 	size_t	len, i;
@@ -242,34 +299,33 @@ void	Server::setMethods( std::vector<std::string> const & src )
 				"in \'accepted_methods\'.");
 		this->_methods.insert(*it);
 	}
-	_alreadySetMethods = true;
+	this->_alreadySetMethods = true;
 }
 
 void	Server::setListen( std::vector<std::string> const & src )
 {
-	checkRedefinition(_alreadySetListen, src[0]);
+	checkRedefinition(this->_alreadySetListen, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
-	// autoriser les char ?? le test listen e; prouve que oui ??
-	_alreadySetListen = true;
+	this->_alreadySetListen = true;
 	this->_listen = *(++(src.begin()));
 }
 
 void	Server::setRoot( std::vector<std::string> const & src )
 {
-	checkRedefinition(_alreadySetRoot, src[0]);
+	checkRedefinition(this->_alreadySetRoot, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 	if (src.size() != 2)
 		throw std::invalid_argument("[Error] invalid number of "
 			"arguments in \'root\'.");
-	_alreadySetRoot = true;
+	this->_alreadySetRoot = true;
 	this->_root = *(++(src.begin()));
 }
 
 void	Server::setAutoindex( std::vector<std::string> const & src )
 {
-	checkRedefinition(_alreadySetAutoindex, src[0]);
+	checkRedefinition(this->_alreadySetAutoindex, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
-	_alreadySetAutoindex = true;
+	this->_alreadySetAutoindex = true;
 	if (*(++(src.begin())) != "on" && *(++(src.begin())) != "off")
 		throw std::invalid_argument("[Error] invalid arguments "
 			"in \'autoindex\'.");
@@ -283,7 +339,7 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 
 	this->_maxbody = stoui_size(0, 100, src[1], src[0]);
 
-	_alreadySetMaxbody = true;
+	this->_alreadySetMaxbody = true;
 }
 
 void	Server::setError( std::vector<std::string> const & src )
@@ -304,6 +360,7 @@ void	Server::setError( std::vector<std::string> const & src )
 			throw std::invalid_argument(thr);
 		}
 	}
+	this->_alreadySetError = true;
 }
 
 void	Server::setCgi( std::vector<std::string> const & src )
@@ -323,6 +380,7 @@ void	Server::setCgi( std::vector<std::string> const & src )
 			throw std::invalid_argument(thr);
 		}
 	}
+	this->_alreadySetCgi = true;
 }
 
 void	Server::setLocation( std::vector<std::string> const & src )
@@ -337,7 +395,6 @@ void	Server::setLocation( std::vector<std::string> const & src )
 	size_t		len, i;
 
 	newConstruct = sortInVec(strParce);
-
 	len = sizeof(nameForbidden) / sizeof(std::string);
 	end = newConstruct.end();
 	for (it = newConstruct.begin() ; it != end ; ++it)
