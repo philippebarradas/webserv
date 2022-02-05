@@ -11,7 +11,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "method.hpp"
+#include "treat_request.hpp"
 #include <iostream>
 #include <cstring>
 #define TRUE 1
@@ -19,7 +19,7 @@
 #include <vector>
 
 
-std::string Method::build_header(std::string buff)
+std::string Treat_request::build_header(std::string buff)
 {
 	std::string full_header;
 	//std::cout << "buff = [" << buff << "]" << std::endl;
@@ -90,7 +90,7 @@ size_t get_listen_vector(std::vector<Server> src, std::string act_listen)
 
 std::string	int_to_string(int x);
 
-std::string Method::is_method(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
+std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server> src, int port, const Parse_header & parse_head) // true or false
 {
 
 	std::string act_listen = int_to_string(port);//get_actual_listen(buff);
@@ -186,20 +186,20 @@ std::string Method::is_method(std::string buff, std::vector<Server> src, int por
 	return ("HTTP/1.1 200 Good Request\nServer: localhost:12345/\nDate: Mon, 20 Dec 2021 14:10:48 GMT\nContent-Type: text/html\nContent-Length: 182\nConnection: close\n\n<html>\n<head><title>200 good Request</title></head>\n<body bgcolor='white'>\n<center><h1>200 good Request</h1></center>\n<hr><center>webcerveau/1.0 (Ubuntu)</center>\n</body>\n</html>\0");
 }
 
-Method::Method(void)
+Treat_request::Treat_request(void)
 {
 }
 
-Method::~Method(void)
+Treat_request::~Treat_request(void)
 {
 }
 
-Method::Method(Method const & Method)
+Treat_request::Treat_request(Treat_request const & Method)
 {
 	*this = Method;
 }
 
-Method	&Method::operator=(const Method &pt)
+Treat_request	&Treat_request::operator=(const Treat_request &pt)
 {
 	this->_request_status = pt._request_status;
 	return (*this);

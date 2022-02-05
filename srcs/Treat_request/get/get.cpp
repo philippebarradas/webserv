@@ -6,11 +6,11 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 13:49:42 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 14:52:25 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../method.hpp"
+#include "../treat_request.hpp"
 #include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -27,7 +27,7 @@
 int     precondition_vadid(std::string file, std::string date, const Parse_header & parse_head)
 {
 
- /*  {  (void)parse_head;
+   /* {  (void)parse_head;
     
 	time_t rawtime;
 	struct tm * timeinfo;
@@ -63,34 +63,34 @@ int     precondition_vadid(std::string file, std::string date, const Parse_heade
     //std::cout << "time 3 = " << &timeinfo << std::endl;
 
     std::cout << "\ntime 2 = " << timeinfo_real.tm_mday << std::endl;
-    std::cout << "time 3 = " << timeinfo_test.tm_mday << std::endl;
+            std::cout << "time 3 = " << timeinfo_test.tm_mday << std::endl;
 
-   // if (timeinfo_real.tm_year > timeinfo_test.tm_year)
+        // if (timeinfo_real.tm_year > timeinfo_test.tm_year)
 
-    if (&timeinfo_real > &timeinfo_test)
-        std::cout << "\nreal time > time wanted" << std::endl;
-    else if (&timeinfo_real == &timeinfo_test)
-         std::cout << "\nreal time == time wanted" << std::endl;
-    else
-        std::cout << "\nreal time < time wanted" << std::endl;
+            if (&timeinfo_real > &timeinfo_test)
+                std::cout << "\nreal time > time wanted" << std::endl;
+            else if (&timeinfo_real == &timeinfo_test)
+                std::cout << "\nreal time == time wanted" << std::endl;
+            else
+                std::cout << "\nreal time < time wanted" << std::endl;
 
-  } */
+        } 
 
-/*     {   
-        time_t rawtime;
-        struct tm timeinfo;
+            {   
+                time_t rawtime;
+                struct tm timeinfo;
 
-       // memset(&timeinfo, 0, sizeof(struct tm));
+            // memset(&timeinfo, 0, sizeof(struct tm));
 
-	    char time_real [200];
+                char time_real [200];
 
-       
-       //strptime("Thu, 20 Jan 2022 10:31:22 CET", "%a, %d %b %G %T %Z", &timeinfo);
-        strptime(parse_head.get_request("If-Unmodified-Since:").c_str(), "%a, %d %b %G %T %Z", &timeinfo);
+            
+            //strptime("Thu, 20 Jan 2022 10:31:22 CET", "%a, %d %b %G %T %Z", &timeinfo);
+                strptime(parse_head.get_request("If-Unmodified-Since:").c_str(), "%a, %d %b %G %T %Z", &timeinfo);
 
 
-        struct tm * timeinfo_real;
-        
+                struct tm * timeinfo_real;
+                
         //time (&rawtime);
 
         rawtime = (time_t)&timeinfo;
@@ -108,15 +108,15 @@ int     precondition_vadid(std::string file, std::string date, const Parse_heade
         //printf("2= %d \n", (int)rawtime); //unix time-stamp
         //printf("2 = %s \n", ctime(&rawtime)); //human readable date 
         
-    } */
+    } 
     //std::cout << "time info = ["<< timeinfo << "]"<< std::endl;
-
+ */
 
     //std::cout << "["<< actual_time << "] vs \n[" << parse_head.get_request("If-Unmodified-Since:") << "]" << std::endl;
     return (0);
 }
 
-std::string Method::ft_get(std::string full_cmd, const Parse_header & parse_head)//, [loca])
+std::string Treat_request::ft_get(std::string full_cmd, const Parse_header & parse_head)//, [loca])
 {
     std::string	file = file_to_string("srcs/Config/default/html_page/" + this->act_index, full_cmd);
 
@@ -134,6 +134,9 @@ std::string Method::ft_get(std::string full_cmd, const Parse_header & parse_head
     _content_type = "Content-Type: text/html";
     _content_length = "Content-Length: " + int_to_string(file.size());
     _connection = "Connection: keep-alive";
+
+
+
 
     /* 
     std::cout << "Full_cmd = [" << full_cmd << "]" << std::endl;   
