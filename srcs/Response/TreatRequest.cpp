@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/02 16:42:07 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/05 16:54:25 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ std::string	TreatRequest::openAndRead( std::string const & path ) const
 std::string	TreatRequest::printError( Parse_header const & req,
 	size_t const & i_conf ) const
 {
-	std::string	path_default_error, file;
+	/*std::string	path_default_error, file;
 
 
 	path_default_error = "srcs/Config/default/html_page/error_page/"
@@ -114,7 +114,7 @@ std::string	TreatRequest::printError( Parse_header const & req,
 	file = openAndRead(path_default_error);
 
 	Response	rep(req, file, std::string(".html"));
-	return (rep.getHeader());
+	return (rep.getHeader());*/
 }
 
 size_t		TreatRequest::selectConf( Parse_header const & req ) const
@@ -134,8 +134,50 @@ size_t		TreatRequest::selectConf( Parse_header const & req ) const
 	return (0);
 }
 
-std::string	TreatRequest::exec( Parse_header const & req )
+size_t	TreatRequest::similarity_point(std::string const & locName,
+	std::string const & path) const
 {
+	size_t	ret, i;
+
+	for (i = 0 ; locName[i] && path[i] ; ++i)
+	{
+		if (locName[i] == path[i])
+			++ret;
+		else
+			break;
+	}
+
+	std::cout << "locName\t=\t" << locName << std::endl;
+	std::cout << "path\t=\t" << path << std::endl;
+	std::cout << "ret\t=\t" << ret << std::endl;
+	std::cout << std::endl;
+
+}
+
+std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
+	Parse_header const & req,
+	std::map<std::string, Server> const allLoc ) const
+{
+	std::cout << "hello" << std::endl;
+	std::map<std::string, Server>::const_iterator	it, end;
+	size_t	similarity;
+
+	end = allLoc.end();
+	for (it = allLoc.begin() ; it != end ; ++it)
+	{
+		similarity = this->similarity_point(it->first, req.get_request("path"));
+	}
+	return (allLoc.begin());
+}
+
+void		TreatRequest::exec( void )
+{
+
+}
+
+std::string	TreatRequest::treat( Parse_header const & req )
+{
+	std::map<std::string, Server>::const_iterator	loc;
 	size_t	i_conf;
 
 	// DISPLAY (TO DELETE)
@@ -143,9 +185,15 @@ std::string	TreatRequest::exec( Parse_header const & req )
 	printMap(pol, "fddf");
 
 	i_conf = this->selectConf(req);
+	loc = this->selectLocation(req, this->_conf[i_conf].getLocation());
 
-	if (req.get_request("status") != "200")
-		return (printError( req, i_conf ));
+
+	if (req.get_request("status") == "200")
+		this->exec();
+	else
+		std::cout << "cas d'erreur pas encore gere." << std::endl;
+	/*else (req.get_request("status") != "200")
+		return (printError( req, i_conf ));*/
 }
 
 /*

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/25 16:27:30 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/05 16:43:04 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,14 @@ class TreatRequest
 
 	public:
 
-		TreatRequest( std::vector<Server> const & conf, int const & access_port );
+		TreatRequest( std::vector<Server> const & conf,
+			int const & access_port );
 		TreatRequest( TreatRequest const & src );
 		~TreatRequest();
 
 		TreatRequest &		operator=( TreatRequest const & rhs );
 
-		std::string	exec( Parse_header const & req );
+		std::string	treat( Parse_header const & req );
 
 	private:
 
@@ -40,6 +41,12 @@ class TreatRequest
 
 		 std::vector<Server>	_conf;
 
+		void		exec( void );
+		std::map<std::string, Server>::const_iterator	selectLocation(
+			Parse_header const & req,
+			std::map<std::string, Server> const allLoc ) const;
+		size_t	similarity_point(std::string const & locName,
+			std::string const & path) const;
 		size_t		selectConf( Parse_header const & req ) const;
 		std::string	openAndRead( std::string const & path ) const;
 		std::string	printError( Parse_header const & req,

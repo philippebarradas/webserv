@@ -9,15 +9,24 @@ server{
 
 	autoindex on;
 	index sdsda;
-	client_max_body_size	100000000m;
 
 	location /hello.a {
-		alias /home/user42/Bureau/webserv/srcs/Config/default/html_page/test;
+		alias /home/user42/;
 	}
 
-	location / {
-		index index.html;
+
+	location /hello.a/salut {
+		alias /home/;
 	}
+
+	location /hello.a/salut/pout {
+		alias /;
+	}
+
+	location /test {
+		autoindex off;
+	}
+
 
 
 }}
