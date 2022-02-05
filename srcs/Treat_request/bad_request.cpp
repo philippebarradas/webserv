@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bad_request.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:57:30 by user42            #+#    #+#             */
-/*   Updated: 2022/01/20 14:56:27 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/24 15:52:53 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ std::string file_to_string(std::string file_path, std::string buff)
 
 	getcwd(pwd, 100);
 
-	std::cout << pwd << std::endl;
-	std::cout << file_path << std::endl;
+	std::cout << "pwd = " << pwd << std::endl;
+	std::cout << "file_path = " << file_path << std::endl;
 
     ifs.open(file_path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
@@ -48,7 +48,7 @@ std::string	Treat_request::get_date()
 
 	strftime(buffer, 200, "%a, %d %b %G %T %Z",timeinfo);
 	std::string actual_time(buffer);
-	
+
 	return (actual_time);
 }
 

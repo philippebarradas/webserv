@@ -6,7 +6,7 @@
 #    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/02/05 16:59:53 by tsannie          ###   ########.fr        #
+#    Updated: 2022/02/05 17:06:44 by tsannie          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME			= webserv
 CC				= @clang++
-CFLAGS			=  #-std=c++98 #-Wall -Wextra -Werror
+CFLAGS			= #-Wall -Wextra -Werror -std=c++98
 RM				= @rm -rf
 
 ######################################################################
@@ -39,11 +39,13 @@ NAMEC			= ${BLUE}${BOLD}$(NAME)${END}
 #                            Source Files                            #
 ######################################################################
 
-CONFIG			= Config.cpp Server.cpp utils.cpp
+CGI			= Cgi.cpp
 
-SERVER			= moteur.cpp
+CONFIG		= Config.cpp Server.cpp utils.cpp
 
-PARSE_HEADER	= parse_header.cpp checker_header.cpp
+SERVER			= Engine.cpp
+
+PARSE_REQUEST	= parse_request.cpp checker_request.cpp
 
 TREAT_REQUEST	= bad_request.cpp treat_request.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp
@@ -55,8 +57,9 @@ RESPONSE		= Response.cpp TreatRequest.cpp
 MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
+				$(addprefix srcs/Cgi/, $(CGI)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
-				$(addprefix srcs/Parse_header/, $(PARSE_HEADER)) \
+				$(addprefix srcs/Parse_request/, $(PARSE_REQUEST)) \
 				$(addprefix srcs/Treat_request/, $(TREAT_REQUEST)) \
 				$(addprefix srcs/Autoindex/, $(AUTO_INDEX)) \
 				$(addprefix srcs/Response/, $(RESPONSE)) \

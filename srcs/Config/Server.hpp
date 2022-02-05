@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/03 16:54:08 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/05 17:06:31 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 # include <string>
 # include <set>
 # include "Config.hpp"
-# include "../Server/moteur.hpp"
+# include "../Server/Engine.hpp"
 
-class Moteur;
+class Engine;
 
 class Server
 {

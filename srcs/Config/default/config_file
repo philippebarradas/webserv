@@ -8,19 +8,21 @@ server {
 
 	client_max_body_size	20;
 
+	cgi .php php-cgi;
 	cgi .py cgi_python;
 
 	accepted_methods	GET POST DELETE;
 
-	root /home/user42/webserv/srcs/Config/html_page;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	index my_index.html;
-	autoindex on;
+	autoindex off;
 	error_page 400 /400_bad_request.html;
 	error_page 404 /404_not_found.html;
 	error_page 405 /405_not_allowed.html;
 
 	location / {
 		accepted_methods GET DELETE;
+		index form.html;
 		root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 		error_page 400 /error_page/400.html;
 		error_page 404 /error_page/404.html;
@@ -35,7 +37,7 @@ server {
 
 	accepted_methods	GET ;
 
-	root /home/user42/webserv/srcs/Config/html_page;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 	index test_404.html;
 
 	error_page 400 /400.html;
@@ -45,6 +47,15 @@ server {
 
 server {
 	server_name serv3;
+	listen 8001;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	accepted_methods	GET ;
+
+	client_max_body_size	20;
+}
+
+server {
+	server_name serv55;
 	listen 8006;
 	root	bjr;
 
