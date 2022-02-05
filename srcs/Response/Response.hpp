@@ -20,9 +20,9 @@
 # include <cctype>
 # include <fstream>
 # include <exception>
-# include "../Parse_header/parse_header.hpp"
+# include "../Parse_request/parse_request.hpp"
 
-class	Parse_header;
+class	Parse_request;
 class	Server;
 
 class Response
@@ -30,7 +30,7 @@ class Response
 
 	public:
 
-		Response( Parse_header const & req, std::string const & page, std::string const & extension );
+		Response( Parse_request const & req, std::string const & page, std::string const & extension );
 		Response( Response const & src );
 		~Response();
 

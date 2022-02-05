@@ -224,7 +224,11 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	//Cgi		obj_cgi2(src.at(i_listen), parse_head, *this, request);
  	if (valread != 0)
 	{
-		if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
+		TreatRequest	treatment(src, this->_port);
+
+		this->_buff_send = treatment.treat(parse_head);
+		nbr_bytes_send = send(fd, this->_buff_send.c_str(), buff_send.size(), 0);
+		/*if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
 			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
@@ -246,7 +250,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 			}
 			else
 				nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
-		}
+		}*/
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;

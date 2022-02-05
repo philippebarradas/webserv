@@ -25,7 +25,6 @@
 
 // My class
 # include "../Config/Server.hpp"
-# include "../Parse_header/parse_header.hpp"
 # include "../Response/TreatRequest.hpp"
 
 // Colors

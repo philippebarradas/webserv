@@ -21,11 +21,17 @@ server {
 	error_page 405 /405_not_allowed.html;
 
 	location / {
-		accepted_methods GET DELETE;
-		index form.html;
-		root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-		error_page 400 /error_page/400.html;
-		error_page 404 /error_page/404.html;
+	}
+
+
+	location /test {
+	}
+
+
+	location /salut/test {
+	}
+
+	location /salut/test/rigolo {
 	}
 }
 
@@ -81,6 +87,4 @@ server {
 	}
 }
 
-server {
 
-}

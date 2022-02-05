@@ -16,7 +16,7 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Response::Response( Parse_header const & req, std::string const & page,
+Response::Response( Parse_request const & req, std::string const & page,
 	std::string const & extension )
 {
 	this->writeRequestStatus(req.get_request("status"));

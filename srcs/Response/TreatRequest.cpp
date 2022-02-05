@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/05 16:54:25 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/05 18:21:52 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ std::string	TreatRequest::openAndRead( std::string const & path ) const
 	return (file);
 }
 
-std::string	TreatRequest::printError( Parse_header const & req,
+std::string	TreatRequest::printError( Parse_request const & req,
 	size_t const & i_conf ) const
 {
 	/*std::string	path_default_error, file;
@@ -117,17 +117,19 @@ std::string	TreatRequest::printError( Parse_header const & req,
 	return (rep.getHeader());*/
 }
 
-size_t		TreatRequest::selectConf( Parse_header const & req ) const
+size_t		TreatRequest::selectConf( Parse_request const & req ) const
 {
 	size_t i;
 	std::set<std::string>::const_iterator	it, end;
+	std::set<std::string>	name;
 
 	for (i = 0 ; i < this->_conf.size() ; ++i)
 	{
-		end = this->_conf[i].getName().end();
-		for (it = this->_conf[i].getName().begin() ; it != end ; ++it)
+		name = this->_conf[i].getName();
+		end = name.end();
+		for (it = name.begin() ; it != end ; ++it)
 		{
-			if (req.get_request("Host") == *it)
+			if (req.get_request("Host:") == *it)
 				return (i);
 		}
 	}
@@ -139,7 +141,7 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 {
 	size_t	ret, i;
 
-	for (i = 0 ; locName[i] && path[i] ; ++i)
+	for (i = 0, ret = 0 ; locName[i] && path[i] ; ++i)
 	{
 		if (locName[i] == path[i])
 			++ret;
@@ -155,19 +157,24 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 }
 
 std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
-	Parse_header const & req,
-	std::map<std::string, Server> const allLoc ) const
+	Parse_request const & req,
+	std::map<std::string, Server> const & allLoc ) const
 {
-	std::cout << "hello" << std::endl;
-	std::map<std::string, Server>::const_iterator	it, end;
-	size_t	similarity;
+	std::map<std::string, Server>::const_iterator	it, end, cpy;
+	size_t	similarity, most;
 
+	most = 0;
 	end = allLoc.end();
 	for (it = allLoc.begin() ; it != end ; ++it)
 	{
-		similarity = this->similarity_point(it->first, req.get_request("path"));
+		similarity = this->similarity_point(it->first, req.get_request("Path"));
+		if (similarity > most)
+		{
+			most = similarity;
+			cpy = it;
+		}
 	}
-	return (allLoc.begin());
+	return (cpy);
 }
 
 void		TreatRequest::exec( void )
@@ -175,20 +182,22 @@ void		TreatRequest::exec( void )
 
 }
 
-std::string	TreatRequest::treat( Parse_header const & req )
+std::string	TreatRequest::treat( Parse_request const & req )
 {
 	std::map<std::string, Server>::const_iterator	loc;
 	size_t	i_conf;
 
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	printMap(pol, "fddf");
+	printMap(pol, "Tableau de merde");
 
 	i_conf = this->selectConf(req);
+	std::cout << "i_conf\t=\t" << i_conf << std::endl;
 	loc = this->selectLocation(req, this->_conf[i_conf].getLocation());
 
 
-	if (req.get_request("status") == "200")
+
+	if (req.get_request("Status") == "200")
 		this->exec();
 	else
 		std::cout << "cas d'erreur pas encore gere." << std::endl;
