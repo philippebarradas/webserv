@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 14:13:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 16:23:54 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,14 @@ class TreatRequest
 
 		bool	is_dir( std::string const & path ) const;
 
-		void	exec( Parse_request const & req,
-			std::map<std::string, Server>::const_iterator const & loc ) const;
+		void	search_index( Parse_request const & req,
+			std::map<std::string, Server>::const_iterator const & loc,
+			std::string const & path );
+
 		void	exec_root( Parse_request const & req,
-			std::map<std::string, Server>::const_iterator const & loc ) const;
+			std::map<std::string, Server>::const_iterator const & loc );
+		void	exec( Parse_request const & req,
+			std::map<std::string, Server>::const_iterator const & loc );
 
 		void	selectLocation(
 			std::map<std::string, Server>::const_iterator & loc,
@@ -62,7 +66,7 @@ class TreatRequest
 		std::string	printError( Parse_request const & req,
 			size_t const & i_conf ) const;
 
-		//Parse_request _request;
+		std::string	_file;
 };
 
 std::ostream &			operator<<( std::ostream & o, TreatRequest const & i );

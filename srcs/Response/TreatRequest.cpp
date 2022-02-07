@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 14:41:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 16:39:41 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ std::string	TreatRequest::openAndRead( std::string const & path ) const
 
     ifs.open(path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
-		throw std::runtime_error("Error 404");
+		throw std::runtime_error("404");
 	while (std::getline(ifs, line))
 		file += line + "\n";
 	ifs.close();
@@ -182,7 +182,6 @@ void	TreatRequest::selectLocation(
 			loc = it;
 		}
 	}
-	std::cout << "cpy->second\t=\t" << loc->second << std::endl;
 }
 
 bool	TreatRequest::is_dir( std::string const & path ) const
@@ -196,14 +195,65 @@ bool	TreatRequest::is_dir( std::string const & path ) const
 	return true;
 }
 
-void	TreatRequest::exec_root( Parse_request const & req,
-	std::map<std::string, Server>::const_iterator const & loc ) const
+void	TreatRequest::search_index( Parse_request const & req,
+	std::map<std::string, Server>::const_iterator const & loc,
+	std::string const & path )
 {
+	std::set<std::string>::const_iterator	it, end;
+	std::string tmp, file;
 
+	end = loc->second.getIndex().end();
+	for (it = loc->second.getIndex().begin() ; it != end ; ++it)
+	{
+		try
+		{
+			tmp = path + *it;
+			std::cout << "tmp\t=\t" << tmp << std::endl;
+			this->_file = this->openAndRead(tmp);
+		}
+		catch (std::runtime_error const & e)
+		{
+			(void)e;
+		}
+	}
+	throw std::invalid_argument("Not found");
+}
+
+void	TreatRequest::exec_root( Parse_request const & req,
+	std::map<std::string, Server>::const_iterator const & loc )
+{
+	std::string	path = loc->second.getRoot() + req.get_request("Path");
+
+	std::cout << "path\t=\t" << path << std::endl;
+
+	if (path[path.length() - 1] == '/')
+	{
+		try
+		{
+			this->search_index(req, loc, path);
+		}
+		catch (std::invalid_argument const & e)
+		{
+			std::cout << "TODO AUTOINDEX" << std::endl;
+			(void)e;
+		}
+	}
+	else
+	{
+		try
+		{
+			this->_file = this->openAndRead(path);
+		}
+		catch (std::runtime_error const & e)
+		{
+			std::cout << "TODO REDIRECT ERROR PAGE" << std::endl;
+			(void)e;
+		}
+	}
 }
 
 void	TreatRequest::exec( Parse_request const & req,
-	std::map<std::string, Server>::const_iterator const & loc ) const
+	std::map<std::string, Server>::const_iterator const & loc )
 {
 	std::ifstream ifs;
 
@@ -217,12 +267,12 @@ void	TreatRequest::exec( Parse_request const & req,
 	}
 	else
 	{
+
 		std::cout << "ROOT METHOD" << std::endl;
 		ifs.close();
 		std::cout << "is_dir(file)\t=\t" << is_dir(loc->second.getRoot()) << std::endl;
-		//exec_root(req, loc);
+		exec_root(req, loc);
 	}
-		throw std::runtime_error("Error 404");
 }
 
 std::string	TreatRequest::treat( Parse_request const & req )
@@ -238,12 +288,18 @@ std::string	TreatRequest::treat( Parse_request const & req )
 	std::cout << "i_conf\t=\t" << i_conf << std::endl;
 	this->selectLocation(loc, req, this->_conf[i_conf].getLocation());
 	std::cout << "location\t=\t" << loc->first << std::endl;
+	std::cout << "loc->second\t=\t" << loc->second << std::endl;
 
 
 	if (req.get_request("Status") == "200")
+	{
 		this->exec(req, loc);
+	}
 	else
-		std::cout << "cas d'erreur pas encore gere." << std::endl;
+		std::cout << "TODO CAS D'ERREUR" << std::endl;
+
+	Response	rep(req, this->_file);
+	return (rep.getHeader());
 	/*else (req.get_request("status") != "200")
 		return (printError( req, i_conf ));*/
 }

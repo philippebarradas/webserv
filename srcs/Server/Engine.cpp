@@ -187,7 +187,6 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 {
 	Parse_request	parse_head;
 	std::string		file_body;
-	std::string 	buff_send;
 
 	size_t	buff_size = 330000;
 	char	buff[buff_size];
@@ -224,7 +223,8 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 		TreatRequest	treatment(src, this->_port);
 
 		this->_buff_send = treatment.treat(parse_head);
-		nbr_bytes_send = send(fd, this->_buff_send.c_str(), buff_send.size(), 0);
+		std::cout << "_buff_send\t=\t" << _buff_send << std::endl;
+		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 		/*if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),

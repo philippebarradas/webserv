@@ -16,15 +16,14 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Response::Response( Parse_request const & req, std::string const & page,
-	std::string const & extension )
+Response::Response( Parse_request const & req, std::string const & page)
 {
-	this->writeRequestStatus(req.get_request("status"));
+	this->writeRequestStatus(req.get_request("Status"));
 	this->_header += "Server: webserv/1.0 (Ubuntu)\n";
 	this->writeDate();
-	this->writeType(extension);
+	this->writeType(req.get_request("Path"));
 	this->writeLenght(page);
-	this->_header += "Connection: " + req.get_request("Connection") + "\n";
+	this->_header += "Connection: " + req.get_request("Connection:") + "\n";
 
 
 	this->_header += "\n" + page;
@@ -94,8 +93,11 @@ void	Response::writeRequestStatus( std::string const & code )
 	}
 }
 
-void	Response::writeType( std::string const & extension )
+void	Response::writeType( std::string const & nameFile )
 {
+	std::string extension = &nameFile[nameFile.rfind('/')];
+
+	extension = &extension[extension.length() - 5];
 	this->_header += "Content-Type: ";
 	if (extension == ".html")
 		this->_header += "text/html";
@@ -131,7 +133,7 @@ void	Response::writeDate( void )
 */
 
 
-std::string	Response::getHeader( void ) const
+std::string const &	Response::getHeader( void ) const
 {
 	std::cout << "_header\t=\t\n" << _header << std::endl;
 	return (this->_header);

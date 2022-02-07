@@ -30,13 +30,13 @@ class Response
 
 	public:
 
-		Response( Parse_request const & req, std::string const & page, std::string const & extension );
+		Response( Parse_request const & req, std::string const & page);
 		Response( Response const & src );
 		~Response();
 
 		Response &		operator=( Response const & rhs );
 
-		std::string	getHeader( void ) const;
+		std::string const &	getHeader( void ) const;
 
 	private:
 
@@ -45,7 +45,7 @@ class Response
 		void	writeRequestStatus( std::string const & code );
 		void	writeRequestStatus( unsigned int const & code );
 		void	writeDate( void );
-		void	writeType( std::string const & extension );
+		void	writeType( std::string const & nameFile );
 		void	writeLenght( std::string const & page );
 
 
