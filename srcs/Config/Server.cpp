@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/03 16:55:42 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:44:18 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,52 +210,52 @@ void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-std::set<std::string>	Server::getName( void ) const
+std::set<std::string> const &	Server::getName( void ) const
 {
 	return (this->_name);
 }
 
-std::set<std::string>	Server::getIndex( void ) const
+std::set<std::string> const &	Server::getIndex( void ) const
 {
 	return (this->_index);
 }
 
-std::set<std::string>	Server::getMethods( void ) const
+std::set<std::string> const &	Server::getMethods( void ) const
 {
 	return (this->_methods);
 }
 
-std::string				Server::getListen( void ) const
+std::string const &				Server::getListen( void ) const
 {
 	return (this->_listen);
 }
 
-std::string				Server::getRoot( void ) const
+std::string const &				Server::getRoot( void ) const
 {
 	return (this->_root);
 }
 
-bool					Server::getAutoindex( void ) const
+bool const &					Server::getAutoindex( void ) const
 {
 	return (this->_autoindex);
 }
 
-unsigned int			Server::getMaxbody( void ) const
+unsigned int const &						Server::getMaxbody( void ) const
 {
 	return (this->_maxbody);
 }
 
-std::map<unsigned int, std::string>	Server::getError( void ) const
+std::map<unsigned int, std::string> const &	Server::getError( void ) const
 {
 	return (this->_error);
 }
 
-std::map<std::string, std::string>	Server::getCgi( void ) const
+std::map<std::string, std::string> const &	Server::getCgi( void ) const
 {
 	return (this->_cgi);
 }
 
-std::map<std::string, Server>	Server::getLocation( void ) const
+std::map<std::string, Server> const &		Server::getLocation( void ) const
 {
 	return (this->_location);
 }

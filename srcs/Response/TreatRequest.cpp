@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 11:56:37 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:41:05 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,11 +162,12 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 	return (ret);
 }
 
-std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
+void	TreatRequest::selectLocation(
+	std::map<std::string, Server>::const_iterator & loc,
 	Parse_request const & req,
 	std::map<std::string, Server> const & allLoc ) const
 {
-	std::map<std::string, Server>::const_iterator	it, end, cpy;
+	std::map<std::string, Server>::const_iterator	it, end;
 	size_t	similarity, most;
 
 	most = 0;
@@ -178,15 +179,50 @@ std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
 		if (similarity > most)
 		{
 			most = similarity;
-			cpy = it;
+			loc = it;
 		}
 	}
-	return (cpy);
+	std::cout << "cpy->second\t=\t" << loc->second << std::endl;
 }
 
-void		TreatRequest::exec( void )
+bool	TreatRequest::is_dir( std::string const & path ) const
+{
+	DIR *pDir;
+
+	pDir = opendir(path.c_str());
+	if (pDir == NULL)
+		return false;
+	closedir(pDir);
+	return true;
+}
+
+void	TreatRequest::exec_root( Parse_request const & req,
+	std::map<std::string, Server>::const_iterator const & loc ) const
 {
 
+}
+
+void	TreatRequest::exec( Parse_request const & req,
+	std::map<std::string, Server>::const_iterator const & loc ) const
+{
+	std::ifstream ifs;
+
+	std::cout << "loc->second.getRoot()\t=\t" << loc->second.getRoot() << std::endl;
+
+	ifs.open(loc->second.getRoot());
+	if (!(ifs.is_open()))
+	{
+		std::cout << "ALIAS METHOD" << std::endl;
+		//this->is_alias();
+	}
+	else
+	{
+		std::cout << "ROOT METHOD" << std::endl;
+		ifs.close();
+		std::cout << "is_dir(file)\t=\t" << is_dir(loc->second.getRoot()) << std::endl;
+		//exec_root(req, loc);
+	}
+		throw std::runtime_error("Error 404");
 }
 
 std::string	TreatRequest::treat( Parse_request const & req )
@@ -200,12 +236,12 @@ std::string	TreatRequest::treat( Parse_request const & req )
 
 	i_conf = this->selectConf(req);
 	std::cout << "i_conf\t=\t" << i_conf << std::endl;
-	loc = this->selectLocation(req, this->_conf[i_conf].getLocation());
+	this->selectLocation(loc, req, this->_conf[i_conf].getLocation());
 	std::cout << "location\t=\t" << loc->first << std::endl;
 
 
 	if (req.get_request("Status") == "200")
-		this->exec();
+		this->exec(req, loc);
 	else
 		std::cout << "cas d'erreur pas encore gere." << std::endl;
 	/*else (req.get_request("status") != "200")

@@ -1,93 +1,18 @@
 
 server {
-	server_name hello1 salut 123 pli;
-	server_name hello2;
-	server_name hello3;
-	server_name hello4;
+	server_name hello1;
 	listen 8001;
 
 	client_max_body_size	20;
-
-	cgi .php php-cgi;
-	cgi .py cgi_python;
 
 	accepted_methods	GET POST DELETE;
 
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-	index my_index.html;
-	autoindex off;
-	error_page 400 /400_bad_request.html;
-	error_page 404 /404_not_found.html;
-	error_page 405 /405_not_allowed.html;
+	root /tmp/test;
 
 	location / {
-	}
 
-
-	location /test {
-	}
-
-	location /test/salut/ {
-	}
-
-
-	location /salut/test {
-	}
-
-	location /salut/test/rigolo {
 	}
 }
 
-server {
-	server_name serv2;
-	listen 8001;
-
-	client_max_body_size	100;
-
-	accepted_methods	GET ;
-
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-	index test_404.html;
-
-	error_page 400 /400.html;
-	error_page 404 /404_not_found.html;
-	error_page 405 /405_not_allowed.html;
-}
-
-server {
-	server_name serv3;
-	listen 8001;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-	accepted_methods	GET ;
-
-	client_max_body_size	20;
-}
-
-server {
-	server_name serv55;
-	listen 8006;
-	root	bjr;
-
-	index hey;
-	client_max_body_size	20;
-	autoindex on;
-	accepted_methods GET POST			  ;
-	error_page 400 404 /400.html;
-	cgi .py python;
-
-	location /test {
-		cgi .php php7.3;
-		accepted_methods DELETE;
-		autoindex off;
-		client_max_body_size	50;
-		root	salut;
-		index	my index lol;
-
-		error_page 400 /saluthtml;
-	}
-
-	location /testempty {
-	}
-}
 
 

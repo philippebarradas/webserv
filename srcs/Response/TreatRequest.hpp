@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/05 18:05:55 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:13:05 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include "../Parse_request/parse_request.hpp"
 # include "Response.hpp"
 # include <string>
+# include <dirent.h>
+# include <sys/stat.h>
 
 class	Parse_request;
 class	Server;
@@ -41,8 +43,16 @@ class TreatRequest
 
 		 std::vector<Server>	_conf;
 
-		void		exec( void );
-		std::map<std::string, Server>::const_iterator	selectLocation(
+
+		bool	is_dir( std::string const & path ) const;
+
+		void	exec( Parse_request const & req,
+			std::map<std::string, Server>::const_iterator const & loc ) const;
+		void	exec_root( Parse_request const & req,
+			std::map<std::string, Server>::const_iterator const & loc ) const;
+
+		void	selectLocation(
+			std::map<std::string, Server>::const_iterator & loc,
 			Parse_request const & req,
 			std::map<std::string, Server> const & allLoc ) const;
 		size_t	similarity_point(std::string const & locName,

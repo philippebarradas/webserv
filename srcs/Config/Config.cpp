@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/02 16:49:10 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:46:52 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	Config::parsingAll( std::vector< std::vector<std::string> > const & src )
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-std::vector<Server>	Config::getConfig() const
+std::vector<Server> const &	Config::getConfig() const
 {
 	return (this->_config);
 }

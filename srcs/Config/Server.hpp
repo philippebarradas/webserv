@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/05 17:06:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:46:10 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,16 @@ class Server
 
 		~Server( void );
 
-		std::set<std::string>				getName( void ) const;
-		std::set<std::string>				getIndex( void ) const;
-		std::set<std::string>				getMethods( void ) const;
-		std::string							getListen( void ) const;
-		std::string							getRoot( void ) const;
-		bool								getAutoindex( void ) const;
-		unsigned int						getMaxbody( void ) const;
-		std::map<unsigned int, std::string>	getError( void ) const;
-		std::map<std::string, std::string>	getCgi( void ) const;
-		std::map<std::string, Server>		getLocation( void ) const;
+		std::set<std::string> const &				getName( void ) const;
+		std::set<std::string> const &				getIndex( void ) const;
+		std::set<std::string> const &				getMethods( void ) const;
+		std::string const &							getListen( void ) const;
+		std::string const &							getRoot( void ) const;
+		bool const &								getAutoindex( void ) const;
+		unsigned int const &						getMaxbody( void ) const;
+		std::map<unsigned int, std::string> const &	getError( void ) const;
+		std::map<std::string, std::string> const &	getCgi( void ) const;
+		std::map<std::string, Server> const &		getLocation( void ) const;
 
 		Server &		operator=( Server const & rhs );
 
