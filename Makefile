@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
+#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/02/01 14:49:58 by dodjian          ###   ########.fr        #
+#    Updated: 2022/02/07 12:25:20 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ CONFIG		= Config.cpp Server.cpp utils.cpp
 
 SERVER			= Engine.cpp
 
-PARSE_REQUEST	= parse_request.cpp checker_request.cpp
+PARSE_REQUEST	= parse_request.cpp checker_request.cpp body.cpp
 
 TREAT_REQUEST	= bad_request.cpp treat_request.cpp delete/delete.cpp \
 					get/get.cpp post/post.cpp

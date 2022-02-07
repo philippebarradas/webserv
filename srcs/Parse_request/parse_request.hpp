@@ -53,16 +53,20 @@ class Parse_request
 		std::string get_request_body_size() const
 		{
 			return (int_to_string(_request_body_size));
-		}
+		};
 
+		void	set_next_buffer_is_body(bool val)
+		{
+			_next_buffer_is_body = val;
+		};
 		int		buff_is_valid(char *buff);
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
+		bool		_next_buffer_is_body;
+		size_t		_request_body_size;
 
 	private:
 		std::string	_request_body;
-		size_t		_request_body_size;
-	
 		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();
 		void		parse_path();

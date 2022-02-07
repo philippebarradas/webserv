@@ -176,6 +176,7 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 	{
 		std::string	content = it_env->first + "=" + it_env->second;
+		//std::cout << "coontent =" << content << std::endl;
 		env[j] = new char[content.size() + 1];
 		env[j] = strcpy(env[j], content.c_str());
 		j++;
@@ -205,7 +206,7 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 	pipe(fds_child);
 	dup2(fds_child[0], STDIN_FILENO);
 	close(fds_child[0]);
-	write(fds_child[1], body_string.c_str(), sizeof(body_string));
+	write(fds_child[1], body_string.c_str(), body_string.size());
 	close(fds_child[1]);
 }
 
@@ -214,6 +215,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header, co
 	//std::string body_string = "nom=dov";
 	//std::cout << "body_string\t=\t" << body_string << std::endl;
 	std::string body_string = src_header.get_request_body();
+
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 
@@ -232,9 +234,9 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header, co
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
 	this->_send_content = fd_to_string(fds_exec[0]);
+
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
 	//this->_send_content << "|" << std::endl << END;
 }
 
@@ -247,6 +249,7 @@ std::string	Cgi::fd_to_string(int fd)
 	ret = "HTTP/1.1 200 OK\n";
 	while (std::getline(is, line))
 	{
+		std::cout << "line = ||" << line << "|" << std::endl;
 		ret += line;
 		ret += '\n';
 	}
