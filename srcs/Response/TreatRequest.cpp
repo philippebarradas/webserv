@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/05 18:21:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 11:56:37 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,19 +141,25 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 {
 	size_t	ret, i;
 
-	for (i = 0, ret = 0 ; locName[i] && path[i] ; ++i)
+	for (i = 0, ret = 0 ; locName[i] && path[i] ; ++i, ++ret)
 	{
-		if (locName[i] == path[i])
-			++ret;
-		else
-			break;
+		if (locName[i] != path[i])
+			return (0);
 	}
 
-	std::cout << "locName\t=\t" << locName << std::endl;
+	/*std::cout << "locName[i] : " << (locName[i] ? "true" : "false") << std::endl;
+	std::cout << "path[i]    : " << (path[i] ? "true" : "false") << std::endl;
+	std::cout << "path[i]\t=\t" << path[i] << std::endl;*/
+
+	if (locName[i] || (i > 0 && path[i] && path[i - 1] != '/' && path[i] != '/'))
+		return (0);
+	/*std::cout << "locName\t=\t" << locName << std::endl;
 	std::cout << "path\t=\t" << path << std::endl;
 	std::cout << "ret\t=\t" << ret << std::endl;
-	std::cout << std::endl;
+	std::cout << "path[i]\t=\t" << path[i] << std::endl;
+	std::cout << std::endl;*/
 
+	return (ret);
 }
 
 std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
@@ -168,6 +174,7 @@ std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
 	for (it = allLoc.begin() ; it != end ; ++it)
 	{
 		similarity = this->similarity_point(it->first, req.get_request("Path"));
+		//std::cout << "similarity\t=\t" << similarity << std::endl;
 		if (similarity > most)
 		{
 			most = similarity;
@@ -194,7 +201,7 @@ std::string	TreatRequest::treat( Parse_request const & req )
 	i_conf = this->selectConf(req);
 	std::cout << "i_conf\t=\t" << i_conf << std::endl;
 	loc = this->selectLocation(req, this->_conf[i_conf].getLocation());
-
+	std::cout << "location\t=\t" << loc->first << std::endl;
 
 
 	if (req.get_request("Status") == "200")
