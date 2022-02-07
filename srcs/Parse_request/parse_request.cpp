@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/07 12:29:21 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/07 14:27:55 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,6 @@ int		Parse_request::parse_first_line()
 	size_t rank = 0;
 	std::map<std::string, std::string>::iterator replace;
 
-
 	for (std::string::iterator it = _buffer.begin(); it != _buffer.end() && rank <= 2; ++it)
 	{
 		cmp = *it;
@@ -163,7 +162,6 @@ int		Parse_request::parse_first_line()
 					replace->second = _buffer.substr(start, size - 1);
 				else
 					replace->second =  _buffer.substr(start, size);
-
 			}
 			full_size += size + 1;
 			start = full_size;
@@ -171,6 +169,8 @@ int		Parse_request::parse_first_line()
 			rank++;
 		}
 	}	
+			std::cout << "---seg---" << std::endl;
+
 	parse_path();
 	return (check_first_line(full_size));
 }

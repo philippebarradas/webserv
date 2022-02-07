@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/02/01 14:53:56 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/07 15:23:16 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,10 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
     _request_status = "HTTP/1.1 200 OK";
     _server = "webcerveau/1.0";
     _date = "Date: " + get_date();
-    _content_type = "Content-Type: text/html";
+    if (this->act_index.find(".jpg") != std::string::npos)
+      _content_type = "Content-Type: image/jpeg";
+    else
+      _content_type = "Content-Type: text/html";
     _content_length = "Content-Length: " + int_to_string(file.size()) + "\nLast-Modified: " + time_modified_file;
     _connection = "Connection: keep-alive";
 

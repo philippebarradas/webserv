@@ -81,9 +81,9 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 
 bool	Cgi::is_file_cgi(std::string path_extension)
 {
-	//if (path_extension.compare("html") == 0)
-	//return (FALSE);
-	return (TRUE);
+	if (path_extension.compare("php") == 0)
+		return (TRUE);
+	return (FALSE);
 }
 
 void	Cgi::init_path(const Server & src)

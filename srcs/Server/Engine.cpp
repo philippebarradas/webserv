@@ -184,7 +184,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-void	Engine::read_send_data(int fd, const std::vector<Server> & src,Parse_request & Xarse_head)
+void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_request & Xarse_head)
 {
 	Treat_request	request;
 	std::string		file_body;
@@ -241,7 +241,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src,Parse_reques
 		if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
 
-			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
+			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
 			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
 
 			//std::cout << "STR = ||" << obj_cgi.getSend_content().c_str() << "||"<< std::endl;
@@ -290,8 +290,8 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src,Parse_reques
 void	Engine::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0, new_socket = 0, i = 0;
-	Parse_request	parse_head;
-	std::cout << "init parse_head" << std::endl;
+//	Parse_request	parse_head;
+	//std::cout << "init parse_head" << std::endl;
 
 	while (TRUE)
 	{
@@ -309,7 +309,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			}
 			else
 			{
-				read_send_data(this->_fds_events[i].data.fd, src, parse_head);
+				read_send_data(this->_fds_events[i].data.fd, src);//, parse_head);
 				//close(this->_fds_events[i].data.fd);
 			}
 		}

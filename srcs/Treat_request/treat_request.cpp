@@ -164,7 +164,12 @@ std::string Treat_request::is_Treat_request(std::string buff, std::vector<Server
 
  	//for (it_index = _index.begin() ; it_index != _index.end(); it_index++)
 	//{	this->act_index = (*it_index);}
-	this->act_index = "form.html";
+
+	this->act_index = parse_head.get_request("Path");
+	if (this->act_index.compare("/favicon.ico") == 0 || this->act_index.compare("/") == 0)
+		this->act_index = "/form.html";
+	this->act_index.erase(0,1);
+
 
 	//std::cout << "file = " << src[j].getIndex() << std::endl;
 	if (act_method.compare("GET") == 0)
