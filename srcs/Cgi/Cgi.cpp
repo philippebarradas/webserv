@@ -249,7 +249,6 @@ std::string	Cgi::fd_to_string(int fd)
 	ret = "HTTP/1.1 200 OK\n";
 	while (std::getline(is, line))
 	{
-		std::cout << "line = ||" << line << "|" << std::endl;
 		ret += line;
 		ret += '\n';
 	}

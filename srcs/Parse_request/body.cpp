@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 11:58:10 by user42            #+#    #+#             */
-/*   Updated: 2022/02/07 12:32:33 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/07 13:58:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ void	Parse_request::is_body(size_t found)
 
 	if (_buffer.size() > found + 4)
 		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
-	
+	if (_request_body.size() == 0)
+		return ;
+
 	std::string split_body = _request_body;
 
 	//std::cout << "transfet = " << get_request("Transfer-Encoding:") << std::endl;
@@ -52,7 +54,7 @@ void	Parse_request::is_body(size_t found)
 	if (get_request("Transfer-Encoding:").compare("chunked") == 0)
 	{
 		std::cout << "---------START----------" << std::endl;
-		while ((found = split_body.find("\r\n")) != std::string::npos)
+		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
 		{
 			found += cmp.size();
 			size = hexa_to_size(split_body.substr(0, found - cmp.size()));
