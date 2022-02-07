@@ -9,9 +9,10 @@ server {
 
 	root /tmp/test;
 
-	location / {
-
+	location /salut {
+		root yo;
 	}
+
 }
 
 
