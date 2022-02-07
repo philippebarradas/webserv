@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "Engine.hpp"
-#include "../Treat_request/treat_request.hpp"
 #include "../Cgi/Cgi.hpp"
 #include "../Parse_request/parse_request.hpp"
 
@@ -186,7 +185,6 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 
 void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 {
-	Treat_request	request;
 	Parse_request	parse_head;
 	std::string		file_body;
 	std::string 	buff_send;
