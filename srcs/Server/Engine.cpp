@@ -184,12 +184,12 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-void	Engine::read_send_data(int fd, const std::vector<Server> & src,Parse_request & parse_head)
+void	Engine::read_send_data(int fd, const std::vector<Server> & src,Parse_request & Xarse_head)
 {
 	Treat_request	request;
 	std::string		file_body;
 	std::string 	buff_send;
-	//Parse_request	parse_head;
+	Parse_request	parse_head;
 
 	size_t	buff_size = 330000;
 	char	buff[buff_size];
