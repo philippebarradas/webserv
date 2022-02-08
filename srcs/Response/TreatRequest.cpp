@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 15:47:49 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:14:45 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,11 @@ void printMap(T & map, std::string const & name)
 	std::cout << "----------------\n" << std::endl;
 }
 
-void	TreatRequest::cpyInfo( std::ifstream const & ifs,
+void	TreatRequest::cpyInfo( std::string const & extension,
 	std::string const & path )
 {
-	this->_extension =	&path[path.rfind('/')];
-	this->_extension = &this->_extension[this->_extension.length() - 5];
+	this->_extension = extension;
+	// TODO CPY LAST MODIFIED
 }
 
 void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs )
@@ -119,7 +119,7 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	//dov le ashkénaze
 }
 
-void	TreatRequest::openAndRead( std::string const & path,
+bool	TreatRequest::openAndRead( std::string const & path,
 	Parse_request const & req )
 {
 	std::ifstream ifs;
@@ -129,7 +129,7 @@ void	TreatRequest::openAndRead( std::string const & path,
 
 	ifs.open(path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
-		throw std::runtime_error("404");
+		return (false);
 
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
@@ -137,8 +137,6 @@ void	TreatRequest::openAndRead( std::string const & path,
 	end = it = this->_loc->second.getCgi().end();
 	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 	{
-		std::cout << "extension\t=\t" << extension << std::endl;
-		std::cout << "it->first\t=\t" << it->first << std::endl;
 		if (extension == it->first)
 		{
 			is_dynamic = true;
@@ -146,13 +144,12 @@ void	TreatRequest::openAndRead( std::string const & path,
 		}
 	}
 
-	std::cout << "is_dynamic\t=\t" << is_dynamic << std::endl;
-
 	if (is_dynamic)
 		this->readDynamicFile(path, it->second, req);
 	else
 		this->readStaticFile(path, ifs);
-	//this->cpyInfo(ifs, path);
+	this->cpyInfo(extension, path);
+	return (true);
 }
 
 size_t		TreatRequest::selectConf( Parse_request const & req ) const
@@ -238,21 +235,13 @@ bool	TreatRequest::search_index( Parse_request const & req,
 	std::set<std::string>::const_iterator	it, end;
 	std::string tmp, file;
 
-	std::cout << "INDEX SEARCH" << std::endl << std::endl;
+	//std::cout << "INDEX SEARCH" << std::endl << std::endl;
 	end = this->_loc->second.getIndex().end();
 	for (it = this->_loc->second.getIndex().begin() ; it != end ; ++it)
 	{
-		try
-		{
-			tmp = path + *it;
-			std::cout << "tmp\t=\t" << tmp << std::endl;
-			this->openAndRead(tmp, req);
+		tmp = path + *it;
+		if (this->openAndRead(tmp, req))
 			return (true);
-		}
-		catch (std::runtime_error const & e)
-		{
-			(void)e;
-		}
 	}
 	return (false);
 }
@@ -292,15 +281,8 @@ void	TreatRequest::exec_root( Parse_request const & req )
 	}
 	else
 	{
-		try
-		{
-			this->openAndRead(path, req);
-		}
-		catch (std::runtime_error const & e)
-		{
+		if (!this->openAndRead(path, req))
 			std::cout << "TODO REDIRECT ERROR PAGE" << std::endl;
-			(void)e;
-		}
 	}
 }
 

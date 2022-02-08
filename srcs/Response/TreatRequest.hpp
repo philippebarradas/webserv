@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 15:44:05 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:08:27 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,11 @@ class TreatRequest
 		void	readStaticFile( std::string const & path, std::ifstream & ifs );
 		void	readDynamicFile( std::string const & path, std::string const & pathCgi,
 			Parse_request const & req );
-		void	openAndRead( std::string const & path, Parse_request const & req );
-		void	cpyInfo( std::ifstream const & ifs, std::string const & path );
+
+		void			cpyInfo( std::string const & extension,
+			std::string const & path );
+		bool	openAndRead( std::string const & path,
+			Parse_request const & req );
 
 
 		Engine const *		_eng;

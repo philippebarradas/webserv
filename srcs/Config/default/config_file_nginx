@@ -9,15 +9,11 @@ server{
 	autoindex on;
 
 
+	root /tmp/test;
+
+	error_page 404 index.html;
 
 	location / {
-		client_max_body_size 2;
-		root /tmp/test/index.html;
-	}
-
-	location /salut {
-		client_max_body_size 80;
-		root /tmp/test/index.html;
 	}
 }
 
