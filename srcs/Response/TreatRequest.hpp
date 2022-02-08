@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 11:21:09 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 11:53:22 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,28 +50,28 @@ class TreatRequest
 		bool	is_dir( std::string const & path ) const;
 
 		void	search_index( Parse_request const & req,
-			std::map<std::string, Server>::const_iterator const & loc,
 			std::string const & path );
 
-		void	exec_root( Parse_request const & req,
-			std::map<std::string, Server>::const_iterator const & loc );
-		void	exec( Parse_request const & req,
-			std::map<std::string, Server>::const_iterator const & loc );
+		void	exec_root( Parse_request const & req);
+		void	exec( Parse_request const & req);
 
 		void	selectLocation(
-			std::map<std::string, Server>::const_iterator & loc,
 			Parse_request const & req,
-			std::map<std::string, Server> const & allLoc ) const;
+			std::map<std::string, Server> const & allLoc );
 		size_t	similarity_point(std::string const & locName,
 			std::string const & path) const;
 		size_t		selectConf( Parse_request const & req ) const;
 
+
+		void	readDynamicFile( std::string const & path );
+		void	readStaticFile( std::string const & path );
 		void	openAndRead( std::string const & path );
 		void	cpyInfo( std::ifstream const & ifs, std::string const & path );
 
 
 		std::string	_file;
 		std::string	_extension;
+		std::map<std::string, Server>::const_iterator	_loc;
 };
 
 std::ostream &			operator<<( std::ostream & o, TreatRequest const & i );

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 11:20:41 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 11:57:36 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	TreatRequest::cpyInfo( std::ifstream const & ifs,
 	this->_extension = &this->_extension[this->_extension.length() - 5];
 }
 
-void	TreatRequest::openAndRead( std::string const & path )
+void	TreatRequest::readStaticFile( std::string const & path )
 {
 	std::ifstream ifs;
 	std::string	line;
@@ -106,8 +106,31 @@ void	TreatRequest::openAndRead( std::string const & path )
 	while (std::getline(ifs, line))
 		this->_file += line + "\n";
 
-	this->cpyInfo(ifs, path);
 	ifs.close();
+}
+
+void	TreatRequest::readDynamicFile( std::string const & path )
+{
+	//dov le ashkénaze
+}
+
+void	TreatRequest::openAndRead( std::string const & path )
+{
+	std::string	extension;
+	std::map<std::string, std::string>::const_iterator	it, end;
+
+	extension =	&path[path.rfind('/')];
+	extension = &extension[extension.length() - 5];
+
+	end = it = this->_loc->second.getCgi().end();
+	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
+	{
+		if (extension == it->first)
+		//dynamic
+	}
+
+	this->readStaticFile(path)
+	//this->cpyInfo(ifs, path);
 }
 
 size_t		TreatRequest::selectConf( Parse_request const & req ) const
@@ -156,9 +179,8 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 }
 
 void	TreatRequest::selectLocation(
-	std::map<std::string, Server>::const_iterator & loc,
 	Parse_request const & req,
-	std::map<std::string, Server> const & allLoc ) const
+	std::map<std::string, Server> const & allLoc )
 {
 	std::map<std::string, Server>::const_iterator	it, end;
 	size_t	similarity, most;
@@ -172,7 +194,7 @@ void	TreatRequest::selectLocation(
 		if (similarity > most)
 		{
 			most = similarity;
-			loc = it;
+			this->_loc = it;
 		}
 	}
 }
@@ -189,15 +211,14 @@ bool	TreatRequest::is_dir( std::string const & path ) const
 }
 
 void	TreatRequest::search_index( Parse_request const & req,
-	std::map<std::string, Server>::const_iterator const & loc,
 	std::string const & path )
 {
 	std::set<std::string>::const_iterator	it, end;
 	std::string tmp, file;
 
 	std::cout << "INDEX SEARCH" << std::endl << std::endl;
-	end = loc->second.getIndex().end();
-	for (it = loc->second.getIndex().begin() ; it != end ; ++it)
+	end = this->_loc->second.getIndex().end();
+	for (it = this->_loc->second.getIndex().begin() ; it != end ; ++it)
 	{
 		try
 		{
@@ -213,10 +234,9 @@ void	TreatRequest::search_index( Parse_request const & req,
 	throw std::invalid_argument("Not found");
 }
 
-void	TreatRequest::exec_root( Parse_request const & req,
-	std::map<std::string, Server>::const_iterator const & loc )
+void	TreatRequest::exec_root( Parse_request const & req)
 {
-	std::string	path = loc->second.getRoot() + req.get_request("Path");
+	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
 
 	std::cout << "path\t=\t" << path << std::endl;
 
@@ -224,7 +244,7 @@ void	TreatRequest::exec_root( Parse_request const & req,
 	{
 		try
 		{
-			this->search_index(req, loc, path);
+			this->search_index(req, path);
 		}
 		catch (std::invalid_argument const & e)
 		{
@@ -246,14 +266,13 @@ void	TreatRequest::exec_root( Parse_request const & req,
 	}
 }
 
-void	TreatRequest::exec( Parse_request const & req,
-	std::map<std::string, Server>::const_iterator const & loc )
+void	TreatRequest::exec( Parse_request const & req)
 {
 	std::ifstream ifs;
 
-	std::cout << "loc->second.getRoot()\t=\t" << loc->second.getRoot() << std::endl;
+	std::cout << "loc->second.getRoot()\t=\t" << _loc->second.getRoot() << std::endl;
 
-	ifs.open(loc->second.getRoot());
+	ifs.open(this->_loc->second.getRoot());
 	if (!(ifs.is_open()))
 	{
 		std::cout << "ALIAS METHOD" << std::endl;
@@ -264,14 +283,13 @@ void	TreatRequest::exec( Parse_request const & req,
 
 		std::cout << "ROOT METHOD" << std::endl;
 		ifs.close();
-		std::cout << "is_dir(file)\t=\t" << is_dir(loc->second.getRoot()) << std::endl;
-		exec_root(req, loc);
+		//std::cout << "is_dir(file)\t=\t" << is_dir(this->_loc->second.getRoot()) << std::endl;
+		exec_root(req);
 	}
 }
 
 std::string	TreatRequest::treat( Parse_request const & req )
 {
-	std::map<std::string, Server>::const_iterator	loc;
 	size_t	i_conf;
 
 	// DISPLAY (TO DELETE)
@@ -280,13 +298,13 @@ std::string	TreatRequest::treat( Parse_request const & req )
 
 	i_conf = this->selectConf(req);
 	std::cout << "i_conf\t=\t" << i_conf << std::endl;
-	this->selectLocation(loc, req, this->_conf[i_conf].getLocation());
-	std::cout << "location\t=\t" << loc->first << std::endl;
-	std::cout << "loc->second\t=\t" << loc->second << std::endl;
+	this->selectLocation(req, this->_conf[i_conf].getLocation());
+	std::cout << "location\t=\t" << _loc->first << std::endl;
+	std::cout << "loc->second\t=\t" << _loc->second << std::endl;
 
 
-	if (req.get_request("Status") == "200")
-		this->exec(req, loc);
+	if (req.get_request("Method") == "GET")
+		this->exec(req);
 	else
 		std::cout << "TODO CAS D'ERREUR" << std::endl;
 
