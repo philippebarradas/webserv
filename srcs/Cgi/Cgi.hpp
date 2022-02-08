@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/08 15:47:24 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:56:35 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ class Cgi
 		std::string	getPath_cgi() const;
 		std::string	getUser() const;
 		std::string	getHome() const;
+		std::string	getType_Cgi() const;
 		int	getPid() const;
 
 		// OPERATORS
@@ -100,6 +101,7 @@ class Cgi
 	private:
 
 		// VARIABLES
+		std::string	_type_cgi; // 1
 		std::string	_root; // 1
 		std::string	_path_file_executed_absolu; // 2
 		std::string	_path_file_executed; // 1 + 2

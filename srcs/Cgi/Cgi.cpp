@@ -254,11 +254,21 @@ std::string	Cgi::fd_to_string(int fd)
     std::istream is(&filebuf);
 	std::string ret, line;
 
-	ret = "HTTP/1.1 200 OK\n";
+	//ret = "HTTP/1.1 200 OK\n";
+	int i = 0;
 	while (std::getline(is, line))
 	{
-		ret += line;
-		ret += '\n';
+		if (i == 0)
+		{
+			this->_type_cgi = line;
+			std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
+		}
+		else
+		{
+			ret += line;
+			ret += '\n';
+		}
+		i++;
 	}
 	return (ret);
 }
@@ -295,5 +305,10 @@ std::string	Cgi::getHome() const
 int	Cgi::getPid() const
 {
 	return (this->_pid);
+}
+
+std::string	Cgi::getType_Cgi() const
+{
+	return (this->_type_cgi);
 }
 /* ************************************************************************** */

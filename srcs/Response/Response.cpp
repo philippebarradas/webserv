@@ -21,7 +21,7 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 	this->writeRequestStatus(req.get_request("Status"));
 	this->_header += "Server: webserv/1.0 (Ubuntu)\n";
 	this->writeDate();
-	this->writeType(treat.getExtension());
+	this->writeType(treat.getExtension(), treat);
 	this->writeLenght(treat.getFile());
 	this->_header += "Connection: " + req.get_request("Connection:") + "\n";
 
@@ -92,14 +92,21 @@ void	Response::writeRequestStatus( std::string const & code )
 	}
 }
 
-void	Response::writeType( std::string const & extension )
+void	Response::writeType( std::string const & extension, TreatRequest const & treat )
 {
-	this->_header += "Content-Type: ";
-	if (extension == ".html")
-		this->_header += "text/html";
+		std::cout << "STATUS CGI:" << treat.getIs_Cgi()  << std::endl;
+		std::cout << "treat.getType_Cgi()\t=\t" << treat.getType_Cgi() << std::endl;
+	if (treat.getIs_Cgi())
+		this->_header += treat.getType_Cgi();
 	else
-		this->_header += "text/plain";
-	this->_header += "\n";
+	{
+		this->_header += "Content-Type: ";
+		if (extension == ".html")
+			this->_header += "text/html";
+		else
+			this->_header += "text/plain";
+		this->_header += "\n";
+	}
 }
 
 void	Response::writeLenght( std::string const & page )

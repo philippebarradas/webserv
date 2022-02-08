@@ -47,7 +47,7 @@ class Response
 		void	writeRequestStatus( std::string const & code );
 		void	writeRequestStatus( unsigned int const & code );
 		void	writeDate( void );
-		void	writeType( std::string const & extension );
+		void	writeType( std::string const & extension, TreatRequest const & treat );
 		void	writeLenght( std::string const & page );
 
 		std::string _header;

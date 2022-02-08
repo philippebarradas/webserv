@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 16:08:27 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 17:02:12 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ class TreatRequest
 
 		std::string const &	getExtension( void ) const;
 		std::string const &	getFile( void ) const;
+		std::string const &	getType_Cgi( void ) const;
+		bool	const &	getIs_Cgi( void ) const;
 
 	private:
 
@@ -82,6 +84,8 @@ class TreatRequest
 
 		Engine const *		_eng;
 		std::string	_file;
+		std::string	_type_cgi;
+		bool	_cgi;
 		std::string	_extension;
 		std::map<std::string, Server>::const_iterator	_loc;
 };

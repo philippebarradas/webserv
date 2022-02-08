@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 16:51:36 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 17:11:24 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
 	this->_file = obj_cgi.getSend_content();
+	this->_type_cgi = obj_cgi.getType_Cgi();
 	std::cout << "this->_file\t=\t" << this->_file << std::endl;
 	//dov le ashkénaze
 }
@@ -125,7 +126,6 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
 	std::string	extension;
-	bool	is_dynamic;
 
 	ifs.open(path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
@@ -133,18 +133,18 @@ bool	TreatRequest::openAndRead( std::string const & path,
 
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
-	is_dynamic = false;
+	this->_cgi = false;
 	end = it = this->_loc->second.getCgi().end();
 	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 	{
 		if (extension == it->first)
 		{
-			is_dynamic = true;
+			this->_cgi = true;
 			break;
 		}
 	}
 
-	if (is_dynamic)
+	if (this->_cgi)
 		this->readDynamicFile(path, it->second, req);
 	else
 		this->readStaticFile(path, ifs);
@@ -347,6 +347,16 @@ std::string const &	TreatRequest::getExtension( void ) const
 std::string const &	TreatRequest::getFile( void ) const
 {
 	return (this->_file);
+}
+
+std::string const &	TreatRequest::getType_Cgi( void ) const
+{
+	return (this->_type_cgi);
+}
+
+bool	const &	TreatRequest::getIs_Cgi( void ) const
+{
+	return (this->_cgi);
 }
 
 /* ************************************************************************** */
