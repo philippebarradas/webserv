@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 11:57:36 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 13:03:52 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,41 +95,55 @@ void	TreatRequest::cpyInfo( std::ifstream const & ifs,
 	this->_extension = &this->_extension[this->_extension.length() - 5];
 }
 
-void	TreatRequest::readStaticFile( std::string const & path )
+void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs )
 {
-	std::ifstream ifs;
 	std::string	line;
 
-	ifs.open(path.c_str(), std::ifstream::in);
-	if (!(ifs.is_open()))
-		throw std::runtime_error("404");
 	while (std::getline(ifs, line))
 		this->_file += line + "\n";
-
 	ifs.close();
 }
 
-void	TreatRequest::readDynamicFile( std::string const & path )
+void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi )
 {
+	std::cout << "TODO DYNAMIC FILE" << std::endl;
+	std::cout << "path\t=\t" << path << std::endl;
+	std::cout << "pathCgi\t=\t" << pathCgi << std::endl;
 	//dov le ashkénaze
 }
 
 void	TreatRequest::openAndRead( std::string const & path )
 {
-	std::string	extension;
+	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
+	std::string	extension;
+	bool	is_dynamic;
+
+	ifs.open(path.c_str(), std::ifstream::in);
+	if (!(ifs.is_open()))
+		throw std::runtime_error("404");
 
 	extension =	&path[path.rfind('/')];
-	extension = &extension[extension.length() - 5];
-
+	extension = &path[path.rfind('.')];
+	is_dynamic = false;
 	end = it = this->_loc->second.getCgi().end();
 	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 	{
+		std::cout << "extension\t=\t" << extension << std::endl;
+		std::cout << "it->first\t=\t" << it->first << std::endl;
 		if (extension == it->first)
-		//dynamic
+		{
+			is_dynamic = true;
+			break;
+		}
 	}
 
-	this->readStaticFile(path)
+	std::cout << "is_dynamic\t=\t" << is_dynamic << std::endl;
+
+	if (is_dynamic)
+		this->readDynamicFile(path, it->second);
+	else
+		this->readStaticFile(path, ifs);
 	//this->cpyInfo(ifs, path);
 }
 

@@ -7,7 +7,9 @@ server {
 
 	accepted_methods	GET POST DELETE;
 
+
 	root /tmp/test;
+	cgi .php /rootCGI;
 
 	location /salut {
 		root yo;

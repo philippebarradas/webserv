@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 11:53:22 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 12:54:43 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ class TreatRequest
 		size_t		selectConf( Parse_request const & req ) const;
 
 
-		void	readDynamicFile( std::string const & path );
-		void	readStaticFile( std::string const & path );
+		void	readStaticFile( std::string const & path, std::ifstream & ifs );
+		void	readDynamicFile( std::string const & path, std::string const & pathCgi );
 		void	openAndRead( std::string const & path );
 		void	cpyInfo( std::ifstream const & ifs, std::string const & path );
 
