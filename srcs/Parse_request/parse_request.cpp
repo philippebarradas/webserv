@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/07 14:27:55 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/08 09:06:08 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int		Parse_request::buff_is_valid(char *buff)
 
 	if (init_buffer(buff) == -1)
 		return (KEEP);
-	if (_buffer.size() > 32000)
+	if (_buffer.size() > 4000000)
 	{
 		replace = _header_tab.find("Status");
 		replace->second = "413";

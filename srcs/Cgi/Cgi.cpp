@@ -200,7 +200,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
-	std::cout << RED << "body_string = " << body_string << END << std::endl ;
+	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
 
 	pipe(fds_child);

@@ -191,14 +191,17 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	std::string 	buff_send;
 	Parse_request	parse_head;
 
-	size_t	buff_size = 330000;
+	//size_t	buff_size = 330000;
+	size_t	buff_size = 4000000;
+
+
 	char	buff[buff_size];
 	int		valread = -1;
 	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
 	size_t	recv_len = 0;
 
-	std::cout << GREEN <<"start _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
+	//std::cout << GREEN <<"start _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{
@@ -220,7 +223,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	if (parse_head._next_buffer_is_body == 1 && parse_head._request_body_size != 0)
 		parse_head._next_buffer_is_body = 0;
 
-	std::cout << GREEN <<"OUTSIDE _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
+	//std::cout << GREEN <<"OUTSIDE _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
 	//std::cout << std::endl << std::endl << std::endl;
 	//std::cout << std::endl << std::endl << std::endl;
 	std::vector<Server>::const_iterator it;
