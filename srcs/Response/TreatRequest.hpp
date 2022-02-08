@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 16:23:54 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 11:21:09 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,16 @@ class TreatRequest
 
 		TreatRequest &		operator=( TreatRequest const & rhs );
 
-		std::string	treat( Parse_request const & req );
+		std::string			treat( Parse_request const & req );
+
+		std::string const &	getExtension( void ) const;
+		std::string const &	getFile( void ) const;
 
 	private:
 
 		TreatRequest( void );
 
-		 std::vector<Server>	_conf;
+		std::vector<Server>	_conf;
 
 
 		bool	is_dir( std::string const & path ) const;
@@ -62,11 +65,13 @@ class TreatRequest
 		size_t	similarity_point(std::string const & locName,
 			std::string const & path) const;
 		size_t		selectConf( Parse_request const & req ) const;
-		std::string	openAndRead( std::string const & path ) const;
-		std::string	printError( Parse_request const & req,
-			size_t const & i_conf ) const;
+
+		void	openAndRead( std::string const & path );
+		void	cpyInfo( std::ifstream const & ifs, std::string const & path );
+
 
 		std::string	_file;
+		std::string	_extension;
 };
 
 std::ostream &			operator<<( std::ostream & o, TreatRequest const & i );

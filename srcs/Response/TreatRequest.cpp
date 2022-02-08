@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 16:39:41 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 11:20:41 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,33 +88,26 @@ void printMap(T & map, std::string const & name)
 	std::cout << "----------------\n" << std::endl;
 }
 
-std::string	TreatRequest::openAndRead( std::string const & path ) const
+void	TreatRequest::cpyInfo( std::ifstream const & ifs,
+	std::string const & path )
+{
+	this->_extension =	&path[path.rfind('/')];
+	this->_extension = &this->_extension[this->_extension.length() - 5];
+}
+
+void	TreatRequest::openAndRead( std::string const & path )
 {
 	std::ifstream ifs;
-	std::string	line, file;
+	std::string	line;
 
-    ifs.open(path.c_str(), std::ifstream::in);
+	ifs.open(path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
 		throw std::runtime_error("404");
 	while (std::getline(ifs, line))
-		file += line + "\n";
+		this->_file += line + "\n";
+
+	this->cpyInfo(ifs, path);
 	ifs.close();
-
-	return (file);
-}
-
-std::string	TreatRequest::printError( Parse_request const & req,
-	size_t const & i_conf ) const
-{
-	/*std::string	path_default_error, file;
-
-
-	path_default_error = "srcs/Config/default/html_page/error_page/"
-		+ req.get_request("status") + ".html";
-	file = openAndRead(path_default_error);
-
-	Response	rep(req, file, std::string(".html"));
-	return (rep.getHeader());*/
 }
 
 size_t		TreatRequest::selectConf( Parse_request const & req ) const
@@ -202,6 +195,7 @@ void	TreatRequest::search_index( Parse_request const & req,
 	std::set<std::string>::const_iterator	it, end;
 	std::string tmp, file;
 
+	std::cout << "INDEX SEARCH" << std::endl << std::endl;
 	end = loc->second.getIndex().end();
 	for (it = loc->second.getIndex().begin() ; it != end ; ++it)
 	{
@@ -209,7 +203,7 @@ void	TreatRequest::search_index( Parse_request const & req,
 		{
 			tmp = path + *it;
 			std::cout << "tmp\t=\t" << tmp << std::endl;
-			this->_file = this->openAndRead(tmp);
+			this->openAndRead(tmp);
 		}
 		catch (std::runtime_error const & e)
 		{
@@ -242,7 +236,7 @@ void	TreatRequest::exec_root( Parse_request const & req,
 	{
 		try
 		{
-			this->_file = this->openAndRead(path);
+			this->openAndRead(path);
 		}
 		catch (std::runtime_error const & e)
 		{
@@ -292,13 +286,12 @@ std::string	TreatRequest::treat( Parse_request const & req )
 
 
 	if (req.get_request("Status") == "200")
-	{
 		this->exec(req, loc);
-	}
 	else
 		std::cout << "TODO CAS D'ERREUR" << std::endl;
 
-	Response	rep(req, this->_file);
+	Response	rep(req, *this);
+	std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;
 	return (rep.getHeader());
 	/*else (req.get_request("status") != "200")
 		return (printError( req, i_conf ));*/
@@ -308,5 +301,14 @@ std::string	TreatRequest::treat( Parse_request const & req )
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
+std::string const &	TreatRequest::getExtension( void ) const
+{
+	return (this->_extension);
+}
+
+std::string const &	TreatRequest::getFile( void ) const
+{
+	return (this->_file);
+}
 
 /* ************************************************************************** */

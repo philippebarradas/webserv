@@ -21,16 +21,18 @@
 # include <fstream>
 # include <exception>
 # include "../Parse_request/parse_request.hpp"
+# include "TreatRequest.hpp"
 
 class	Parse_request;
 class	Server;
+class	TreatRequest;
 
 class Response
 {
 
 	public:
 
-		Response( Parse_request const & req, std::string const & page);
+		Response( Parse_request const & req, TreatRequest const & treat );
 		Response( Response const & src );
 		~Response();
 
@@ -45,9 +47,8 @@ class Response
 		void	writeRequestStatus( std::string const & code );
 		void	writeRequestStatus( unsigned int const & code );
 		void	writeDate( void );
-		void	writeType( std::string const & nameFile );
+		void	writeType( std::string const & extension );
 		void	writeLenght( std::string const & page );
-
 
 		std::string _header;
 

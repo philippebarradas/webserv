@@ -7,8 +7,6 @@ server {
 
 	accepted_methods	GET POST DELETE;
 
-	index ah yo bg lol in;
-
 	root /tmp/test;
 
 	location /salut {
