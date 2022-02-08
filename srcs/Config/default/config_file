@@ -4,13 +4,13 @@ server{
 	listen 8001;
 
 	client_max_body_size	20;
-	cgi .php /rootCGI;
+	cgi .php /usr/bin/php-cgi;
 
 	accepted_methods	GET POST DELETE;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	autoindex on;
-	index invalid;
+	autoindex off;
+	index form.html;
 
 	location /salut {
 		root yo;

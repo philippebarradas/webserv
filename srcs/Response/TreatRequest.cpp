@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 15:47:49 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:46:57 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ TreatRequest::TreatRequest( std::vector<Server> const & conf,
 	for (size_t i = 0 ; i < conf.size() ; ++i)
 	{
 		std::stringstream(conf[i].getListen()) >> comp;
-		if (comp == this->_eng->getAccessPort())
+		if (comp == this->_eng->GetAccessPort())
 			this->_conf.push_back(conf[i]);
 	}
 
@@ -110,12 +110,12 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
-	Cgi obj_cgi;
-	//Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
+	Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
 
-	std::cout << "TODO DYNAMIC FILE" << std::endl;
-	std::cout << "path\t=\t" << path << std::endl;
-	std::cout << "pathCgi\t=\t" << pathCgi << std::endl;
+	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
+		obj_cgi.convert_env(obj_cgi.getEnv()), req);
+	this->_file = obj_cgi.getSend_content();
+	std::cout << "this->_file\t=\t" << this->_file << std::endl;
 	//dov le ashkénaze
 }
 
@@ -332,7 +332,7 @@ std::string	TreatRequest::treat( Parse_request const & req )
 
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	printMap(pol, "Tableau de merde");
+	//printMap(pol, "Tableau de merde");
 
 	i_conf = this->selectConf(req);
 	std::cout << "i_conf\t=\t" << i_conf << std::endl;

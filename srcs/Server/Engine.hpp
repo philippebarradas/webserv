@@ -76,8 +76,7 @@ class Engine
 
 		std::string	GetRemote_Port() const;
 		std::string	GetRemote_Addr() const;
-
-		int			getAccessPort( void ) const;
+		int			GetAccessPort( void ) const;
 
 	private:
 

@@ -22,8 +22,23 @@ Cgi::Cgi()
 
 Cgi::Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine)
 {
+	std::cout << "lolilol port = " << src_engine.GetAccessPort() << std::endl;
 	this->_path_file_executed = path;
 	this->_path_cgi = pathCgi;
+	std::string root;
+	std::string path_abs;
+	int i;
+
+	/* for (int i = 0; i < this->_path_file_executed.size(); i++)
+	{
+	}
+	for (int j = i; j > 0 && this->_path_file_executed[j] != '/'; j--)
+	{
+	}
+	for  */
+
+	std::cout << "path\t=\t" << path << std::endl;
+	//this->_root;
 	//this->_path_file_executed_absolu = getPath_abs();
 	init_env(src_header, src_engine);
 }
@@ -125,19 +140,23 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
-	//this->_env["REQUEST_URI"] = "/env.php" + //query string ;
+	this->_env["REQUEST_URI"] = "/env.php" + src_header.get_request("Query");//query string ;
 	//this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + src_header.get_request("Query_string:");//query string ;
 	//this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
+	this->_env["SCRIPT_FILENAME"] = this->_path_file_executed;
 	//this->_env["DOCUMENT_ROOT"] = src.getRoot();
+	//this->_env["DOCUMENT_ROOT"] = this->_path_file_executed;
 	this->_env["DOCUMENT_URI"] = "/env.php";
+	std::cout << "src_header.get_request(Method)\t=\t" << src_header.get_request("Method") << std::endl;
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
-	//this->_env["SERVER_PORT"] = src.getListen();
+	this->_env["SERVER_PORT"] = src_engine.GetAccessPort();
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	// pas de path info pour post ??
 	//this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
+	//this->_env["PATH_INFO"] = this->_path_file_executed_absolu;
 	//this->_env["PATH_TRANSLATED"] = "";
 	this->_env["SCRIPT_NAME"] = "/env.php";
-	this->_env["QUERY_STRING"] = "";
+	this->_env["QUERY_STRING"] = src_header.get_request("Query");
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
@@ -175,6 +194,7 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 
 char	**Cgi::create_argv(std::string path_file_executed)
 {
+	std::cout << "path_file_executed in create argv\t=\t" << path_file_executed << std::endl;
 	int		nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
 
@@ -202,6 +222,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
 	//std::string body_string = "nom=dov";
 	//std::cout << "body_string\t=\t" << body_string << std::endl;
+
 	std::string body_string = src_header.get_request_body();
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
@@ -223,8 +244,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	this->_send_content = fd_to_string(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	//this->_send_content << "|" << std::endl << END;
+	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::fd_to_string(int fd)

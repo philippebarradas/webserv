@@ -293,7 +293,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-int			Engine::getAccessPort() const
+int			Engine::GetAccessPort() const
 {
 	return (this->_port);
 }
