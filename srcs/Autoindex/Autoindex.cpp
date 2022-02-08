@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 10:11:41 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 11:01:14 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 13:52:40 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ std::string	Autoindex::getPage( void ) const
 		}
 	}
 
-	page += "</pre><hr></body>\n</html>";
+	page += "</pre><hr></body>\n</html>\n";
 
 	return (page);
 }

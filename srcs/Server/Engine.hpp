@@ -49,6 +49,7 @@
 // My class
 #include "../Config/Server.hpp"
 #include "../Parse_request/parse_request.hpp"
+
 class Server;
 class Parse_request;
 
@@ -75,6 +76,9 @@ class Engine
 
 		std::string	GetRemote_Port() const;
 		std::string	GetRemote_Addr() const;
+
+		int			getAccessPort( void ) const;
+
 	private:
 
 		// VARIABLES

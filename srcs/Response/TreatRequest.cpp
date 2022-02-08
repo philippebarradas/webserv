@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:08:19 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 14:34:29 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,19 @@ TreatRequest::TreatRequest( void )
 {
 }
 
-TreatRequest::TreatRequest( std::vector<Server> const & conf, int const & access_port )
+TreatRequest::TreatRequest( std::vector<Server> const & conf,
+	Engine const & eng )
 {
 	int	comp;
 
+	this->_eng = &eng;
 	for (size_t i = 0 ; i < conf.size() ; ++i)
 	{
 		std::stringstream(conf[i].getListen()) >> comp;
-		if (comp == access_port)
+		if (comp == this->_eng->getAccessPort())
 			this->_conf.push_back(conf[i]);
 	}
+
 }
 
 TreatRequest::TreatRequest( TreatRequest const & src )
@@ -105,18 +108,20 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 	ifs.close();
 }
 
-void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi )
+void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
+	Parse_request const & req )
 {
 	Cgi	obj_cgi();
 
-	
+
 	std::cout << "TODO DYNAMIC FILE" << std::endl;
 	std::cout << "path\t=\t" << path << std::endl;
 	std::cout << "pathCgi\t=\t" << pathCgi << std::endl;
 	//dov le ashkénaze
 }
 
-void	TreatRequest::openAndRead( std::string const & path )
+void	TreatRequest::openAndRead( std::string const & path,
+	Parse_request const & req )
 {
 	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
@@ -145,7 +150,7 @@ void	TreatRequest::openAndRead( std::string const & path )
 	std::cout << "is_dynamic\t=\t" << is_dynamic << std::endl;
 
 	if (is_dynamic)
-		this->readDynamicFile(path, it->second);
+		this->readDynamicFile(path, it->second, req);
 	else
 		this->readStaticFile(path, ifs);
 	//this->cpyInfo(ifs, path);
@@ -228,7 +233,7 @@ bool	TreatRequest::is_dir( std::string const & path ) const
 	return true;
 }
 
-void	TreatRequest::search_index( Parse_request const & req,
+bool	TreatRequest::search_index( Parse_request const & req,
 	std::string const & path )
 {
 	std::set<std::string>::const_iterator	it, end;
@@ -242,17 +247,40 @@ void	TreatRequest::search_index( Parse_request const & req,
 		{
 			tmp = path + *it;
 			std::cout << "tmp\t=\t" << tmp << std::endl;
-			this->openAndRead(tmp);
+			this->openAndRead(tmp, req);
+			return (true);
 		}
 		catch (std::runtime_error const & e)
 		{
 			(void)e;
 		}
 	}
-	throw std::invalid_argument("Not found");
+	return (false);
 }
 
-void	TreatRequest::exec_root( Parse_request const & req)
+void	TreatRequest::generateAutoIndex( Parse_request const & req,
+	std::string const & path )
+{
+	if (!this->_loc->second.getAutoindex())
+	{
+		std::cout << "TODO ERROR AUTOINDEX OFF" << std::endl;
+		return ;
+	}
+
+	if (this->is_dir(path))
+	{
+		std::cout << "LETZGONGUE " << path << " IS DIR !" << std::endl;
+		Autoindex	page(path.c_str(), req.get_request("Path"));
+
+		this->_file = page.getPage();
+		this->_extension = ".html";
+
+	}
+	else
+		std::cout << "TODO ERROR PATH IS NOT VALID/DIR" << std::endl;
+}
+
+void	TreatRequest::exec_root( Parse_request const & req )
 {
 	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
 
@@ -260,21 +288,14 @@ void	TreatRequest::exec_root( Parse_request const & req)
 
 	if (path[path.length() - 1] == '/')
 	{
-		try
-		{
-			this->search_index(req, path);
-		}
-		catch (std::invalid_argument const & e)
-		{
-			std::cout << "TODO AUTOINDEX" << std::endl;
-			(void)e;
-		}
+		if (!this->search_index(req, path))
+			this->generateAutoIndex(req, path);
 	}
 	else
 	{
 		try
 		{
-			this->openAndRead(path);
+			this->openAndRead(path, req);
 		}
 		catch (std::runtime_error const & e)
 		{

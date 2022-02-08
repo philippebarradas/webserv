@@ -225,7 +225,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	//Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
  	if (valread != 0)
 	{
-		TreatRequest	treatment(src, this->_port);
+		TreatRequest	treatment(src, *this);
 
 		this->_buff_send = treatment.treat(parse_head);
 		std::cout << "_buff_send\t=\t" << _buff_send << std::endl;
@@ -292,6 +292,11 @@ void	Engine::loop_server(const std::vector<Server> & src)
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+int			Engine::getAccessPort() const
+{
+	return (this->_port);
+}
 
 std::string	Engine::GetRemote_Port() const
 {

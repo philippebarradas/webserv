@@ -10,10 +10,13 @@ server{
 	autoindex on;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	index form.html;
-	dav_methods DELETE;
+	autoindex on;
+	index invalid;
 
-	location /error_page {
-		index my_index.html;
+	root /;
+	cgi .php /rootCGI;
+
+	location /salut {
+		root yo;
 	}
 }}
