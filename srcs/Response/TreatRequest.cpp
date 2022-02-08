@@ -6,12 +6,11 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 14:34:29 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:47:49 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TreatRequest.hpp"
-#include "Cgi/Cgi.hpp"
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -111,8 +110,8 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
-	Cgi	obj_cgi();
-
+	Cgi obj_cgi;
+	//Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
 
 	std::cout << "TODO DYNAMIC FILE" << std::endl;
 	std::cout << "path\t=\t" << path << std::endl;

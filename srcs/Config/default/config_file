@@ -7,16 +7,12 @@ server{
 	cgi .php /rootCGI;
 
 	accepted_methods	GET POST DELETE;
-	autoindex on;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
 	autoindex on;
 	index invalid;
 
-	root /;
-	cgi .php /rootCGI;
-
 	location /salut {
 		root yo;
 	}
-}}
+}

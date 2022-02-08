@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/08 13:53:22 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:47:24 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,13 @@
 #define FALSE 0
 
 // My class
+#include "../Server/Engine.hpp"
 #include "../Config/Server.hpp"
 
 class Server;
 class Request;
+class Engine;
+class Parse_request;
 
 class Cgi
 {
@@ -61,7 +64,6 @@ class Cgi
 		// CONSTRUCTOR
 		Cgi();
 		Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
-		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
 
 		// DESTRUCTOR

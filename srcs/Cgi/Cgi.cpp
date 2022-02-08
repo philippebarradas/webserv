@@ -24,6 +24,7 @@ Cgi::Cgi(std::string const & path, std::string const & pathCgi, const Parse_requ
 {
 	this->_path_file_executed = path;
 	this->_path_cgi = pathCgi;
+	//this->_path_file_executed_absolu = getPath_abs();
 	init_env(src_header, src_engine);
 }
 
@@ -110,7 +111,7 @@ void	Cgi::init_env_server_var(const Parse_request & src_header)
 	this->_env["HOME"] = this->_home; // pas sur
 	this->_env["USER"] = this->_user; // pas sur
 	this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
-	//this->_env["SERVER_NAME"] = *it;
+	this->_env["SERVER_NAME"] =
 	this->_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 }
 
@@ -124,7 +125,8 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
-	this->_env["REQUEST_URI"] = "/env.php" + //query string ;
+	//this->_env["REQUEST_URI"] = "/env.php" + //query string ;
+	//this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + src_header.get_request("Query_string:");//query string ;
 	//this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
 	//this->_env["DOCUMENT_ROOT"] = src.getRoot();
 	this->_env["DOCUMENT_URI"] = "/env.php";

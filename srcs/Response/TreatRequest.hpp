@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 14:28:43 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:44:05 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
+#include "../Cgi/Cgi.hpp"
 # include "Response.hpp"
 # include <string>
 # include <dirent.h>
