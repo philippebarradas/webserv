@@ -192,10 +192,11 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	Parse_request	parse_head;
 
 	//size_t	buff_size = 330000;
-	size_t	buff_size = 4000000;
+	size_t	client_max_body_size = 2000000; // == 1M (1 000 000) default case
 
+	parse_head._client_max_body_size = client_max_body_size;
 
-	char	buff[buff_size];
+	char	buff[client_max_body_size];
 	int		valread = -1;
 	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
@@ -216,9 +217,17 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		
 		if (parse_head.get_request("Expect:").compare("") != 0
 		&& parse_head.get_request("Content-Length:").compare("") != 0)
-			valread = recv(fd, &buff[recv_len], std::stoi(parse_head.get_request("Content-Length:")), 0);
+		{
+			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
+			//while (valread != 0)
+			//{
+				valread = recv(fd, &buff, std::stoi(parse_head.get_request("Content-Length:")), 0);
+				//recv_len += valread;
+				//std::cout << BLUE << "buff=[" << buff << "]" << END << std::endl;
+			//}
+		}
 		else
-			valread = recv(fd, &buff[recv_len], buff_size, 0);
+			valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
 		
 		
 		
@@ -230,7 +239,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
 
 		if (parse_head.buff_is_valid(buff) == 0
-		||(parse_head._next_buffer_is_body == 1))
+		||(parse_head._next_buffer_is_body == 1 && parse_head._request_body_size == 0))
 		{
 			std::cout << "[EPOLWAIT]" << std::endl;
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);

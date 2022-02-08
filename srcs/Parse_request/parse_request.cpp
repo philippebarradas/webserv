@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/08 10:58:19 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/08 13:25:05 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,20 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Last-Modified:",
 		"Warning:"};
 
-	std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+	
+
 	std::string empty = "";
 
-	if (_next_buffer_is_body != 1)
-	{
-		_next_buffer_is_body = 0;
+	_next_buffer_is_body = 0;
+	std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+
+	
+		_client_max_body_size = 10;
+	//if (_next_buffer_is_body != 1)
+	//{
 		for (size_t x = 0; x < 42; x++)
 			_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
-	}
+	//}
 }
 
 
@@ -100,13 +105,12 @@ int		Parse_request::buff_is_valid(char *buff)
 		return (check_request());
 		//_next_buffer_is_body = 0;
 	} */
-
 	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 
 	if (init_buffer(buff) == -1)
 		return (KEEP);
-	if (_buffer.size() > 4000000)
+	if (_buffer.size() > _client_max_body_size)
 	{
 		replace = _header_tab.find("Status");
 		replace->second = "413";

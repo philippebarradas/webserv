@@ -64,7 +64,8 @@ class Parse_request
 		void	incr_nbr_line(){this->_nbr_line++;};
 		bool		_next_buffer_is_body;
 		size_t		_request_body_size;
-
+		size_t		_client_max_body_size;
+		
 	private:
 		std::string	_request_body;
 		std::string	fill_header_tab(std::string str);

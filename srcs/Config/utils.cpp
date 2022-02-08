@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 17:48:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 13:39:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 
-unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
+unsigned int	stoui_size( size_t const & min, size_t const & max,
 	std::string const & nb, std::string const & name )
 {
 	std::string::const_iterator	it, end;
@@ -25,7 +25,7 @@ unsigned int	stoui_size( unsigned int const & min, unsigned int const & max,
 	conv << nb;
 	conv >> ret;
 
-	if (nb.size() > 9 || it != end)
+	if (nb.size() > 22 || it != end)
 	{
 		std::string thr("[Error] invalid arguments in \'");
 		thr += name + "\' (\'" + nb + "\' is not un valid number).";
