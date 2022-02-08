@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:54:59 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 14:30:13 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,19 @@ TreatRequest::TreatRequest( void )
 {
 }
 
-TreatRequest::TreatRequest( std::vector<Server> const & conf, int const & access_port )
+TreatRequest::TreatRequest( std::vector<Server> const & conf,
+	Engine const & eng )
 {
 	int	comp;
 
+	this->_eng = &eng;
 	for (size_t i = 0 ; i < conf.size() ; ++i)
 	{
 		std::stringstream(conf[i].getListen()) >> comp;
-		if (comp == access_port)
+		if (comp == this->_eng->getAccessPort())
 			this->_conf.push_back(conf[i]);
 	}
+
 }
 
 TreatRequest::TreatRequest( TreatRequest const & src )
@@ -104,7 +107,8 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 	ifs.close();
 }
 
-void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi )
+void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
+	Parse_request const & req )
 {
 	std::cout << "TODO DYNAMIC FILE" << std::endl;
 	std::cout << "path\t=\t" << path << std::endl;
@@ -112,7 +116,8 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	//dov le ashkénaze
 }
 
-void	TreatRequest::openAndRead( std::string const & path )
+void	TreatRequest::openAndRead( std::string const & path,
+	Parse_request const & req )
 {
 	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
@@ -141,7 +146,7 @@ void	TreatRequest::openAndRead( std::string const & path )
 	std::cout << "is_dynamic\t=\t" << is_dynamic << std::endl;
 
 	if (is_dynamic)
-		this->readDynamicFile(path, it->second);
+		this->readDynamicFile(path, it->second, req);
 	else
 		this->readStaticFile(path, ifs);
 	//this->cpyInfo(ifs, path);
@@ -238,7 +243,7 @@ bool	TreatRequest::search_index( Parse_request const & req,
 		{
 			tmp = path + *it;
 			std::cout << "tmp\t=\t" << tmp << std::endl;
-			this->openAndRead(tmp);
+			this->openAndRead(tmp, req);
 			return (true);
 		}
 		catch (std::runtime_error const & e)
@@ -286,7 +291,7 @@ void	TreatRequest::exec_root( Parse_request const & req )
 	{
 		try
 		{
-			this->openAndRead(path);
+			this->openAndRead(path, req);
 		}
 		catch (std::runtime_error const & e)
 		{

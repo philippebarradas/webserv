@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:48:51 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 14:28:43 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 # include <iostream>
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
+# include "../Server/Engine.hpp"
 # include "Response.hpp"
 # include <string>
 # include <dirent.h>
 # include <sys/stat.h>
 
 class	Parse_request;
+class	Engine;
 class	Server;
 class	Autoindex;
 
@@ -31,7 +33,7 @@ class TreatRequest
 	public:
 
 		TreatRequest( std::vector<Server> const & conf,
-			int const & access_port );
+			Engine const & eng );
 		TreatRequest( TreatRequest const & src );
 		~TreatRequest();
 
@@ -68,11 +70,13 @@ class TreatRequest
 			std::string const & path );
 
 		void	readStaticFile( std::string const & path, std::ifstream & ifs );
-		void	readDynamicFile( std::string const & path, std::string const & pathCgi );
-		void	openAndRead( std::string const & path );
+		void	readDynamicFile( std::string const & path, std::string const & pathCgi,
+			Parse_request const & req );
+		void	openAndRead( std::string const & path, Parse_request const & req );
 		void	cpyInfo( std::ifstream const & ifs, std::string const & path );
 
 
+		Engine const *		_eng;
 		std::string	_file;
 		std::string	_extension;
 		std::map<std::string, Server>::const_iterator	_loc;
