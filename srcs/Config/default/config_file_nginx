@@ -9,7 +9,14 @@ server{
 	autoindex on;
 
 
+
 	location / {
+		client_max_body_size 2;
+		root /tmp/test/index.html;
+	}
+
+	location /salut {
+		client_max_body_size 80;
 		root /tmp/test/index.html;
 	}
 }}

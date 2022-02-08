@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:03:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 13:54:59 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ bool	TreatRequest::is_dir( std::string const & path ) const
 	return true;
 }
 
-void	TreatRequest::search_index( Parse_request const & req,
+bool	TreatRequest::search_index( Parse_request const & req,
 	std::string const & path )
 {
 	std::set<std::string>::const_iterator	it, end;
@@ -239,16 +239,39 @@ void	TreatRequest::search_index( Parse_request const & req,
 			tmp = path + *it;
 			std::cout << "tmp\t=\t" << tmp << std::endl;
 			this->openAndRead(tmp);
+			return (true);
 		}
 		catch (std::runtime_error const & e)
 		{
 			(void)e;
 		}
 	}
-	throw std::invalid_argument("Not found");
+	return (false);
 }
 
-void	TreatRequest::exec_root( Parse_request const & req)
+void	TreatRequest::generateAutoIndex( Parse_request const & req,
+	std::string const & path )
+{
+	if (!this->_loc->second.getAutoindex())
+	{
+		std::cout << "TODO ERROR AUTOINDEX OFF" << std::endl;
+		return ;
+	}
+
+	if (this->is_dir(path))
+	{
+		std::cout << "LETZGONGUE " << path << " IS DIR !" << std::endl;
+		Autoindex	page(path.c_str(), req.get_request("Path"));
+
+		this->_file = page.getPage();
+		this->_extension = ".html";
+
+	}
+	else
+		std::cout << "TODO ERROR PATH IS NOT VALID/DIR" << std::endl;
+}
+
+void	TreatRequest::exec_root( Parse_request const & req )
 {
 	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
 
@@ -256,15 +279,8 @@ void	TreatRequest::exec_root( Parse_request const & req)
 
 	if (path[path.length() - 1] == '/')
 	{
-		try
-		{
-			this->search_index(req, path);
-		}
-		catch (std::invalid_argument const & e)
-		{
-			std::cout << "TODO AUTOINDEX" << std::endl;
-			(void)e;
-		}
+		if (!this->search_index(req, path))
+			this->generateAutoIndex(req, path);
 	}
 	else
 	{

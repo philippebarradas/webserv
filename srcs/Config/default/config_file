@@ -7,8 +7,10 @@ server {
 
 	accepted_methods	GET POST DELETE;
 
+	autoindex on;
+	index invalid;
 
-	root /tmp/test;
+	root /;
 	cgi .php /rootCGI;
 
 	location /salut {
