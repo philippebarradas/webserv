@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/20 14:31:46 by user42            #+#    #+#             */
-/*   Updated: 2022/02/08 08:56:59 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/08 09:55:51 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 #include <sys/stat.h>
 
 /* time_t rawtimet;
-                                    struct tm * timeinfot;
-                                    char time_test [200];
+struct tm * timeinfot;
+char time_test [200];
 
-                                    time (&rawtimet);
-                                    timeinfot = localtime (&rawtimet);
+time (&rawtimet);
+timeinfot = localtime (&rawtimet);
 
-                                    strftime(time_test, 200, "%a, %d %b %G %T %Z",timeinfot); */
+strftime(time_test, 200, "%a, %d %b %G %T %Z",timeinfot); */
 
 int     precondition_vadid(std::string file, std::string date, const Parse_request & parse_head)
 {
@@ -162,7 +162,8 @@ std::string Treat_request::ft_get(std::string full_cmd, const Parse_request & pa
       _content_type = "Content-Type: image/jpeg";
     else
       _content_type = "Content-Type: text/html";
-    _content_length = "Content-Length: " + int_to_string(file.size()) + "\nLast-Modified: " + time_modified_file;
+    _content_length = "Content-Length: " + int_to_string(file.size()) +
+    "\nLast-Modified: " + time_modified_file;
     _connection = "Connection: keep-alive";
 
 

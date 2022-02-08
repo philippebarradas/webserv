@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/08 09:06:08 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/08 10:58:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,9 @@ Parse_request::Parse_request() : _nbr_line(0)
 int		Parse_request::buff_is_valid(char *buff)
 {
 	std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-/* 	if (_next_buffer_is_body == TRUE)
+/*  	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
-		std::cout << "inside" << std::endl;
-
+		std::cout << GREEN << "_request_body_size=[" << _request_body_size << "]" << END << std::endl;
 		for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 		{
 			if (it->second.size() != 0)
@@ -101,6 +100,7 @@ int		Parse_request::buff_is_valid(char *buff)
 		return (check_request());
 		//_next_buffer_is_body = 0;
 	} */
+
 	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 

@@ -205,17 +205,36 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{
-		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
+		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
+		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
+		if (parse_head.get_request("Content-Length:").compare("") != 0)
+		{
+			std::cout << RED << "std::stoi(parse_head.get_request(Content-Length:)=["
+			<< std::stoi(parse_head.get_request("Content-Length:"))
+			<< "]" << END << std::endl;
+		}
+		
+		if (parse_head.get_request("Expect:").compare("") != 0
+		&& parse_head.get_request("Content-Length:").compare("") != 0)
+			valread = recv(fd, &buff[recv_len], std::stoi(parse_head.get_request("Content-Length:")), 0);
+		else
+			valread = recv(fd, &buff[recv_len], buff_size, 0);
+		
+		
+		
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-	
+		std::cout << "valread=[" << valread << "]" << std::endl;
 		std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
 
 		if (parse_head.buff_is_valid(buff) == 0
-		||(parse_head._next_buffer_is_body == 1 && parse_head._request_body_size == 0))
+		||(parse_head._next_buffer_is_body == 1))
+		{
+			std::cout << "[EPOLWAIT]" << std::endl;
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+		}
 		else
 			is_valid = false;
 		//std::cout << "end boucle = " << parse_head._next_buffer_is_body << std::endl;
