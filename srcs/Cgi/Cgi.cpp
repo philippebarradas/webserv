@@ -20,10 +20,11 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+Cgi::Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine)
 {
-	init_path(src);
-	init_env(src, src_header, src_engine);
+	this->_path_file_executed = path;
+	this->_path_cgi = pathCgi;
+	init_env(src_header, src_engine);
 }
 
 Cgi::Cgi( const Cgi & src )
@@ -78,23 +79,14 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 	delete [] argv;
 }
 
-bool	Cgi::is_file_cgi(std::string path_extension)
+void	Cgi::init_path()
 {
-	//if (path_extension.compare("html") == 0)
-	return (FALSE);
-	return (TRUE);
-}
-
-void	Cgi::init_path(const Server & src)
-{
-	this->_path_cgi = "/usr/bin/php-cgi";
-	//this->_path_cgi = "/usr/bin/python";
-	this->_user = "user42";
-	this->_home = "/home/user42/Bureau/webserv";
+	//this->_user = "user42"; pas sur
+	//this->_home = "/home/user42/Bureau/webserv"; pas sur
 }
 
 // var from client
-void	Cgi::init_env_client_var(const Server & src, const Parse_request & src_header)
+void	Cgi::init_env_client_var(const Parse_request & src_header)
 {
 	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
@@ -111,19 +103,19 @@ void	Cgi::init_env_client_var(const Server & src, const Parse_request & src_head
 }
 
 // var server
-void	Cgi::init_env_server_var(const Server & src, const Parse_request & src_header)
+void	Cgi::init_env_server_var(const Parse_request & src_header)
 {
-	std::set<std::string>::iterator it;
-	it = src.getName().begin();
-	this->_env["HOME"] = this->_home;
-	this->_env["USER"] = this->_user;
+	//std::set<std::string>::iterator it;
+	//it = src.getName().begin();
+	this->_env["HOME"] = this->_home; // pas sur
+	this->_env["USER"] = this->_user; // pas sur
 	this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
-	this->_env["SERVER_NAME"] = *it;
+	//this->_env["SERVER_NAME"] = *it;
 	this->_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 }
 
 // var request
-void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & src_engine)
 {
 	/* difference entre GET et POST sur un form html qui redirect ur env.php:
 		POST par rapport a get: + : HTTP_CONTENT_LENGTH, HTTP_CONTENT_TYPE == CONTENT_TYPE et CONTENT_LENGTH
@@ -131,13 +123,13 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_hea
 	*/
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
-	this->_env["REQUEST_SCHEME"] = "http";
-	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
-	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
-	this->_env["DOCUMENT_ROOT"] = src.getRoot();
+	//this->_env["REQUEST_SCHEME"] = "http";
+	this->_env["REQUEST_URI"] = "/env.php" + //query string ;
+	//this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
+	//this->_env["DOCUMENT_ROOT"] = src.getRoot();
 	this->_env["DOCUMENT_URI"] = "/env.php";
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
-	this->_env["SERVER_PORT"] = src.getListen();
+	//this->_env["SERVER_PORT"] = src.getListen();
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	// pas de path info pour post ??
 	//this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
@@ -152,13 +144,13 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_hea
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
-void	Cgi::init_env(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+void	Cgi::init_env(const Parse_request & src_header, const Engine & src_engine)
 {
 	std::map<std::string, std::string>::iterator it_env;
 
-	init_env_client_var(src, src_header);
-	init_env_server_var(src, src_header);
-	init_env_request_var(src, src_header, src_engine);
+	init_env_client_var(src_header);
+	init_env_server_var(src_header);
+	init_env_request_var(src_header, src_engine);
 	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }

@@ -12,4 +12,25 @@ server{
 	location / {
 		root /tmp/test/index.html;
 	}
+}
+
+server{
+	server_name hello12 hello55;
+	listen 7777;
+
+	autoindex on;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+
+	index form.html;
+	dav_methods DELETE;
+
+	location /error_page {
+		index my_index.html;
+	}
+	location ~ \.php$ {
+		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+		fastcgi_index hello.php;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include /etc/nginx/fastcgi_params;
+	}
 }}

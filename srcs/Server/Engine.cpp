@@ -124,6 +124,11 @@ Engine::Engine(const std::vector<Server> & src)
 	loop_server(src);
 }
 
+Engine::Engine( Engine const & src )
+{
+	*this = src;
+}
+
 /*
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
@@ -217,7 +222,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
 		if ((*it).getListen() == port_str)
 			break ;
-	Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
+	//Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
  	if (valread != 0)
 	{
 		TreatRequest	treatment(src, this->_port);

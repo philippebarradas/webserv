@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/07 15:06:11 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 13:53:22 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class Cgi
 
 		// CONSTRUCTOR
 		Cgi();
-		Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
+		Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
 		//Cgi(const Request & re); pour plus tard
 		Cgi(Cgi const & src);
 
@@ -71,12 +71,12 @@ class Cgi
 		void	delete_argv_env(char **argv, char **env);
 		std::string	to_string(size_t nb);
 		bool	is_file_cgi(std::string path_extension);
-		void	init_path(const Server & src);
-		void	init_env_client_var(const Server & src, const Parse_request & src_header);
-		void	init_env_server_var(const Server & src, const Parse_request & src_header);
-		void	init_env_request_var(const Server & src, const Parse_request & src_header,
+		void	init_path();
+		void	init_env_client_var(const Parse_request & src_header);
+		void	init_env_server_var(const Parse_request & src_header);
+		void	init_env_request_var(const Parse_request & src_header,
 			const Engine & src_engine);
-		void	init_env(const Server & src, const Parse_request & src_header,
+		void	init_env(const Parse_request & src_header,
 			const Engine & src_engine);
 		char	**convert_env(std::map<std::string, std::string>);
 		char	**create_argv(std::string path_file_executed);
@@ -98,6 +98,9 @@ class Cgi
 	private:
 
 		// VARIABLES
+		std::string	_root; // 1
+		std::string	_path_file_executed_absolu; // 2
+		std::string	_path_file_executed; // 1 + 2
 		std::string	_path_cgi;
 		std::string	_user;
 		std::string	_home;

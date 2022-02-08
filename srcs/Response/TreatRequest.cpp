@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:03:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/08 13:08:19 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TreatRequest.hpp"
+#include "Cgi/Cgi.hpp"
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -106,6 +107,9 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi )
 {
+	Cgi	obj_cgi();
+
+	
 	std::cout << "TODO DYNAMIC FILE" << std::endl;
 	std::cout << "path\t=\t" << path << std::endl;
 	std::cout << "pathCgi\t=\t" << pathCgi << std::endl;

@@ -1,21 +1,19 @@
 
-server {
-	server_name hello1;
+server{
+	server_name hello12 hello55;
 	listen 8001;
 
 	client_max_body_size	20;
-
-	accepted_methods	GET POST DELETE;
-
-
-	root /tmp/test;
 	cgi .php /rootCGI;
 
-	location /salut {
-		root yo;
+	accepted_methods	GET POST DELETE;
+	autoindex on;
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+
+	index form.html;
+	dav_methods DELETE;
+
+	location /error_page {
+		index my_index.html;
 	}
-
-}
-
-
-
+}}
