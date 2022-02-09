@@ -3,6 +3,15 @@ server{
 	server_name localhost;
 	listen 8001;
 
+	client_max_body_size	 9000000000000000001;
+
+	cgi .php php-cgi;
+	cgi .py cgi_python;
+
+	accepted_methods	GET POST DELETE;
+
+	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	index my_index.html;
 	autoindex off;
 
 	location / {

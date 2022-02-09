@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 14:44:18 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/09 13:20:57 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,7 +337,7 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 	checkRedefinition(_alreadySetMaxbody, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 
-	this->_maxbody = stoui_size(0, 100, src[1], src[0]);
+	this->_maxbody = stoui_size(0, 9000000000000000001, src[1], src[0]);
 
 	this->_alreadySetMaxbody = true;
 }
