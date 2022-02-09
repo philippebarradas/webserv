@@ -75,8 +75,8 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "404"};
-	std::string		all_status[] = {"OK", "Not Found"};
+	std::string		all_code[] = {"200", "403", "404"};
+	std::string		all_status[] = {"OK", "Forbidden", "Not Found"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;

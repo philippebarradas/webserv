@@ -53,6 +53,7 @@ class Parse_request
 		void	incr_nbr_line(){this->_nbr_line++;};
 
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_big_tab;}
+		void	setStatus( std::string const & code ) { this->_big_tab["Status"] = code; }
 
 	private:
 		std::string	_request_body;

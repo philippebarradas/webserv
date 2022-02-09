@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 17:02:12 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/09 15:53:40 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
-#include "../Cgi/Cgi.hpp"
+# include "../Cgi/Cgi.hpp"
 # include "Response.hpp"
 # include <string>
 # include <dirent.h>
 # include <sys/stat.h>
+
+# define DEFAULT_ROOT_ERROR "srcs/Config/default/error_page/"
 
 class	Parse_request;
 class	Engine;
@@ -40,7 +42,7 @@ class TreatRequest
 
 		TreatRequest &		operator=( TreatRequest const & rhs );
 
-		std::string			treat( Parse_request const & req );
+		std::string			treat( Parse_request & req );
 
 		std::string const &	getExtension( void ) const;
 		std::string const &	getFile( void ) const;
@@ -59,21 +61,22 @@ class TreatRequest
 		bool	search_index( Parse_request const & req,
 			std::string const & path );
 
-		void	exec_root( Parse_request const & req );
-		void	exec( Parse_request const & req );
+		void	exec_root( Parse_request & req );
+		void	exec( Parse_request & req );
 
-		void	selectLocation(
-			Parse_request const & req,
+		std::map<std::string, Server>::const_iterator	selectLocation(
+			std::string const &	path,
 			std::map<std::string, Server> const & allLoc );
 		size_t	similarity_point(std::string const & locName,
 			std::string const & path ) const;
 		size_t		selectConf( Parse_request const & req ) const;
 
-		void	generateAutoIndex( Parse_request const & req,
+		void	generateAutoIndex( Parse_request & req,
 			std::string const & path );
 
 		void	readStaticFile( std::string const & path, std::ifstream & ifs );
-		void	readDynamicFile( std::string const & path, std::string const & pathCgi,
+		void	readDynamicFile( std::string const & path,
+			std::string const & pathCgi,
 			Parse_request const & req );
 
 		void			cpyInfo( std::string const & extension,
@@ -81,6 +84,7 @@ class TreatRequest
 		bool	openAndRead( std::string const & path,
 			Parse_request const & req );
 
+		void	error_page( Parse_request const & req );
 
 		Engine const *		_eng;
 		std::string	_file;
@@ -88,6 +92,7 @@ class TreatRequest
 		bool	_cgi;
 		std::string	_extension;
 		std::map<std::string, Server>::const_iterator	_loc;
+		size_t	_i_conf;
 };
 
 std::ostream &			operator<<( std::ostream & o, TreatRequest const & i );

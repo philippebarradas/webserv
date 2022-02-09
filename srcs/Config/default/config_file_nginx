@@ -3,17 +3,42 @@ user www-data;
 events {}
 http{
 server{
-	server_name hello4;
-
+	server_name localhost;
 	listen 7778;
+
 	autoindex on;
 
-	root /tmp;
+	location / {
+		error_page 404 /404.htmll;
+		index	no;
+		root /tmp;
+	}
 
-	error_page 404 404.html;
+	location /lol {
+		error_page 404 rigolo;
+	}
+
+	location /rigolo {
+		error_page 404 /404.html;
+		index	no;
+		root /tmp;
+	}
+
+	location /404.htmll {
+		error_page 404 /404.html;
+		index lol;
+		root /tmp/test;
+	}
 
 	location /404.html {
-		alias /tmp/test;
+		error_page 404 /404.html;
+		index lol;
+		root /tmp/test;
+	}
+
+
+	location /salut {
+		root yo;
 	}
 }
 

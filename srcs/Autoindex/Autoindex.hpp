@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 13:52:00 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/19 11:00:33 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/09 16:42:48 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Autoindex
 		std::map<std::string, std::string>	_href;
 
 		void	setAllHref( DIR *dir, const char *root );
-		void	insertAlign( std::string const & path,
+		void	insertAlign( std::string & path,
 					time_t const & date, off_t const & size );
 
 };

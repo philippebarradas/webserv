@@ -5,14 +5,16 @@ server{
 
 	autoindex on;
 
+	error_page 404 /404.html;
+	root /tmp;
+
 	location / {
 		index form.html;
 		cgi .php /usr/bin/php-cgi;
 		accepted_methods	GET POST DELETE;
-		root /tmp/test;
 	}
 
-	location /salut {
-		root yo;
+	location /404.html {
+		root /tmp/test;
 	}
 }

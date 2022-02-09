@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 10:25:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/09 16:21:15 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,25 +197,27 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 	return (ret);
 }
 
-void	TreatRequest::selectLocation(
-	Parse_request const & req,
+std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
+	std::string const &	path,
 	std::map<std::string, Server> const & allLoc )
 {
-	std::map<std::string, Server>::const_iterator	it, end;
+	std::map<std::string, Server>::const_iterator	it, end, ret;
 	size_t	similarity, most;
 
 	most = 0;
 	end = allLoc.end();
 	for (it = allLoc.begin() ; it != end ; ++it)
 	{
-		similarity = this->similarity_point(it->first, req.get_request("Path"));
+		similarity = this->similarity_point(it->first, path);
 		//std::cout << "similarity\t=\t" << similarity << std::endl;
 		if (similarity > most)
 		{
 			most = similarity;
-			this->_loc = it;
+			ret = it;
 		}
 	}
+
+	return (ret);
 }
 
 bool	TreatRequest::is_dir( std::string const & path ) const
@@ -246,33 +248,72 @@ bool	TreatRequest::search_index( Parse_request const & req,
 	return (false);
 }
 
-void	TreatRequest::generateAutoIndex( Parse_request const & req,
+void	TreatRequest::generateAutoIndex( Parse_request & req,
 	std::string const & path )
 {
-	if (!this->_loc->second.getAutoindex())
-	{
-		std::cout << "TODO ERROR AUTOINDEX OFF" << std::endl;
-		return ;
-	}
+	std::cout << this->_loc->second.getAutoindex() << std::endl;
 
 	if (this->is_dir(path))
 	{
-		//std::cout << "LETZGONGUE " << path << " IS DIR !" << std::endl;
-		Autoindex	page(path.c_str(), req.get_request("Path"));
+		std::cout << "FILE EXIST" << std::endl;
+		if (!this->_loc->second.getAutoindex())
+		{
+			req.setStatus("403");
+			this->error_page(req);
+		}
+		else
+		{
+			Autoindex	page(path.c_str(), req.get_request("Path"));
 
-		this->_file = page.getPage();
-		this->_extension = ".html";
-
+			this->_file = page.getPage();
+			this->_extension = ".html";
+		}
 	}
 	else
-		std::cout << "TODO ERROR PATH IS NOT VALID/DIR" << std::endl;
+	{
+		req.setStatus("404");
+		this->error_page(req);
+	}
 }
 
-void	TreatRequest::exec_root( Parse_request const & req )
+void	TreatRequest::error_page( Parse_request const & req )
+{
+	std::map<std::string, Server>::const_iterator	locErr;
+	std::map<unsigned int, std::string>				allError;
+	std::string			codeStr, path;
+	std::stringstream	conv;
+	unsigned int		code;
+	bool				find_custom;
+
+	codeStr = req.get_request("Status");
+	allError = this->_loc->second.getError();
+
+	conv << codeStr;
+	conv >> code;
+
+	find_custom = false;
+
+
+	if (allError[code] != "")
+	{
+		locErr = this->selectLocation(allError[code], this->_conf[this->_i_conf].getLocation());
+		path = locErr->second.getRoot() + locErr->first;
+		if (this->openAndRead(path, req))
+			find_custom = true;
+	}
+	if (!find_custom)
+	{
+		path = DEFAULT_ROOT_ERROR + codeStr + ".html";
+		this->openAndRead(path, req);
+	}
+
+
+	std::cout << "path\t=\t" << path << std::endl;
+}
+
+void	TreatRequest::exec_root( Parse_request & req )
 {
 	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
-
-	//std::cout << "path\t=\t" << path << std::endl;
 
 	if (path[path.length() - 1] == '/')
 	{
@@ -282,11 +323,14 @@ void	TreatRequest::exec_root( Parse_request const & req )
 	else
 	{
 		if (!this->openAndRead(path, req))
-			std::cout << "TODO REDIRECT ERROR PAGE" << std::endl;
+		{
+			req.setStatus("404");
+			this->error_page(req);
+		}
 	}
 }
 
-void	TreatRequest::exec( Parse_request const & req)
+void	TreatRequest::exec( Parse_request & req )
 {
 	std::ifstream ifs;
 
@@ -295,32 +339,29 @@ void	TreatRequest::exec( Parse_request const & req)
 	ifs.open(this->_loc->second.getRoot());
 	if (!(ifs.is_open()))
 	{
-		std::cout << "TO DO ALIAS METHOD" << std::endl;
+		std::cout << "TODO ALIAS METHOD" << std::endl;
 		//this->is_alias();
 	}
 	else
 	{
 
-		//std::cout << "ROOT METHOD" << std::endl;
+		std::cout << "ROOT METHOD" << std::endl;
 		ifs.close();
-		//std::cout << "is_dir(file)\t=\t" << is_dir(this->_loc->second.getRoot()) << std::endl;
 		exec_root(req);
 	}
 }
 
-std::string	TreatRequest::treat( Parse_request const & req )
+std::string	TreatRequest::treat( Parse_request & req )
 {
-	size_t	i_conf;
-
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
 	//printMap(pol, "Tableau de merde");
 
-	i_conf = this->selectConf(req);
-	std::cout << "i_conf\t=\t" << i_conf << std::endl;
-	this->selectLocation(req, this->_conf[i_conf].getLocation());
-	std::cout << "location\t=\t" << _loc->first << std::endl;
-	std::cout << "loc->second\t=\t" << _loc->second << std::endl;
+	this->_i_conf = this->selectConf(req);
+	std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
+	this->_loc = this->selectLocation(req.get_request("Path"), this->_conf[this->_i_conf].getLocation());
+	std::cout << "location\t=\t" << _loc->first << std::endl
+		<< _loc->second << std::endl;
 
 
 	if (req.get_request("Method") == "GET")
