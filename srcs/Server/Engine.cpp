@@ -270,24 +270,13 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
 		if ((*it).getListen() == port_str)
 			break ;
-	Cgi		obj_cgi(src.at(i_listen), parse_head, *this, request);
-	//Cgi		obj_cgi2(src.at(i_listen), parse_head, *this, request);
-
-
-	//std::cout << " --|" << buff << "|-end-" << std::endl;
-
-	std::cout << GREEN << "valread=[" << valread << "]" << END << std::endl;
-
+	Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
  	if (valread != 0)
 	{
 		if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
-			std::cout << YELLOW << "--------------------CGI--------------------" << END << std::endl;
-			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
-			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
-
-			//std::cout << "STR = ||" << obj_cgi.getSend_content().c_str() << "||"<< std::endl;
-
+			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
+			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
 			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 				obj_cgi.getSend_content().size(), 0);
 			//close(fd);
@@ -299,7 +288,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 				//parse_head.get_request("method").compare("GET") == 0)
 			{
 				obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
-				obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
+				obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
 				nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
 					obj_cgi.getSend_content().size(), 0);
 			}
