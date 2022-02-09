@@ -190,18 +190,12 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 
 void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_request & Xarse_head)
 {
-<<<<<<< HEAD
 	Parse_request	parse_head;
-	std::string		file_body;
-=======
-	Treat_request	request;
 	std::string		file_body;
 	std::string 	buff_send;
-	Parse_request	parse_head;
 
 	//size_t	buff_size = 330000;
 	size_t	client_max_body_size = 2000000; // == 1M (1 000 000) default case
->>>>>>> parse_header_path
 
 	parse_head._client_max_body_size = client_max_body_size;
 
@@ -309,12 +303,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 			else
 			{
 				nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
-<<<<<<< HEAD
 		}*/
-=======
-			}
-		}
->>>>>>> parse_header_path
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
