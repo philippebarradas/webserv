@@ -201,46 +201,55 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
 	size_t	recv_len = 0;
-
+	size_t	head;
 	//std::cout << GREEN <<"start _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{
-		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
-		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
-		if (parse_head.get_request("Content-Length:").compare("") != 0)
-		{
-			std::cout << RED << "std::stoi(parse_head.get_request(Content-Length:)=["
-			<< std::stoi(parse_head.get_request("Content-Length:"))
-			<< "]" << END << std::endl;
-		}
 		
-		if (parse_head.get_request("Expect:").compare("") != 0
-		&& parse_head.get_request("Content-Length:").compare("") != 0)
-		{
-			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			//while (valread != 0)
-			//{
-				valread = recv(fd, &buff, std::stoi(parse_head.get_request("Content-Length:")), 0);
-				//recv_len += valread;
-				//std::cout << BLUE << "buff=[" << buff << "]" << END << std::endl;
-			//}
-		}
-		else
-			valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
-		
-		
-		
+		valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
 			recv_len += valread;
-		std::cout << "valread=[" << valread << "]" << std::endl;
-		std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
+		head = valread;
+		std::cout << "-buf-\n-|" << GREEN << buff << END << "|-\n-end-" << std::endl;
 
-		if (parse_head.buff_is_valid(buff) == 0
-		||(parse_head._next_buffer_is_body == 1 && parse_head._request_body_size == 0))
+		std::cout << "BUFF IS VALID = " << parse_head.buff_is_valid(buff) << std::endl;
+
+		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
+		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
+		
+ 		if (parse_head.get_request("Expect:").compare("") != 0
+		&& parse_head.get_request("Content-Length:").compare("") != 0)
 		{
+			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
+			while (valread != 0 &&  std::strlen(buff) < head + std::stoi(parse_head.get_request("Content-Length:")))
+			{
+				valread = recv(fd, &buff[recv_len], 1, 0);
+				recv_len += valread;
+				//std::cout << BLUE << "buff=[" << buff << "]" << END << std::endl;
+				//std::cout << GREEN  << recv_len  << " < " << std::stoi(parse_head.get_request("Content-Length:")) << END << std::endl;
+				//std::cout << RED << "valread=[" << valread << "]" << END << std::endl;
+			}
+		}
+		
+		
+		std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
+		std::cout << "valread=[" << valread << "]" << std::endl;
+		std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
+		std::cout << BLUE << "buff.size() - head =[" << std::strlen(buff) - head<< "]" << END << std::endl;
+
+		if (parse_head.get_request("Content-Length:").compare("") != 0)
+		{
+			std::cout << BLUE << "(Content-Length:)=["<< std::stoi(parse_head.get_request("Content-Length:"))<< "]" << END << std::endl;
+		}
+
+
+		if (parse_head.buff_is_valid(buff) == 0)
+		{
+			std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
+			std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
 			std::cout << "[EPOLWAIT]" << std::endl;
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 		}
@@ -265,13 +274,15 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	//Cgi		obj_cgi2(src.at(i_listen), parse_head, *this, request);
 
 
-	std::cout << "CGI" << std::endl;
 	//std::cout << " --|" << buff << "|-end-" << std::endl;
+
+	std::cout << GREEN << "valread=[" << valread << "]" << END << std::endl;
+
  	if (valread != 0)
 	{
 		if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
-
+			std::cout << YELLOW << "--------------------CGI--------------------" << END << std::endl;
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
 			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head, request);
 

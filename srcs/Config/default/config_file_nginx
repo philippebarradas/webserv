@@ -16,7 +16,7 @@ server{
 	server_name hello12 hello55;
 	listen 7777;
 
-	client_max_body_size	 9000;
+	client_max_body_size	 900000;
 
 	autoindex on;
 	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;

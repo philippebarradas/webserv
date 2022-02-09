@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 11:58:10 by user42            #+#    #+#             */
-/*   Updated: 2022/02/07 13:58:20 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/09 08:57:26 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,11 @@ void	Parse_request::is_body(size_t found)
 	std::string _request_body_unchanked;
 	std::string cmp = "\r\n";
 
-	if (_buffer.size() > found + 4)
-		_request_body = _buffer.substr(found + 4, _buffer.size() - found + 4);
+	if (found != 0)
+		found += 4;
+
+	if (_buffer.size() > found)
+		_request_body = _buffer.substr(found, _buffer.size() - found);
 	if (_request_body.size() == 0)
 		return ;
 
@@ -81,9 +84,19 @@ void	Parse_request::is_body(size_t found)
 		std::cout << "--------END-----------" << std::endl;
 	}
 	//std::cout << "is_body = {{{{{" << _request_body << "}}}}}}}" << std::endl;
+
+	//std::cout << RED << "_request_body=[" << _request_body << "]" << END << std::endl;
+	
+	std::cout << BLUE << "_buffer.size()=[" << _buffer.size() << "]" << END << std::endl;
+	
+	if (get_request("Content-Length:").compare("") != 0)
+	{
+		std::cout << RED << "Content length = [" << std::stoi(get_request("Content-Length:")) << "]" << END << std::endl;
+	}
+
 	if (_request_body_size == 0)
 		_request_body_size = _request_body.size();
-	std::cout << "_request_body_size = [" << _request_body_size << "]" << std::endl;
+	std::cout << RED << "_request_body_size = [" << _request_body_size << "]" << END << std::endl;
 
 	if (_next_buffer_is_body == 1 && _request_body_size != 0)
 		_next_buffer_is_body = 0;

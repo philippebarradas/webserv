@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/08 13:25:05 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/09 11:30:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,18 +93,18 @@ Parse_request::Parse_request() : _nbr_line(0)
 int		Parse_request::buff_is_valid(char *buff)
 {
 	std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-/*  	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
+  	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
+		this->_buffer = buff;
 		std::cout << GREEN << "_request_body_size=[" << _request_body_size << "]" << END << std::endl;
 		for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 		{
 			if (it->second.size() != 0)
-				std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
+				std::cout << RED << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
 		}
-
 		return (check_request());
 		//_next_buffer_is_body = 0;
-	} */
+	}
 	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 
