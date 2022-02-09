@@ -7,10 +7,15 @@ server{
 
 	listen 7778;
 	autoindex on;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-	error_page 400 /400_bad_request.html;
-}
 
+	root /tmp;
+
+	error_page 404 404.html;
+
+	location /404.html {
+		alias /tmp/test;
+	}
+}
 
 server{
 	server_name hello12 hello55;

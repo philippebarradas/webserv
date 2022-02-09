@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:47 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/11 09:17:46 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:46:38 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class Config
 
 		Config &		operator=( Config const & rhs );
 
-		std::vector<Server>	getConfig() const;
+		std::vector<Server> const &	getConfig() const;
 
 	private:
 

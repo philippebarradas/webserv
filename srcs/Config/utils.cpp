@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2021/12/13 17:48:05 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/03 16:26:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,8 @@ std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 			if (src[i])
 				++i;
 		}
+		else if (src[i] == ';' && !tmp.size())
+			++i;
 	}
 
 	// print content (to delete)

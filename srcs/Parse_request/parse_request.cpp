@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_request.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/01 17:37:33 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/05 17:23:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 Parse_request::Parse_request() : _nbr_line(0)
 {
-	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 // GET /../../../Makefile HTTP/1.1 = invalid mais bon
     std::string  elements[42] = {
 		"Status", //ok

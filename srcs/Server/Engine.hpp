@@ -2,10 +2,10 @@
 # define ENGINE_HPP
 
 // C++
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <cstring>
+# include <iostream>
+# include <string>
+# include <fstream>
+# include <cstring>
 
 // C
 #include <stdio.h>
@@ -15,13 +15,17 @@
 #include <fcntl.h>
 
 // Socket
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+# include <sys/ioctl.h>
+# include <sys/poll.h>
+# include <sys/epoll.h>
+# include <sys/socket.h>
+# include <sys/time.h>
+# include <arpa/inet.h>
+# include <netinet/in.h>
+
+// My class
+# include "../Config/Server.hpp"
+# include "../Response/TreatRequest.hpp"
 
 // Colors
 #define PURPLE	"\033[0;35m"
@@ -45,6 +49,7 @@
 // My class
 #include "../Config/Server.hpp"
 #include "../Parse_request/parse_request.hpp"
+
 class Server;
 class Parse_request;
 
@@ -71,6 +76,8 @@ class Engine
 
 		std::string	GetRemote_Port() const;
 		std::string	GetRemote_Addr() const;
+		int			GetAccessPort( void ) const;
+
 	private:
 
 		// VARIABLES

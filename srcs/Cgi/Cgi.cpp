@@ -20,10 +20,17 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+Cgi::Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine)
 {
-	init_path(src);
-	init_env(src, src_header, src_engine);
+	std::cout << "lolilol port = " << src_engine.GetAccessPort() << std::endl;
+	this->_path_file_executed = path;
+	this->_path_cgi = pathCgi;
+	this->_root = &this->_path_file_executed[this->_path_file_executed.rfind('/')];
+	this->_path_file_executed_absolu = &this->_path_file_executed[this->_path_file_executed.rfind('/') - this->_path_file_executed.find('/')];
+	std::cout << "this->_path_file_executed_absolu\t=\t" << this->_path_file_executed_absolu << std::endl;
+	//this->_root;
+	//this->_path_file_executed_absolu = getPath_abs();
+	init_env(src_header, src_engine);
 }
 
 Cgi::Cgi( const Cgi & src )
@@ -78,52 +85,42 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 	delete [] argv;
 }
 
-bool	Cgi::is_file_cgi(std::string path_extension)
+void	Cgi::init_path()
 {
-	//if (path_extension.compare("html") == 0)
-	return (FALSE);
-	return (TRUE);
-}
-
-void	Cgi::init_path(const Server & src)
-{
-	this->_path_cgi = "/usr/bin/php-cgi";
-	//this->_path_cgi = "/usr/bin/python";
-	this->_user = "user42";
-	this->_home = "/home/user42/Bureau/webserv";
+	//this->_user = "user42"; pas sur
+	//this->_home = "/home/user42/Bureau/webserv"; pas sur
 }
 
 // var from client
-void	Cgi::init_env_client_var(const Server & src, const Parse_request & src_header)
+void	Cgi::init_env_client_var(const Parse_request & src_header)
 {
 	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
 	this->_env["HTTP_USER_AGENT"] = src_header.get_request("User-Agent:");
 	this->_env["HTTP_CONNECTION"] = src_header.get_request("Connection:");
-	/*pour le post
-	this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-*/
-	this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+	if (src_header.get_request("Method").compare("POST") == 0)
+	{
+		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+	}
 	this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");
 	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server
-void	Cgi::init_env_server_var(const Server & src, const Parse_request & src_header)
+void	Cgi::init_env_server_var(const Parse_request & src_header)
 {
-	std::set<std::string>::iterator it;
-	it = src.getName().begin();
-	this->_env["HOME"] = this->_home;
-	this->_env["USER"] = this->_user;
+	//std::set<std::string>::iterator it;
+	//it = src.getName().begin();
+	this->_env["HOME"] = this->_home; // pas sur
+	this->_env["USER"] = this->_user; // pas sur
 	this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
-	this->_env["SERVER_NAME"] = *it;
+	//this->_env["SERVER_NAME"] = src_header.get_request("Host:");
 	this->_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 }
 
 // var request
-void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & src_engine)
 {
 	/* difference entre GET et POST sur un form html qui redirect ur env.php:
 		POST par rapport a get: + : HTTP_CONTENT_LENGTH, HTTP_CONTENT_TYPE == CONTENT_TYPE et CONTENT_LENGTH
@@ -131,19 +128,21 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_hea
 	*/
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
-	this->_env["REQUEST_SCHEME"] = "http";
-	this->_env["REQUEST_URI"] = src_header.get_request("path") + "";
-	this->_env["SCRIPT_FILENAME"] = src.getRoot() + "/env.php";
-	this->_env["DOCUMENT_ROOT"] = src.getRoot();
-	this->_env["DOCUMENT_URI"] = "/env.php";
+	//this->_env["REQUEST_SCHEME"] = "http";
+	this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
+	//this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + src_header.get_request("Query_string:");//query string ;
+	this->_env["SCRIPT_FILENAME"] = this->_path_file_executed;
+	this->_env["DOCUMENT_ROOT"] = this->_path_file_executed;
+	this->_env["DOCUMENT_URI"] = this->_path_file_executed_absolu;
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
-	this->_env["SERVER_PORT"] = src.getListen();
+	this->_env["SERVER_PORT"] = int_to_string(src_engine.GetAccessPort());
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	// pas de path info pour post ??
 	//this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
+	//this->_env["PATH_INFO"] = this->_path_file_executed_absolu;
 	//this->_env["PATH_TRANSLATED"] = "";
-	this->_env["SCRIPT_NAME"] = "/env.php";
-	this->_env["QUERY_STRING"] = "";
+	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
+	this->_env["QUERY_STRING"] = src_header.get_request("Query");
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
@@ -152,13 +151,13 @@ void	Cgi::init_env_request_var(const Server & src, const Parse_request & src_hea
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
-void	Cgi::init_env(const Server & src, const Parse_request & src_header, const Engine & src_engine)
+void	Cgi::init_env(const Parse_request & src_header, const Engine & src_engine)
 {
 	std::map<std::string, std::string>::iterator it_env;
 
-	init_env_client_var(src, src_header);
-	init_env_server_var(src, src_header);
-	init_env_request_var(src, src_header, src_engine);
+	init_env_client_var(src_header);
+	init_env_server_var(src_header);
+	init_env_request_var(src_header, src_engine);
 	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
@@ -181,6 +180,7 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 
 char	**Cgi::create_argv(std::string path_file_executed)
 {
+	std::cout << "path_file_executed in create argv\t=\t" << path_file_executed << std::endl;
 	int		nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
 
@@ -208,6 +208,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
 	//std::string body_string = "nom=dov";
 	//std::cout << "body_string\t=\t" << body_string << std::endl;
+
 	std::string body_string = src_header.get_request_body();
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
@@ -229,8 +230,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	this->_send_content = fd_to_string(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	//this->_send_content << "|" << std::endl << END;
+	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::fd_to_string(int fd)
@@ -239,11 +240,21 @@ std::string	Cgi::fd_to_string(int fd)
     std::istream is(&filebuf);
 	std::string ret, line;
 
-	ret = "HTTP/1.1 200 OK\n";
+	//ret = "HTTP/1.1 200 OK\n";
+	int i = 0;
 	while (std::getline(is, line))
 	{
-		ret += line;
-		ret += '\n';
+		if (i == 0)
+		{
+			this->_type_cgi = line;
+			std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
+		}
+		else
+		{
+			ret += line;
+			ret += '\n';
+		}
+		i++;
 	}
 	return (ret);
 }
@@ -280,5 +291,10 @@ std::string	Cgi::getHome() const
 int	Cgi::getPid() const
 {
 	return (this->_pid);
+}
+
+std::string	Cgi::getType_Cgi() const
+{
+	return (this->_type_cgi);
 }
 /* ************************************************************************** */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/24 15:51:07 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/07 14:46:10 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,24 +28,25 @@ class Server
 
 		Server( Server const & src );
 		Server( std::string const & src );
+		Server( void );
+
 		~Server( void );
 
-		std::set<std::string>				getName( void ) const;
-		std::set<std::string>				getIndex( void ) const;
-		std::set<std::string>				getMethods( void ) const;
-		std::string							getListen( void ) const;
-		std::string							getRoot( void ) const;
-		bool								getAutoindex( void ) const;
-		unsigned int						getMaxbody( void ) const;
-		std::map<unsigned int, std::string>	getError( void ) const;
-		std::map<std::string, std::string>	getCgi( void ) const;
-		std::map<std::string, Server>		getLocation( void ) const;
+		std::set<std::string> const &				getName( void ) const;
+		std::set<std::string> const &				getIndex( void ) const;
+		std::set<std::string> const &				getMethods( void ) const;
+		std::string const &							getListen( void ) const;
+		std::string const &							getRoot( void ) const;
+		bool const &								getAutoindex( void ) const;
+		unsigned int const &						getMaxbody( void ) const;
+		std::map<unsigned int, std::string> const &	getError( void ) const;
+		std::map<std::string, std::string> const &	getCgi( void ) const;
+		std::map<std::string, Server> const &		getLocation( void ) const;
 
 		Server &		operator=( Server const & rhs );
 
 	private:
 
-		Server();
 		Server( std::vector< std::vector<std::string> > const & src );
 
 		void	setName( std::vector<std::string> const & src );
@@ -60,13 +61,18 @@ class Server
 		void	setLocation( std::vector<std::string> const & src );
 
 		void	parsingAll( std::vector< std::vector<std::string> > const & src );
+		void	fillLocation( void );
 		void	initServ( void );
+		void	initLocation( void );
 
+		bool	_alreadySetIndex;
 		bool	_alreadySetMethods;
 		bool	_alreadySetListen;
 		bool	_alreadySetRoot;
 		bool	_alreadySetAutoindex;
 		bool	_alreadySetMaxbody;
+		bool	_alreadySetError;
+		bool	_alreadySetCgi;
 
 		std::set<std::string>				_name;
 		std::set<std::string>				_index;

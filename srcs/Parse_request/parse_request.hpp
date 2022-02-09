@@ -52,6 +52,8 @@ class Parse_request
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
 
+		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_big_tab;}
+
 	private:
 		std::string	_request_body;
 		std::string	fill_big_tab(std::string str);
