@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 18:23:05 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/09 10:25:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
 	this->_file = obj_cgi.getSend_content();
 	this->_type_cgi = obj_cgi.getType_Cgi();
-	std::cout << "this->_file\t=\t" << this->_file << std::endl;
+	//std::cout << "this->_file\t=\t" << this->_file << std::endl;
 	//dov le ashkénaze
 }
 
@@ -257,7 +257,7 @@ void	TreatRequest::generateAutoIndex( Parse_request const & req,
 
 	if (this->is_dir(path))
 	{
-		std::cout << "LETZGONGUE " << path << " IS DIR !" << std::endl;
+		//std::cout << "LETZGONGUE " << path << " IS DIR !" << std::endl;
 		Autoindex	page(path.c_str(), req.get_request("Path"));
 
 		this->_file = page.getPage();
@@ -272,7 +272,7 @@ void	TreatRequest::exec_root( Parse_request const & req )
 {
 	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
 
-	std::cout << "path\t=\t" << path << std::endl;
+	//std::cout << "path\t=\t" << path << std::endl;
 
 	if (path[path.length() - 1] == '/')
 	{
@@ -290,18 +290,18 @@ void	TreatRequest::exec( Parse_request const & req)
 {
 	std::ifstream ifs;
 
-	std::cout << "loc->second.getRoot()\t=\t" << _loc->second.getRoot() << std::endl;
+	//std::cout << "loc->second.getRoot()\t=\t" << _loc->second.getRoot() << std::endl;
 
 	ifs.open(this->_loc->second.getRoot());
 	if (!(ifs.is_open()))
 	{
-		std::cout << "ALIAS METHOD" << std::endl;
+		std::cout << "TO DO ALIAS METHOD" << std::endl;
 		//this->is_alias();
 	}
 	else
 	{
 
-		std::cout << "ROOT METHOD" << std::endl;
+		//std::cout << "ROOT METHOD" << std::endl;
 		ifs.close();
 		//std::cout << "is_dir(file)\t=\t" << is_dir(this->_loc->second.getRoot()) << std::endl;
 		exec_root(req);
@@ -329,7 +329,7 @@ std::string	TreatRequest::treat( Parse_request const & req )
 		std::cout << "TODO CAS D'ERREUR" << std::endl;
 
 	Response	rep(req, *this);
-	std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;
+	//std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;
 	return (rep.getHeader());
 	/*else (req.get_request("status") != "200")
 		return (printError( req, i_conf ));*/

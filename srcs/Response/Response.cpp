@@ -94,12 +94,8 @@ void	Response::writeRequestStatus( std::string const & code )
 
 void	Response::writeType( std::string const & extension, TreatRequest const & treat )
 {
-	std::cout << "STATUS CGI:" << treat.getIs_Cgi()  << std::endl;
-	std::cout << "treat.getType_Cgi()\t=\t" << treat.getType_Cgi() << std::endl;
 	if (treat.getIs_Cgi())
-	{
 		this->_header += treat.getType_Cgi() + "\n";
-	}
 	else
 	{
 		this->_header += "Content-Type: ";

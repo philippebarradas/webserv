@@ -1,16 +1,16 @@
 
 server{
-	server_name hello12 hello55;
+	server_name localhost;
 	listen 8001;
 
-	client_max_body_size	20;
-	cgi .php /usr/bin/php-cgi;
-
-	accepted_methods	GET POST DELETE;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-
 	autoindex off;
-	index form.html;
+
+	location / {
+		index form.html;
+		cgi .php /usr/bin/php-cgi;
+		accepted_methods	GET POST DELETE;
+		root /tmp/test;
+	}
 
 	location /salut {
 		root yo;
