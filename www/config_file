@@ -3,14 +3,18 @@ server{
 	server_name localhost;
 	listen 8001;
 
-	autoindex off;
+	autoindex on;
 	root /home/user42/Bureau/webserv/www;
+	cgi .php /usr/bin/php-cgi;
 	location / {
 		index form.html;
 		cgi .php /usr/bin/php-cgi;
 		accepted_methods	GET POST DELETE;
 	}
 
+	location /test {
+
+	}
 	location /salut {
 		root yo;
 	}

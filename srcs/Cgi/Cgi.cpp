@@ -124,7 +124,10 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
-	this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
+	if (src_header.get_request("Query").compare(""))
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
+	else
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu;
 	this->_env["SCRIPT_FILENAME"] = this->_path_file_executed;
 	this->_env["DOCUMENT_ROOT"] = this->_root;
 	this->_env["DOCUMENT_URI"] = this->_path_file_executed_absolu;
