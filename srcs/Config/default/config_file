@@ -3,7 +3,7 @@ server{
 	server_name localhost;
 	listen 8001;
 
-	autoindex off;
+	autoindex on;
 
 	location / {
 		index form.html;
