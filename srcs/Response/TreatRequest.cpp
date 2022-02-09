@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 10:25:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/09 14:45:34 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,17 +78,17 @@ std::ostream &			operator<<( std::ostream & o, TreatRequest const & i )
 template <typename T>
 void printMap(T & map, std::string const & name)
 {
-	typename	T::iterator	it;
+/* 	typename	T::iterator	it;
 	typename	T::iterator	end;
 
-	std::cout << "----------------" << std::endl;
-	std::cout << name << " contains:" << std::endl;
+	//std::cout << "----------------" << std::endl;
+	//std::cout << name << " contains:" << std::endl;
 
 	end = map.end();
 	for (it = map.begin() ; it != end ; it++)
 		std::cout << it->first << " => " << it->second << std::endl;
 	std::cout << "size = " << map.size() << std::endl;
-	std::cout << "----------------\n" << std::endl;
+	std::cout << "----------------\n" << std::endl; */
 }
 
 void	TreatRequest::cpyInfo( std::string const & extension,
@@ -317,16 +317,16 @@ std::string	TreatRequest::treat( Parse_request const & req )
 	//printMap(pol, "Tableau de merde");
 
 	i_conf = this->selectConf(req);
-	std::cout << "i_conf\t=\t" << i_conf << std::endl;
+	//std::cout << "i_conf\t=\t" << i_conf << std::endl;
 	this->selectLocation(req, this->_conf[i_conf].getLocation());
-	std::cout << "location\t=\t" << _loc->first << std::endl;
-	std::cout << "loc->second\t=\t" << _loc->second << std::endl;
+	//std::cout << "location\t=\t" << _loc->first << std::endl;
+	//std::cout << "loc->second\t=\t" << _loc->second << std::endl;
 
 
-	if (req.get_request("Method") == "GET")
+	//if (req.get_request("Method") == "GET")
 		this->exec(req);
-	else
-		std::cout << "TODO CAS D'ERREUR" << std::endl;
+	//else
+		//std::cout << "TODO CAS D'ERREUR" << std::endl;
 
 	Response	rep(req, *this);
 	//std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;

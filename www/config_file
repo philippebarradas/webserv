@@ -7,7 +7,7 @@ server{
 	cgi .php /usr/bin/php-cgi;
 
 	accepted_methods	GET POST DELETE;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	root /home/user42/Bureau/webserv/www;
 
 	autoindex off;
 	index form.html;

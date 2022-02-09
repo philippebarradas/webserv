@@ -24,7 +24,7 @@ server{
 	client_max_body_size	 900000;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	root /home/user42/Bureau/webserv/www/;
 
 	index form.html;
 	dav_methods DELETE;
