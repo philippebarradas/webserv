@@ -215,12 +215,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	}
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
-<<<<<<< HEAD
-	this->_send_content = fd_to_string(fds_exec[0]);
-
-=======
 	this->_send_content = body_response_from_fd(fds_exec[0]);
->>>>>>> origin/cgi_in_treat_request
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
