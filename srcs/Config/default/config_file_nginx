@@ -8,12 +8,12 @@ server{
 	listen 7778;
 	autoindex on;
 
+	root /tmp;
 
-	root /tmp/test;
+	error_page 404 404.html;
 
-	error_page 404 index.html;
-
-	location / {
+	location /404.html {
+		alias /tmp/test;
 	}
 }
 
