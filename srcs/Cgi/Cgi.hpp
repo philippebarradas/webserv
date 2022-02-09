@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/08 18:35:30 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/09 14:35:46 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class Cgi
 
 		// CONSTRUCTOR
 		Cgi();
-		Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
+		Cgi(std::string const & root, std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
 		Cgi(Cgi const & src);
 
 		// DESTRUCTOR
@@ -73,7 +73,7 @@ class Cgi
 		void	delete_argv_env(char **argv, char **env);
 		std::string	to_string(size_t nb);
 		bool	is_file_cgi(std::string path_extension);
-		void	init_path();
+		void	init_path(std::string const & root, std::string const & path, std::string const & pathCgi);
 		void	init_env_client_var(const Parse_request & src_header);
 		void	init_env_server_var(const Parse_request & src_header);
 		void	init_env_request_var(const Parse_request & src_header,
@@ -83,7 +83,7 @@ class Cgi
 		char	**convert_env(std::map<std::string, std::string>);
 		char	**create_argv(std::string path_file_executed);
 		void	exec_cgi(char **argv, char **env, const Parse_request & src_header);
-		std::string	fd_to_string(int fd);
+		std::string	body_response_from_fd(int fd);
 		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
 
 		// GETTERS
@@ -101,7 +101,7 @@ class Cgi
 	private:
 
 		// VARIABLES
-		std::string	_type_cgi; // 1
+		std::string	_type_cgi;
 		std::string	_root; // 1
 		std::string	_path_file_executed_absolu; // 2
 		std::string	_path_file_executed; // 1 + 2

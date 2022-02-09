@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 14:45:34 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/09 14:53:05 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
-	Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
+	Cgi	obj_cgi(this->_loc->second.getRoot(), path, pathCgi, req, *this->_eng);
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
@@ -323,7 +323,7 @@ std::string	TreatRequest::treat( Parse_request const & req )
 	//std::cout << "loc->second\t=\t" << _loc->second << std::endl;
 
 
-	//if (req.get_request("Method") == "GET")
+	//if (req.get_request("Method") == "GET" && req.get_request())
 		this->exec(req);
 	//else
 		//std::cout << "TODO CAS D'ERREUR" << std::endl;
