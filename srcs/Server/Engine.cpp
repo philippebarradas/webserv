@@ -278,9 +278,18 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	{
 		TreatRequest	treatment(src, *this);
 
+		std::cout << "{BEFORE TREAT CMD}" << std::endl;
+
+
 		this->_buff_send = treatment.treat(parse_head);
-		std::cout << "\n_buff_send:\n" << _buff_send << std::endl;
+		//std::cout << "\n_buff_send:\n" << _buff_send << std::endl;
+
+		std::cout << YELLOW << "this->_buff_send.c_str()=[" << this->_buff_send.c_str() << "]" << END << std::endl;
+		std::cout << YELLOW << "this->_buff_send.size()=[" << this->_buff_send.size() << "]" << END << std::endl;
+
 		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+
+		std::cout << "{NORMAL SEND}" << std::endl;
 		/*if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
 		{
 			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),

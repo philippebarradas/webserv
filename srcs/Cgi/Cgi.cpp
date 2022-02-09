@@ -184,7 +184,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
-	std::cout << RED << "body_string = " << body_string << END << std::endl ;
+	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
 
 	pipe(fds_child);
@@ -196,8 +196,10 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 
 void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
+	std::cout << "{avant}" << std::endl;
 	std::string body_string = src_header.get_request_body();
 
+	std::cout << "{pres}" << std::endl;
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 

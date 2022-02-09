@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 14:53:05 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/09 15:58:17 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,21 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
+	std::cout << "{dynamic files}" << std::endl;
 	Cgi	obj_cgi(this->_loc->second.getRoot(), path, pathCgi, req, *this->_eng);
+	std::cout << "{0}" << std::endl;
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
+
+	std::cout << "{2}" << std::endl;
+
 	this->_file = obj_cgi.getSend_content();
+	std::cout << "{3}" << std::endl;
+
+
 	this->_type_cgi = obj_cgi.getType_Cgi();
+
 	//std::cout << "this->_file\t=\t" << this->_file << std::endl;
 	//dov le ashkénaze
 }
@@ -271,16 +280,19 @@ void	TreatRequest::generateAutoIndex( Parse_request const & req,
 void	TreatRequest::exec_root( Parse_request const & req )
 {
 	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
+		std::cout << "{search index}" << std::endl;
 
 	//std::cout << "path\t=\t" << path << std::endl;
 
 	if (path[path.length() - 1] == '/')
 	{
+		
 		if (!this->search_index(req, path))
 			this->generateAutoIndex(req, path);
 	}
 	else
 	{
+		std::cout << "{openreadd}" << std::endl;
 		if (!this->openAndRead(path, req))
 			std::cout << "TODO REDIRECT ERROR PAGE" << std::endl;
 	}
@@ -291,7 +303,6 @@ void	TreatRequest::exec( Parse_request const & req)
 	std::ifstream ifs;
 
 	//std::cout << "loc->second.getRoot()\t=\t" << _loc->second.getRoot() << std::endl;
-
 	ifs.open(this->_loc->second.getRoot());
 	if (!(ifs.is_open()))
 	{
@@ -304,6 +315,7 @@ void	TreatRequest::exec( Parse_request const & req)
 		//std::cout << "ROOT METHOD" << std::endl;
 		ifs.close();
 		//std::cout << "is_dir(file)\t=\t" << is_dir(this->_loc->second.getRoot()) << std::endl;
+		std::cout << "{BEFORE EXEC}" << std::endl;
 		exec_root(req);
 	}
 }
