@@ -188,71 +188,42 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-void	Engine::read_send_data(int fd, const std::vector<Server> & src)
+// read data tant que le buffer est rempli
+void	Engine::read_data(int fd, const std::vector<Server> & src, Parse_request & src_header)
 {
-	Parse_request	parse_head;
-	std::string		file_body;
-
-	size_t	buff_size = 330000;
-	char	buff[buff_size];
-	int		valread = -1;
-	int		nbr_bytes_send = 0;
-	bool	is_valid = true;
 	size_t	recv_len = 0;
+	char	buff[BUFFER_SIZE];
+	bool	is_valid = true;
+	this->_valread = -1;
 
 	bzero(&buff, sizeof(buff));
-    while (valread != 0 && is_valid == true)
+	while (this->_valread != 0 && is_valid == true)
 	{
-		valread = recv(fd, &buff[recv_len], buff_size - recv_len, 0);
-		if (valread == -1)
+		this->_valread = recv(fd, &buff[recv_len], BUFFER_SIZE - recv_len, 0);
+		if (this->_valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
-			recv_len += valread;
-		if (parse_head.buff_is_valid(buff) == 0)
+			recv_len += this->_valread;
+		if (src_header.buff_is_valid(buff) == 0)
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 		else
 			is_valid = false;
 	}
-	//std::cout << std::endl << std::endl << std::endl;
-	//std::cout << std::endl << std::endl << std::endl;
-	std::vector<Server>::const_iterator it;
-	std::string port_str = static_cast<std::ostringstream*>( &(std::ostringstream() << this->_port))->str();
+}
 
-	int i_listen = 0;
-	for (it = src.begin(); it != src.end(); it++, i_listen++)
-		if ((*it).getListen() == port_str)
-			break ;
-	//Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
- 	if (valread != 0)
+// Traitement de la requete puis envoi de la reponse au client
+void	Engine::send_data(int fd, const std::vector<Server> & src, const Parse_request & src_header)
+{
+	int		nbr_bytes_send = 0;
+
+	if (this->_valread != 0)
 	{
 		TreatRequest	treatment(src, *this);
 
-		this->_buff_send = treatment.treat(parse_head);
+		this->_buff_send = treatment.treat(src_header);
 		std::cout << "\n_buff_send:\n" << _buff_send << std::endl;
 		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
-		/*if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
-		{
-			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
-			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
-			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
-				obj_cgi.getSend_content().size(), 0);
-			//close(fd);
-		}
-		else
-		{
-			buff_send = request.is_Treat_request(buff, src, this->_port, parse_head);
-			if (parse_head.get_request("Method").compare("POST") == 0)
-				//parse_head.get_request("method").compare("GET") == 0)
-			{
-				std::cout << "je suis dans la condition" << std::endl;
-				obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
-				obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
-				nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
-					obj_cgi.getSend_content().size(), 0);
-			}
-			else
-				nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
-		}*/
+
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
@@ -282,7 +253,10 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			}
 			else
 			{
-				read_send_data(this->_fds_events[i].data.fd, src);
+				Parse_request req;
+
+				read_data(this->_fds_events[i].data.fd, src, req);
+				send_data(this->_fds_events[i].data.fd, src, req);
 				close(this->_fds_events[i].data.fd);
 			}
 		}
