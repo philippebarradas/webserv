@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 11:43:43 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 12:08:44 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,12 +120,33 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	//dov le ashkénaze
 }
 
+bool	TreatRequest::permForOpen( std::string const & path ) const
+{
+	// true = perm ok / false = no perm(403)
+	return (true);
+}
+
+bool	TreatRequest::exist( std::string const & path ) const
+{
+	// true = exist  / false = no exist
+	return (true);
+}
+
 bool	TreatRequest::openAndRead( std::string const & path,
-	Parse_request const & req )
+	Parse_request & req )
 {
 	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
 	std::string	extension;
+
+	if (!exist(path))
+		return (false);
+	if (!permForOpen(path))
+	{
+		req.setStatus("403");
+		this->error_page(req);
+		return (true);
+	}
 
 	ifs.open(path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
@@ -181,18 +202,8 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 		if (locName[i] != path[i])
 			return (0);
 	}
-
-	/*std::cout << "locName[i] : " << (locName[i] ? "true" : "false") << std::endl;
-	std::cout << "path[i]    : " << (path[i] ? "true" : "false") << std::endl;
-	std::cout << "path[i]\t=\t" << path[i] << std::endl;*/
-
 	if (locName[i] || (i > 0 && path[i] && path[i - 1] != '/' && path[i] != '/'))
 		return (0);
-	/*std::cout << "locName\t=\t" << locName << std::endl;
-	std::cout << "path\t=\t" << path << std::endl;
-	std::cout << "ret\t=\t" << ret << std::endl;
-	std::cout << "path[i]\t=\t" << path[i] << std::endl;
-	std::cout << std::endl;*/
 
 	return (ret);
 }
@@ -209,7 +220,6 @@ std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
 	for (it = allLoc.begin() ; it != end ; ++it)
 	{
 		similarity = this->similarity_point(it->first, path);
-		//std::cout << "similarity\t=\t" << similarity << std::endl;
 		if (similarity > most)
 		{
 			most = similarity;
@@ -231,7 +241,7 @@ bool	TreatRequest::is_dir( std::string const & path ) const
 	return true;
 }
 
-bool	TreatRequest::search_index( Parse_request const & req,
+bool	TreatRequest::search_index( Parse_request & req,
 	std::string const & path )
 {
 	std::set<std::string>::const_iterator	it, end;
@@ -276,7 +286,7 @@ void	TreatRequest::generateAutoIndex( Parse_request & req,
 	}
 }
 
-void	TreatRequest::error_page( Parse_request const & req )
+void	TreatRequest::error_page( Parse_request & req )
 {
 	std::map<std::string, Server>::const_iterator	locErr;
 	std::map<unsigned int, std::string>				allError;
@@ -306,7 +316,6 @@ void	TreatRequest::error_page( Parse_request const & req )
 		path = DEFAULT_ROOT_ERROR + codeStr + ".html";
 		this->openAndRead(path, req);
 	}
-
 
 	std::cout << "path\t=\t" << path << std::endl;
 }

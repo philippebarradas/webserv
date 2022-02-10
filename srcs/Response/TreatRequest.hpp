@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 11:11:02 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 12:06:20 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,11 @@ class TreatRequest
 
 		bool	is_dir( std::string const & path ) const;
 
-		bool	search_index( Parse_request const & req,
+		bool	search_index( Parse_request & req,
 			std::string const & path );
 
+		bool	exist( std::string const & path ) const;
+		bool	permForOpen( std::string const & path ) const;
 		void	permMethod( Parse_request & req );
 		void	exec_root( Parse_request & req );
 		void	exec( Parse_request & req );
@@ -70,7 +72,7 @@ class TreatRequest
 			std::map<std::string, Server> const & allLoc );
 		size_t	similarity_point(std::string const & locName,
 			std::string const & path ) const;
-		size_t		selectConf( Parse_request const & req ) const;
+		size_t	selectConf( Parse_request const & req ) const;
 
 		void	generateAutoIndex( Parse_request & req,
 			std::string const & path );
@@ -80,12 +82,12 @@ class TreatRequest
 			std::string const & pathCgi,
 			Parse_request const & req );
 
-		void			cpyInfo( std::string const & extension,
+		void	cpyInfo( std::string const & extension,
 			std::string const & path );
 		bool	openAndRead( std::string const & path,
-			Parse_request const & req );
+			Parse_request & req );
 
-		void	error_page( Parse_request const & req );
+		void	error_page( Parse_request & req );
 
 		Engine const *		_eng;
 		std::string	_file;
