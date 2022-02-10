@@ -9,7 +9,7 @@ server{
 
 	location / {
 		autoindex	on;
-		root /;
+		root /tmp/test;
 	}
 
 	location /hello/bg {

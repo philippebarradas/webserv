@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 18:20:54 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 19:52:51 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ bool	TreatRequest::exist_file( std::string const & path) const
 	return (false);
 }
 
-bool	TreatRequest::exist_dir( std::string const & root, const Parse_request & req) const
+bool	TreatRequest::exist_dir( std::string const & root) const
 {
 	// true = exist  / false = no exist
 	struct stat sbuf_dir;
@@ -181,6 +181,15 @@ bool	TreatRequest::exist_dir( std::string const & root, const Parse_request & re
 		return (true);
 	}
 	std::cout << "Dossier existe pas!" << std::endl;
+	return (false);
+}
+
+bool	TreatRequest::exist( std::string const & root) const
+{
+	if (this->exist_dir(root))
+		return (true);
+	if (this->exist_file(root))
+		return (true);
 	return (false);
 }
 
@@ -215,8 +224,9 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	std::string	extension;
 
 	if (!exist_file(path))// &&
-		//!exist_dir((this->_loc->second.getRoot() + req.get_request("Path")), req))
 		return (false);
+	//std::cout << "exist" << std::endl;
+		//!exist_dir((this->_loc->second.getRoot() + req.get_request("Path")), req))
 	if (!permForOpen(path))
 	{
 		req.setStatus("403");
@@ -415,13 +425,23 @@ void	TreatRequest::exec_root( Parse_request & req, std::string const & path )		/
 
 	if (path[path.length() - 1] == '/')
 	{
+		std::cout << "pathDEBatarD\t=\t" << path << std::endl;
 		if (!this->search_index(req, path))
 			this->generateAutoIndex(req, path);
 	}
 	else
 	{
-		if (is_dir(path))		// TODO no problem with perm ??
-			this->redirect(req, path);
+		if (this->exist_dir(path))		// TODO no problem with perm ??
+		{
+			//std::cout << "this->permForOpen(path)\t=\t" << this->permForOpen(path) << std::endl;
+			if (this->permForOpen(path))		// TODO test zith same name for dir and file with redirect
+				this->redirect(req, path);
+			else
+			{
+				req.setStatus("403");
+				this->error_page(req);
+			}
+		}
 		else if (!this->openAndRead(path, req))
 		{
 			req.setStatus("404");
@@ -436,9 +456,9 @@ void	TreatRequest::exec( Parse_request & req )
 	std::string		path;
 	std::string		path_alias;
 
-	ifs.open(this->_loc->second.getRoot() + req.get_request("Path"));
-	if (!(ifs.is_open()))					// TODO JUST OPEN OR WITH PERMISSION ??
+	if (!this->exist(this->_loc->second.getRoot() + req.get_request("Path")))					// TODO JUST OPEN OR WITH PERMISSION ??
 	{
+		std::cout << "ALIAS" << std::endl;
 		path_alias = req.get_request("Path");
 		path_alias.erase(0, this->_loc->first.length());
 		path = this->_loc->second.getRoot() + path_alias;
