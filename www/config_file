@@ -1,18 +1,23 @@
 
 server{
-	server_name hello12 hello55;
+	server_name localhost;
 	listen 8001;
 
-	client_max_body_size	20;
-	cgi .php /usr/bin/php-cgi;
+	autoindex on;
+	root /home/user42/Bureau/webserv/www/test/403/bad_dir_perm;
 
-	accepted_methods	GET POST DELETE;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
 
-	autoindex off;
-	index form.html;
+	accepted_methods	GET;
 
-	location /salut {
-		root yo;
+	location / {
+		cgi .php /usr/bin/php-cgi;
+	}
+
+	location /404.html {
+		root /tmp/test;
+	}
+
+	location /403/bad_dir_perm{
+		index hello_good_perm.txt;
 	}
 }

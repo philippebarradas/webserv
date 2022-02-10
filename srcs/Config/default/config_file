@@ -6,7 +6,7 @@ server{
 	autoindex on;
 
 	error_page 404 /404.html;
-	root /tmp;
+	root /home/user42/Bureau/webserv/www;
 
 	accepted_methods	GET;
 
@@ -17,5 +17,9 @@ server{
 
 	location /404.html {
 		root /tmp/test;
+	}
+
+	location /test/403/bad_dir_perm{
+		index hello_good_perm.txt;
 	}
 }

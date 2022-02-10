@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 12:08:44 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 14:23:54by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,14 +122,48 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 
 bool	TreatRequest::permForOpen( std::string const & path ) const
 {
-	// true = perm ok / false = no perm(403)
+	struct stat sbuf;
+
+	int ret_stat = stat(path.c_str(), &sbuf);
+
+	if (ret_stat == -1)
+		return (false);
+	std::cout << "path = " << path << std::endl;
+	if (path[path.size() - 1] == '/') // dossier
+	{
+		if (sbuf.st_mode & S_IXUSR)
+		{
+			std::cout << "executable !!!" << std::endl;
+			return (true);
+		}
+		else
+			return (false);
+	}
+	else
+	{
+		if (sbuf.st_mode & S_IRUSR)
+		{
+			std::cout << "readable !!!" << std::endl;
+			return (true);
+		}
+		else
+			return (false);
+	}
 	return (true);
+	// true = perm ok / false = no perm(403)
 }
 
 bool	TreatRequest::exist( std::string const & path ) const
 {
 	// true = exist  / false = no exist
-	return (true);
+
+	if (access(path.c_str(), F_OK) != -1)
+	{
+		std::cout << "Fichier existe !" << std::endl;
+		return (true);
+	}
+	std::cout << "Fichier existe pas!" << std::endl;
+	return (false);
 }
 
 bool	TreatRequest::openAndRead( std::string const & path,
