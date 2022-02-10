@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.cpp                                         :+:      :+:    :+:   */
+/*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/11 09:19:32 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 16:53:15 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 	this->writeDate();
 	this->writeType(treat.getExtension(), treat);
 	this->writeLenght(treat.getFile());
+	this->_header += treat.getLocation()[0]
+		? "Location: " + treat.getLocation() + "\n"
+		: "";
+	this->_header += treat.getLastModif()[0]
+		? "Last-Modified: " + treat.getLastModif() + "\n"
+		: "";
 	this->_header += "Connection: " + req.get_request("Connection:") + "\n";
 
 	this->_header += "\n" + treat.getFile();
@@ -75,8 +81,8 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "400", "403", "404", "405"};
-	std::string		all_status[] = {"OK", "Bad Request", "Forbidden",
+	std::string		all_code[] = {"200", "301", "400", "403", "404", "405"};
+	std::string		all_status[] = {"OK", "Moved Permanently", "Bad Request", "Forbidden",
 		"Not Found", "Not Allowed"};
 	size_t			len, i;
 
@@ -88,7 +94,7 @@ void	Response::writeRequestStatus( std::string const & code )
 		if (all_code[i] == code)
 		{
 			this->_header += " " + all_status[i] + "\n";
-			break;
+			return ;
 		}
 	}
 	this->_header += " Not Define\n";

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 12:06:20 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 18:16:19 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,28 @@ class TreatRequest
 
 		std::string			treat( Parse_request & req );
 
+		std::string const &	getLocation( void ) const;
+		std::string const &	getLastModif( void ) const;
 		std::string const &	getExtension( void ) const;
 		std::string const &	getFile( void ) const;
 		std::string const &	getType_Cgi( void ) const;
-		bool	const &	getIs_Cgi( void ) const;
+		bool const &		getIs_Cgi( void ) const;
 
 	private:
 
 		TreatRequest( void );
 
-		std::vector<Server>	_conf;
+		std::vector<Server>								_conf;
+		std::map<std::string, Server>::const_iterator	_loc;
+		Engine const *									_eng;
+
+		std::string	_file;
+		std::string	_location;
+		std::string	_type_cgi;
+		std::string	_last_modif;
+		std::string	_extension;
+		bool		_cgi;
+		size_t		_i_conf;
 
 
 		bool	is_dir( std::string const & path ) const;
@@ -64,7 +76,8 @@ class TreatRequest
 		bool	exist( std::string const & path ) const;
 		bool	permForOpen( std::string const & path ) const;
 		void	permMethod( Parse_request & req );
-		void	exec_root( Parse_request & req );
+		void	redirect( Parse_request & req, std::string const & path );
+		void	exec_root( Parse_request & req, std::string const & path );
 		void	exec( Parse_request & req );
 
 		std::map<std::string, Server>::const_iterator	selectLocation(
@@ -83,19 +96,12 @@ class TreatRequest
 			Parse_request const & req );
 
 		void	cpyInfo( std::string const & extension,
-			std::string const & path );
+			std::string const & path, Parse_request const & req );
 		bool	openAndRead( std::string const & path,
 			Parse_request & req );
 
 		void	error_page( Parse_request & req );
 
-		Engine const *		_eng;
-		std::string	_file;
-		std::string	_type_cgi;
-		bool	_cgi;
-		std::string	_extension;
-		std::map<std::string, Server>::const_iterator	_loc;
-		size_t	_i_conf;
 };
 
 std::ostream &			operator<<( std::ostream & o, TreatRequest const & i );

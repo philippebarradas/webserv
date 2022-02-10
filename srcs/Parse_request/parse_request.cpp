@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/05 17:23:24 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 16:34:36 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@ Parse_request::Parse_request() : _nbr_line(0)
 {
 	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 // GET /../../../Makefile HTTP/1.1 = invalid mais bon
-    std::string  elements[42] = {
+    std::string  elements[43] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
 		"Query",
 		"Protocol", //ok
 		"Host:", //ok
+		"Host-uncut-comme-les-casquettes",
 		"A-IM:",
 		"Transfer-Encoding:"
 		"Accept:",
@@ -67,7 +68,8 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Warning:"};
 
 	std::string empty = "";
-	for (size_t x = 0; x < 42; x++)
+	size_t len = sizeof(elements) / sizeof(std::string);
+	for (size_t x = 0; x < len ; x++)
 		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/01 18:29:21 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/10 16:47:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,15 +180,20 @@ int		Parse_request::check_request()
 		}
 		if (get_request("Host:").compare("") == 0)
 		{
-            std::cout << "ERROR = NO HOST" << std::endl;
+			std::cout << "ERROR = NO HOST" << std::endl;
 			replace = _big_tab.find("Status");
 			replace->second = "400";
 		}
 		else if (get_request("Host:").find(":") != std::string::npos)
 		{
 			found = get_request("Host:").find(":");
+
+			replace = _big_tab.find("Host-uncut-comme-les-casquettes");
+			replace->second = get_request("Host:").substr(0, found);
+
 			replace = _big_tab.find("Host:");
 			replace->second = get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
+
 		}
 		if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
 		|| (_buffer.rfind("Content-Length\r\n") != std::string::npos))

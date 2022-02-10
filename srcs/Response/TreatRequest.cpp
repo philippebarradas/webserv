@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 12:43:42 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 18:18:38 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,22 @@ void printMap(T & map, std::string const & name)
 }
 
 void	TreatRequest::cpyInfo( std::string const & extension,
-	std::string const & path )
+	std::string const & path, Parse_request const & req )
 {
+	struct tm *	timeinfo;
+	struct stat	result;
+	char		time_modified_file[50];
+
+	stat(path.c_str(), &result);
+	if (req.get_request("Status") == "200")
+	{
+		timeinfo = localtime (&result.st_ctim.tv_sec);
+		strftime(time_modified_file, 50, "%a, %d %b %G %T %Z", timeinfo);
+		this->_last_modif = std::string(time_modified_file);
+		std::cout << "_last_modif\t=\t" << _last_modif << std::endl;
+	}
+	std::cout << "_last_modif\t=\t" << _last_modif << std::endl;
 	this->_extension = extension;
-	// TODO CPY LAST MODIFIED
 }
 
 void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs )
@@ -174,7 +186,7 @@ bool	TreatRequest::openAndRead( std::string const & path,
 		this->readDynamicFile(path, it->second, req);
 	else
 		this->readStaticFile(path, ifs);
-	this->cpyInfo(extension, path);
+	this->cpyInfo(extension, path, req);
 	return (true);
 }
 
@@ -268,7 +280,7 @@ void	TreatRequest::generateAutoIndex( Parse_request & req,
 {
 	std::cout << this->_loc->second.getAutoindex() << std::endl;
 
-	if (this->is_dir(path))
+	if (this->is_dir(path))		//TODO PERMISSION AND 403
 	{
 		std::cout << "FILE EXIST" << std::endl;
 		if (!this->_loc->second.getAutoindex())
@@ -322,9 +334,20 @@ void	TreatRequest::error_page( Parse_request & req )
 	}
 }
 
-void	TreatRequest::exec_root( Parse_request & req )
+void	TreatRequest::redirect( Parse_request & req, std::string const & path )
 {
-	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
+	this->_location = "http://"
+		+ req.get_request("Host-uncut-comme-les-casquettes")
+		+ ":" + int_to_string(this->_eng->GetAccessPort())
+		+ req.get_request("Path") + "/";
+	//std::cout << "_location\t=\t" << _location << std::endl;
+	req.setStatus("301");
+	this->error_page(req);
+}
+
+void	TreatRequest::exec_root( Parse_request & req, std::string const & path )		// TODO RENAME TO exec
+{
+	//std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
 
 	if (path[path.length() - 1] == '/')
 	{
@@ -333,7 +356,9 @@ void	TreatRequest::exec_root( Parse_request & req )
 	}
 	else
 	{
-		if (!this->openAndRead(path, req))
+		if (is_dir(path))		// TODO no problem with perm ??
+			this->redirect(req, path);
+		else if (!this->openAndRead(path, req))
 		{
 			req.setStatus("404");
 			this->error_page(req);
@@ -343,20 +368,27 @@ void	TreatRequest::exec_root( Parse_request & req )
 
 void	TreatRequest::exec( Parse_request & req )
 {
-	std::ifstream ifs;
+	std::ifstream	ifs;
+	std::string		path;
+	std::string		path_alias;
 
-	ifs.open(this->_loc->second.getRoot());
-	if (!(ifs.is_open()))
+	ifs.open(this->_loc->second.getRoot() + req.get_request("Path"));
+	if (!(ifs.is_open()))					// TODO JUST OPEN OR WITH PERMISSION ??
 	{
-		std::cout << "TODO ALIAS METHOD" << std::endl;
-		//this->is_alias();
+		path_alias = req.get_request("Path");
+		path_alias.erase(0, this->_loc->first.length());
+		path = this->_loc->second.getRoot() + path_alias;
+		if (path == "/")
+			this->redirect(req, path);
+		else
+			exec_root(req, path);
 	}
 	else
 	{
-
 		std::cout << "ROOT METHOD" << std::endl;
+		path = this->_loc->second.getRoot() + req.get_request("Path");
 		ifs.close();
-		exec_root(req);
+		exec_root(req, path);
 	}
 }
 
@@ -383,7 +415,7 @@ std::string	TreatRequest::treat( Parse_request & req )
 {
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	//printMap(pol, "Tableau de merde");
+	printMap(pol, "Tableau de merde");
 
 	if (req.get_request("Status") == "400")
 	{
@@ -414,6 +446,16 @@ std::string	TreatRequest::treat( Parse_request & req )
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+std::string const &	TreatRequest::getLocation( void ) const
+{
+	return (this->_location);
+}
+
+std::string const &	TreatRequest::getLastModif( void ) const
+{
+	return (this->_last_modif);
+}
 
 std::string const &	TreatRequest::getExtension( void ) const
 {

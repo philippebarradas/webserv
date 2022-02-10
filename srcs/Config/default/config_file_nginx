@@ -6,10 +6,17 @@ server{
 	server_name localhost;
 	listen 7778;
 
-	root /tmp/test;
 
 	location / {
-		error_page 404 400 /404.html;
+		autoindex	on;
+		root /;
+	}
+
+	location /hello/bg {
+		error_page 404 400 /tmp/test/404.html;
+		autoindex on;
+
+		alias		/;
 	}
 }
 

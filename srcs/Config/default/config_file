@@ -15,6 +15,12 @@ server{
 		cgi .php /usr/bin/php-cgi;
 	}
 
+	location /hello/bg {
+		autoindex	on;
+		root		/;
+	}
+
+
 	location /404.html {
 		root /tmp/test;
 	}
