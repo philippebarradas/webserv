@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 10:11:41 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 17:25:44 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 10:33:51 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,12 @@ std::string	Autoindex::getPage( void ) const
 	{
 		if (it->first[it->first.length() - 1] == '/')
 		{
-			page += "<a href=\"" + it->first + "\">" + it->second + "\n";
+			if (it->first == "../")
+				page += "<a href=\"" + it->first + "\">" + it->first + "</a>\n";
+			else
+				page += "<a href=\"" + it->first + "\">" + it->second + "\n";
 		}
 	}
-	end = this->_href.end();
 	for (it = this->_href.begin() ; it != end ; ++it)
 	{
 		if (it->first[it->first.length() - 1] != '/')
@@ -97,7 +99,6 @@ std::string	Autoindex::getPage( void ) const
 			page += "<a href=\"" + it->first + "\">" + it->second + "\n";
 		}
 	}
-
 	page += "</pre><hr></body>\n</html>\n";
 
 	return (page);
@@ -135,10 +136,6 @@ void		Autoindex::insertAlign( std::string & path,
 		path.erase((path.begin()+47), path.end());
 		path.insert(path.length(), "..>");
 	}
-
-	std::cout << "href\t=\t" << href << std::endl;
-	std::cout << "path\t=\t" << path << std::endl;
-	std::cout << std::endl;
 
 	log = path + "</a>" + std::string(51 - path.length(), ' ') + log_date
 		+ std::string(20 - log_size.length(), ' ') + log_size;
