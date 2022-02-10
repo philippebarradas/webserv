@@ -24,4 +24,8 @@ server{
 	location /404.html {
 		root /tmp/test;
 	}
+
+	location /test/403/bad_dir_perm{
+		index hello_good_perm.txt;
+	}
 }

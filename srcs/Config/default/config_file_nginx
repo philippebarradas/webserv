@@ -1,4 +1,4 @@
-user www-data;
+user user42;
 
 events {}
 http{
@@ -25,7 +25,7 @@ server{
 	listen 7777;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
+	root /home/user42/Bureau/webserv/www/test/403;
 
 	index form.html;
 	dav_methods DELETE;
@@ -33,6 +33,11 @@ server{
 	location /error_page {
 		index my_index.html;
 	}
+
+	location /bad_dir_perm{
+		index hello_good_perm.txt;
+	}
+
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
 		fastcgi_index hello.php;
