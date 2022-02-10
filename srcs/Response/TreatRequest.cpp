@@ -186,16 +186,21 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	if (!(ifs.is_open()))
 		return (false);
 
+
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
 	this->_cgi = false;
-	end = it = this->_loc->second.getCgi().end();
-	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
+
+	if (req.get_request("Status") != "400")
 	{
-		if (extension == it->first)
+		end = it = this->_loc->second.getCgi().end();
+		for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 		{
-			this->_cgi = true;
-			break;
+			if (extension == it->first)
+			{
+				this->_cgi = true;
+				break;
+			}
 		}
 	}
 
@@ -337,7 +342,6 @@ void	TreatRequest::error_page( Parse_request & req )
 
 	find_custom = false;
 
-
 	if (allError[code] != "")
 	{
 		locErr = this->selectLocation(allError[code], this->_conf[this->_i_conf].getLocation());
@@ -350,8 +354,6 @@ void	TreatRequest::error_page( Parse_request & req )
 		path = DEFAULT_ROOT_ERROR + codeStr + ".html";
 		this->openAndRead(path, req);
 	}
-
-	std::cout << "path\t=\t" << path << std::endl;
 }
 
 void	TreatRequest::exec_root( Parse_request & req )
@@ -415,18 +417,26 @@ std::string	TreatRequest::treat( Parse_request & req )
 {
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	printMap(pol, "Tableau de merde");
+	//printMap(pol, "Tableau de merde");
 
-	this->_i_conf = this->selectConf(req);
-	std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
-	this->_loc = this->selectLocation(req.get_request("Path"), this->_conf[this->_i_conf].getLocation());
-	std::cout << "location\t=\t" << _loc->first << std::endl
-		<< _loc->second << std::endl;
-
-	if (req.get_request("Status") != "200")
-		this->error_page(req);
+	if (req.get_request("Status") == "400")
+	{
+		std::string path_bad_req = DEFAULT_ROOT_ERROR "400.html";
+		this->openAndRead(path_bad_req, req);
+	}
 	else
-		this->permMethod(req);
+	{
+		this->_i_conf = this->selectConf(req);
+		std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
+		this->_loc = this->selectLocation(req.get_request("Path"), this->_conf[this->_i_conf].getLocation());
+		std::cout << "location\t=\t" << _loc->first << std::endl
+			<< _loc->second << std::endl;
+
+		if (req.get_request("Status") != "200")
+			this->error_page(req);
+		else
+			this->permMethod(req);
+	}
 
 	Response	rep(req, *this);
 	//std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;

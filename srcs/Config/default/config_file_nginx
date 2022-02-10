@@ -6,39 +6,10 @@ server{
 	server_name localhost;
 	listen 7778;
 
-	autoindex on;
+	root /tmp/test;
 
 	location / {
-		error_page 404 /404.htmll;
-		index	no;
-		root /tmp;
-	}
-
-	location /lol {
-		error_page 404 rigolo;
-	}
-
-	location /rigolo {
-		error_page 404 /404.html;
-		index	no;
-		root /tmp;
-	}
-
-	location /404.htmll {
-		error_page 404 /404.html;
-		index lol;
-		root /tmp/test;
-	}
-
-	location /404.html {
-		error_page 404 /404.html;
-		index lol;
-		root /tmp/test;
-	}
-
-
-	location /salut {
-		root yo;
+		error_page 404 400 /404.html;
 	}
 }
 

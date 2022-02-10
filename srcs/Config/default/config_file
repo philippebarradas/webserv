@@ -5,8 +5,8 @@ server{
 
 	autoindex on;
 
-	error_page 404 /404.html;
-	root /home/user42/Bureau/webserv/www;
+	error_page 400 /404.html;
+	root /tmp;
 
 	accepted_methods	GET;
 
