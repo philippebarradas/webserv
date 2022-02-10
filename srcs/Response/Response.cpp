@@ -75,8 +75,9 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "403", "404"};
-	std::string		all_status[] = {"OK", "Forbidden", "Not Found"};
+	std::string		all_code[] = {"200", "400", "403", "404", "405"};
+	std::string		all_status[] = {"OK", "Bad Request", "Forbidden",
+		"Not Found", "Not Allowed"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;
@@ -90,6 +91,7 @@ void	Response::writeRequestStatus( std::string const & code )
 			break;
 		}
 	}
+	this->_header += " Not Define\n";
 }
 
 void	Response::writeType( std::string const & extension, TreatRequest const & treat )

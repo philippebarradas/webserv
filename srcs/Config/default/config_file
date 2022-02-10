@@ -8,10 +8,11 @@ server{
 	error_page 404 /404.html;
 	root /tmp;
 
+	accepted_methods	GET;
+
 	location / {
 		index form.html;
 		cgi .php /usr/bin/php-cgi;
-		accepted_methods	GET POST DELETE;
 	}
 
 	location /404.html {

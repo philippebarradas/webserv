@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 16:21:15 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 11:43:43 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,8 +334,6 @@ void	TreatRequest::exec( Parse_request & req )
 {
 	std::ifstream ifs;
 
-	//std::cout << "loc->second.getRoot()\t=\t" << _loc->second.getRoot() << std::endl;
-
 	ifs.open(this->_loc->second.getRoot());
 	if (!(ifs.is_open()))
 	{
@@ -351,11 +349,30 @@ void	TreatRequest::exec( Parse_request & req )
 	}
 }
 
+void	TreatRequest::permMethod( Parse_request & req )
+{
+	std::string	cmd;
+	std::set<std::string>::const_iterator	it;
+
+	cmd = req.get_request("Method");
+	it = this->_loc->second.getMethods().find(cmd);
+	//std::cout << "CRASH" << std::endl;
+	//std::cout << "*it\t=\t" << *it << std::endl;
+	if (it == this->_loc->second.getMethods().end())
+	{
+		std::cout << "NO METHOD" << std::endl;
+		req.setStatus("405");
+		this->error_page(req);
+	}
+	else
+		this->exec(req);
+}
+
 std::string	TreatRequest::treat( Parse_request & req )
 {
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	//printMap(pol, "Tableau de merde");
+	printMap(pol, "Tableau de merde");
 
 	this->_i_conf = this->selectConf(req);
 	std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
@@ -363,11 +380,10 @@ std::string	TreatRequest::treat( Parse_request & req )
 	std::cout << "location\t=\t" << _loc->first << std::endl
 		<< _loc->second << std::endl;
 
-
-	if (req.get_request("Method") == "GET")
-		this->exec(req);
+	if (req.get_request("Status") != "200")
+		this->error_page(req);
 	else
-		std::cout << "TODO CAS D'ERREUR" << std::endl;
+		this->permMethod(req);
 
 	Response	rep(req, *this);
 	//std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 15:53:40 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 11:11:02 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class TreatRequest
 		bool	search_index( Parse_request const & req,
 			std::string const & path );
 
+		void	permMethod( Parse_request & req );
 		void	exec_root( Parse_request & req );
 		void	exec( Parse_request & req );
 
