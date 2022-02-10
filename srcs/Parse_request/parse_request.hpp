@@ -50,6 +50,11 @@ class Parse_request
 			return (_request_body);
 		}
 
+		void set_request_body(std::string new_request_body)
+		{
+			_request_body = new_request_body;
+		}
+
 		std::string get_request_body_size() const
 		{
 			return (int_to_string(_request_body_size));
@@ -68,9 +73,9 @@ class Parse_request
 		bool		_next_buffer_is_body;
 		size_t		_request_body_size;
 		size_t		_client_max_body_size;
+		std::string	_request_body;
 		
 	private:
-		std::string	_request_body;
 		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();
 		void		parse_path();

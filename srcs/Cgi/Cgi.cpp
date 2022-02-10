@@ -207,11 +207,12 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 	{
 		//str[x] = *it;
 		// 		65336
-		if (x < 65000)
+		if (x < 60000)
 			z = write(fds_child[1], &body_string[x], 1);
 		std::cout << RED << "z=[" << z << "]" << END << std::endl;
 
 		std::cout << GREEN << "*it=[" << *it << "]" << END << std::endl;
+		z = -1;
 		//std::cout << CYAN << body_string[x] << END;
 		x++;
 	}
@@ -261,8 +262,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	std::cout << "{pas ici}" << std::endl;
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	//this->_send_content << "|" << std::endl << END;
+	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::body_response_from_fd(int fd)
@@ -279,6 +280,7 @@ std::string	Cgi::body_response_from_fd(int fd)
 		{
 			ret += line;
 			ret += '\n';
+			std::cout << RED << "line=[" << line << "]" << END << std::endl;
 		}
 	}
 	return (ret);

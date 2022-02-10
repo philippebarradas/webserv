@@ -273,21 +273,48 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
 		if ((*it).getListen() == port_str)
 			break ;
+	//std::string new_buffer = _buffer.substr(limit, std::strlen(buff) - );
 	//Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
+	size_t full_size = 0;
+	std::string request_body = parse_head.get_request_body();
+
+	std::string one;
+	std::string two;
+	std::string thre;
+
  	if (valread != 0)
 	{
 		TreatRequest	treatment(src, *this);
 
 		std::cout << "{BEFORE TREAT CMD}" << std::endl;
 
+		//while (full_size < std::stoi(parse_head.get_request("Content-Length:")))
+		//{
+			this->_buff_send = treatment.treat(parse_head);
+			std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
 
-		this->_buff_send = treatment.treat(parse_head);
+			//nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+
+	//_buffer.substr(start, size)
+			full_size += this->_buff_send.size();
+			parse_head.set_request_body(request_body.substr(this->_buff_send.size(),
+			std::stoi(parse_head.get_request("Content-Length:")) - this->_buff_send.size() ));
+
+			std::cout << GREEN << "parse_head.get_request_body()=[" << parse_head.get_request_body() << "]" << END << std::endl;
+		
+			two = treatment.treat(parse_head);
+			std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
+
+			thre = this->_buff_send + two;
+			//std::cout << BLUE << "thre=[" << thre << "]" << END << std::endl;
+			nbr_bytes_send = send(fd, thre.c_str(), thre.size(), 0);
+		
+		
+		//}
 		//std::cout << "\n_buff_send:\n" << _buff_send << std::endl;
 
 		//std::cout << YELLOW << "this->_buff_send.c_str()=[" << this->_buff_send.c_str() << "]" << END << std::endl;
 		//std::cout << YELLOW << "this->_buff_send.size()=[" << this->_buff_send.size() << "]" << END << std::endl;
-
-		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 		std::cout << "{NORMAL SEND}" << std::endl;
 		/*if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 15:58:17 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/10 17:15:18 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,8 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	std::cout << "{dynamic files}" << std::endl;
 	Cgi	obj_cgi(this->_loc->second.getRoot(), path, pathCgi, req, *this->_eng);
 	std::cout << "{0}" << std::endl;
+
+
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
