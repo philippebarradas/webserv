@@ -128,36 +128,24 @@ bool	TreatRequest::permForOpen( std::string const & path ) const
 
 	if (ret_stat == -1)
 		return (false);
-	std::cout << "path = " << path << std::endl;
-	if (path[path.size() - 1] == '/') // dossier
+	std::cout << "path in permforopen = " << path << std::endl;
+
+	if (sbuf.st_mode & S_IRUSR)
 	{
-		if (sbuf.st_mode & S_IXUSR)
-		{
-			std::cout << "executable !!!" << std::endl;
-			return (true);
-		}
-		else
-			return (false);
+		std::cout << "readable !!!" << std::endl;
+		return (true);
 	}
 	else
-	{
-		if (sbuf.st_mode & S_IRUSR)
-		{
-			std::cout << "readable !!!" << std::endl;
-			return (true);
-		}
-		else
-			return (false);
-	}
+		return (false);
 	return (true);
 	// true = perm ok / false = no perm(403)
 }
 
-bool	TreatRequest::exist( std::string const & path ) const
+bool	TreatRequest::exist_file( std::string const & path) const
 {
 	// true = exist  / false = no exist
 
-	if (access(path.c_str(), F_OK) != -1)
+	if (access(path.c_str(), F_OK) != -1) // fichier
 	{
 		std::cout << "Fichier existe !" << std::endl;
 		return (true);
@@ -166,6 +154,47 @@ bool	TreatRequest::exist( std::string const & path ) const
 	return (false);
 }
 
+bool	TreatRequest::exist_dir( std::string const & root, const Parse_request & req) const
+{
+	// true = exist  / false = no exist
+	struct stat sbuf_dir;
+
+	int ret_stat_dir = stat(root.c_str(), &sbuf_dir);
+
+	if (ret_stat_dir == -1)
+		return (false);
+	if (S_ISDIR(sbuf_dir.st_mode)) // dossier
+	{
+		std::cout << "Dossier existe et perm verifie!" << std::endl;
+		return (true);
+	}
+	std::cout << "Dossier existe pas!" << std::endl;
+	return (false);
+}
+
+/* bool	TreatRequest::exist( std::string const & path, Parse_request & req) const
+{
+	// true = exist  / false = no exist
+	struct stat sbuf_dir;
+
+	int ret_stat_dir = stat((this->_loc->second.getRoot() + req.get_request("Path")).c_str(), &sbuf_dir);
+
+	if (ret_stat_dir == -1)
+		return (false);
+	if (access(path.c_str(), F_OK) != -1) // fichier
+	{
+		std::cout << "Fichier existe !" << std::endl;
+		return (true);
+	}
+	else if (S_ISDIR(sbuf_dir.st_mode)) // dossier
+	{
+		std::cout << "Dossier existe et perm verifie!" << std::endl;
+		return (true);
+	}
+	std::cout << "Fichier existe pas!" << std::endl;
+	return (false);
+} */
+
 bool	TreatRequest::openAndRead( std::string const & path,
 	Parse_request & req )
 {
@@ -173,7 +202,8 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	std::map<std::string, std::string>::const_iterator	it, end;
 	std::string	extension;
 
-	if (!exist(path))
+	if (!exist_file(path))// &&
+		//!exist_dir((this->_loc->second.getRoot() + req.get_request("Path")), req))
 		return (false);
 	if (!permForOpen(path))
 	{

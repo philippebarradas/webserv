@@ -4,7 +4,7 @@ server{
 	listen 8001;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/www/test/403/bad_dir_perm;
+	root /home/user42/Bureau/webserv/www/test/403;
 
 
 	accepted_methods	GET;
@@ -17,7 +17,7 @@ server{
 		root /tmp/test;
 	}
 
-	location /403/bad_dir_perm{
+	location /bad_dir_perm{
 		index hello_good_perm.txt;
 	}
 }

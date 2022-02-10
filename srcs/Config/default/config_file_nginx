@@ -18,7 +18,7 @@ server{
 	listen 7777;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/www/test/403/bad_dir_perm;
+	root /home/user42/Bureau/webserv/www/test/403;
 
 	index form.html;
 	dav_methods DELETE;
@@ -27,7 +27,7 @@ server{
 		index my_index.html;
 	}
 
-	location /test/403/bad_dir_perm{
+	location /bad_dir_perm{
 		index hello_good_perm.txt;
 	}
 
