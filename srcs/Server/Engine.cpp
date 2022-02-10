@@ -284,8 +284,8 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		this->_buff_send = treatment.treat(parse_head);
 		//std::cout << "\n_buff_send:\n" << _buff_send << std::endl;
 
-		std::cout << YELLOW << "this->_buff_send.c_str()=[" << this->_buff_send.c_str() << "]" << END << std::endl;
-		std::cout << YELLOW << "this->_buff_send.size()=[" << this->_buff_send.size() << "]" << END << std::endl;
+		//std::cout << YELLOW << "this->_buff_send.c_str()=[" << this->_buff_send.c_str() << "]" << END << std::endl;
+		//std::cout << YELLOW << "this->_buff_send.size()=[" << this->_buff_send.size() << "]" << END << std::endl;
 
 		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 

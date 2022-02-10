@@ -133,6 +133,7 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
+	std::cout << YELLOW << "src_header.get_request(Query);=[" << src_header.get_request("Query") << "]" << END << std::endl;
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
@@ -181,16 +182,49 @@ char	**Cgi::create_argv(std::string path_file_executed)
 	argv[2] = NULL;
 	return (argv);
 }
+#include <unistd.h>
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
 	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
-
+	std::cout << PURPLE << "body_string=[" << body_string << "]" << END << std::endl;
+	std::cout << RED << "body_string.size()=[" << body_string.size() << "]" << END << std::endl;
+	std::cout << "{IN}" << std::endl;
 	pipe(fds_child);
 	dup2(fds_child[0], STDIN_FILENO);
 	close(fds_child[0]);
-	write(fds_child[1], body_string.c_str(), body_string.size());
+	 
+	//char *str;
+	
+	//str = (char *)malloc(sizeof(char) * (body_string.size() + 1));
+
+
+
+	size_t x = 0;
+	int z = -1;
+	for ( std::string::iterator it = body_string.begin(); it != body_string.end(); it++)
+	{
+		//str[x] = *it;
+		// 		65336
+		if (x < 65000)
+			z = write(fds_child[1], &body_string[x], 1);
+		std::cout << RED << "z=[" << z << "]" << END << std::endl;
+
+		std::cout << GREEN << "*it=[" << *it << "]" << END << std::endl;
+		//std::cout << CYAN << body_string[x] << END;
+		x++;
+	}
+	
+
+	/* int z = -1;
+	for(int x = 0; str[x]; x++)
+	{
+		z = write(fds_child[1], &(str[x]), 1);
+		std::cout << RED << "z=[" << z << "]" << END << std::endl;
+		x++;
+	} */
+	//free(str);
 	close(fds_child[1]);
 }
 
@@ -215,11 +249,18 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}
+
+	std::cout << "{waitpid}" << std::endl;
+	std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
+	std::cout << RED << "&status=[" << &status << "]" << END << std::endl;
 	waitpid(this->_pid, &status, 0);
+	std::cout << "{close}" << std::endl;
 	close(fds_exec[1]);
+	std::cout << "{body_response_fd}" << std::endl;
 	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
+	std::cout << "{pas ici}" << std::endl;
 	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
 	//this->_send_content << "|" << std::endl << END;
 }
