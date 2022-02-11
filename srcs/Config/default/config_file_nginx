@@ -1,42 +1,16 @@
-user user42;
+user www-data;
 
 events {}
 http{
 server{
-	server_name localhost;
-	listen 7778;
-
-	autoindex on;
-
-	location / {
-		root /tmp/test;
-	}
-
-	location /hello/bg {
-		error_page 404 400 /tmp/test/404.html;
-		autoindex on;
-
-		alias		/;
-	}
-}
-
-server{
-	server_name hello12 hello55;
+	server_name hello1 hello3;
 	listen 7777;
 
-	autoindex on;
-	root /home/user42/Bureau/webserv/www/test/403;
+	autoindex off;
+	root /home/user42/Bureau/webserv/www;
 
-	index form.html;
+	index phpinfo.php;
 	dav_methods DELETE;
-
-	location /error_page {
-		index my_index.html;
-	}
-
-	location /bad_dir_perm{
-		index hello_good_perm.txt;
-	}
 
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
@@ -44,4 +18,5 @@ server{
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include /etc/nginx/fastcgi_params;
 	}
+
 }}

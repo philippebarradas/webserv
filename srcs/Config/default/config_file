@@ -7,6 +7,7 @@ server{
 
 	root /tmp/test;
 
+
 	accepted_methods	GET;
 
 	location / {
@@ -14,9 +15,8 @@ server{
 		cgi .php /usr/bin/php-cgi;
 	}
 
-	location /hello/bg {
+	location /salutlol {
 		autoindex	on;
-		root		/;
 	}
 
 
