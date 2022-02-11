@@ -291,23 +291,23 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		//while (full_size < std::stoi(parse_head.get_request("Content-Length:")))
 		//{
 			this->_buff_send = treatment.treat(parse_head);
-			std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
+			//std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
 
-			//nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 	//_buffer.substr(start, size)
-			full_size += this->_buff_send.size();
-			parse_head.set_request_body(request_body.substr(this->_buff_send.size(),
-			std::stoi(parse_head.get_request("Content-Length:")) - this->_buff_send.size() ));
+			//full_size += this->_buff_send.size();
+			//parse_head.set_request_body(request_body.substr(this->_buff_send.size(),
+			//std::stoi(parse_head.get_request("Content-Length:")) - this->_buff_send.size() ));
 
-			std::cout << GREEN << "parse_head.get_request_body()=[" << parse_head.get_request_body() << "]" << END << std::endl;
+			//std::cout << GREEN << "parse_head.get_request_body()=[" << parse_head.get_request_body() << "]" << END << std::endl;
 		
-			two = treatment.treat(parse_head);
-			std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
+			//two = treatment.treat(parse_head);
+			//std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
 
-			thre = this->_buff_send + two;
+			//thre = this->_buff_send + two;
 			//std::cout << BLUE << "thre=[" << thre << "]" << END << std::endl;
-			nbr_bytes_send = send(fd, thre.c_str(), thre.size(), 0);
+			//nbr_bytes_send = send(fd, thre.c_str(), thre.size(), 0);
 		
 		
 		//}

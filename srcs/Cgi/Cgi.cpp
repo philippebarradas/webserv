@@ -184,22 +184,43 @@ char	**Cgi::create_argv(std::string path_file_executed)
 }
 #include <unistd.h>
 
-void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
+int	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
 	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
+
+
+
+
 	std::cout << PURPLE << "body_string=[" << body_string << "]" << END << std::endl;
 	std::cout << RED << "body_string.size()=[" << body_string.size() << "]" << END << std::endl;
 	std::cout << "{IN}" << std::endl;
 	pipe(fds_child);
+	//fcntl(fds_child[0], F_SETFL, O_NONBLOCK);
+			//pipe_sz = fcntl(fds_child[0], F_SETPIPE_SZ, 8999999999999999999);
+			//std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl;
+	/* pipe_sz = fcntl(fds_child[0],  F_SETFL, O_NONBLOCK);
+	std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl; */
+size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
+	std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl;
 	dup2(fds_child[0], STDIN_FILENO);
+	
+
+
 	close(fds_child[0]);
-	 
+
 	//char *str;
 	
 	//str = (char *)malloc(sizeof(char) * (body_string.size() + 1));
 
 
+	//size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
+	//std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl;
+    size_t pipe_size = (size_t)fcntl(fds_child[1], F_GETPIPE_SZ);
+    if (pipe_size == -1) {
+        perror("get pipe size 2 failed.");
+    }
+    printf("new pipe size: %ld\n", pipe_size);
 
 	size_t x = 0;
 	int z = -1;
@@ -207,17 +228,38 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 	{
 		//str[x] = *it;
 		// 		65336
-		if (x < 60000)
+		if (x < 70000)
+		{
 			z = write(fds_child[1], &body_string[x], 1);
-		std::cout << RED << "z=[" << z << "]" << END << std::endl;
+			std::cout << RED << "" << z << " " << END;
+			if (z == -1)
+			{
+				std::cout << x << " ";
+			}
+			
+		}
+ /* 		else
+		{
+			x = 0;
+		} */
 
-		std::cout << GREEN << "*it=[" << *it << "]" << END << std::endl;
+		//std::cout << GREEN << "[" << *it << "]" << END ;
 		z = -1;
 		//std::cout << CYAN << body_string[x] << END;
 		x++;
 	}
-	
+	std::string data;
 
+	char buffer[1];
+	size_t len = read(fds_child[1], buffer,  1);
+
+	//std::string data(buffer, len);
+	std::cout << RED << "body_string.size()=[" << body_string.size() << "]" << END << std::endl;
+
+	std::cout << PURPLE << "data=[" << buffer << "]" << END << std::endl;
+	this->_send_content = body_response_from_fd(fds_child[1]);
+	std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl;
+	std::cout << "{ICI}" << std::endl;
 	/* int z = -1;
 	for(int x = 0; str[x]; x++)
 	{
@@ -226,7 +268,8 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 		x++;
 	} */
 	//free(str);
-	close(fds_child[1]);
+	return(fds_child[1]);
+
 }
 
 void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
@@ -237,18 +280,31 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	std::cout << "{pres}" << std::endl;
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
-
+	int fd;
 	pipe(fds_exec);
+	
+	fcntl(fds_exec[1],  F_SETFL, O_NONBLOCK);
+	//fcntl(fds_exec[0],  F_SETFL, O_NONBLOCK);
 	this->_pid = fork();
+
+
 	if (this->_pid == 0)
 	{
 		if (src_header.get_request("Method").compare("POST") == 0)
-			write_body_post_in_fd(body_string); // for post request
+			fd = write_body_post_in_fd(body_string); // for post request
+		this->_send_content = body_response_from_fd(fd);
+std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl;
+		std::cout << "{proyt}" << std::endl;
+		close(fd);
 		dup2(fds_exec[1], STDOUT_FILENO);
+
+		std::cout << "{la}" << std::endl;
 		close(fds_exec[0]);
 		close(fds_exec[1]);
+		std::cout << "{cc}" << std::endl;
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
+		std::cout << "{main}" << std::endl;
 	}
 
 	std::cout << "{waitpid}" << std::endl;
@@ -258,12 +314,11 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	std::cout << "{close}" << std::endl;
 	close(fds_exec[1]);
 	std::cout << "{body_response_fd}" << std::endl;
-	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	std::cout << "{pas ici}" << std::endl;
-	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	this->_send_content << "|" << std::endl << END;
+	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	//this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::body_response_from_fd(int fd)
@@ -280,7 +335,7 @@ std::string	Cgi::body_response_from_fd(int fd)
 		{
 			ret += line;
 			ret += '\n';
-			std::cout << RED << "line=[" << line << "]" << END << std::endl;
+			std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		}
 	}
 	return (ret);

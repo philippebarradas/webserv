@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/09 14:35:46 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/11 14:47:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ class Cgi
 		char	**create_argv(std::string path_file_executed);
 		void	exec_cgi(char **argv, char **env, const Parse_request & src_header);
 		std::string	body_response_from_fd(int fd);
-		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
+		int	write_body_post_in_fd(std::string body_string); // body | php-cgi
 
 		// GETTERS
 		std::map<std::string, std::string>	getEnv() const;
