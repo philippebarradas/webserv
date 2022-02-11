@@ -3,10 +3,13 @@
 <body>
 
 <form action="upload.php" method="post" enctype="multipart/form-data">
-  Select image to upload:
-  <input type="file" name="fileToUpload" id="fileToUpload">
-  <input type="submit" value="Upload Image" name="submit">
+<!-- MAX_FILE_SIZE doit précéder le champ input de type file -->
+	<input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
+	Select image to upload:
+
+	<input type="file" name="fileToUpload">
+	<input type="submit" value="Upload Image" name="submit">
 </form>
 
-</bojpg.jpg
+</body>
 </html>
