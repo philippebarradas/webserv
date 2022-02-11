@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 19:20:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/11 14:51:03 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ class TreatRequest
 			std::string const & path );
 
 		//bool	exist( std::string const & path, Parse_request & req) const;
+		bool	check_access( Parse_request & req, std::string path );
 		bool	exist_file( std::string const & path) const;
 		bool	exist_dir( std::string const & root) const;
 		bool	exist( std::string const & root) const;

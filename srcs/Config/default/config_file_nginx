@@ -6,9 +6,9 @@ server{
 	server_name localhost;
 	listen 7778;
 
+	autoindex on;
 
 	location / {
-		autoindex	on;
 		root /tmp/test;
 	}
 
