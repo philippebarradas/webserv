@@ -105,8 +105,7 @@ class Engine
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-		void	read_data(int fd, const std::vector<Server> & src, Parse_request & src_header);
-		void	send_data(int fd, const std::vector<Server> & src, const Parse_request & src_header);
+void		read_send_data(int fd, const std::vector<Server> & src);//,Parse_request & parse_head);
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 
