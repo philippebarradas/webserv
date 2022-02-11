@@ -22,13 +22,14 @@ server{
 	listen 7777;
 
 	autoindex on;
+	client_max_body_size 100M;
 	root /home/user42/Bureau/webserv/www;
 
-	index form.html;
+	index upload.html;
 	dav_methods DELETE;
 
 	location /test {
-		root /home/user42/Bureau/webserv;
+
 	}
 	location /error_page {
 		index my_index.html;
