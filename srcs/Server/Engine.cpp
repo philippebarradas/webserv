@@ -238,10 +238,10 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		}
 		
 		
-		std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
-		std::cout << "valread=[" << valread << "]" << std::endl;
-		std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
-		std::cout << BLUE << "buff.size() - head =[" << std::strlen(buff) - head<< "]" << END << std::endl;
+		//std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
+		//std::cout << "valread=[" << valread << "]" << std::endl;
+		//std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
+		//std::cout << BLUE << "buff.size() - head =[" << std::strlen(buff) - head<< "]" << END << std::endl;
 
 		if (parse_head.get_request("Content-Length:").compare("") != 0)
 		{
@@ -290,10 +290,20 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 
 		//while (full_size < std::stoi(parse_head.get_request("Content-Length:")))
 		//{
-			this->_buff_send = treatment.treat(parse_head);
+			
 			//std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
+			this->_buff_send = treatment.treat(parse_head);
 
 			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+
+
+			this->_buff_send = "qweqwe";
+			parse_head._request_body = "qweqwe";
+
+
+			this->_buff_send = treatment.treat(parse_head);
+			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+
 
 	//_buffer.substr(start, size)
 			//full_size += this->_buff_send.size();

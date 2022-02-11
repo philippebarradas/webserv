@@ -184,7 +184,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 }
 #include <unistd.h>
 
-int	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
+void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
 	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
@@ -201,8 +201,9 @@ int	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 			//std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl;
 	/* pipe_sz = fcntl(fds_child[0],  F_SETFL, O_NONBLOCK);
 	std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl; */
-size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
-	std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl;
+	fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
+	fcntl(fds_child[0],  F_SETFL, O_NONBLOCK);
+
 	dup2(fds_child[0], STDIN_FILENO);
 	
 
@@ -228,10 +229,11 @@ size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
 	{
 		//str[x] = *it;
 		// 		65336
-		if (x < 70000)
+		if (x < 66000)
 		{
 			z = write(fds_child[1], &body_string[x], 1);
 			std::cout << RED << "" << z << " " << END;
+			_still++;
 			if (z == -1)
 			{
 				std::cout << x << " ";
@@ -248,7 +250,7 @@ size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
 		//std::cout << CYAN << body_string[x] << END;
 		x++;
 	}
-	std::string data;
+/* 	std::string data;
 
 	char buffer[1];
 	size_t len = read(fds_child[1], buffer,  1);
@@ -258,8 +260,8 @@ size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
 
 	std::cout << PURPLE << "data=[" << buffer << "]" << END << std::endl;
 	this->_send_content = body_response_from_fd(fds_child[1]);
-	std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl;
-	std::cout << "{ICI}" << std::endl;
+	std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl; */
+	std::cout << "{leave}" << std::endl;
 	/* int z = -1;
 	for(int x = 0; str[x]; x++)
 	{
@@ -268,7 +270,7 @@ size_t pipe_sz = fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
 		x++;
 	} */
 	//free(str);
-	return(fds_child[1]);
+	close(fds_child[1]);
 
 }
 
@@ -276,26 +278,33 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
 	std::cout << "{avant}" << std::endl;
 	std::string body_string = src_header.get_request_body();
-
+	this->_send_content = "";
 	std::cout << "{pres}" << std::endl;
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 	int fd;
+
+
+
+
+ 	std::string body_cut = src_header.get_request_body();
+	size_t full_lenght = 0;
+	_still = 0;
+
+
+
 	pipe(fds_exec);
 	
 	fcntl(fds_exec[1],  F_SETFL, O_NONBLOCK);
 	//fcntl(fds_exec[0],  F_SETFL, O_NONBLOCK);
 	this->_pid = fork();
 
-
 	if (this->_pid == 0)
 	{
 		if (src_header.get_request("Method").compare("POST") == 0)
-			fd = write_body_post_in_fd(body_string); // for post request
-		this->_send_content = body_response_from_fd(fd);
-std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl;
+			write_body_post_in_fd(body_cut); // for post request
+//std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl;
 		std::cout << "{proyt}" << std::endl;
-		close(fd);
 		dup2(fds_exec[1], STDOUT_FILENO);
 
 		std::cout << "{la}" << std::endl;
@@ -314,6 +323,7 @@ std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::e
 	std::cout << "{close}" << std::endl;
 	close(fds_exec[1]);
 	std::cout << "{body_response_fd}" << std::endl;
+	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	std::cout << "{pas ici}" << std::endl;
@@ -335,7 +345,7 @@ std::string	Cgi::body_response_from_fd(int fd)
 		{
 			ret += line;
 			ret += '\n';
-			std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
+			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		}
 	}
 	return (ret);
