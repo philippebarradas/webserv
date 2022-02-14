@@ -8,6 +8,7 @@ server{
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
+	error_page 404 /env.php;
 
 	index phpinfo.php;
 	dav_methods DELETE;

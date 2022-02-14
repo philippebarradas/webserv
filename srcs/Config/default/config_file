@@ -10,13 +10,10 @@ server{
 
 	accepted_methods	GET POST;
 	cgi .php /usr/bin/php-cgi;
+	error_page 404 /env.php;
 
 	location / {
 		index no.html;
-	}
-
-	location /salutlol {
-		autoindex	on;
 	}
 
 

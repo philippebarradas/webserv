@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/14 15:31:58 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/14 18:33:43 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,7 @@ bool	TreatRequest::exist( std::string const & root) const
 } */
 
 bool	TreatRequest::openAndRead( std::string const & path,
-	Parse_request & req )
+	Parse_request & req, bool const & isError )
 {
 	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
@@ -248,11 +248,19 @@ bool	TreatRequest::openAndRead( std::string const & path,
 			}
 		}
 	}
+	std::cout << "path\t=\t" << path << std::endl;
+	std::cout << "this->_cgi\t=\t" << this->_cgi << std::endl;
 
 	if (this->_cgi)
 		this->readDynamicFile(path, it->second, req);
-	else
+	else if ((!this->_cgi && req.get_request("Method") == "GET") || isError)
 		this->readStaticFile(path, ifs);
+	else
+	{
+		std::cout << "ERROR 405" << std::endl;
+		req.setStatus("405");
+		this->error_page(req);
+	}
 	this->cpyInfo(extension, path, req);
 	return (true);
 }
@@ -336,7 +344,7 @@ bool	TreatRequest::search_index( Parse_request & req,
 	for (it = this->_loc->second.getIndex().begin() ; it != end ; ++it)
 	{
 		tmp = path + *it;
-		if (this->openAndRead(tmp, req))
+		if (this->openAndRead(tmp, req, false))
 			return (true);
 	}
 	return (false);
@@ -376,19 +384,26 @@ void	TreatRequest::error_page( Parse_request & req )
 	conv >> code;
 
 	find_custom = false;
-
 	if (allError[code] != "")
 	{
 		locErr = this->selectLocation(allError[code], this->_conf[this->_i_conf].getLocation());
-		path = locErr->second.getRoot() + locErr->first;
-		if (this->openAndRead(path, req))
+		path = locErr->second.getRoot() + allError[code];
+
+		std::cout << "locErr->first\t=\t" << locErr->first << std::endl;
+		std::cout << "pathERR\t=\t" << path << std::endl;
+		std::cout << std::endl;
+
+		if (this->openAndRead(path, req, true))
 			find_custom = true;
 	}
+	std::cout << "find_custom\t=\t" << find_custom << std::endl;
+	std::cout << "_file\t=\t" << _file << std::endl;
 	if (!find_custom)
 	{
 		path = DEFAULT_ROOT_ERROR + codeStr + ".html";
-		this->openAndRead(path, req);
+		this->openAndRead(path, req, true);
 	}
+	//std::cout << "BYE" << std::endl;
 }
 
 void	TreatRequest::redirect( Parse_request & req, std::string const & path )
@@ -477,7 +492,7 @@ void	TreatRequest::exec_root( Parse_request & req, std::string const & path )
 			this->generateAutoIndex(req, path);
 	}
 	else
-		this->openAndRead(path, req);
+		this->openAndRead(path, req, false);
 }
 
 void	TreatRequest::exec( Parse_request & req )
@@ -520,14 +535,22 @@ void	TreatRequest::permMethod( Parse_request & req )
 	it = this->_loc->second.getMethods().find(cmd);
 	//std::cout << "CRASH" << std::endl;
 	//std::cout << "*it\t=\t" << *it << std::endl;
-	if (it == this->_loc->second.getMethods().end())
+	if (it == this->_loc->second.getMethods().end()
+		|| (cmd != "GET"
+		&& cmd != "POST"
+		&& cmd != "DELETE"))
 	{
 		//std::cout << "NO METHOD" << std::endl;
 		req.setStatus("405");
 		this->error_page(req);
 	}
 	else
-		this->exec(req);
+	{
+		if (cmd == "POST" || cmd == "GET")
+			this->exec(req);
+		//else
+		//	TODO DELETE
+	}
 }
 
 std::string	TreatRequest::treat( Parse_request & req )
@@ -539,7 +562,7 @@ std::string	TreatRequest::treat( Parse_request & req )
 	if (req.get_request("Status") == "400")
 	{
 		std::string path_bad_req = DEFAULT_ROOT_ERROR "400.html";
-		this->openAndRead(path_bad_req, req);
+		this->openAndRead(path_bad_req, req, true);
 	}
 	else
 	{
