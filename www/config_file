@@ -4,7 +4,7 @@ server{
 	listen 8001;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/www/test/403;
+	root /home/user42/Bureau/webserv/www;
 
 
 	accepted_methods	GET;

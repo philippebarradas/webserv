@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/14 15:45:40 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/14 15:53:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 	std::string empty = "";
 	size_t len = sizeof(elements) / sizeof(std::string);
 	for (size_t x = 0; x < len ; x++)
-		_big_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
-}
+		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 
 	_next_buffer_is_body = 0;
 	std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
