@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/11 17:19:25 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/14 15:31:58 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,14 +402,16 @@ void	TreatRequest::redirect( Parse_request & req, std::string const & path )
 	this->error_page(req);
 }
 
+// err TODO 406 ?? 408 ?? 411 ?? 413 ??
+
 bool	TreatRequest::check_access( Parse_request & req, std::string path )
 {
 	std::string	testPath;
 	int			size_parced;
 	bool		is_file;		// theorie is file but possible to be a dir without '/'
 
-	std::cout << "hello:" << path << std::endl;
-	std::cout << "this->exist(\"/tmp/test\") = " << this->exist("/tmp/test") <<  std::endl;
+//	std::cout << "hello:" << path << std::endl;
+//	std::cout << "this->exist(\"/tmp/test\") = " << this->exist("/tmp/test") <<  std::endl;
 
 	is_file = false;
 	while (path.length())
@@ -423,10 +425,10 @@ bool	TreatRequest::check_access( Parse_request & req, std::string path )
 		else
 			++size_parced;
 		testPath.insert(testPath.end(), path.begin(), path.begin() + size_parced);
-		std::cout << "testPath:\t=\t" << testPath << std::endl;
-		std::cout << "this->exist_dir(testPath + \'/\')\t=\t" << this->exist_dir(testPath + '/') << std::endl;
-		std::cout << "this->exist_dir(testPath)\t=\t" << this->exist_dir(testPath) << std::endl;
-		if (is_file && this->exist_dir(testPath)) // == the last parced part
+		//std::cout << "testPath:\t=\t" << testPath << std::endl;
+		//std::cout << "this->exist_dir(testPath + \'/\')\t=\t" << this->exist_dir(testPath + '/') << std::endl;
+		//std::cout << "this->exist_dir(testPath)\t=\t" << this->exist_dir(testPath) << std::endl;
+		if (is_file && (this->exist_dir(testPath) || this->exist_dir(testPath + "/"))) // == the last parced part
 		{
 			if (!this->permForOpen(testPath))
 				req.setStatus("403");
@@ -447,20 +449,20 @@ bool	TreatRequest::check_access( Parse_request & req, std::string path )
 			return (false);
 		}
 		path.erase(0, size_parced);
-		std::cout << "size_parced\t=\t" << size_parced << std::endl;
-		std::cout << "testPath\t=\t" << testPath << std::endl;
-		std::cout << "path\t\t=\t" << path << std::endl;
-		std::cout << std::endl << std::endl << std::endl;
+		//std::cout << "size_parced\t=\t" << size_parced << std::endl;
+		//std::cout << "testPath\t=\t" << testPath << std::endl;
+		//std::cout << "path\t\t=\t" << path << std::endl;
+		//std::cout << std::endl << std::endl << std::endl;
 		//std::cout << testPath << std::endl;
 	}
-	std::cout << "path.find('/')\t=\t" << path.find('/') << std::endl;
-	std::cout << "size_parced\t=\t" << size_parced << std::endl;
-	std::cout << "path.length()\t=\t" << path.length() << std::endl;
-	std::cout << "LEAVE PERM" << std::endl;
+	//std::cout << "path.find('/')\t=\t" << path.find('/') << std::endl;
+	//std::cout << "size_parced\t=\t" << size_parced << std::endl;
+	//std::cout << "path.length()\t=\t" << path.length() << std::endl;
+	//std::cout << "LEAVE PERM" << std::endl;
 	return (true);
 }
 
-void	TreatRequest::exec_root( Parse_request & req, std::string const & path )		// TODO RENAME TO exec
+void	TreatRequest::exec_root( Parse_request & req, std::string const & path )
 {
 	//std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
 	//std::cout << "this->permForOpen(path\t=\t" << this->permForOpen(path) << std::endl;
@@ -483,20 +485,20 @@ void	TreatRequest::exec( Parse_request & req )
 	std::string		path;
 	std::string		path_alias;
 
-	std::cout << "fake path:" <<  this->_loc->second.getRoot() + req.get_request("Path") <<  std::endl;
-	std::cout << "req.get_request(\"Path\")\t=\t" << req.get_request("Path") << std::endl;
+	//std::cout << "fake path:" <<  this->_loc->second.getRoot() + req.get_request("Path") <<  std::endl;
+	//std::cout << "req.get_request(\"Path\")\t=\t" << req.get_request("Path") << std::endl;
 
 	if (!this->exist(this->_loc->second.getRoot() + req.get_request("Path"))
 		&& this->_loc->first != "/")					// TODO JUST OPEN OR WITH PERMISSION ??
 	{
-		std::cout << "_loc->first\t=\t" << _loc->first << std::endl;
-		std::cout << "ALIAS" << std::endl;
+		//std::cout << "_loc->first\t=\t" << _loc->first << std::endl;
+		std::cout << "ALIAS METHOD" << std::endl;
 
 		path_alias = req.get_request("Path");
 		path_alias.erase(0, this->_loc->first.length());
 
-		std::cout << "path\t=\t" << path << std::endl;
-		std::cout << "path_alias\t=\t" << path_alias << std::endl;
+		//std::cout << "path\t=\t" << path << std::endl;
+		//std::cout << "path_alias\t=\t" << path_alias << std::endl;
 
 		path = this->_loc->second.getRoot() + path_alias;
 		exec_root(req, path);
@@ -520,7 +522,7 @@ void	TreatRequest::permMethod( Parse_request & req )
 	//std::cout << "*it\t=\t" << *it << std::endl;
 	if (it == this->_loc->second.getMethods().end())
 	{
-		std::cout << "NO METHOD" << std::endl;
+		//std::cout << "NO METHOD" << std::endl;
 		req.setStatus("405");
 		this->error_page(req);
 	}
@@ -532,7 +534,7 @@ std::string	TreatRequest::treat( Parse_request & req )
 {
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	//printMap(pol, "Tableau de merde");
+	printMap(pol, "Tableau de merde");
 
 	if (req.get_request("Status") == "400")
 	{
