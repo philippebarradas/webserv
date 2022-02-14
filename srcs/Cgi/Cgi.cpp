@@ -187,7 +187,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
-	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
+	std::cout << RED << "body_string = |" << body_string << "|" << END << std::endl ;
 	int fds_child[2];
 
 	pipe(fds_child);
@@ -218,17 +218,25 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	}
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
-	this->_send_content = body_response_from_fd(fds_exec[0]);
+	std::cout << "Content-Type\t=\t" << src_header.get_request("Content-Type:") << std::endl;
+	if (src_header.get_request("Method").compare("POST") == 0 &&
+		src_header.get_request("Content-Type:").compare("multipart/form-data") == 0)
+	{
+		upload_file(body_response_from_fd(fds_exec[0]));
+		this->_send_content = "";
+	}
+	else
+		this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	//this->_send_content << "|" << std::endl << END;
+	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::body_response_from_fd(int fd)
 {
-    __gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
-    std::istream is(&filebuf);
+	__gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
+	std::istream is(&filebuf);
 	std::string ret, line;
 	std::string content_type = "Content-type:";
 	while (std::getline(is, line))
@@ -241,7 +249,17 @@ std::string	Cgi::body_response_from_fd(int fd)
 			ret += '\n';
 		}
 	}
+	std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
+}
+
+void	Cgi::upload_file(std::string response)
+{
+	std::cout << "Je suis dans upload" << std::endl;
+	std::ofstream out("www/uploads/file_created.txt");
+
+	out << response;
+	out.close();
 }
 
 /*

@@ -25,7 +25,7 @@ server{
 	client_max_body_size 100M;
 	root /home/user42/Bureau/webserv/www;
 
-	index form.html;
+	index upload.html;
 	dav_methods DELETE;
 
 	location /test {

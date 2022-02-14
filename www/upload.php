@@ -1,19 +1,18 @@
 <?php
-$uploaddir = '/var/www/uploads/';
+// In PHP versions earlier than 4.1.0, $HTTP_POST_FILES should be used instead
+// of $_FILES.
+
+$uploaddir = '/home/user42/Bureau/webserv/www/uploads/';
 $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 
 echo '<pre>';
 if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-    echo "Le fichier est valide, et a été téléchargé
-           avec succès. Voici plus d'informations :\n";
+    echo "File is valid, and was successfully uploaded.\n";
 } else {
-    echo "Attaque potentielle par téléchargement de fichiers.
-          Voici plus d'informations :\n";
+    echo "Possible file upload attack!\n";
 }
 
-echo 'Voici quelques informations de débogage :';
+echo 'Here is some more debugging info:';
 print_r($_FILES);
 
-echo '</pre>';
-
-?>
+print "</pre>";
