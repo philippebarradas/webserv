@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.cpp                                         :+:      :+:    :+:   */
+/*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/01/11 09:19:32 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/13 17:30:50 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,19 @@
 Response::Response( Parse_request const & req, TreatRequest const & treat )
 {
 	this->writeRequestStatus(req.get_request("Status"));
-	this->_header += "Server: webserv/1.0 (Ubuntu)\n";
+	this->_header += "Server: webserv/1.0 (Ubuntu)\r\n";
 	this->writeDate();
 	this->writeType(treat.getExtension(), treat);
 	this->writeLenght(treat.getFile());
-	this->_header += "Connection: " + req.get_request("Connection:") + "\n";
+	this->_header += treat.getLocation()[0]
+		? "Location: " + treat.getLocation() + "\r\n"
+		: "";
+	this->_header += treat.getLastModif()[0]
+		? "Last-Modified: " + treat.getLastModif() + "\r\n"
+		: "";
+	this->_header += "Connection: " + req.get_request("Connection:") + "\r\n";
 
-	this->_header += "\n" + treat.getFile();
+	this->_header += "\r\n" + treat.getFile();
 }
 
 Response::Response()
@@ -75,8 +81,9 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "404"};
-	std::string		all_status[] = {"OK", "Not Found"};
+	std::string		all_code[] = {"200", "301", "400", "403", "404", "405"};
+	std::string		all_status[] = {"OK", "Moved Permanently", "Bad Request", "Forbidden",
+		"Not Found", "Not Allowed"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;
@@ -86,16 +93,17 @@ void	Response::writeRequestStatus( std::string const & code )
 	{
 		if (all_code[i] == code)
 		{
-			this->_header += " " + all_status[i] + "\n";
-			break;
+			this->_header += " " + all_status[i] + "\r\n";
+			return ;
 		}
 	}
+	this->_header += " Not Define\r\n";
 }
 
 void	Response::writeType( std::string const & extension, TreatRequest const & treat )
 {
 	if (treat.getIs_Cgi())
-		this->_header += treat.getType_Cgi() + "\n";
+		this->_header += treat.getType_Cgi() + "\r\n";
 	else
 	{
 		this->_header += "Content-Type: ";
@@ -103,7 +111,7 @@ void	Response::writeType( std::string const & extension, TreatRequest const & tr
 			this->_header += "text/html";
 		else
 			this->_header += "text/plain";
-		this->_header += "\n";
+		this->_header += "\r\n";
 	}
 }
 
@@ -112,7 +120,7 @@ void	Response::writeLenght( std::string const & page )
 	std::stringstream conv;
 
 	conv << page.length();
-	this->_header += "Content-Length: " + conv.str() + "\n";
+	this->_header += "Content-Length: " + conv.str() + "\r\n";
 }
 
 void	Response::writeDate( void )
@@ -125,7 +133,7 @@ void	Response::writeDate( void )
 	timeinfo = localtime(&rawtime);
 
 	strftime(buffer, 200, "%a, %d %b %G %T %Z",timeinfo);
-	this->_header += "Date: " + std::string(buffer) + "\n";
+	this->_header += "Date: " + std::string(buffer) + "\r\n";
 }
 
 
@@ -136,7 +144,7 @@ void	Response::writeDate( void )
 
 std::string const &	Response::getHeader( void ) const
 {
-	//std::cout << "_header\t=\t\n" << _header << std::endl;
+	//std::cout << "_header\t=\t\r\n" << _header << std::endl;
 	return (this->_header);
 }
 

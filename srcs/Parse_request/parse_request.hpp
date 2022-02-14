@@ -63,12 +63,13 @@ class Parse_request
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
 
+		void	setStatus( std::string const & code ) { this->_big_tab["Status"] = code; }
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
 
 		bool		_next_buffer_is_body;
 		size_t		_request_body_size;
 		size_t		_client_max_body_size;
-		
+
 	private:
 		std::string	_request_body;
 		std::string	fill_header_tab(std::string str);

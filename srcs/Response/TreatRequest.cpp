@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 10:25:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/14 15:31:58 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,22 @@ void printMap(T & map, std::string const & name)
 }
 
 void	TreatRequest::cpyInfo( std::string const & extension,
-	std::string const & path )
+	std::string const & path, Parse_request const & req )
 {
+	struct tm *	timeinfo;
+	struct stat	result;
+	char		time_modified_file[50];
+
+	stat(path.c_str(), &result);
+	if (req.get_request("Status") == "200")
+	{
+		timeinfo = localtime (&result.st_ctim.tv_sec);
+		strftime(time_modified_file, 50, "%a, %d %b %G %T %Z", timeinfo);
+		this->_last_modif = std::string(time_modified_file);
+		//std::cout << "_last_modif\t=\t" << _last_modif << std::endl;
+	}
+	//std::cout << "_last_modif\t=\t" << _last_modif << std::endl;
 	this->_extension = extension;
-	// TODO CPY LAST MODIFIED
 }
 
 void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs )
@@ -120,12 +132,101 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	//dov le ashkénaze
 }
 
+bool	TreatRequest::permForOpen( std::string const & path ) const
+{
+	struct stat sbuf;
+
+	int ret_stat = stat(path.c_str(), &sbuf);
+
+	if (ret_stat == -1)
+		return (false);
+	//std::cout << "test perm = ";
+
+	if (sbuf.st_mode & S_IRUSR)
+	{
+		//std::cout << "readable" << std::endl;
+		return (true);
+	}
+	else
+	{
+		//std::cout << "not readable" << std::endl;
+		return (false);
+	}
+	return (true);
+	// true = perm ok / false = no perm(403)
+}
+
+bool	TreatRequest::exist_file( std::string const & path) const
+{
+	//std::cout << "test file:";
+	// true = exist  / false = no exist
+
+	if (access(path.c_str(), F_OK) != -1) // fichier
+	{
+		//std::cout << "File exist !" << std::endl;
+		return (true);
+	}
+	//std::cout << "File not exist !" << std::endl;
+	return (false);
+}
+
+bool	TreatRequest::exist_dir( std::string const & root) const
+{
+	//std::cout << "test dir :";
+	// true = exist  / false = no exist
+	struct stat sbuf_dir;
+
+	int ret_stat_dir = stat(root.c_str(), &sbuf_dir);
+
+	if (S_ISDIR(sbuf_dir.st_mode)) // dossier
+	{
+		//std::cout << "Dir exist !" << std::endl;
+		return (true);
+	}
+	//std::cout << "Dir not exist !" << std::endl;
+	return (false);
+}
+
+bool	TreatRequest::exist( std::string const & root) const
+{
+	//std::cout << "test exist for:" << root << std::endl;
+	if (this->exist_dir(root) || this->exist_file(root))
+		return (true);
+	return (false);
+}
+
+/* bool	TreatRequest::exist( std::string const & path, Parse_request & req) const
+{
+	// true = exist  / false = no exist
+	struct stat sbuf_dir;
+
+	int ret_stat_dir = stat((this->_loc->second.getRoot() + req.get_request("Path")).c_str(), &sbuf_dir);
+
+	if (ret_stat_dir == -1)
+		return (false);
+	if (access(path.c_str(), F_OK) != -1) // fichier
+	{
+		std::cout << "Fichier existe !" << std::endl;
+		return (true);
+	}
+	else if (S_ISDIR(sbuf_dir.st_mode)) // dossier
+	{
+		std::cout << "Dossier existe et perm verifie!" << std::endl;
+		return (true);
+	}
+	std::cout << "Fichier existe pas!" << std::endl;
+	return (false);
+} */
+
 bool	TreatRequest::openAndRead( std::string const & path,
-	Parse_request const & req )
+	Parse_request & req )
 {
 	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it, end;
 	std::string	extension;
+
+	if (!exist_file(path))// &&
+		return (false);
 
 	ifs.open(path.c_str(), std::ifstream::in);
 	if (!(ifs.is_open()))
@@ -134,13 +235,17 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
 	this->_cgi = false;
-	end = it = this->_loc->second.getCgi().end();
-	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
+
+	if (req.get_request("Status") != "400")
 	{
-		if (extension == it->first)
+		end = it = this->_loc->second.getCgi().end();
+		for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 		{
-			this->_cgi = true;
-			break;
+			if (extension == it->first)
+			{
+				this->_cgi = true;
+				break;
+			}
 		}
 	}
 
@@ -148,7 +253,7 @@ bool	TreatRequest::openAndRead( std::string const & path,
 		this->readDynamicFile(path, it->second, req);
 	else
 		this->readStaticFile(path, ifs);
-	this->cpyInfo(extension, path);
+	this->cpyInfo(extension, path, req);
 	return (true);
 }
 
@@ -181,44 +286,35 @@ size_t	TreatRequest::similarity_point(std::string const & locName,
 		if (locName[i] != path[i])
 			return (0);
 	}
-
-	/*std::cout << "locName[i] : " << (locName[i] ? "true" : "false") << std::endl;
-	std::cout << "path[i]    : " << (path[i] ? "true" : "false") << std::endl;
-	std::cout << "path[i]\t=\t" << path[i] << std::endl;*/
-
 	if (locName[i] || (i > 0 && path[i] && path[i - 1] != '/' && path[i] != '/'))
 		return (0);
-	/*std::cout << "locName\t=\t" << locName << std::endl;
-	std::cout << "path\t=\t" << path << std::endl;
-	std::cout << "ret\t=\t" << ret << std::endl;
-	std::cout << "path[i]\t=\t" << path[i] << std::endl;
-	std::cout << std::endl;*/
 
 	return (ret);
 }
 
-void	TreatRequest::selectLocation(
-	Parse_request const & req,
+std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
+	std::string const &	path,
 	std::map<std::string, Server> const & allLoc )
 {
-	std::map<std::string, Server>::const_iterator	it, end;
+	std::map<std::string, Server>::const_iterator	it, end, ret;
 	size_t	similarity, most;
 
 	most = 0;
 	end = allLoc.end();
 	for (it = allLoc.begin() ; it != end ; ++it)
 	{
-		similarity = this->similarity_point(it->first, req.get_request("Path"));
-		//std::cout << "similarity\t=\t" << similarity << std::endl;
+		similarity = this->similarity_point(it->first, path);
 		if (similarity > most)
 		{
 			most = similarity;
-			this->_loc = it;
+			ret = it;
 		}
 	}
+
+	return (ret);
 }
 
-bool	TreatRequest::is_dir( std::string const & path ) const
+bool	TreatRequest::is_dir( std::string const & path ) const		// to delete ??
 {
 	DIR *pDir;
 
@@ -229,7 +325,7 @@ bool	TreatRequest::is_dir( std::string const & path ) const
 	return true;
 }
 
-bool	TreatRequest::search_index( Parse_request const & req,
+bool	TreatRequest::search_index( Parse_request & req,
 	std::string const & path )
 {
 	std::set<std::string>::const_iterator	it, end;
@@ -246,87 +342,218 @@ bool	TreatRequest::search_index( Parse_request const & req,
 	return (false);
 }
 
-void	TreatRequest::generateAutoIndex( Parse_request const & req,
+void	TreatRequest::generateAutoIndex( Parse_request & req,
 	std::string const & path )
 {
+	//std::cout << this->_loc->second.getAutoindex() << std::endl;
+
 	if (!this->_loc->second.getAutoindex())
 	{
-		std::cout << "TODO ERROR AUTOINDEX OFF" << std::endl;
-		return ;
-	}
-
-	if (this->is_dir(path))
-	{
-		//std::cout << "LETZGONGUE " << path << " IS DIR !" << std::endl;
-		Autoindex	page(path.c_str(), req.get_request("Path"));
-
-		this->_file = page.getPage();
-		this->_extension = ".html";
-
+		req.setStatus("403");
+		this->error_page(req);
 	}
 	else
-		std::cout << "TODO ERROR PATH IS NOT VALID/DIR" << std::endl;
+	{
+		Autoindex	page(path.c_str(), req.get_request("Path"));
+		this->_file = page.getPage();
+		this->_extension = ".html";
+	}
 }
 
-void	TreatRequest::exec_root( Parse_request const & req )
+void	TreatRequest::error_page( Parse_request & req )
 {
-	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
+	std::map<std::string, Server>::const_iterator	locErr;
+	std::map<unsigned int, std::string>				allError;
+	std::string			codeStr, path;
+	std::stringstream	conv;
+	unsigned int		code;
+	bool				find_custom;
 
-	//std::cout << "path\t=\t" << path << std::endl;
+	codeStr = req.get_request("Status");
+	allError = this->_loc->second.getError();
 
-	if (path[path.length() - 1] == '/')
+	conv << codeStr;
+	conv >> code;
+
+	find_custom = false;
+
+	if (allError[code] != "")
 	{
+		locErr = this->selectLocation(allError[code], this->_conf[this->_i_conf].getLocation());
+		path = locErr->second.getRoot() + locErr->first;
+		if (this->openAndRead(path, req))
+			find_custom = true;
+	}
+	if (!find_custom)
+	{
+		path = DEFAULT_ROOT_ERROR + codeStr + ".html";
+		this->openAndRead(path, req);
+	}
+}
+
+void	TreatRequest::redirect( Parse_request & req, std::string const & path )
+{
+	this->_location = "http://"
+		+ req.get_request("Host-uncut-comme-les-casquettes")
+		+ ":" + int_to_string(this->_eng->GetAccessPort())
+		+ req.get_request("Path") + "/";
+	//std::cout << "_location\t=\t" << _location << std::endl;
+	req.setStatus("301");
+	this->error_page(req);
+}
+
+// err TODO 406 ?? 408 ?? 411 ?? 413 ??
+
+bool	TreatRequest::check_access( Parse_request & req, std::string path )
+{
+	std::string	testPath;
+	int			size_parced;
+	bool		is_file;		// theorie is file but possible to be a dir without '/'
+
+//	std::cout << "hello:" << path << std::endl;
+//	std::cout << "this->exist(\"/tmp/test\") = " << this->exist("/tmp/test") <<  std::endl;
+
+	is_file = false;
+	while (path.length())
+	{
+		size_parced = path.find('/');
+		if (size_parced == std::string::npos)
+		{
+			is_file = true;
+			size_parced = path.length();
+		}
+		else
+			++size_parced;
+		testPath.insert(testPath.end(), path.begin(), path.begin() + size_parced);
+		//std::cout << "testPath:\t=\t" << testPath << std::endl;
+		//std::cout << "this->exist_dir(testPath + \'/\')\t=\t" << this->exist_dir(testPath + '/') << std::endl;
+		//std::cout << "this->exist_dir(testPath)\t=\t" << this->exist_dir(testPath) << std::endl;
+		if (is_file && (this->exist_dir(testPath) || this->exist_dir(testPath + "/"))) // == the last parced part
+		{
+			if (!this->permForOpen(testPath))
+				req.setStatus("403");
+			else
+				this->redirect(req, testPath);
+			return (false);
+		}
+		else if (!this->exist(testPath))
+		{
+			req.setStatus("404");
+			std::cout << "404" << std::endl;
+			return (false);
+		}
+		else if (!this->permForOpen(testPath))
+		{
+			std::cout << "403" << std::endl;
+			req.setStatus("403");
+			return (false);
+		}
+		path.erase(0, size_parced);
+		//std::cout << "size_parced\t=\t" << size_parced << std::endl;
+		//std::cout << "testPath\t=\t" << testPath << std::endl;
+		//std::cout << "path\t\t=\t" << path << std::endl;
+		//std::cout << std::endl << std::endl << std::endl;
+		//std::cout << testPath << std::endl;
+	}
+	//std::cout << "path.find('/')\t=\t" << path.find('/') << std::endl;
+	//std::cout << "size_parced\t=\t" << size_parced << std::endl;
+	//std::cout << "path.length()\t=\t" << path.length() << std::endl;
+	//std::cout << "LEAVE PERM" << std::endl;
+	return (true);
+}
+
+void	TreatRequest::exec_root( Parse_request & req, std::string const & path )
+{
+	//std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
+	//std::cout << "this->permForOpen(path\t=\t" << this->permForOpen(path) << std::endl;
+	//std::cout << "this->exist(path)\t=\t" << this->exist(path) << std::endl;
+	std::cout << "pathDEBatarD\t=\t" << path << std::endl;
+	if (!this->check_access(req, path))
+		this->error_page(req);
+	else if (path[path.length() - 1] == '/')
+	{
+		//std::cout << "pathDEBatarD\t=\t" << path << std::endl;
 		if (!this->search_index(req, path))
 			this->generateAutoIndex(req, path);
 	}
 	else
-	{
-		if (!this->openAndRead(path, req))
-			std::cout << "TODO REDIRECT ERROR PAGE" << std::endl;
-	}
+		this->openAndRead(path, req);
 }
 
-void	TreatRequest::exec( Parse_request const & req)
+void	TreatRequest::exec( Parse_request & req )
 {
-	std::ifstream ifs;
+	std::string		path;
+	std::string		path_alias;
 
-	//std::cout << "loc->second.getRoot()\t=\t" << _loc->second.getRoot() << std::endl;
+	//std::cout << "fake path:" <<  this->_loc->second.getRoot() + req.get_request("Path") <<  std::endl;
+	//std::cout << "req.get_request(\"Path\")\t=\t" << req.get_request("Path") << std::endl;
 
-	ifs.open(this->_loc->second.getRoot());
-	if (!(ifs.is_open()))
+	if (!this->exist(this->_loc->second.getRoot() + req.get_request("Path"))
+		&& this->_loc->first != "/")					// TODO JUST OPEN OR WITH PERMISSION ??
 	{
-		std::cout << "TO DO ALIAS METHOD" << std::endl;
-		//this->is_alias();
+		//std::cout << "_loc->first\t=\t" << _loc->first << std::endl;
+		std::cout << "ALIAS METHOD" << std::endl;
+
+		path_alias = req.get_request("Path");
+		path_alias.erase(0, this->_loc->first.length());
+
+		//std::cout << "path\t=\t" << path << std::endl;
+		//std::cout << "path_alias\t=\t" << path_alias << std::endl;
+
+		path = this->_loc->second.getRoot() + path_alias;
+		exec_root(req, path);
 	}
 	else
 	{
-
-		//std::cout << "ROOT METHOD" << std::endl;
-		ifs.close();
-		//std::cout << "is_dir(file)\t=\t" << is_dir(this->_loc->second.getRoot()) << std::endl;
-		exec_root(req);
+		std::cout << "ROOT METHOD" << std::endl;
+		path = this->_loc->second.getRoot() + req.get_request("Path");
+		exec_root(req, path);
 	}
 }
 
-std::string	TreatRequest::treat( Parse_request const & req )
+void	TreatRequest::permMethod( Parse_request & req )
 {
-	size_t	i_conf;
+	std::string	cmd;
+	std::set<std::string>::const_iterator	it;
 
+	cmd = req.get_request("Method");
+	it = this->_loc->second.getMethods().find(cmd);
+	//std::cout << "CRASH" << std::endl;
+	//std::cout << "*it\t=\t" << *it << std::endl;
+	if (it == this->_loc->second.getMethods().end())
+	{
+		//std::cout << "NO METHOD" << std::endl;
+		req.setStatus("405");
+		this->error_page(req);
+	}
+	else
+		this->exec(req);
+}
+
+std::string	TreatRequest::treat( Parse_request & req )
+{
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	//printMap(pol, "Tableau de merde");
+	printMap(pol, "Tableau de merde");
 
-	i_conf = this->selectConf(req);
-	std::cout << "i_conf\t=\t" << i_conf << std::endl;
-	this->selectLocation(req, this->_conf[i_conf].getLocation());
-	std::cout << "location\t=\t" << _loc->first << std::endl;
-	std::cout << "loc->second\t=\t" << _loc->second << std::endl;
-
-
-	if (req.get_request("Method") == "GET")
-		this->exec(req);
+	if (req.get_request("Status") == "400")
+	{
+		std::string path_bad_req = DEFAULT_ROOT_ERROR "400.html";
+		this->openAndRead(path_bad_req, req);
+	}
 	else
-		std::cout << "TODO CAS D'ERREUR" << std::endl;
+	{
+		this->_i_conf = this->selectConf(req);
+		std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
+		this->_loc = this->selectLocation(req.get_request("Path"), this->_conf[this->_i_conf].getLocation());
+		std::cout << "location\t=\t" << _loc->first << std::endl
+			<< _loc->second << std::endl;
+
+		if (req.get_request("Status") != "200")
+			this->error_page(req);
+		else
+			this->permMethod(req);
+	}
 
 	Response	rep(req, *this);
 	//std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;
@@ -338,6 +565,16 @@ std::string	TreatRequest::treat( Parse_request const & req )
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+std::string const &	TreatRequest::getLocation( void ) const
+{
+	return (this->_location);
+}
+
+std::string const &	TreatRequest::getLastModif( void ) const
+{
+	return (this->_last_modif);
+}
 
 std::string const &	TreatRequest::getExtension( void ) const
 {
