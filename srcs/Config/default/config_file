@@ -1,7 +1,7 @@
 
 server{
 	server_name localhost;
-	listen 8001;
+	listen 8003;
 
 	autoindex on;
 
@@ -12,7 +12,7 @@ server{
 	cgi .php /usr/bin/php-cgi;
 
 	location / {
-		index form.html;
+		index no.html;
 	}
 
 	location /salutlol {
