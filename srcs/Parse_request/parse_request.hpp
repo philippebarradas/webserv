@@ -18,6 +18,9 @@
 #define KEEP 0
 #define STOP -1
 
+std::string		int_to_string(int x);
+
+
 class Server;
 
 class Parse_request
@@ -30,7 +33,7 @@ class Parse_request
 
 		std::string get_request(std::string request) const
 		{
-			for (std::map<std::string, std::string>::const_iterator it = _big_tab.begin(); it != _big_tab.end(); ++it)
+			for (std::map<std::string, std::string>::const_iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 			{
 				if (request.compare(it->first) == 0)
 				{
@@ -47,21 +50,34 @@ class Parse_request
 			return (_request_body);
 		}
 
+		std::string get_request_body_size() const
+		{
+			return (int_to_string(_request_body_size));
+		};
 
+		void	set_next_buffer_is_body(bool val)
+		{
+			_next_buffer_is_body = val;
+		};
 		int		buff_is_valid(char *buff);
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
 
-		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_big_tab;}
 		void	setStatus( std::string const & code ) { this->_big_tab["Status"] = code; }
+		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
+
+		bool		_next_buffer_is_body;
+		size_t		_request_body_size;
+		size_t		_client_max_body_size;
 
 	private:
 		std::string	_request_body;
-		std::string	fill_big_tab(std::string str);
+		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();
 		void		parse_path();
 		int			fill_variables();
 		int			init_buffer(char *buff);
+		void		is_body(size_t found);
 
 		int			check_request();
 		int			check_first_line(size_t full_size);
@@ -71,7 +87,7 @@ class Parse_request
 
 		std::vector<std::string> full_path;
 
-		std::map<std::string, std::string> _big_tab;
+		std::map<std::string, std::string> _header_tab;
 		std::string _buffer;
 		size_t _nbr_line;
 };

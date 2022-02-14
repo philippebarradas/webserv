@@ -147,7 +147,8 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
@@ -170,6 +171,7 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 	{
 		std::string	content = it_env->first + "=" + it_env->second;
+		//std::cout << "coontent =" << content << std::endl;
 		env[j] = new char[content.size() + 1];
 		env[j] = strcpy(env[j], content.c_str());
 		j++;
@@ -194,13 +196,13 @@ char	**Cgi::create_argv(std::string path_file_executed)
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
-	std::cout << RED << "body_string = " << body_string << END << std::endl ;
+	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
 	int fds_child[2];
 
 	pipe(fds_child);
 	dup2(fds_child[0], STDIN_FILENO);
 	close(fds_child[0]);
-	write(fds_child[1], body_string.c_str(), sizeof(body_string));
+	write(fds_child[1], body_string.c_str(), body_string.size());
 	close(fds_child[1]);
 }
 
@@ -210,6 +212,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	//std::cout << "body_string\t=\t" << body_string << std::endl;
 
 	std::string body_string = src_header.get_request_body();
+
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 
@@ -228,10 +231,11 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
 	this->_send_content = fd_to_string(fds_exec[0]);
+
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
-	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	this->_send_content << "|" << std::endl << END;
+	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	//this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::fd_to_string(int fd)
