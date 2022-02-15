@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/14 18:33:43 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/15 15:13:57 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ void	TreatRequest::cpyInfo( std::string const & extension,
 
 void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs )
 {
+	std::cout << "STATIC READ" << std::endl;
 	std::string	line;
 
 	while (std::getline(ifs, line))
@@ -122,10 +123,12 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
+	std::cout << "DYNAMIC READ" << std::endl;
 	Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
+
 	this->_file = obj_cgi.getSend_content();
 	this->_type_cgi = obj_cgi.getType_Cgi();
 	//std::cout << "this->_file\t=\t" << this->_file << std::endl;
