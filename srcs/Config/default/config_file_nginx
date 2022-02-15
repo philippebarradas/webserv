@@ -9,6 +9,7 @@ server{
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 
+	client_max_body_size 1000000000;
 	index form.html;
 	dav_methods DELETE;
 
@@ -20,3 +21,4 @@ server{
 	}
 
 }}
+
