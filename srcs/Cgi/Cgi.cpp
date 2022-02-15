@@ -219,14 +219,14 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
 	std::cout << "Content-Type\t=\t" << src_header.get_request("Content-Type:") << std::endl;
-	if (src_header.get_request("Method").compare("POST") == 0 &&
+	/* if (src_header.get_request("Method").compare("POST") == 0 &&
 		src_header.get_request("Content-Type:").compare("multipart/form-data") == 0)
 	{
-		upload_file(body_response_from_fd(fds_exec[0]));
+		//upload_file(body_response_from_fd(fds_exec[0]));
 		this->_send_content = "";
 	}
-	else
-		this->_send_content = body_response_from_fd(fds_exec[0]);
+	else */
+	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
@@ -253,14 +253,14 @@ std::string	Cgi::body_response_from_fd(int fd)
 	return (ret);
 }
 
-void	Cgi::upload_file(std::string response)
+/* void	Cgi::upload_file(std::string response)
 {
 	std::cout << "Je suis dans upload" << std::endl;
 	std::ofstream out("www/uploads/file_created.txt");
 
 	out << response;
 	out.close();
-}
+} */
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
