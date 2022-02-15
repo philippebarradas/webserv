@@ -140,7 +140,10 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
+	if (src_header.get_request_body_size() == "0")
+		this->_env["CONTENT_LENGTH"] = "";
+	else
+		this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
@@ -151,8 +154,8 @@ void	Cgi::init_env(const Parse_request & src_header, const Engine & src_engine)
 	init_env_client_var(src_header);
 	init_env_server_var(src_header);
 	init_env_request_var(src_header, src_engine);
-	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
-		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
+	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
+		std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
 
 char **Cgi::convert_env(std::map<std::string, std::string>)
