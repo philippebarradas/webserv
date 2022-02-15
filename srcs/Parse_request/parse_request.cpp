@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/10 17:05:49 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/14 15:20:15 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,9 @@ Parse_request::Parse_request() : _nbr_line(0)
 ** --------------------------------- METHODS ----------------------------------
 */
 
-int		Parse_request::buff_is_valid(char *buff)
+int		Parse_request::parse_request_buffer(char *buff)
 {
+	std::cout << PURPLE << "buff=[" << buff << "]" << END << std::endl;
 	std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
   	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
@@ -117,7 +118,7 @@ int		Parse_request::buff_is_valid(char *buff)
 		std::cout << "ERROR 413 STATUS" << std::endl;
 		return (STOP);
 	}
-	//std::cout << "buff_is_valid == \n{"<< _buffer << "}" << std::endl;
+	//std::cout << "parse_request_buffer == \n{"<< _buffer << "}" << std::endl;
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{

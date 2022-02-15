@@ -21,7 +21,7 @@ server{
 	server_name hello12 hello55;
 	listen 7777;
 
-	client_max_body_size	 900000;
+	client_max_body_size	 5;
 
 	autoindex on;
 	root /home/user42/Bureau/webserv/www/;
@@ -32,7 +32,7 @@ server{
 	location /error_page {
 		index my_index.html;
 	}
-	location ~ \.php$ {
+	location / {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
 		fastcgi_index hello.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;

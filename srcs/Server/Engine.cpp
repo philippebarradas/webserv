@@ -195,21 +195,20 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	std::string 	buff_send;
 
 	//size_t	buff_size = 330000;
-	size_t	client_max_body_size = 2000000; // == 1M (1 000 000) default case
+	size_t	client_max_body_size = 1000000; // == 1M (1 000 000) default case
 
 	parse_head._client_max_body_size = client_max_body_size;
 
 	char	buff[client_max_body_size];
+
 	int		valread = -1;
-	int		nbr_bytes_send = 0;
 	bool	is_valid = true;
 	size_t	recv_len = 0;
 	size_t	head;
-	//std::cout << GREEN <<"start _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
+
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
-	{
-		
+	{	
 		valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
@@ -218,7 +217,9 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		head = valread;
 		std::cout << "-buf-\n-|" << GREEN << buff << END << "|-\n-end-" << std::endl;
 
-		std::cout << "BUFF IS VALID = " << parse_head.buff_is_valid(buff) << std::endl;
+		std::cout << RED << "parse_head.parse_request_buffer(buff)=[" << parse_head.parse_request_buffer(buff) << "]" << END << std::endl;
+		//parse_head.parse_request_buffer(buff);
+
 
 		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
 		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
@@ -226,6 +227,12 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
  		if (parse_head.get_request("Expect:").compare("") != 0
 		&& parse_head.get_request("Content-Length:").compare("") != 0)
 		{
+/* 			bzero(&buff, sizeof(buff));
+			buff[head + std::stoi(parse_head.get_request("Content-Length:"))];
+			bzero(&buff, sizeof(buff)); */
+
+			std::cout << RED << "ICI" << END << std::endl;
+			send(fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
 			while (valread != 0 &&  std::strlen(buff) < head + std::stoi(parse_head.get_request("Content-Length:")))
 			{
@@ -236,36 +243,29 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 				//std::cout << RED << "valread=[" << valread << "]" << END << std::endl;
 			}
 		}
-		
-		
-		//std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
-		//std::cout << "valread=[" << valread << "]" << std::endl;
-		//std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
-		//std::cout << BLUE << "buff.size() - head =[" << std::strlen(buff) - head<< "]" << END << std::endl;
-
-		if (parse_head.get_request("Content-Length:").compare("") != 0)
-		{
-			std::cout << BLUE << "(Content-Length:)=["<< std::stoi(parse_head.get_request("Content-Length:"))<< "]" << END << std::endl;
-		}
 
 
-		if (parse_head.buff_is_valid(buff) == 0)
+		if (parse_head.parse_request_buffer(buff) == 0)
 		{
 			std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
 			std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
-			std::cout << "[EPOLWAIT]" << std::endl;
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+			std::cout << "[EPOLWAIT]" << std::endl;
 		}
 		else
 			is_valid = false;
-		//std::cout << "end boucle = " << parse_head._next_buffer_is_body << std::endl;
 	}
 	if (parse_head._next_buffer_is_body == 1 && parse_head._request_body_size != 0)
 		parse_head._next_buffer_is_body = 0;
 
-	//std::cout << GREEN <<"OUTSIDE _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
-	//std::cout << std::endl << std::endl << std::endl;
-	//std::cout << std::endl << std::endl << std::endl;
+	send_data(valread, fd, src, parse_head);
+
+}
+
+void	Engine::send_data(int valread, int fd,const std::vector<Server> & src, const Parse_request & parse_head)
+{
+	int		nbr_bytes_send = 0;
+
 	std::vector<Server>::const_iterator it;
 	std::string port_str = static_cast<std::ostringstream*>( &(std::ostringstream() << this->_port))->str();
 
@@ -273,102 +273,17 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	for (it = src.begin(); it != src.end(); it++, i_listen++)
 		if ((*it).getListen() == port_str)
 			break ;
-	//std::string new_buffer = _buffer.substr(limit, std::strlen(buff) - );
-	//Cgi		obj_cgi(src.at(i_listen), parse_head, *this);
-	size_t full_size = 0;
-	std::string request_body = parse_head.get_request_body();
-
-	std::string one;
-	std::string two;
-	std::string thre;
 
  	if (valread != 0)
 	{
 		TreatRequest	treatment(src, *this);
-
-		std::cout << "{BEFORE TREAT CMD}" << std::endl;
-
-		//while (full_size < std::stoi(parse_head.get_request("Content-Length:")))
-		//{
-			
-			//std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
-			this->_buff_send = treatment.treat(parse_head);
-
-			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
-
-
-			this->_buff_send = "qweqwe";
-			parse_head._request_body = "qweqwe";
-
-
-			this->_buff_send = treatment.treat(parse_head);
-			nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
-
-
-	//_buffer.substr(start, size)
-			//full_size += this->_buff_send.size();
-			//parse_head.set_request_body(request_body.substr(this->_buff_send.size(),
-			//std::stoi(parse_head.get_request("Content-Length:")) - this->_buff_send.size() ));
-
-			//std::cout << GREEN << "parse_head.get_request_body()=[" << parse_head.get_request_body() << "]" << END << std::endl;
-		
-			//two = treatment.treat(parse_head);
-			//std::cout << BLUE << "_buff_send=[" << _buff_send << "]" << END << std::endl;
-
-			//thre = this->_buff_send + two;
-			//std::cout << BLUE << "thre=[" << thre << "]" << END << std::endl;
-			//nbr_bytes_send = send(fd, thre.c_str(), thre.size(), 0);
-		
-		
-		//}
-		//std::cout << "\n_buff_send:\n" << _buff_send << std::endl;
-
-		//std::cout << YELLOW << "this->_buff_send.c_str()=[" << this->_buff_send.c_str() << "]" << END << std::endl;
-		//std::cout << YELLOW << "this->_buff_send.size()=[" << this->_buff_send.size() << "]" << END << std::endl;
-
-		std::cout << "{NORMAL SEND}" << std::endl;
-		/*if (obj_cgi.is_file_cgi(parse_head.get_request("Path")) == TRUE)
-		{
-			obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/hello.php"),
-			obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
-			nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
-				obj_cgi.getSend_content().size(), 0);
-			//close(fd);
-		}
-		else
-		{
-			buff_send = request.is_Treat_request(buff, src, this->_port, parse_head);
-			if (parse_head.get_request("Method").compare("POST") == 0)
-				//parse_head.get_request("method").compare("GET") == 0)
-			{
-				obj_cgi.exec_cgi(obj_cgi.create_argv(src.at(i_listen).getRoot() + "/env.php"),
-				obj_cgi.convert_env(obj_cgi.getEnv()), parse_head);
-				nbr_bytes_send = send(fd, obj_cgi.getSend_content().c_str(),
-					obj_cgi.getSend_content().size(), 0);
-			}
-			else
-			{
-				nbr_bytes_send = send(fd, buff_send.c_str(), buff_send.size(), 0);
-		}*/
+		this->_buff_send = treatment.treat(parse_head);
+		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
-	//std::cout << " ----|" << parse_head.get_request("Expect:") << "|" << std::endl;
-	//if (parse_head.get_request("Expect:").compare("100-continue") != 0)
-	//{
-		close(fd);
-	//}
-	//else
-	//{
-	//	parse_head.set_next_buffer_is_body(TRUE);
-	//	std::cout << "du coup _next_buffer_is_body " << parse_head._next_buffer_is_body << std::endl;
-	//}
-	//if (parse_head.get_request("status").compare("200") != 0 ||
-		//parse_head.get_request("Connection:").find("close") != std::string::npos)
-	//close(fd);
-	std::cout << GREEN <<"END _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
-
+	close(fd);
 }
 
 void	Engine::loop_server(const std::vector<Server> & src)
