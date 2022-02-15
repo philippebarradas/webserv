@@ -21,7 +21,7 @@ server{
 	server_name hello12 hello55;
 	listen 7777;
 
-	client_max_body_size	 5;
+	client_max_body_size	 10000000000;
 
 	autoindex on;
 	root /home/user42/Bureau/webserv/www/;

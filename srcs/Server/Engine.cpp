@@ -196,11 +196,12 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 
 	//size_t	buff_size = 330000;
 	size_t	client_max_body_size = 1000000; // == 1M (1 000 000) default case
+	std::cout << RED << "element=[" << 	src.begin()->getMaxbody() << "]" << END << std::endl;
 
 	parse_head._client_max_body_size = client_max_body_size;
 
 	char	buff[client_max_body_size];
-
+	std::cout << "{xx}" << std::endl;
 	int		valread = -1;
 	bool	is_valid = true;
 	size_t	recv_len = 0;
@@ -238,9 +239,11 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 			{
 				valread = recv(fd, &buff[recv_len], 1, 0);
 				recv_len += valread;
+
+				
 				//std::cout << BLUE << "buff=[" << buff << "]" << END << std::endl;
 				//std::cout << GREEN  << recv_len  << " < " << std::stoi(parse_head.get_request("Content-Length:")) << END << std::endl;
-				//std::cout << RED << "valread=[" << valread << "]" << END << std::endl;
+				//std::cout << RED << "valread=[" << valread << "]" << END <code < std::endl;
 			}
 		}
 

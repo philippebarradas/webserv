@@ -182,121 +182,28 @@ char	**Cgi::create_argv(std::string path_file_executed)
 	argv[2] = NULL;
 	return (argv);
 }
-#include <unistd.h>
-
-void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
-{
-	int fds_child[4];
-
-	std::cout << PURPLE << "body_string=[" << body_string << "]" << END << std::endl;
-	std::cout << RED << "body_string.size()=[" << body_string.size() << "]" << END << std::endl;
-	std::cout << "{IN}" << std::endl;
-	pipe(fds_child);
-	//fcntl(fds_child[0], F_SETFL, O_NONBLOCK);
-			//pipe_sz = fcntl(fds_child[0], F_SETPIPE_SZ, 8999999999999999999);
-			//std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl;
-	/* pipe_sz = fcntl(fds_child[0],  F_SETFL, O_NONBLOCK);
-	std::cout << GREEN << "pipe_sz=[" << pipe_sz << "]" << END << std::endl; */
-
-	fcntl(fds_child[1],  F_SETFL, O_NONBLOCK);
-	fcntl(fds_child[0],  F_SETFL, O_NONBLOCK);
-
-	dup2(fds_child[0], STDIN_FILENO);
-	
-
-
-	close(fds_child[0]);
-
-
-	size_t x = 0;
-	int z = -1;
-	for ( std::string::iterator it = body_string.begin(); it != body_string.end(); it++)
-	{
-		// 		65336
-		//if (x < 66000)
-	//	{
-			z = write(fds_child[1], &body_string[x], 1);
-
-			std::cout << RED << "" << z << " " << END;
-			_still++;
-			if (z == -1)
-			{
-				std::cout << x << " ";
-			}
-
-		z = -1;
-		x++;
-	}
-
-	close(fds_child[1]);
-
-
-	fcntl(fds_child[3],  F_SETFL, O_NONBLOCK);
-	fcntl(fds_child[2],  F_SETFL, O_NONBLOCK);
-
-	dup2(fds_child[2], STDIN_FILENO);
-	
-
-
-	close(fds_child[2]);
-
-
-	 x = 0;
-	 z = -1;
-	for ( std::string::iterator it = body_string.begin(); it != body_string.end(); it++)
-	{
-		// 		65336
-		//if (x < 66000)
-	//	{
-			z = write(fds_child[3], &body_string[x], 1);
-
-			std::cout << RED << "" << z << " " << END;
-			_still++;
-			if (z == -1)
-			{
-				std::cout << x << " ";
-			}
-
-		z = -1;
-		x++;
-	}
-
-	close(fds_child[3]);
-
-
-	{}
-
-}
 
 void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
 	std::string body_string = src_header.get_request_body();
-
-	int		real_stdin = dup(STDIN_FILENO); // copie descriteur de fichier
+	int		real_stdin = dup(STDIN_FILENO);
 	int		real_stdout = dup(STDOUT_FILENO);
-	int		status = 0;
-	//tmpfile() function opens a unique temporary file in binary read/write (w+b) mode.
-	//The file will be automatically deleted when it is closed or the program terminates.
-
 	FILE	*file_stdin = tmpfile();
 	FILE	*file_stdout = tmpfile();
-
-	//Fileno() obtain file descriptor of a stdio stream
 	int	fd_stdin = fileno(file_stdin);
 	int	fd_stdout = fileno(file_stdout);
-
-	size_t x = 0;
-	int z = -1;
-	write(fd_stdin, body_string.c_str(),body_string.size());
-	//place la tête de lecture/écriture à la position offset depuis le début du fichier.
-	lseek(fd_stdin, 0, SEEK_SET);
-	// crée un nouveau processus en dupliquant le processus appelant.
+	int		status = 0;
 	this->_pid = fork();
 
 	if (this->_pid == -1)
 		std::cout << RED << "FAIL PID -1" << END << std::endl;
 	else if (this->_pid == 0)
-	{
+	{		
+		if (src_header.get_request("Method").compare("POST") == 0)
+		{
+			write(fd_stdin, body_string.c_str(),body_string.size());
+			lseek(fd_stdin, 0, SEEK_SET);
+		}
 		dup2(fd_stdin, STDIN_FILENO);
 		dup2(fd_stdout, STDOUT_FILENO);
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
@@ -307,96 +214,15 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	waitpid(this->_pid, &status, 0);
 	lseek(fd_stdout, 0, SEEK_SET);
 	this->_send_content = body_response_from_fd(fd_stdout);
-
-	std::cout << YELLOW << "this->_send_content=[" << this->_send_content << "]" << END << std::endl;
-	
 	dup2(real_stdin, STDIN_FILENO);
 	dup2(real_stdout, STDOUT_FILENO);
 	fclose(file_stdin);
 	fclose(file_stdout);
-
 	close(fd_stdin);
 	close(fd_stdout);
-
 	close(real_stdin);
 	close(real_stdout);
-
 	delete_argv_env(argv, env);
-
-
-
-	/* std::cout << "{avant}" << std::endl;
-	std::string body_string = src_header.get_request_body();
-	this->_send_content = "";
-	std::cout << "{pres}" << std::endl;
-	int i = 0, fd_out = 0, status = 0;
-	int fds_exec[2];
-	int fd;
-
-
-
-
- 	std::string body_cut = src_header.get_request_body();
-	size_t full_lenght = 0;
-	_still = 0;
-
-
-
-	pipe(fds_exec);
-	
-	fcntl(fds_exec[1],  F_SETFL, O_NONBLOCK);
-	//fcntl(fds_exec[0],  F_SETFL, O_NONBLOCK);
-	this->_pid = fork();
-
-	if (this->_pid == 0)
-	{
-		if (src_header.get_request("Method").compare("POST") == 0)
-		{	write_body_post_in_fd(body_string); // for post request
-			write_body_post_in_fd(body_string); // for post request
-		}
-
-
-//std::cout << GREEN << "_send_content=[" << _send_content << "]" << END << std::endl;
-		std::cout << "{proyt}" << std::endl;
-		dup2(fds_exec[1], STDOUT_FILENO);
-		//dup2(fds_exec[1], STDOUT_FILENO);
-
-
-
-
-		std::cout << "{la}" << std::endl;
-		close(fds_exec[0]);
-		close(fds_exec[1]);
-		std::cout << "{cc}" << std::endl;
-
-		//std::cout << BLUE << "this->_path_cgi.c_str()=[" << this->_path_cgi.c_str() << "]" << END << std::endl;
-		//for (int i = 0; argv[i]; i++)
-		//	std::cout << BLUE << "argv=[" << argv[i] << "]" << END << std::endl;
-		//for (int i = 0; env[i]; i++)
-		//	std::cout << RED << "env=[" << env[i] << "]" << END << std::endl;
-		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
-			std::cout << "error execve cgi" << std::endl;
-
-		write(STDOUT_FILENO, "zzz", 3);
-		std::cout << "{main}" << std::endl;
-	}
-
-	
-	std::cout << "{waitpid}" << std::endl;
-	std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
-	std::cout << RED << "&status=[" << &status << "]" << END << std::endl;
-	waitpid(this->_pid, &status, 0);
-	std::cout << "{close}" << std::endl;
-	close(fds_exec[1]);
-	std::cout << "{body_response_fd}" << std::endl;
-
-	this->_send_content = body_response_from_fd(fds_exec[0]);
-	std::cout << YELLOW << "this->_send_content=[" << this->_send_content << "]" << END << std::endl;
-	close(fds_exec[0]);
-	delete_argv_env(argv, env);
-	std::cout << "{pas ici}" << std::endl;
-	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	//this->_send_content << "|" << std::endl << END; */
 }
 
 std::string	Cgi::body_response_from_fd(int fd)

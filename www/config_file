@@ -3,6 +3,7 @@ server{
 	server_name localhost;
 	listen 8001;
 
+
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	location / {
