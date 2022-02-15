@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/14 15:20:15 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/15 10:28:24 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,13 @@ Parse_request::Parse_request() : _nbr_line(0)
 ** --------------------------------- METHODS ----------------------------------
 */
 
-int		Parse_request::parse_request_buffer(char *buff)
+int		Parse_request::parse_request_buffer(char *buff, std::string full_b)
 {
 	std::cout << PURPLE << "buff=[" << buff << "]" << END << std::endl;
 	std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
   	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
-		this->_buffer = buff;
+		this->_buffer = full_b;
 		std::cout << GREEN << "_request_body_size=[" << _request_body_size << "]" << END << std::endl;
 		for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 		{

@@ -64,7 +64,7 @@ class Parse_request
 		{
 			_next_buffer_is_body = val;
 		};
-		int		parse_request_buffer(char *buff);
+		int		parse_request_buffer(char *buff, std::string full_b);
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
 

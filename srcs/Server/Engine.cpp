@@ -206,7 +206,8 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	bool	is_valid = true;
 	size_t	recv_len = 0;
 	size_t	head;
-
+	char b;
+	std::string full_b;
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{	
@@ -216,9 +217,10 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		else
 			recv_len += valread;
 		head = valread;
+		full_b += buff;
 		std::cout << "-buf-\n-|" << GREEN << buff << END << "|-\n-end-" << std::endl;
 
-		std::cout << RED << "parse_head.parse_request_buffer(buff)=[" << parse_head.parse_request_buffer(buff) << "]" << END << std::endl;
+		std::cout << RED << "parse_head.parse_request_buffer(buff)=[" << parse_head.parse_request_buffer(buff, full_b) << "]" << END << std::endl;
 		//parse_head.parse_request_buffer(buff);
 
 
@@ -235,20 +237,21 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 			std::cout << RED << "ICI" << END << std::endl;
 			send(fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 &&  std::strlen(buff) < head + std::stoi(parse_head.get_request("Content-Length:")))
+			while (valread != 0 &&  full_b.size() < head + std::stoi(parse_head.get_request("Content-Length:")))
 			{
-				valread = recv(fd, &buff[recv_len], 1, 0);
+				valread = recv(fd, &b, 1, 0);
 				recv_len += valread;
-
+				full_b += b;
 				
+			//std::cout << YELLOW << "full_b=[" << full_b << "]" << END << std::endl;
 				//std::cout << BLUE << "buff=[" << buff << "]" << END << std::endl;
 				//std::cout << GREEN  << recv_len  << " < " << std::stoi(parse_head.get_request("Content-Length:")) << END << std::endl;
 				//std::cout << RED << "valread=[" << valread << "]" << END <code < std::endl;
 			}
+			std::cout << "{x}" << std::endl;
 		}
 
-
-		if (parse_head.parse_request_buffer(buff) == 0)
+		if (parse_head.parse_request_buffer(buff, full_b) == 0)
 		{
 			std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
 			std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
