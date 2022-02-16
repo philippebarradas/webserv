@@ -148,7 +148,7 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
+	//this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
@@ -248,6 +248,7 @@ std::string	Cgi::fd_to_string(int fd)
 	int i = 0;
 	while (std::getline(is, line))
 	{
+		//std::cout << "line\t=\t" << line << std::endl;
 		if (i == 0)
 		{
 			this->_type_cgi = line;

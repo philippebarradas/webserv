@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 13:20:57 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/16 10:02:41 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,9 @@ void	Server::fillLocation( void )
 
 void	Server::initLocation( void )
 {
-	this->_autoindex = false;
-	this->_maxbody   = 1;
+	this->_autoindex = AUTOINDEX_DEFAULT;
+	this->_maxbody   = MAXBODY_DEFAULT;
+
 	this->_alreadySetIndex     = false;
 	this->_alreadySetMethods   = false;
 	this->_alreadySetListen    = false;
@@ -240,7 +241,7 @@ bool const &					Server::getAutoindex( void ) const
 	return (this->_autoindex);
 }
 
-unsigned int const &						Server::getMaxbody( void ) const
+size_t const &					Server::getMaxbody( void ) const
 {
 	return (this->_maxbody);
 }
@@ -337,7 +338,7 @@ void	Server::setMaxbody( std::vector<std::string> const & src )
 	checkRedefinition(_alreadySetMaxbody, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
 
-	this->_maxbody = stoui_size(0, 9000000000000000001, src[1], src[0]);
+	this->_maxbody = stost_size(0, MAX_MAXBODY, src[1], src[0]);
 
 	this->_alreadySetMaxbody = true;
 }
@@ -351,7 +352,7 @@ void	Server::setError( std::vector<std::string> const & src )
 	end = src.end();
 	for (it = src.begin() + 1 ; it + 1 != end ; ++it)
 	{
-		ret = this->_error.insert(std::make_pair( stoui_size(300, 599, *it,
+		ret = this->_error.insert(std::make_pair( stost_size(300, 599, *it,
 			src[0]), *(end - 1) ));
 		if (ret.second == false)
 		{

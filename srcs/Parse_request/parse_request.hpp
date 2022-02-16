@@ -50,10 +50,12 @@ class Parse_request
 			return (_request_body);
 		}
 
-		std::string get_request_body_size() const
+		size_t const & get_request_body_size() const
 		{
-			return (int_to_string(_request_body_size));
+			return (this->_request_body_size);
 		};
+
+
 
 		void	set_next_buffer_is_body(bool val)
 		{
