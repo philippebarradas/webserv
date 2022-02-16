@@ -3,39 +3,20 @@ user www-data;
 events {}
 http{
 server{
-	server_name hello4;
-
-	listen 7778;
-	autoindex on;
-
-	root /tmp;
-
-	error_page 404 404.html;
-
-	location /404.html {
-		alias /tmp/test;
-	}
-}
-
-server{
-	server_name hello12 hello55;
+	server_name hello1 hello3;
 	listen 7777;
 
-	client_max_body_size	 900000;
+	autoindex off;
+	root /home/user42/Bureau/webserv/www;
 
-	autoindex on;
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-
-	index form.html;
+	index phpinfo.php;
 	dav_methods DELETE;
 
-	location /error_page {
-		index my_index.html;
-	}
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
 		fastcgi_index hello.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include /etc/nginx/fastcgi_params;
 	}
+
 }}

@@ -52,6 +52,7 @@
 
 class Server;
 class Parse_request;
+class Treat_request;
 
 class Engine
 {

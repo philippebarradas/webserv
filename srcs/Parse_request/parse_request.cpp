@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 19:33:19 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:42:33 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,17 @@
 Parse_request::Parse_request() : _nbr_line(0)
 {
 	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
-
-	// GET /../../../Makefile HTTP/1.1 = invalid
-
-	_request_body_size = 0;
-	std::string  elements[42] = {
+// GET /../../../Makefile HTTP/1.1 = invalid mais bon
+    std::string  elements[] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
 		"Query",
 		"Protocol", //ok
 		"Host:", //ok
+		"Host-uncut-comme-les-casquettes",
 		"A-IM:",
-		"Transfer-Encoding:", //ok
+		"Transfer-Encoding:"
 		"Accept:",
 		"Accept-Charset:",
 		"Accept-Encoding:",
@@ -69,9 +67,10 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Last-Modified:",
 		"Warning:"};
 
-
-
 	std::string empty = "";
+	size_t len = sizeof(elements) / sizeof(std::string);
+	for (size_t x = 0; x < len ; x++)
+		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 
 	_next_buffer_is_body = 0;
 	//std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
