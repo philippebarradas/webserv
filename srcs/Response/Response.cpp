@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/13 17:30:50 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 09:39:48 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,10 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "301", "400", "403", "404", "405"};
+	std::string		all_code[] = {"200", "301", "400", "403", "404", "405",
+		"412", "413"};
 	std::string		all_status[] = {"OK", "Moved Permanently", "Bad Request", "Forbidden",
-		"Not Found", "Not Allowed"};
+		"Not Found", "Not Allowed", "Precondition Failed", "Request Entity Too Large"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;

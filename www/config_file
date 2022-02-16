@@ -6,6 +6,7 @@ server{
 	autoindex on;
 	root /home/user42/Bureau/webserv/www;
 
+	client_max_body_size 10;
 
 	accepted_methods	GET;
 

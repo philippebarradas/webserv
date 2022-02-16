@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 13:29:52 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/16 10:02:27 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 
-unsigned int	stoui_size( size_t const & min, size_t const & max,
+size_t	stost_size( size_t const & min, size_t const & max,
 	std::string const & nb, std::string const & name )
 {
 	std::string::const_iterator	it, end;
 	std::stringstream			conv, conv_max, conv_min;
-	unsigned int				ret;
+	size_t						ret;
 
 	end = nb.end();
 	for (it = nb.begin() ; it != end && std::isdigit(*it) ; ++it) {}
@@ -25,7 +25,7 @@ unsigned int	stoui_size( size_t const & min, size_t const & max,
 	conv << nb;
 	conv >> ret;
 
-	if (nb.size() > 22 || it != end)
+	if (nb.size() > 19 || it != end)
 	{
 		std::string thr("[Error] invalid arguments in \'");
 		thr += name + "\' (\'" + nb + "\' is not un valid number).";

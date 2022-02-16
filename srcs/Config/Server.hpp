@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/07 14:46:10 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 10:05:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 # include <set>
 # include "Config.hpp"
 # include "../Server/Engine.hpp"
+
+# define MAX_MAXBODY       9000000000000
+# define MAXBODY_DEFAULT   1000000
+# define AUTOINDEX_DEFAULT false
 
 class Engine;
 
@@ -38,7 +42,7 @@ class Server
 		std::string const &							getListen( void ) const;
 		std::string const &							getRoot( void ) const;
 		bool const &								getAutoindex( void ) const;
-		unsigned int const &						getMaxbody( void ) const;
+		size_t const &								getMaxbody( void ) const;
 		std::map<unsigned int, std::string> const &	getError( void ) const;
 		std::map<std::string, std::string> const &	getCgi( void ) const;
 		std::map<std::string, Server> const &		getLocation( void ) const;
@@ -80,7 +84,7 @@ class Server
 		std::string							_listen;
 		std::string							_root;
 		bool								_autoindex;
-		unsigned int						_maxbody;
+		size_t								_maxbody;
 		std::map<unsigned int, std::string>	_error;
 		std::map<std::string, std::string>	_cgi;
 		std::map<std::string, Server>		_location;

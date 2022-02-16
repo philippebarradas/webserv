@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/15 15:13:57 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 10:15:33 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -575,6 +575,9 @@ std::string	TreatRequest::treat( Parse_request & req )
 		std::cout << "location\t=\t" << _loc->first << std::endl
 			<< _loc->second << std::endl;
 
+		if (req.get_request_body_size() > this->_loc->second.getMaxbody()
+			&& this->_loc->second.getMaxbody() != 0)
+			req.setStatus("413");
 		if (req.get_request("Status") != "200")
 			this->error_page(req);
 		else

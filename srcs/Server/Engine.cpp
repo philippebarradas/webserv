@@ -209,7 +209,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	bzero(&buff, sizeof(buff));
     while (valread != 0 && is_valid == true)
 	{
-		
+
 		valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
@@ -222,7 +222,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 
 		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
 		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
-		
+
  		if (parse_head.get_request("Expect:").compare("") != 0
 		&& parse_head.get_request("Content-Length:").compare("") != 0)
 		{
@@ -236,8 +236,8 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 				//std::cout << RED << "valread=[" << valread << "]" << END << std::endl;
 			}
 		}
-		
-		
+
+
 		std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
 		std::cout << "valread=[" << valread << "]" << std::endl;
 		std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
