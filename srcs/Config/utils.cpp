@@ -6,11 +6,16 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 10:02:27 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:33:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
+
+std::string	sizet_to_string(size_t const & x)
+{
+	return (static_cast<std::ostringstream*>( &(std::ostringstream() << x))->str());
+}
 
 size_t	stost_size( size_t const & min, size_t const & max,
 	std::string const & nb, std::string const & name )

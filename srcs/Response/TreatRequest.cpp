@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:21:39 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:33:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -453,7 +453,7 @@ void	TreatRequest::redirect( Parse_request & req, std::string const & path )
 {
 	this->_location = "http://"
 		+ req.get_request("Host-uncut-comme-les-casquettes")
-		+ ":" + int_to_string(this->_eng->GetAccessPort())
+		+ ":" + sizet_to_string(this->_eng->GetAccessPort())
 		+ req.get_request("Path") + "/";
 	//std::cout << "_location\t=\t" << _location << std::endl;
 	req.setStatus("301");

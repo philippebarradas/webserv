@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:27:37 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 09:50:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:33:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void			checkNbArgMin( size_t const & toCheck, size_t const & size,
 size_t			stost_size( size_t const & min, size_t const & max,
 					std::string const & nb, std::string const & name );
 
-std::string		int_to_string(int x);
+std::string		sizet_to_string(size_t const & x);
 
 
 #endif

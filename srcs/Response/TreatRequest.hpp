@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:06:02 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:30:56 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
 # include "../Cgi/Cgi.hpp"
+# include "../Config/utils.hpp"
+
 # include "Response.hpp"
 # include <string>
 # include <dirent.h>

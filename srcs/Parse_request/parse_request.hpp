@@ -18,8 +18,6 @@
 #define KEEP 0
 #define STOP -1
 
-std::string		int_to_string(int x);
-
 
 class Server;
 
