@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 10:02:41 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:35:16 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,10 +118,10 @@ void	Server::fillLocation( void )
 
 	for (it = this->_location.begin() ; it != end ; ++it)
 	{
-		std::cout << it->first << ":" << std::endl;
-		std::cout << "autoi" << it->second._alreadySetAutoindex << std::endl;
-		std::cout << "maxbod" << it->second._alreadySetMaxbody << std::endl;
-		std::cout << std::endl;
+		//std::cout << it->first << ":" << std::endl;
+		//std::cout << "autoi" << it->second._alreadySetAutoindex << std::endl;
+		//std::cout << "maxbod" << it->second._alreadySetMaxbody << std::endl;
+		//std::cout << std::endl;
 
 		if (!it->second._alreadySetIndex)
 			it->second._index = this->_index;
