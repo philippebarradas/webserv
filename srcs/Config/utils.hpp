@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:27:37 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:37:06 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/16 09:31:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void			checkNbArgMin( size_t const & toCheck, size_t const & size,
 unsigned int	stoui_size(	size_t const & min, size_t const & max,
 					std::string const & nb, std::string const & name );
 
-std::string		int_to_string(int x);
+std::string		int_to_string(size_t x);
 
 
 #endif

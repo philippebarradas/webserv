@@ -18,7 +18,7 @@
 #define KEEP 0
 #define STOP -1
 
-std::string		int_to_string(int x);
+std::string		int_to_string(size_t x);
 
 
 class Server;
@@ -75,6 +75,10 @@ class Parse_request
 		size_t		_client_max_body_size;
 		std::string	_request_body;
 		
+		size_t	recv_len;
+		size_t	head;
+		std::string full_b;
+
 	private:
 		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();

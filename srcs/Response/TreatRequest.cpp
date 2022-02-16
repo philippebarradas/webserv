@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/14 17:52:20 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/16 09:45:01 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,20 +110,15 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
-	std::cout << "{dynamic files}" << std::endl;
 	Cgi	obj_cgi(this->_loc->second.getRoot(), path, pathCgi, req, *this->_eng);
-	std::cout << "{0}" << std::endl;
 
 
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path), obj_cgi.convert_env(obj_cgi.getEnv()), req);
 
 
-	std::cout << "{2}" << std::endl;
 
 	this->_file = obj_cgi.getSend_content();
-	std::cout << "{3}" << std::endl;
-
 
 	this->_type_cgi = obj_cgi.getType_Cgi();
 
@@ -282,7 +277,6 @@ void	TreatRequest::generateAutoIndex( Parse_request const & req,
 void	TreatRequest::exec_root( Parse_request const & req )
 {
 	std::string	path = this->_loc->second.getRoot() + req.get_request("Path");
-		std::cout << "{search index}" << std::endl;
 
 	//std::cout << "path\t=\t" << path << std::endl;
 
@@ -294,7 +288,6 @@ void	TreatRequest::exec_root( Parse_request const & req )
 	}
 	else
 	{
-		std::cout << "{openreadd}" << std::endl;
 		if (!this->openAndRead(path, req))
 			std::cout << "TODO REDIRECT ERROR PAGE" << std::endl;
 	}

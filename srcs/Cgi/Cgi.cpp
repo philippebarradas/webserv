@@ -129,7 +129,7 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["DOCUMENT_ROOT"] = this->_root;
 	this->_env["DOCUMENT_URI"] = this->_path_file_executed_absolu;
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
-	this->_env["SERVER_PORT"] = int_to_string(src_engine.GetAccessPort());
+	this->_env["SERVER_PORT"] = int_to_string((size_t)src_engine.GetAccessPort());
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
@@ -209,8 +209,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}	
-	std::cout << "{waitpid}" << std::endl;
-	std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
+	//std::cout << "{waitpid}" << std::endl;
+	//std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
 	waitpid(this->_pid, &status, 0);
 	lseek(fd_stdout, 0, SEEK_SET);
 	this->_send_content = body_response_from_fd(fd_stdout);

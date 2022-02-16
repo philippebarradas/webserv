@@ -4,11 +4,12 @@ events {}
 http{
 server{
 	server_name hello1 hello3;
-	listen 7777;
+	listen 7770;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 
+	client_max_body_size 1M;
 	index form.html;
 	dav_methods DELETE;
 
@@ -20,3 +21,4 @@ server{
 	}
 
 }}
+
