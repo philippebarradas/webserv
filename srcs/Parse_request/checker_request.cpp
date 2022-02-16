@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/14 16:38:13 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 11:31:49 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,12 +198,12 @@ int		Parse_request::check_request()
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 		}
-		else if (check_precondition() == -1)
+		/* else if (check_precondition() == -1)
 		{
 			std::cout << "ERROR = Precondition Failed" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "412";
-		}
+		} */
 		return (1);
 
 	}

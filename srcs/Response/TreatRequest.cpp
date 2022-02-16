@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 10:15:33 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 14:15:54 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,19 +91,52 @@ void printMap(T & map, std::string const & name)
 	std::cout << "----------------\n" << std::endl;
 }
 
+bool	TreatRequest::check_precondition( Parse_request const & req, struct tm const & timefile ) const
+{
+	std::string	time_unmodified;
+	struct tm	timereq;
+
+	time_unmodified = req.get_request("If-Unmodified-Since:");
+	if (time_unmodified == "")
+		return (true);
+
+	strptime(time_unmodified.c_str(), "%a, %d %b %Y %T %Z", &timereq);
+
+	if (timefile.tm_year != timereq.tm_year)
+		return (timefile.tm_year < timereq.tm_year);
+	if (timefile.tm_yday != timereq.tm_yday)
+		return (timefile.tm_yday < timefile.tm_yday);
+	if (timefile.tm_hour != timefile.tm_hour)
+		return (timefile.tm_hour < timefile.tm_hour);
+	if (timefile.tm_min != timefile.tm_min)
+		return (timefile.tm_min < timefile.tm_min);
+	if (timefile.tm_sec != timefile.tm_sec)
+		return (timefile.tm_sec < timefile.tm_sec);
+	return (true);
+}
+
 void	TreatRequest::cpyInfo( std::string const & extension,
-	std::string const & path, Parse_request const & req )
+	std::string const & path, Parse_request & req )
 {
 	struct tm *	timeinfo;
 	struct stat	result;
 	char		time_modified_file[50];
 
-	stat(path.c_str(), &result);
 	if (req.get_request("Status") == "200")
 	{
-		timeinfo = localtime (&result.st_ctim.tv_sec);
-		strftime(time_modified_file, 50, "%a, %d %b %G %T %Z", timeinfo);
+		stat(path.c_str(), &result);
+		timeinfo = localtime(&result.st_ctim.tv_sec);
+		strftime(time_modified_file, 50, "%a, %d %b %Y %T %Z", timeinfo);
+		if (!check_precondition(req, *timeinfo))
+		{
+			//std::cout << "ERROR 412" << std::endl;
+			this->_file.clear();
+			req.setStatus("412");
+			this->error_page(req);
+			return ;
+		}
 		this->_last_modif = std::string(time_modified_file);
+
 		//std::cout << "_last_modif\t=\t" << _last_modif << std::endl;
 	}
 	//std::cout << "_last_modif\t=\t" << _last_modif << std::endl;
@@ -112,7 +145,7 @@ void	TreatRequest::cpyInfo( std::string const & extension,
 
 void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs )
 {
-	std::cout << "STATIC READ" << std::endl;
+	std::cout << "--------------------\nSTATIC READ" << std::endl;
 	std::string	line;
 
 	while (std::getline(ifs, line))
@@ -123,7 +156,7 @@ void	TreatRequest::readStaticFile( std::string const & path, std::ifstream & ifs
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
-	std::cout << "DYNAMIC READ" << std::endl;
+	std::cout << "--------------------\nDYNAMIC READ" << std::endl;
 	Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
@@ -161,33 +194,21 @@ bool	TreatRequest::permForOpen( std::string const & path ) const
 
 bool	TreatRequest::exist_file( std::string const & path) const
 {
-	//std::cout << "test file:";
-	// true = exist  / false = no exist
+	struct stat path_stat;
 
-	if (access(path.c_str(), F_OK) != -1) // fichier
-	{
-		//std::cout << "File exist !" << std::endl;
-		return (true);
-	}
-	//std::cout << "File not exist !" << std::endl;
-	return (false);
+	if (stat(path.c_str(), &path_stat) == -1)
+		return (false);
+	return (S_ISREG(path_stat.st_mode));
 }
 
 bool	TreatRequest::exist_dir( std::string const & root) const
 {
-	//std::cout << "test dir :";
 	// true = exist  / false = no exist
-	struct stat sbuf_dir;
+	struct stat	sbuf_dir;
 
-	int ret_stat_dir = stat(root.c_str(), &sbuf_dir);
-
-	if (S_ISDIR(sbuf_dir.st_mode)) // dossier
-	{
-		//std::cout << "Dir exist !" << std::endl;
-		return (true);
-	}
-	//std::cout << "Dir not exist !" << std::endl;
-	return (false);
+	if (stat(root.c_str(), &sbuf_dir) == -1)
+		return (false);
+	return (S_ISDIR(sbuf_dir.st_mode)); // dossier
 }
 
 bool	TreatRequest::exist( std::string const & root) const
@@ -443,6 +464,10 @@ bool	TreatRequest::check_access( Parse_request & req, std::string path )
 		else
 			++size_parced;
 		testPath.insert(testPath.end(), path.begin(), path.begin() + size_parced);
+		//std::cout << "testPath\t=\t" << testPath << std::endl;
+		//std::cout << "this->exist(testPath)\t=\t" << this->exist(testPath) << std::endl;
+		//std::cout << "this->exist(testPath)\t=\t" << this->exist(testPath + "/") << std::endl;
+		//std::cout << "this->exist(testPath)\t=\t" << this->exist(testPath) << std::endl;
 		//std::cout << "testPath:\t=\t" << testPath << std::endl;
 		//std::cout << "this->exist_dir(testPath + \'/\')\t=\t" << this->exist_dir(testPath + '/') << std::endl;
 		//std::cout << "this->exist_dir(testPath)\t=\t" << this->exist_dir(testPath) << std::endl;
@@ -462,7 +487,7 @@ bool	TreatRequest::check_access( Parse_request & req, std::string path )
 		}
 		else if (!this->permForOpen(testPath))
 		{
-			std::cout << "403" << std::endl;
+			std::cout << "403 sauce" << std::endl;
 			req.setStatus("403");
 			return (false);
 		}
@@ -487,15 +512,22 @@ void	TreatRequest::exec_root( Parse_request & req, std::string const & path )
 	//std::cout << "this->exist(path)\t=\t" << this->exist(path) << std::endl;
 	std::cout << "pathDEBatarD\t=\t" << path << std::endl;
 	if (!this->check_access(req, path))
+	{
+		std::cout << RED "NO PERM" END << std::endl;
 		this->error_page(req);
+	}
 	else if (path[path.length() - 1] == '/')
 	{
+		std::cout << GREEN "OK PERM" END << std::endl;
 		//std::cout << "pathDEBatarD\t=\t" << path << std::endl;
 		if (!this->search_index(req, path))
 			this->generateAutoIndex(req, path);
 	}
 	else
+	{
+		std::cout << GREEN "OK PERM" END << std::endl;
 		this->openAndRead(path, req, false);
+	}
 }
 
 void	TreatRequest::exec( Parse_request & req )

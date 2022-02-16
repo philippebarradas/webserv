@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/14 18:11:45 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 13:27:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,10 @@ class TreatRequest
 			Parse_request const & req );
 
 		void	cpyInfo( std::string const & extension,
-			std::string const & path, Parse_request const & req );
+			std::string const & path, Parse_request & req );
 		bool	openAndRead( std::string const & path,
 			Parse_request & req, bool const & isError );
+		bool	check_precondition( Parse_request const & req, struct tm const & timefile ) const;
 
 		void	error_page( Parse_request & req );
 
