@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:35:16 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:35:40 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void	Server::fillLocation( void )
 		if (!it->second._alreadySetCgi)
 			it->second._cgi = this->_cgi;
 	}
-	std::cout << "leave" << std::endl;
+	//std::cout << "leave" << std::endl;
 
 
 }
