@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 09:19:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 20:01:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 
 	_next_buffer_is_body = 0;
 	this->_request_body_size = 0;
-	std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+	//std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 
 
 		_client_max_body_size = 10;
@@ -92,8 +92,8 @@ Parse_request::Parse_request() : _nbr_line(0)
 
 int		Parse_request::buff_is_valid(char *buff)
 {
-	std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-  	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
+	//std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
 		this->_buffer = buff;
 		std::cout << GREEN << "_request_body_size=[" << _request_body_size << "]" << END << std::endl;
@@ -173,7 +173,7 @@ int		Parse_request::parse_first_line()
 			rank++;
 		}
 	}
-			std::cout << "---seg---" << std::endl;
+	//std::cout << "---seg---" << std::endl;
 
 	parse_path();
 	return (check_first_line(full_size));
@@ -245,11 +245,11 @@ int		Parse_request::fill_variables()
 		std::cout << GREEN <<"FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
 	//DISPLAY VALID ELEMENTS
-	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
-    {
+	/* for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+	{
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
+	} */
 	//
 	return (KEEP);
 }

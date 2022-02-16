@@ -20,16 +20,9 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine)
+Cgi::Cgi(std::string const & root, std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine)
 {
-	std::cout << "lolilol port = " << src_engine.GetAccessPort() << std::endl;
-	this->_path_file_executed = path;
-	this->_path_cgi = pathCgi;
-	this->_root = &this->_path_file_executed[this->_path_file_executed.rfind('/')];
-	this->_path_file_executed_absolu = &this->_path_file_executed[this->_path_file_executed.rfind('/') - this->_path_file_executed.find('/')];
-	std::cout << "this->_path_file_executed_absolu\t=\t" << this->_path_file_executed_absolu << std::endl;
-	//this->_root;
-	//this->_path_file_executed_absolu = getPath_abs();
+	init_path(root, path, pathCgi);
 	init_env(src_header, src_engine);
 }
 
@@ -85,10 +78,15 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 	delete [] argv;
 }
 
-void	Cgi::init_path()
+void	Cgi::init_path(std::string const & root, std::string const & path, std::string const & pathCgi)
 {
-	//this->_user = "user42"; pas sur
-	//this->_home = "/home/user42/Bureau/webserv"; pas sur
+	this->_path_file_executed = path;
+	this->_path_cgi = pathCgi;
+	this->_root = root;
+	this->_path_file_executed_absolu =
+		this->_path_file_executed.substr(this->_root.size(), this->_path_file_executed.size());
+	this->_user = "user42";
+	//this->_home = "/home/user42/Bureau/webserv/www";
 }
 
 // var from client
@@ -103,15 +101,12 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	}
-	this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");
-	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
+	//this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server
 void	Cgi::init_env_server_var(const Parse_request & src_header)
 {
-	//std::set<std::string>::iterator it;
-	//it = src.getName().begin();
 	this->_env["HOME"] = this->_home; // pas sur
 	this->_env["USER"] = this->_user; // pas sur
 	this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
@@ -129,23 +124,20 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
-	this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
-	//this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + src_header.get_request("Query_string:");//query string ;
+	if (src_header.get_request("Query").compare(""))
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
+	else
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu;
 	this->_env["SCRIPT_FILENAME"] = this->_path_file_executed;
-	this->_env["DOCUMENT_ROOT"] = this->_path_file_executed;
+	this->_env["DOCUMENT_ROOT"] = this->_root;
 	this->_env["DOCUMENT_URI"] = this->_path_file_executed_absolu;
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
 	this->_env["SERVER_PORT"] = sizet_to_string(src_engine.GetAccessPort());
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
-	// pas de path info pour post ??
-	//this->_env["PATH_INFO"] = src_header.get_request("path"); // P_INFO + QUERY STRING = REQUEST URI
-	//this->_env["PATH_INFO"] = this->_path_file_executed_absolu;
-	//this->_env["PATH_TRANSLATED"] = "";
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
-	this->_env["AUTH_TYPE"] = src_header.get_request("Authorization:");
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["CONTENT_LENGTH"] = sizet_to_string(src_header.get_request_body_size());
 	//this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
@@ -182,7 +174,6 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 
 char	**Cgi::create_argv(std::string path_file_executed)
 {
-	std::cout << "path_file_executed in create argv\t=\t" << path_file_executed << std::endl;
 	int		nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
 
@@ -196,7 +187,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
-	//std::cout << RED << "body_string = " << body_string << END << std::endl ;
+	//std::cout << RED << "body_string = |" << body_string << "|" << END << std::endl ;
 	int fds_child[2];
 
 	pipe(fds_child);
@@ -208,11 +199,10 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 
 void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
-	//std::string body_string = "nom=dov";
-	//std::cout << "body_string\t=\t" << body_string << std::endl;
-
 	std::string body_string = src_header.get_request_body();
+	//std::string body_string = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567FIN";
 
+	//std::cout << YELLOW << "body_string = |" << body_string << "|" << END << std::endl ;
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 
@@ -230,38 +220,54 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	}
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
-	this->_send_content = fd_to_string(fds_exec[0]);
+	std::string multipart = "multipart/form-data;";
+	std::string new_c_type = src_header.get_request("Content-Type:");
 
+	//std::cout << "new_c_type\t=\t" << new_c_type << std::endl;
+	if (new_c_type.compare("text/plain") == 0)
+	//src_header.get_request("Content-Type:").compare(0, multipart.size(), multipart) == 0)
+	{
+		//std::cout << "LALALAL" << std::endl;
+		upload_file(body_string);
+		//this->_send_content = "lol";
+	}
+	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
 	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
 	//this->_send_content << "|" << std::endl << END;
 }
 
-std::string	Cgi::fd_to_string(int fd)
+std::string	Cgi::body_response_from_fd(int fd)
 {
-    __gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
-    std::istream is(&filebuf);
+	__gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
+	std::istream is(&filebuf);
 	std::string ret, line;
-
-	//ret = "HTTP/1.1 200 OK\n";
-	int i = 0;
+	std::string content_type = "Content-type:";
 	while (std::getline(is, line))
 	{
-		//std::cout << "line\t=\t" << line << std::endl;
-		if (i == 0)
-		{
+		if (line.compare(0, content_type.size(), content_type) == 0)
 			this->_type_cgi = line;
-			std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
-		}
 		else
 		{
 			ret += line;
 			ret += '\n';
 		}
-		i++;
 	}
+	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
+}
+
+void	Cgi::upload_file(std::string response)
+{
+	//response = "0123456789\n";
+	//std::cout << "Je suis dans upload" << std::endl;
+	std::ofstream out("www/uploads/file_created.txt");
+
+	//std::cout << GREEN << "response = " << std::endl << "|" <<
+	//response << "|" << std::endl << END;
+	out << response;
+	out.close();
 }
 
 /*

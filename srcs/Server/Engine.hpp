@@ -44,7 +44,7 @@
 #define FALSE 0
 #define MAX_EVENTS 300
 #define MAX_SERVERS 100
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 330000
 
 // My class
 #include "../Config/Server.hpp"
@@ -52,6 +52,7 @@
 
 class Server;
 class Parse_request;
+class Treat_request;
 
 class Engine
 {
@@ -105,7 +106,7 @@ class Engine
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-void		read_send_data(int fd, const std::vector<Server> & src);//,Parse_request & parse_head);
+		void	read_send_data(int fd, const std::vector<Server> & src);//,Parse_request & parse_head);
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 

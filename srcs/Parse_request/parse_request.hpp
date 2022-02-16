@@ -67,7 +67,7 @@ class Parse_request
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
 
 		bool		_next_buffer_is_body;
-		size_t		_request_body_size;
+		int			_request_body_size;
 		size_t		_client_max_body_size;
 
 	private:

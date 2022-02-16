@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:28:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 20:00:23 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int	main( int ac, char *av[] )
 		vec_serv = conf.getConfig();
 
 		Engine serv(vec_serv);
-		//Cgi		obj_cgi(vec_serv.front());
 	}
 	catch( std::exception const & e )
 	{

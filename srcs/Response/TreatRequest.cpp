@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:33:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 20:04:42 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,10 +156,10 @@ void	TreatRequest::readStaticFile( std::ifstream & ifs )
 void	TreatRequest::readDynamicFile( std::string const & path, std::string const & pathCgi,
 	Parse_request const & req )
 {
+
 	std::cout << "--------------------\nDYNAMIC READ" << std::endl;
 	//std::cout << "pathCgi\t=\t" << pathCgi << std::endl;
-
-	Cgi	obj_cgi(path, pathCgi, req, *this->_eng);
+	Cgi	obj_cgi(this->_loc->second.getRoot(), path, pathCgi, req, *this->_eng);
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
@@ -620,10 +620,10 @@ std::string	TreatRequest::treat( Parse_request & req )
 	else
 	{
 		this->_i_conf = this->selectConf(req);
-		std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
+		//std::cout << "i_conf\t=\t" << this->_i_conf << std::endl;
 		this->_loc = this->selectLocation(req.get_request("Path"), this->_conf[this->_i_conf].getLocation());
-		std::cout << "location\t=\t" << _loc->first << std::endl
-			<< _loc->second << std::endl;
+		//std::cout << "location\t=\t" << _loc->first << std::endl
+			//<< _loc->second << std::endl;
 
 		if (req.get_request_body_size() > this->_loc->second.getMaxbody()
 			&& this->_loc->second.getMaxbody() != 0)
