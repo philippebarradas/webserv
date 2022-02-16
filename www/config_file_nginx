@@ -24,7 +24,6 @@ server{
 	autoindex on;
 	client_max_body_size 100M;
 	root /home/user42/Bureau/webserv/www;
-	include /etc/nginx/mime.types;
 
 	index upload.php;
 	dav_methods DELETE;

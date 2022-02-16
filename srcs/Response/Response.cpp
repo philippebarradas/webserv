@@ -22,7 +22,10 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 	this->_header += "Server: webserv/1.0 (Ubuntu)\n";
 	this->writeDate();
 	this->writeType(treat.getExtension(), treat);
-	this->writeLenght(treat.getFile());
+	//if (req.get_request("Method").compare("POST") == 0)
+		//this->_header += "Transfer-Encoding: chunked\n";
+	//else
+		this->writeLenght(treat.getFile());
 	this->_header += "Connection: " + req.get_request("Connection:") + "\n";
 
 	this->_header += "\n" + treat.getFile();

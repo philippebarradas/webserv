@@ -152,8 +152,8 @@ void	Cgi::init_env(const Parse_request & src_header, const Engine & src_engine)
 	init_env_client_var(src_header);
 	init_env_server_var(src_header);
 	init_env_request_var(src_header, src_engine);
-	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
-		std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
+	//for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
+		//std::cout << PURPLE << it_env->first << " = " << BLUE << it_env->second << std::endl << END;
 }
 
 char **Cgi::convert_env(std::map<std::string, std::string>)
@@ -188,7 +188,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 
 void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 {
-	std::cout << RED << "body_string = |" << body_string << "|" << END << std::endl ;
+	//std::cout << RED << "body_string = |" << body_string << "|" << END << std::endl ;
 	int fds_child[2];
 
 	pipe(fds_child);
@@ -201,7 +201,9 @@ void	Cgi::write_body_post_in_fd(std::string body_string) // body | php-cgi
 void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 {
 	std::string body_string = src_header.get_request_body();
+	//std::string body_string = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567FIN";
 
+	//std::cout << YELLOW << "body_string = |" << body_string << "|" << END << std::endl ;
 	int i = 0, fd_out = 0, status = 0;
 	int fds_exec[2];
 
@@ -219,13 +221,17 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	}
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
-	/* if (src_header.get_request("Method").compare("POST") == 0 &&
-		src_header.get_request("Content-Type:").compare("multipart/form-data") == 0)
+	std::string multipart = "multipart/form-data;";
+	std::string new_c_type = src_header.get_request("Content-Type:");
+
+	//std::cout << "new_c_type\t=\t" << new_c_type << std::endl;
+	if (new_c_type.compare("text/plain") == 0)
+	//src_header.get_request("Content-Type:").compare(0, multipart.size(), multipart) == 0)
 	{
-		//upload_file(body_response_from_fd(fds_exec[0]));
-		this->_send_content = "";
+		//std::cout << "LALALAL" << std::endl;
+		upload_file(body_string);
+		//this->_send_content = "lol";
 	}
-	else */
 	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
@@ -249,18 +255,21 @@ std::string	Cgi::body_response_from_fd(int fd)
 			ret += '\n';
 		}
 	}
-	std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
+	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }
 
-/* void	Cgi::upload_file(std::string response)
+void	Cgi::upload_file(std::string response)
 {
-	std::cout << "Je suis dans upload" << std::endl;
+	//response = "0123456789\n";
+	//std::cout << "Je suis dans upload" << std::endl;
 	std::ofstream out("www/uploads/file_created.txt");
 
+	//std::cout << GREEN << "response = " << std::endl << "|" <<
+	//response << "|" << std::endl << END;
 	out << response;
 	out.close();
-} */
+}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------

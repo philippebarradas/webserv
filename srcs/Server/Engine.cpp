@@ -220,13 +220,13 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		else
 			recv_len += valread;
 		head = valread;
-		std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
+		//std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
 		if (parse_head.buff_is_valid(buff) == 0)
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 		else
 			is_valid = false;
-		std::cout << "parse_head.get_request(Content-Length:).compare()\t=\t" <<  parse_head.get_request("Content-Length:").compare("")<< std::endl;
-		std::cout << "expect value = " << parse_head.get_request("Expect:") << std::endl;
+		//std::cout << "parse_head.get_request(Content-Length:).compare()\t=\t" <<  parse_head.get_request("Content-Length:").compare("")<< std::endl;
+		//std::cout << "expect value = " << parse_head.get_request("Expect:") << std::endl;
 		/* if (parse_head.get_request("Expect:").compare("100-continue") == 0
 			&& parse_head.get_request("Content-Length:").compare("") != 0)
 		{
@@ -256,8 +256,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	//if (parse_head.get_request("status").compare("200") != 0 ||
 		//parse_head.get_request("Connection:").find("close") != std::string::npos)
 	//close(fd);
-	std::cout << GREEN << "END _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
-
+	//std::cout << GREEN << "END _next_buffer_is_body " << parse_head._next_buffer_is_body << END << std::endl << std::endl;
 }
 
 void	Engine::loop_server(const std::vector<Server> & src)
