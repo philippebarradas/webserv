@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 13:27:42 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/16 19:06:02 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,13 @@ class TreatRequest
 		void	generateAutoIndex( Parse_request & req,
 			std::string const & path );
 
-		void	readStaticFile( std::string const & path, std::ifstream & ifs );
+		void	force_open( Parse_request const & req );
+		void	readStaticFile( std::ifstream & ifs );
 		void	readDynamicFile( std::string const & path,
 			std::string const & pathCgi,
 			Parse_request const & req );
 
+		bool	check502( std::string const & pathCgi, Parse_request & req );
 		void	cpyInfo( std::string const & extension,
 			std::string const & path, Parse_request & req );
 		bool	openAndRead( std::string const & path,
