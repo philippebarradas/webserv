@@ -101,7 +101,7 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	}
-	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
+	//this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server
@@ -139,11 +139,9 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	if (src_header.get_request_body_size() == "0")
-		this->_env["CONTENT_LENGTH"] = "";
-	else
-		this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
+	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	//if (src_header.get_request_body_size() != 0) // a changer
+		//this->_env["CONTENT_LENGTH"] = int_to_string(src_header.get_request_body_size());
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
@@ -221,7 +219,6 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	}
 	waitpid(this->_pid, &status, 0);
 	close(fds_exec[1]);
-	std::cout << "Content-Type\t=\t" << src_header.get_request("Content-Type:") << std::endl;
 	/* if (src_header.get_request("Method").compare("POST") == 0 &&
 		src_header.get_request("Content-Type:").compare("multipart/form-data") == 0)
 	{
@@ -232,8 +229,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	this->_send_content = body_response_from_fd(fds_exec[0]);
 	close(fds_exec[0]);
 	delete_argv_env(argv, env);
-	std::cout << GREEN << "_send_content = " << std::endl << "|" <<
-	this->_send_content << "|" << std::endl << END;
+	//std::cout << GREEN << "_send_content = " << std::endl << "|" <<
+	//this->_send_content << "|" << std::endl << END;
 }
 
 std::string	Cgi::body_response_from_fd(int fd)

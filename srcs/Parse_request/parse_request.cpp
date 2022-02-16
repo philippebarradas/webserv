@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_request.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/09 13:22:19 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/16 14:19:43 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 
 	// GET /../../../Makefile HTTP/1.1 = invalid
 
-    _request_body_size = 0;
+	_request_body_size = 0;
 	std::string  elements[42] = {
 		"Status", //ok
 		"Method", //ok
@@ -33,7 +33,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Query",
 		"Protocol", //ok
 		"Host:", //ok
-		"A-IM:", 
+		"A-IM:",
 		"Transfer-Encoding:", //ok
 		"Accept:",
 		"Accept-Charset:",
@@ -69,14 +69,14 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Last-Modified:",
 		"Warning:"};
 
-	
+
 
 	std::string empty = "";
 
 	_next_buffer_is_body = 0;
 	std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 
-	
+
 		_client_max_body_size = 10;
 	//if (_next_buffer_is_body != 1)
 	//{
@@ -172,7 +172,7 @@ int		Parse_request::parse_first_line()
 			size = 0;
 			rank++;
 		}
-	}	
+	}
 			std::cout << "---seg---" << std::endl;
 
 	parse_path();

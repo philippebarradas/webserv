@@ -7,7 +7,7 @@ server{
 	root /home/user42/Bureau/webserv/www;
 	cgi .php /usr/bin/php-cgi;
 	location / {
-		index form.html;
+		index upload.php;
 		cgi .php /usr/bin/php-cgi;
 		accepted_methods	GET POST DELETE;
 	}
