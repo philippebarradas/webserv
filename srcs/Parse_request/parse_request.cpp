@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_request.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 19:42:33 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/16 20:01:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 
 	_next_buffer_is_body = 0;
+	this->_request_body_size = 0;
 	//std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 
 

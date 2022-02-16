@@ -1,7 +1,7 @@
 
 server{
 	server_name localhost;
-	listen 8001;
+	listen 8004;
 
 	autoindex on;
 
@@ -10,13 +10,11 @@ server{
 
 	accepted_methods	GET POST;
 	cgi .php /usr/bin/php-cgi;
+	cgi .html /usr/bin/php-cgi;
+	error_page 404 /env.php;
 
 	location / {
-		index form.html;
-	}
-
-	location /salutlol {
-		autoindex	on;
+		index no.html;
 	}
 
 

@@ -18,8 +18,6 @@
 #define KEEP 0
 #define STOP -1
 
-std::string		int_to_string(int x);
-
 
 class Server;
 
@@ -50,10 +48,12 @@ class Parse_request
 			return (_request_body);
 		}
 
-		int get_request_body_size() const
+		size_t const & get_request_body_size() const
 		{
-			return (_request_body_size);
+			return (this->_request_body_size);
 		};
+
+
 
 		void	set_next_buffer_is_body(bool val)
 		{

@@ -8,11 +8,12 @@ server{
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
+	error_page 404 /env.php;
 
 	index phpinfo.php;
 	dav_methods DELETE;
 
-	location ~ \.php$ {
+	location / {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
 		fastcgi_index hello.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;

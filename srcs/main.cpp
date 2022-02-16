@@ -3,20 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 13:16:52 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/16 20:00:23 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config/Config.hpp"
 #include "Cgi/Cgi.hpp"
-
-std::string	int_to_string(int x)
-{
-	return (static_cast<std::ostringstream*>( &(std::ostringstream() << x))->str());
-}
 
 int	main( int ac, char *av[] )
 {

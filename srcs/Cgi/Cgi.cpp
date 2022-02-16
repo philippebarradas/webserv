@@ -132,16 +132,15 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["DOCUMENT_ROOT"] = this->_root;
 	this->_env["DOCUMENT_URI"] = this->_path_file_executed_absolu;
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
-	this->_env["SERVER_PORT"] = int_to_string(src_engine.GetAccessPort());
+	this->_env["SERVER_PORT"] = sizet_to_string(src_engine.GetAccessPort());
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	//if (src_header.get_request_body_size() != 0) // a changer
-		//this->_env["CONTENT_LENGTH"] = int_to_string(src_header.get_request_body_size());
+	this->_env["CONTENT_LENGTH"] = sizet_to_string(src_header.get_request_body_size());
+	//this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 

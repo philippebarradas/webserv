@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:42:57 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/16 20:02:03 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,11 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "301", "400", "403", "404", "405"};
+	std::string		all_code[] = {"200", "301", "400", "403", "404", "405",
+		"412", "413", "502"};
 	std::string		all_status[] = {"OK", "Moved Permanently", "Bad Request", "Forbidden",
-		"Not Found", "Not Allowed"};
+		"Not Found", "Not Allowed", "Precondition Failed", "Request Entity Too Large",
+		"Bad Gateway"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;

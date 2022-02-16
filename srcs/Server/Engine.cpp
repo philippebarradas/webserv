@@ -221,6 +221,39 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 			recv_len += valread;
 		head = valread;
 		//std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
+		/*std::cout << "-buf-\n-|" << GREEN << buff << END << "|-\n-end-" << std::endl;
+
+		std::cout << "BUFF IS VALID = " << parse_head.buff_is_valid(buff) << std::endl;
+
+		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
+		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
+
+ 		if (parse_head.get_request("Expect:").compare("") != 0
+		&& parse_head.get_request("Content-Length:").compare("") != 0)
+		{
+			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
+			while (valread != 0 &&  std::strlen(buff) < head + std::stoi(parse_head.get_request("Content-Length:")))
+			{
+				valread = recv(fd, &buff[recv_len], 1, 0);
+				recv_len += valread;
+				//std::cout << BLUE << "buff=[" << buff << "]" << END << std::endl;
+				//std::cout << GREEN  << recv_len  << " < " << std::stoi(parse_head.get_request("Content-Length:")) << END << std::endl;
+				//std::cout << RED << "valread=[" << valread << "]" << END << std::endl;
+			}
+		}*/
+
+
+		//std::cout << "-buf-\n-|" << BLUE << buff << END << "|-\n-end-" << std::endl;
+		//std::cout << "valread=[" << valread << "]" << std::endl;
+		//std::cout << BLUE << "buff.size()=[" << std::strlen(buff) << "]" << END << std::endl;
+		//std::cout << BLUE << "buff.size() - head =[" << std::strlen(buff) - head<< "]" << END << std::endl;
+
+		/*if (parse_head.get_request("Content-Length:").compare("") != 0)
+		{
+			//std::cout << BLUE << "(Content-Length:)=["<< std::stoi(parse_head.get_request("Content-Length:"))<< "]" << END << std::endl;
+		}*/
+
+
 		if (parse_head.buff_is_valid(buff) == 0)
 			epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 		else
