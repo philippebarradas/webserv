@@ -1,4 +1,4 @@
-user user42;
+user www-data;
 
 events {}
 http{
@@ -8,22 +8,7 @@ server{
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
-
-	index phpinfo.php;
 	dav_methods DELETE;
-
-
-	location /env.php {
-		error_page 404 /form.html;
-	}
-
-	location /hello.html {
-		error_page 502 /env.php;
-		fastcgi_pass unix:/var/run/php/php7.2-fpm.socke;
-		fastcgi_index hello.php;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		include /etc/nginx/fastcgi_params;
-	}
 
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
