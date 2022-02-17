@@ -67,6 +67,7 @@ class Parse_request
 		int		parse_request_buffer(char *buff, std::string full_b);
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
+		void 	reinit_obj();
 
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
 
@@ -74,9 +75,11 @@ class Parse_request
 		size_t		_request_body_size;
 		size_t		_client_max_body_size;
 		std::string	_request_body;
-		
+
+
+/* 		bool _continue;
 		size_t	recv_len;
-		size_t	head;
+		size_t	head; */
 		std::string full_b;
 
 	private:

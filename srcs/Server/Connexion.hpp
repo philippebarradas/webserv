@@ -1,5 +1,5 @@
-#ifndef ENGINE_HPP
-# define ENGINE_HPP
+#ifndef Connexion_HPP
+# define Connexion_HPP
 
 // C++
 # include <iostream>
@@ -53,37 +53,39 @@
 class Server;
 class Parse_request;
 
-class Engine
+class Connexion
 {
 	public:
 
 		// CONSTRUCTOR
-		Engine();
-		Engine(const std::vector<Server> & src);
-		Engine( Engine const & src );
+		Connexion();
+
+		Connexion( Connexion const & src );
 
 		// DESTRUCTOR
-		~Engine();
+		~Connexion();
 
 		// METHODS
-		void	setup_socket_server(const std::vector<Server> & src);
-		void	loop_server(const std::vector<Server> & src);
+
 
 		// OPERATORS
-		Engine &		operator=( Engine const & rhs );
+		Connexion &		operator=( Connexion const & rhs );
 
 		// GETTERS
 
-		std::string	GetRemote_Port() const;
-		std::string	GetRemote_Addr() const;
-		int			GetAccessPort( void ) const;
-
+        //bool _is_create
 		
+		void	reinit_obj();
+
+		size_t	recv_len;
+		size_t	request_header_size;
+		std::string fill_request;
+
 
 	private:
 
 		// VARIABLES
-		struct	sockaddr_in _addr;
+	/* 	struct	sockaddr_in _addr;
 		struct	epoll_event _fds_events[MAX_EVENTS];
 		size_t	_i_server;
 		size_t	_i_server_binded;
@@ -106,13 +108,13 @@ class Engine
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
-		void	set_remote_var(struct sockaddr_in & addr_client);
+		void	set_remote_var(struct sockaddr_in & addr_Connexion);
 		void	read_send_data(int fd, const std::vector<Server> & src);
 		void	send_data(int valread, int fd,const std::vector<Server> & src, const Parse_request & parse_head);
 
-		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
+		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src); */
 };
 
-std::ostream &			operator<<( std::ostream & o, Engine const & i );
+std::ostream &			operator<<( std::ostream & o, Connexion const & i );
 
-#endif /* ********************************************************* Engine_H */
+#endif /* ********************************************************* Connexion_H */

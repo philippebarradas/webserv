@@ -138,6 +138,7 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
+	std::cout << RED << "element=[" << src_header.get_request_body_size() << "]" << END << std::endl;
 	this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }

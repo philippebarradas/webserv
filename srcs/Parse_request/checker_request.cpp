@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 13:14:17 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/17 09:00:13 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ int     Parse_request::check_first_line(size_t full_size)
 	}
 	else if (get_request("Protocol").compare("HTTP/1.1") != 0)
 	{
-		replace->second = "404";
+		if (get_request("Protocol").find("HTTP/") != std::string::npos)
+			replace->second = "505";
+		else
+			replace->second = "404";
 		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
 		return (STOP);
 	}

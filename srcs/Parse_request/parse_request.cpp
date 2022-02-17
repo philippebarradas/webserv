@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 16:13:17 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/17 11:16:03 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,17 @@ Parse_request::Parse_request() : _nbr_line(0)
 	std::string empty = "";
 
 
-	recv_len = 0;
-	head = 0;
-	full_b = "";
-
+	/* 	recv_len = 0;
+		head = 0;
+		full_b = "";
+		_continue = false; */
 
 	_client_max_body_size = 10;
 	_next_buffer_is_body = 0;
 	_request_body_size = 0;
 	//std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+
+		//std::vector<std::string> full_path;
 
 
 	for (size_t x = 0; x < 42; x++)
@@ -93,6 +95,23 @@ Parse_request::Parse_request() : _nbr_line(0)
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
+void 	Parse_request::reinit_obj()
+{
+	_client_max_body_size = 10;
+	_next_buffer_is_body = 0;
+	_request_body_size = 0;
+	_buffer = "";
+	_nbr_line = 0;
+
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+    {
+		if (it->second.size() != 0)
+		{
+			it->second = "";
+		}
+		//std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
+	}
+}
 
 int		Parse_request::parse_request_buffer(char *buff, std::string full_b)
 {
@@ -113,16 +132,12 @@ int		Parse_request::parse_request_buffer(char *buff, std::string full_b)
 	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 
-	if (init_buffer(buff) == -1)
-		return (KEEP);
-/* 	if (_buffer.size() > _client_max_body_size)
-	{
-		replace = _header_tab.find("Status");
-		replace->second = "413";
-		std::cout << "ERROR 413 STATUS" << std::endl;
-		return (STOP);
-	} */
-	//std::cout << "parse_request_buffer == \n{"<< _buffer << "}" << std::endl;
+	//if (init_buffer(buff) == -1)
+	//	return (KEEP);
+	std::cout << PURPLE << "element=[" << get_nbr_line() << "]" << END << std::endl;
+	
+	this->_buffer = full_b;
+
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
@@ -255,6 +270,8 @@ int		Parse_request::fill_variables()
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
 	//
+	//std::cout << RED << "_=[" << _buffer<< "]" << END << std::endl;
+	std::cout << "{seg}" << std::endl;
 	return (KEEP);
 }
 
