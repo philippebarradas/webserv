@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/17 09:00:13 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/17 16:37:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,91 +85,16 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 	return (KEEP);
 }
 
-#include <sys/stat.h>
 int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
 	std::cout <<  time_test << std::endl;
 	if (time_test.compare("") == 0)
 		return (KEEP);
-/* 	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
+ 	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
 		return (STOP);
 	if(_buffer.rfind("If-Unmodified-Since\r\n") != std::string::npos)
 		return (STOP);
-	if (time_test.size() < 13)
-		return (STOP); */
-
-    std::string filename = "srcs/Config/default/error_page/404.html";
-    struct stat result;
-
-   	if (stat(filename.c_str(), &result) == -1)
-	{
-	    std::cout << "stat failed" << std::endl;
-	
-		return (STOP);
-	}
-
-	char time_modified_file [200];
-
-	struct tm * timeinfo;
-
-	timeinfo = localtime (&result.st_ctim.tv_sec);
-	strftime(time_modified_file, 199, "%a, %d %b %G %T %Z", timeinfo);
-
-	std::cout << time_modified_file << std::endl;
-	
-    struct tm timeinfo_modif;
-    struct tm timeinfo_test;
-
-
-    strptime(time_modified_file , "%a, %d %b %Y %T %Z", &timeinfo_modif);
-    strptime(   time_test.c_str(), "%a, %d %b %Y %T %Z", &timeinfo_test);
-
-	mktime(&timeinfo_modif);
-	mktime(&timeinfo_test);
-	std::cout << time_test.c_str() << std::endl;
-
-	std::cout << BLUE << "modif=[" << timeinfo_modif.tm_year << "]" << END << std::endl;
-	std::cout << BLUE << "test=[" << timeinfo_test.tm_year << "]" << END << std::endl;
-
-	std::cout << BLUE << "modif=[" << timeinfo_modif.tm_yday << "]" << END << std::endl;
-	std::cout << BLUE << "test=[" << timeinfo_test.tm_yday << "]" << END << std::endl;
-
-	std::cout << BLUE << "modif=[" << timeinfo_test.tm_hour << "]" << END << std::endl;
-	std::cout << BLUE << "test=[" << timeinfo_modif.tm_hour << "]" << END << std::endl;
-
-	if (timeinfo_modif.tm_year > timeinfo_test.tm_year)
-		return (STOP);
-	else if (timeinfo_modif.tm_year < timeinfo_test.tm_year)
-		return (KEEP);
-	else
-	{
-		if (timeinfo_modif.tm_yday > timeinfo_test.tm_yday)
-			return (STOP);
-		else if (timeinfo_modif.tm_yday < timeinfo_test.tm_yday)
-			return (KEEP);
-		else
-		{
-			if (timeinfo_modif.tm_hour > timeinfo_test.tm_hour)
-				return (STOP);
-			else if (timeinfo_modif.tm_hour < timeinfo_test.tm_hour)
-				return (KEEP);
-			else
-			{
-				if (timeinfo_modif.tm_min > timeinfo_test.tm_min)
-					return (STOP);
-				else if (timeinfo_modif.tm_min < timeinfo_test.tm_min)
-					return (KEEP);
-				else
-				{
-					if (timeinfo_modif.tm_sec > timeinfo_test.tm_sec)
-						return (STOP);
-					else if (timeinfo_modif.tm_sec < timeinfo_test.tm_sec)
-						return (KEEP);
-				}
-			}
-		}
-	}
 	return (KEEP);
 }
 

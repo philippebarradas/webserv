@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/17 11:16:03 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/17 16:37:46 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ Parse_request::Parse_request() : _nbr_line(0)
 
 	// GET /../../../Makefile HTTP/1.1 = invalid
 
-    _request_body_size = 0;
 	std::string  elements[42] = {
 		"Status", //ok
 		"Method", //ok
@@ -70,22 +69,10 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Warning:"};
 
 	
-
-
 	std::string empty = "";
-
-
-	/* 	recv_len = 0;
-		head = 0;
-		full_b = "";
-		_continue = false; */
-
-	_client_max_body_size = 10;
 	_next_buffer_is_body = 0;
 	_request_body_size = 0;
-	//std::cout << GREEN <<"_next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-
-		//std::vector<std::string> full_path;
+	_request_body = "";
 
 
 	for (size_t x = 0; x < 42; x++)
@@ -97,12 +84,11 @@ Parse_request::Parse_request() : _nbr_line(0)
 */
 void 	Parse_request::reinit_obj()
 {
-	_client_max_body_size = 10;
 	_next_buffer_is_body = 0;
 	_request_body_size = 0;
 	_buffer = "";
 	_nbr_line = 0;
-
+	_request_body = "";
 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
@@ -113,7 +99,7 @@ void 	Parse_request::reinit_obj()
 	}
 }
 
-int		Parse_request::parse_request_buffer(char *buff, std::string full_b)
+int		Parse_request::parse_request_buffer(std::string full_b)
 {
 	//std::cout << PURPLE << "buff=[" << buff << "]" << END << std::endl;
 	//std::cout << GREEN <<"inside _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;

@@ -13,6 +13,7 @@
 #include "Engine.hpp"
 #include "../Cgi/Cgi.hpp"
 #include "../Parse_request/parse_request.hpp"
+#include "Connexion.hpp"
 
 // Creating socket file descriptor
 int	Engine::create_socket()
@@ -187,106 +188,140 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 		listen_socket(this->_listen_fd[this->_i_server]);
 	}
 }
-/*  
-void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_request & Xarse_head)
+
+void	Engine::read_send_data(int i, int new_socket, const std::vector<Server> & src, Parse_request parse_head[MAX_EVENTS], Connexion	connexion[MAX_EVENTS])
 {
-	Parse_request	parse_head;
-	size_t	client_max_body_size = 1000000; // == 1M (1 000 000) default case
-	char	buff[client_max_body_size];
-	char b;
-	
-	parse_head._client_max_body_size = client_max_body_size;
-
-	//struct
-	size_t	recv_len = 0;
-	size_t	head;
-	std::string full_b;
-
-	std::cout << "{xx}" << std::endl;
-
+	char	b;
+	int		f;
 	int		valread = -1;
-	bool	is_valid = true;
-	bzero(&buff, sizeof(buff));
-
-    while (valread != 0 && is_valid == true)
-	{	
-		valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
+	//else if(connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
+	//if (valread != 0 && connexion[i].fill_request.find("\r\n\r\n") == std::string::npos )//&& e <= 80)
+	if (this->_fds_events[i].events == EPOLLIN && connexion[i].is_parsed == false)
+	{
+		valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 		if (valread == -1)
 			throw std::runtime_error("[Error] recv() failed");
 		else
-			recv_len += valread;
-		head = valread;
-		full_b += buff;
-		std::cout << "-buf-\n-|" << GREEN << buff << END << "|-\n-end-" << std::endl;
-
-		std::cout << RED << "parse_head.parse_request_buffer(buff)=[" << parse_head.parse_request_buffer(buff, full_b) << "]" << END << std::endl;
-		//parse_head.parse_request_buffer(buff);
-
-
-		std::cout << GREEN << "content length=[" << parse_head.get_request("Content-Length:") << "]" << END << std::endl;
-		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
-		
- 		if ((parse_head.get_request("Expect:") == "100-continue"
-		 && parse_head.get_request("Content-Length:") != "" ))
+			connexion[i].recv_len += valread;
+		connexion[i].fill_request += b;
+		if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos) // header rempli
 		{
-			std::cout << "{if}" << std::endl;
+			//std::cout << "{EPOLLOUT}" << std::endl;
+			this->_fds_events[i].events = EPOLLOUT;
+			if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, new_socket, &this->_fds_events[i]) == -1)
+				throw std::runtime_error("[Error] epoll_ctl_mod() failed");
+			//std::cout << RED << " this->_fds_events=[" << this->_fds_events[i].events << "]";
+			connexion[i].request_header_size = connexion[i].fill_request.size();
+		} 
+	}
+	else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == false)
+	{
+	//	std::cout << YELLOW << "i=[" << i << "]" << END << std::endl;
+	//	std::cout << RED << "element=[" << connexion[i].fill_request << "]" << END << std::endl;
+		f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+		connexion[i].is_parsed = true;
+	}
+	else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == true)
+		read_request_body(i, src, parse_head, connexion);
+}
 
+void	Engine::read_request_body(int i, const std::vector<Server> & src, Parse_request parse_head[MAX_EVENTS], Connexion connexion[MAX_EVENTS])
+{
+	char b;
+	int valread = -1;
+	int f;
 
-			std::cout << RED << "ICI" << END << std::endl;
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-			send(fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-
-
-			std::cout << GREEN << "full_b=[" << full_b << "]" << END << std::endl;
-			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			std::cout << GREEN << "valread=[" << valread << "]" << END << std::endl;
-			std::cout << GREEN << "full_b.size()=[" << full_b.size() << "]" << END << std::endl;
-			std::cout << GREEN << "head + std::stoi(parse_head.get_request(\"Content-Length:\"))=["
-			 << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && full_b.size() < head + std::stoi(parse_head.get_request("Content-Length:"))
-			&& head < std::stoi(parse_head.get_request("Content-Length:")))
-			{
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				//std::cout << "{x}";
-				valread = recv(fd, &b, 1, 0);
-				recv_len += valread;
-				full_b += b;
-			}
-		}
-		else if(parse_head.get_request("Expect:") == "100-continue"
-		&& parse_head.get_request("Content-Length:") == ""
-		&& parse_head.get_request("Transfer-Encoding:") == "chunked")
+	if (parse_head[i].get_request("Content-Length:") != ""  && connexion[i].is_sendable == false)
+	{
+		if (parse_head[i].get_request("Expect:") == "100-continue"
+		&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
 		{
 			std::cout << "{else if}" << std::endl;
-			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-			send(fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && full_b.find("0\r\n\r\n") == std::string::npos)
+			//send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
+			if (valread != 0 && connexion[i].fill_request.find("0\r\n\r\n") == std::string::npos)
 			{
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				valread = recv(fd, &b, 1, 0);
-				recv_len += valread;
-				full_b += b;;
+				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+				connexion[i].recv_len += valread;
+				connexion[i].fill_request += b;;
 			}
-			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << full_b.size() << "]" << END << std::endl;
-		}
-
-		if (parse_head.parse_request_buffer(buff, full_b) == 0)
-		{
-			std::cout << "{parse_request_buffer = 0}" << std::endl;
-			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
-			//std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
-			//std::cout << "[EPOLWAIT]" << std::endl;
+			else
+			{			
+				f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+				connexion[i].is_sendable = true;
+			}
 		}
 		else
-			is_valid = false;
+		{
+			if (valread != 0
+			&& connexion[i].fill_request.size() < connexion[i].request_header_size + std::stoi(parse_head[i].get_request("Content-Length:")))
+			{
+				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+				connexion[i].recv_len += valread;
+				connexion[i].fill_request += b;
+			}
+			else
+			{
+				f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+				connexion[i].is_sendable = true;
+			}
+		}
 	}
-	if (parse_head._next_buffer_is_body == 1 && parse_head._request_body_size != 0)
-		parse_head._next_buffer_is_body = 0;
-	send_data(valread, fd, src, parse_head);
+	else
+	{
+		std::cout << "{ap send ELSE}" << std::endl;
+		send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
+		parse_head[i].reinit_obj();
+		connexion[i].reinit_obj();
+		close(this->_fds_events[i].data.fd);
+	}
 
-} */
+
+
+	/* if (connexion[i].is_sendable == false)
+	{
+		if(parse_head[i].get_request("Expect:") == "100-continue"
+		&& parse_head[i].get_request("Content-Length:") == ""
+		&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
+		{
+			if (valread != 0 && connexion[i].fill_request.find("0\r\n\r\n") == std::string::npos)
+			{
+				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+				connexion[i].recv_len += valread;
+				connexion[i].fill_request += b;;
+			}
+			else
+			{			
+				f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+				connexion[i].is_sendable = true;
+			}
+		}
+		else if (parse_head[i].get_request("Content-Length:") != "" )
+		{
+			if (valread != 0
+			&& connexion[i].fill_request.size() < connexion[i].request_header_size + std::stoi(parse_head[i].get_request("Content-Length:")))
+			{
+				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+				connexion[i].recv_len += valread;
+				connexion[i].fill_request += b;
+			}
+			else
+			{
+				f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+				connexion[i].is_sendable = true;
+			}
+		}
+	}
+	else
+	{
+		std::cout << "{ap send ELSE}" << std::endl;
+		if (parse_head[i].get_request("Expect:") == "100-continue")
+			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
+		send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
+		parse_head[i].reinit_obj();
+		connexion[i].reinit_obj();
+		close(this->_fds_events[i].data.fd);
+	} */
+}
 
 void	Engine::send_data(int valread, int fd,const std::vector<Server> & src, const Parse_request & parse_head)
 {
@@ -307,29 +342,15 @@ void	Engine::send_data(int valread, int fd,const std::vector<Server> & src, cons
 	close(fd);
 }
 
-//void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_request & Xarse_head)
-
-#include "Connexion.hpp"
 
 void	Engine::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0, new_socket = 0, i = 0;
-	int e = 0;
-//	Parse_request	parse_head;
-	//std::cout << "init parse_head" << std::endl;
 	Parse_request	parse_head[MAX_EVENTS];
 	Connexion		connexion[MAX_EVENTS];
 
-	std::cout << RED << "	parse_head[0].head=[" << 	connexion[0].request_header_size << "]" << END << std::endl;
-	std::cout << RED << "	parse_head[0].head=[" << 	connexion[1].request_header_size << "]" << END << std::endl;
-
 	while (TRUE)
 	{
-/* 		std::cout << "{av}" << std::endl;
-		std::cout << BLUE << "nbr_connexions=[" << nbr_connexions << "]";
-		std::cout << BLUE << " this->_epfd=[" << this->_epfd << "]";
-		std::cout << YELLOW << " this->_fds_events=[" << this->_fds_events[0].events << "]";
-		std::cout << BLUE << " this->_timeout=[" << this->_timeout << "]" << std::endl; */
 		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 
@@ -337,7 +358,6 @@ void	Engine::loop_server(const std::vector<Server> & src)
 		{
 			if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
 			{
-			//std::cout << BLUE << "element=[" << this->_fds_events[i].data.fd << "]" << END << std::endl;
 				new_socket = accept_connexions(this->_fds_events[i].data.fd);
 				this->_fds_events[i].events = EPOLLIN;
 				std::cout << "{epol accept}" << std::endl;
@@ -347,316 +367,8 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			}
 			else
 			{
-	
-	size_t	client_max_body_size = 1000000; // == 1M (1 000 000) default case
-	char	buff[client_max_body_size];
-	char b;
-	int f;
-	parse_head[i]._client_max_body_size = client_max_body_size;
-	//struct
-	//size_t	recv_len = 0;
-	//size_t	head;
-	//std::string full_b;
-
-	//std::cout << "{xx}" << std::endl;
-
-	int		valread = -1;
-	bool	is_valid = true;
-	//bzero(&buff, sizeof(buff));
-		//else if(connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
-
-    //while (valread != 0 && is_valid == true)
-	//{	
-		//std::cout << "{x}";
-		//if (valread != 0 && connexion[i].fill_request.find("\r\n\r\n") == std::string::npos )//&& e <= 80)
-		if (this->_fds_events[i].events == EPOLLIN && connexion[i].is_parsed == false)
-		{
-		//std::cout << CYAN << " this->_fds_events=[" << this->_fds_events[i].events << "]";
-			valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-			if (valread == -1)
-				throw std::runtime_error("[Error] recv() failed");
-			else
-				connexion[i].recv_len += valread;
-			connexion[i].fill_request += b;
-			e++;
-			//std::cout << " " << e << std::endl;
-			std::cout << b;
- 			if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos) // header rempli
-			{
-				std::cout << "{EPOLLOUT}" << std::endl;
-				//std::cout << "{EPOLLOUTE}" << std::endl;
-				this->_fds_events[i].events = EPOLLOUT;
-				if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, new_socket, &this->_fds_events[i]) == -1)
-					throw std::runtime_error("[Error] epoll_ctl_mod() failed");
-				std::cout << RED << " this->_fds_events=[" << this->_fds_events[i].events << "]";
-				connexion[i].request_header_size = connexion[i].fill_request.size();
-
-			} 
-		}
-		else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == false)
-		{
-			std::cout << YELLOW << "i=[" << i << "]" << END << std::endl;
-			std::cout << RED << "element=[" << connexion[i].fill_request << "]" << END << std::endl;
-			f = parse_head[i].parse_request_buffer(buff, connexion[i].fill_request);
-			connexion[i].is_parsed = true;
-			/* send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
-			std::cout << "{SEG}" << std::endl;
-			parse_head[i].reinit_obj();
-			connexion[i].reinit_obj();
-			close(this->_fds_events[i].data.fd);
-			std::cout << "{close}" << std::endl; */
-			//std::cout << "-buf-\n-|" << GREEN << parse_head[i].fill_request << END << "|-\n-end-" << std::endl;
-
-		}
-		else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == true)
-		{
- 			//parse_head.parse_request_buffer(buff);
-			if (parse_head[i].get_request("Content-Length:") != ""  && connexion[i].is_sendable == false)
-			{
-				//std::cout << "{if}" << std::endl;
-
-				//std::cout << RED << "ICI" << END << std::endl;
-						//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				//send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-
-				// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-				//std::cout << CYAN << "-buf-\n-|" << connexion[i].fill_request << END << "|-\n-end-" << std::endl;
-				if (valread != 0
-				&& connexion[i].fill_request.size() < connexion[i].request_header_size + std::stoi(parse_head[i].get_request("Content-Length:")))
-				{
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-					//std::cout << "{x}";
-					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-					connexion[i].recv_len += valread;
-					connexion[i].fill_request += b;
-				}
-				else
-				{
-					f = parse_head[i].parse_request_buffer(buff, connexion[i].fill_request);
-					connexion[i].is_sendable = true;
-				}
+				read_send_data(i, new_socket, src, parse_head, connexion);
 			}
-			else if(parse_head[i].get_request("Expect:") == "100-continue"
-			&& parse_head[i].get_request("Content-Length:") == ""
-			&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
-			{
-				std::cout << "{else if}" << std::endl;
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-				//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
-				if (valread != 0 && connexion[i].fill_request.find("0\r\n\r\n") == std::string::npos)
-				{
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-					connexion[i].recv_len += valread;
-					connexion[i].fill_request += b;;
-				}
-				else
-				{			
-					f = parse_head[i].parse_request_buffer(buff, connexion[i].fill_request);
-					connexion[i].is_sendable = true;
-				}
-				//std::cout << RED << "full_b.size()=[" << connexion[i].fill_request.size() << "]" << END << std::endl;
-			} 
-			else
-			{
-/* 				this->_fds_events[i].events = EPOLLOUT;
-				if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, new_socket, &this->_fds_events[i]) == -1)
-					throw std::runtime_error("[Error] epoll_ctl_mod() failed");
-				std::cout << RED << " this->_fds_events=[" << this->_fds_events[i].events << "]";
-					std::cout << "{av send}" << std::endl; */
-				send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
-				std::cout << "{ap send}" << std::endl;
-				parse_head[i].reinit_obj();
-				connexion[i].reinit_obj();
-				close(this->_fds_events[i].data.fd);
-			}
-		}
-		else if (connexion[i].is_sendable == true)
-		{
-			std::cout << "{av send}" << std::endl;
-			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
-			std::cout << "{ap send}" << std::endl;
-			parse_head[i].reinit_obj();
-			connexion[i].reinit_obj();
-			close(this->_fds_events[i].data.fd);
-		}
-
-
-		
-		/* std::cout << GREEN << "content length=[" << parse_head[i].get_request("Content-Length:") << "]" << END << std::endl;
-		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head[i]._request_body_size << "]" << END << std::endl;
-		
- 		if ((parse_head[i].get_request("Expect:") == "100-continue"
-		 && parse_head[i].get_request("Content-Length:") != "" ))
-		{
-			std::cout << "{if}" << std::endl;
-
-			std::cout << RED << "ICI" << END << std::endl;
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-
-			// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
-			&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
-			{
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				//std::cout << "{x}";
-				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;
-			}
-		}
-		else if(parse_head[i].get_request("Expect:") == "100-continue"
-		&& parse_head[i].get_request("Content-Length:") == ""
-		&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
-		{
-			std::cout << "{else if}" << std::endl;
-			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
-			{
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;;
-			}
-			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
-		}
-
-		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_b) == 0)
-		{
-			std::cout << "{parse_request_buffer = 0}" << std::endl;
-			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
-			//std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
-			//std::cout << "[EPOLWAIT]" << std::endl;
-		}
-		else
-			is_valid = false;
-	//}
-	if (parse_head[i]._next_buffer_is_body == 1 && parse_head[i]._request_body_size != 0)
-		parse_head[i]._next_buffer_is_body = 0; */
-
-/* 	if (parse_head[i].get_request("Content-Length:") != "")
-	{
-		if (parse_head[i].full_b.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
-			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
-	} */
-
-			//}
-		//	std::cout << RED << "f[" << f << "]" << END << std::endl;
-		//if (parse_head[i].fill_request.find("\r\n\r\n") != std::string::npos)
-		//{
-/* 			//parse_head.parse_request_buffer(buff);
-			if ((parse_head[i].get_request("Expect:") == "100-continue"
-			&& parse_head[i].get_request("Content-Length:") != "" ))
-			{
-				std::cout << "{if}" << std::endl;
-
-				//std::cout << RED << "ICI" << END << std::endl;
-						//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-
-				// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-				if (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
-				&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
-				{
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-					//std::cout << "{x}";
-					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-					parse_head[i].recv_len += valread;
-					parse_head[i].full_b += b;
-				}
-			}
-			else if(parse_head[i].get_request("Expect:") == "100-continue"
-			&& parse_head[i].get_request("Content-Length:") == ""
-			&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
-			{
-				std::cout << "{else if}" << std::endl;
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-				//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
-				if (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
-				{
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-					parse_head[i].recv_len += valread;
-					parse_head[i].full_b += b;;
-				}
-				std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-				std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
-			} */
-			//else
-			//{
-			//	send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
-			//	parse_head[i];
-			//}
-		}
-		/* std::cout << GREEN << "content length=[" << parse_head[i].get_request("Content-Length:") << "]" << END << std::endl;
-		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head[i]._request_body_size << "]" << END << std::endl;
-		
- 		if ((parse_head[i].get_request("Expect:") == "100-continue"
-		 && parse_head[i].get_request("Content-Length:") != "" ))
-		{
-			std::cout << "{if}" << std::endl;
-
-			std::cout << RED << "ICI" << END << std::endl;
-					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-
-			// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
-			&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
-			{
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				//std::cout << "{x}";
-				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;
-			}
-		}
-		else if(parse_head[i].get_request("Expect:") == "100-continue"
-		&& parse_head[i].get_request("Content-Length:") == ""
-		&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
-		{
-			std::cout << "{else if}" << std::endl;
-			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
-			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
-			{
-				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
-				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;;
-			}
-			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
-		}
-
-		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_b) == 0)
-		{
-			std::cout << "{parse_request_buffer = 0}" << std::endl;
-			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
-			//std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
-			//std::cout << "[EPOLWAIT]" << std::endl;
-		}
-		else
-			is_valid = false;
-	//}
-	if (parse_head[i]._next_buffer_is_body == 1 && parse_head[i]._request_body_size != 0)
-		parse_head[i]._next_buffer_is_body = 0; */
-
-/* 	if (parse_head[i].get_request("Content-Length:") != "")
-	{
-		if (parse_head[i].full_b.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
-			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
-	} */
-
-			//}
-
 		}
 
 	}

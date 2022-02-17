@@ -16,3 +16,21 @@ server{
 		root yo;
 	}
 }
+
+server{
+	server_name localhost;
+	listen 8002;
+
+
+	autoindex off;
+	root /home/user42/Bureau/webserv/www;
+	location / {
+		index form.html;
+		cgi .php /usr/bin/php-cgi;
+		accepted_methods	GET POST DELETE;
+	}
+
+	location /salut {
+		root yo;
+	}
+}
