@@ -31,3 +31,4 @@ server{
 		cgi .html /usr/bin/php-cgie;
 	}
 }
+

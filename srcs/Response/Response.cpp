@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 20:02:03 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/17 15:14:07 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,12 @@ std::ostream &			operator<<( std::ostream & o, Response const & i )
 
 void	Response::writeRequestStatus( std::string const & code )
 {
-	std::string		all_code[] = {"200", "301", "400", "403", "404", "405",
-		"412", "413", "502"};
-	std::string		all_status[] = {"OK", "Moved Permanently", "Bad Request", "Forbidden",
-		"Not Found", "Not Allowed", "Precondition Failed", "Request Entity Too Large",
-		"Bad Gateway"};
+	std::string		all_code[] = {"200", "204", "301", "400", "403", "404",
+		"405", "409", "412", "413", "500", "502", "505"};
+	std::string		all_status[] = {"OK", "No Content", "Moved Permanently",
+		"Bad Request", "Forbidden", "Not Found", "Not Allowed", "Conflict",
+		"Precondition Failed", "Request Entity Too Large", "Internal Server Error",
+		"Bad Gateway", "HTTP Version not supported"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;
@@ -108,6 +109,7 @@ void	Response::writeType( std::string const & extension, TreatRequest const & tr
 		this->_header += treat.getType_Cgi() + "\r\n";
 	else
 	{
+		//std::cout << "extension\t=\t" << extension << std::endl;
 		this->_header += "Content-Type: ";
 		if (extension == ".html")
 			this->_header += "text/html";
@@ -146,7 +148,7 @@ void	Response::writeDate( void )
 
 std::string const &	Response::getHeader( void ) const
 {
-	//std::cout << "_header\t=\t\r\n" << _header << std::endl;
+	std::cout << "_header\t=\t\r\n" << _header << std::endl;
 	return (this->_header);
 }
 

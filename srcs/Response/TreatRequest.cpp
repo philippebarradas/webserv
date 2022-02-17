@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 20:26:42 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/17 16:05:31 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
-
-// TODO: 405 bad extension text plain
 
 TreatRequest::TreatRequest( void )
 {
@@ -170,13 +168,12 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 	this->_type_cgi = obj_cgi.getType_Cgi();
 }
 
-// TODO 505
-
 void	TreatRequest::force_open( Parse_request const & req )
 {
 	std::ifstream	ifs;
 	std::string		pathErr;
 
+	std::cout << "FORCE OPEN ERROR" << std::endl;
 	pathErr = DEFAULT_ROOT_ERROR + req.get_request("Status") + ".html";
 	ifs.open(pathErr, std::ifstream::in);
 	this->readStaticFile(ifs);
@@ -280,7 +277,7 @@ bool	TreatRequest::openAndRead( std::string const & path,
 		{
 			if (extension == it->first)
 			{
-				this->_cgi = true;		// TODO check plusieurs def de .php dans la confi
+				this->_cgi = true;
 				break;
 			}
 		}
@@ -299,9 +296,11 @@ bool	TreatRequest::openAndRead( std::string const & path,
 		this->readStaticFile(ifs);
 	else
 	{
-		//std::cout << "ERROR 405" << std::endl;
+		std::cout << "HELLO" << std::endl;
+		std::cout << "ERROR 405" << std::endl;
 		req.setStatus("405");
 		this->error_page(req);
+		return (true);
 	}
 	this->cpyInfo(extension, path, req);
 	return (true);
@@ -444,8 +443,8 @@ void	TreatRequest::error_page( Parse_request & req )
 		else
 			this->_loc = locTmp;
 	}
-	//std::cout << "find_custom\t=\t" << find_custom << std::endl;
-	//std::cout << "_file\t=\t" << _file << std::endl;
+	std::cout << "find_custom\t=\t" << find_custom << std::endl;
+	std::cout << "_file\t=\t" << _file << std::endl;
 	if (!find_custom)
 		this->force_open(req);
 	//std::cout << "BYE" << std::endl;
@@ -462,12 +461,10 @@ void	TreatRequest::redirect( Parse_request & req, std::string const & path )
 	this->error_page(req);
 }
 
-// err TODO 406 ?? 408 ?? 411 ?? 413 ??
-
 bool	TreatRequest::check_access( Parse_request & req, std::string path )
 {
 	std::string	testPath;
-	int			size_parced;
+	size_t		size_parced;
 	bool		is_file;		// theorie is file but possible to be a dir without '/'
 
 //	std::cout << "hello:" << path << std::endl;
@@ -545,15 +542,113 @@ void	TreatRequest::exec_root( Parse_request & req, std::string const & path )
 			this->generateAutoIndex(req, path);
 	}
 	else
-	{
-		//std::cout << GREEN "OK PERM FILE" END << std::endl;
-		//this->_file += "ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD1\n";
 		this->openAndRead(path, req, false);
-		//this->_file += "ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD2\n";
+}
+
+void	TreatRequest::parce_end_path( std::string & src )
+{
+	for (std::string::iterator it = src.end()-1 ; it != src.begin() ; --it)
+	{
+		if (*it == '/' && *(it - 1) == '/')
+		{
+			src.erase(it);
+			it = src.end();
+		}
+		else
+			return ;
 	}
 }
 
-void	TreatRequest::exec( Parse_request & req )
+/*{
+	// true = exist  / false = no exist
+	struct stat	sbuf_dir;
+
+	if (stat(root.c_str(), &sbuf_dir) == -1)
+		return (false);
+	return (S_ISDIR(sbuf_dir.st_mode)); // dossier
+}*/
+
+bool	TreatRequest::check_access_delete( Parse_request & req, std::string path )
+{
+	std::string	testPath;
+	size_t		size_parced;
+
+	//std::cout << "pathbefore\t=\t" << path << std::endl;
+	this->parce_end_path(path);
+	//std::cout << "pathafter\t=\t" << path << std::endl;
+
+	while (path.length())
+	{
+		size_parced = path.find('/');
+		if (size_parced == std::string::npos || (size_parced + 1) == path.length() )
+			return (true);
+		++size_parced;
+		testPath.insert(testPath.end(), path.begin(), path.begin() + size_parced);
+		//std::cout << "testPath\t=\t" << testPath << std::endl;
+		if (this->exist_dir(testPath) && !this->permForOpen(testPath))
+		{
+			req.setStatus("403");
+			return (false);
+		}
+		else if (!this->exist_dir(testPath))
+		{
+			req.setStatus("404");
+			return (false);
+		}
+		path.erase(0, size_parced);
+	}
+
+	return (true);
+}
+
+bool	TreatRequest::del( char const * path )
+{
+	struct stat sb;
+
+	if (stat(path, &sb) != -1)
+	{
+		if (S_ISDIR(sb.st_mode))
+		{
+			if (rmdir(path) == -1)
+				return (false);
+		}
+		else
+		{
+			if (unlink(path) == -1)
+				return (false);
+		}
+	}
+	else
+		return (false);
+	return (true);
+}
+
+void	TreatRequest::exec_delete( Parse_request & req, std::string const & path )
+{
+	if (this->check_access_delete(req, path))
+	{
+		if (!this->exist(path))
+			req.setStatus("404");
+		else if (!this->exist_file(path) && *(--(path.end())) != '/')
+			req.setStatus("409");
+		else if (this->exist_dir(path) && !this->permForOpen(path))
+			req.setStatus("500");
+		else if (del(path.c_str()))
+			req.setStatus("204");
+		else
+			req.setStatus("500");
+	}
+	if (req.get_request("Status") != "204")
+		this->error_page(req);
+
+
+	// TODO delete dir without / == 409 Conflict
+	// TODO delete dir withour perm == 500 Internal Server Error
+	// TODO delete file withour perm == 204
+
+}
+
+void	TreatRequest::exec( Parse_request & req, std::string const & method )
 {
 	std::string		path;
 	std::string		path_alias;
@@ -562,7 +657,7 @@ void	TreatRequest::exec( Parse_request & req )
 	//std::cout << "req.get_request(\"Path\")\t=\t" << req.get_request("Path") << std::endl;
 
 	if (!this->exist(this->_loc->second.getRoot() + req.get_request("Path"))
-		&& this->_loc->first != "/")					// TODO JUST OPEN OR WITH PERMISSION ??
+		&& this->_loc->first != "/")
 	{
 		//std::cout << "_loc->first\t=\t" << _loc->first << std::endl;
 		//std::cout << "ALIAS METHOD" << std::endl;
@@ -574,41 +669,42 @@ void	TreatRequest::exec( Parse_request & req )
 		//std::cout << "path_alias\t=\t" << path_alias << std::endl;
 
 		path = this->_loc->second.getRoot() + path_alias;
-		exec_root(req, path);
+		if (method == "POST" || method == "GET")
+			this->exec_root(req, path);
+		else if (method == "DELETE")
+			this->exec_delete(req, path);
 	}
 	else
 	{
 		//std::cout << "ROOT METHOD" << std::endl;
 		path = this->_loc->second.getRoot() + req.get_request("Path");
-		exec_root(req, path);
+		if (method == "POST" || method == "GET")
+			this->exec_root(req, path);
+		else if (method == "DELETE")
+			this->exec_delete(req, path);
 	}
 }
 
 void	TreatRequest::permMethod( Parse_request & req )
 {
-	std::string	cmd;
+	std::string	method;
 	std::set<std::string>::const_iterator	it;
 
-	cmd = req.get_request("Method");
-	it = this->_loc->second.getMethods().find(cmd);
+	method = req.get_request("Method");
+	it = this->_loc->second.getMethods().find(method);
 	//std::cout << "CRASH" << std::endl;
 	//std::cout << "*it\t=\t" << *it << std::endl;
 	if (it == this->_loc->second.getMethods().end()
-		|| (cmd != "GET"
-		&& cmd != "POST"
-		&& cmd != "DELETE"))
+		|| (method != "GET"
+		&& method != "POST"
+		&& method != "DELETE"))
 	{
 		//std::cout << "NO METHOD" << std::endl;
 		req.setStatus("405");
 		this->error_page(req);
 	}
 	else
-	{
-		if (cmd == "POST" || cmd == "GET")
-			this->exec(req);
-		//else
-		//	TODO DELETE
-	}
+		this->exec(req, method);
 }
 
 std::string	TreatRequest::treat( Parse_request & req )
@@ -617,7 +713,7 @@ std::string	TreatRequest::treat( Parse_request & req )
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
 	//printMap(pol, "Tableau de merde");
 
-	if (req.get_request("Status") == "400")
+	if (req.get_request("Status") == "400" || req.get_request("Status") == "505") // TODO 505 test when merge
 		force_open(req);
 	else
 	{

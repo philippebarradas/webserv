@@ -6,14 +6,13 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:30:56 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/17 14:21:20 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TREATREQUEST_HPP
 # define TREATREQUEST_HPP
 
-# include <iostream>
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
@@ -21,9 +20,13 @@
 # include "../Config/utils.hpp"
 
 # include "Response.hpp"
+# include <iostream>
 # include <string>
 # include <dirent.h>
 # include <sys/stat.h>
+# include <unistd.h>
+# include <grp.h>
+# include <pwd.h>
 
 # define DEFAULT_ROOT_ERROR "srcs/Config/default/error_page/"
 
@@ -76,7 +79,10 @@ class TreatRequest
 			std::string const & path );
 
 		//bool	exist( std::string const & path, Parse_request & req) const;
+		void	parce_end_path( std::string & src );
+		bool	check_access_delete( Parse_request & req, std::string path );
 		bool	check_access( Parse_request & req, std::string path );
+		bool	del( char const * path );
 		bool	exist_file( std::string const & path) const;
 		bool	exist_dir( std::string const & root) const;
 		bool	exist( std::string const & root) const;
@@ -84,7 +90,8 @@ class TreatRequest
 		void	permMethod( Parse_request & req );
 		void	redirect( Parse_request & req, std::string const & path );
 		void	exec_root( Parse_request & req, std::string const & path );
-		void	exec( Parse_request & req );
+		void	exec( Parse_request & req, std::string const & method );
+		void	exec_delete( Parse_request & req, std::string const & path );
 
 		std::map<std::string, Server>::const_iterator	selectLocation(
 			std::string const &	path,

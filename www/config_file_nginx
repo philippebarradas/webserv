@@ -1,4 +1,4 @@
-user www-data;
+user user42;
 
 events {}
 http{
@@ -11,6 +11,7 @@ server{
 
 	index phpinfo.php;
 	dav_methods DELETE;
+
 
 	location /env.php {
 		error_page 404 /form.html;
