@@ -2,8 +2,6 @@
 
 var_dump($_POST);
 
-<<<<<<< HEAD
-=======
 if(isset($_FILES['avatar']))
 { 
      $dossier = '/home/user42/Bureau/webserv/www/upload/';
@@ -22,6 +20,5 @@ if(isset($_FILES['avatar']))
 }
 else
     echo 'NO AVATAR';
->>>>>>> 8d51e34053bf07a8af856831e591d22b5021200b
 
 ?>

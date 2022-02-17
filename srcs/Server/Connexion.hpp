@@ -80,7 +80,8 @@ class Connexion
 		size_t	recv_len;
 		size_t	request_header_size;
 		std::string fill_request;
-
+		bool	is_parsed;
+		bool	is_sendable;
 
 	private:
 

@@ -1,1 +1,122 @@
 qwertxxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqxxxxxqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1234567890qwertyuiop
+
+else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
+		{
+ 			//parse_head.parse_request_buffer(buff);
+			if ((parse_head[i].get_request("Expect:") == "100-continue"
+			&& parse_head[i].get_request("Content-Length:") != "" ))
+			{
+				std::cout << "{if}" << std::endl;
+
+				//std::cout << RED << "ICI" << END << std::endl;
+						//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
+
+				// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
+				if (valread != 0
+				&& connexion[i].fill_request.size() < connexion[i].request_header_size + std::stoi(parse_head[i].get_request("Content-Length:"))
+				&& connexion[i].request_header_size < std::stoi(parse_head[i].get_request("Content-Length:")))
+				{
+					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+					//std::cout << "{x}";
+					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+					connexion[i].recv_len += valread;
+					connexion[i].fill_request += b;
+				}
+				else
+					_stop = true;
+			}
+			else if(parse_head[i].get_request("Expect:") == "100-continue"
+			&& parse_head[i].get_request("Content-Length:") == ""
+			&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
+			{
+				std::cout << "{else if}" << std::endl;
+				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
+				//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
+				if (valread != 0 && connexion[i].fill_request.find("0\r\n\r\n") == std::string::npos)
+				{
+					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+					connexion[i].recv_len += valread;
+					connexion[i].fill_request += b;;
+				}
+				else
+					_stop = true;
+				
+				std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
+				std::cout << RED << "full_b.size()=[" << connexion[i].fill_request.size() << "]" << END << std::endl;
+			} 
+			else
+				_stop = true;
+		}
+		/* std::cout << GREEN << "content length=[" << parse_head[i].get_request("Content-Length:") << "]" << END << std::endl;
+		std::cout << GREEN << "parse_head._request_body_size=[" << parse_head[i]._request_body_size << "]" << END << std::endl;
+		
+ 		if ((parse_head[i].get_request("Expect:") == "100-continue"
+		 && parse_head[i].get_request("Content-Length:") != "" ))
+		{
+			std::cout << "{if}" << std::endl;
+
+			std::cout << RED << "ICI" << END << std::endl;
+					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
+
+			// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
+			while (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
+			&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
+			{
+				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+				//std::cout << "{x}";
+				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+				parse_head[i].recv_len += valread;
+				parse_head[i].full_b += b;
+			}
+		}
+		else if(parse_head[i].get_request("Expect:") == "100-continue"
+		&& parse_head[i].get_request("Content-Length:") == ""
+		&& parse_head[i].get_request("Transfer-Encoding:") == "chunked")
+		{
+			std::cout << "{else if}" << std::endl;
+			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
+			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
+ 			while (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
+			{
+				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
+				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
+				parse_head[i].recv_len += valread;
+				parse_head[i].full_b += b;;
+			}
+			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
+			std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
+		}
+
+		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_b) == 0)
+		{
+			std::cout << "{parse_request_buffer = 0}" << std::endl;
+			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
+			//std::cout << RED << "parse_head._next_buffer_is_body=[" << parse_head._next_buffer_is_body << "]" << END << std::endl;
+			//std::cout << "[EPOLWAIT]" << std::endl;
+		}
+		else
+			is_valid = false;
+	//}
+	if (parse_head[i]._next_buffer_is_body == 1 && parse_head[i]._request_body_size != 0)
+		parse_head[i]._next_buffer_is_body = 0; */
+
+/* 	if (parse_head[i].get_request("Content-Length:") != "")
+	{
+		if (parse_head[i].full_b.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
+			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
+	} */
+
+			//}
+			if (_stop == true)
+			{
+				send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
+				std::cout << "{SEG}" << std::endl;
+				parse_head[i].reinit_obj();
+				connexion[i].reinit_obj();
+				close(this->_fds_events[i].data.fd);
+			}

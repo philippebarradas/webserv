@@ -19,7 +19,7 @@ server{
 
 server{
 	server_name hello12 hello55;
-	listen 7777;
+	listen 7775;
 
 	autoindex on;
 	root /home/user42/Bureau/webserv/www;
