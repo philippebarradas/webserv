@@ -124,6 +124,8 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
+	if (src_header.get_request("Cookie:") != "")
+		this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");	// debrouille toi avec ca. La bise !
 	if (src_header.get_request("Query").compare(""))
 		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
 	else

@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/17 15:14:07 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/18 23:30:38 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 		: "";
 	this->_header += "Connection: " + req.get_request("Connection:") + "\r\n";
 
-	this->_header += "\r\n" + treat.getFile();
+	this->_header += (treat.getIs_Cgi() ? "" : "\r\n") + treat.getFile();
 }
 
 Response::Response()

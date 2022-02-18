@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/18 05:29:45 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/18 23:47:54 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -711,7 +711,7 @@ std::string	TreatRequest::treat( Parse_request & req )
 {
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	//printMap(pol, "Tableau de merde");
+	printMap(pol, "Tableau de merde");
 
 	if (req.get_request("Status") == "400" || req.get_request("Status") == "505") // TODO 505 test when merge
 		force_open(req);
