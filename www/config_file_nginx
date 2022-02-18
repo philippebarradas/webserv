@@ -9,6 +9,7 @@ server{
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	dav_methods DELETE;
+	index cookie.php;
 
 	location ~ \.php$ {
 		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;

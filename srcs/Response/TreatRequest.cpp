@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/17 16:05:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/18 05:27:04 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ bool	TreatRequest::check502( std::string const & pathCgi, Parse_request & req )
 	{
 		//std::cout << "SEARCH CUSTOM 502" << std::endl;
 		req.setStatus("502");
-		//std::cout << "HELLO" << std::endl;
+		std::cout << "HELLO" << std::endl;
 		this->error_page(req);
 		return (false);
 	}
@@ -290,7 +290,7 @@ bool	TreatRequest::openAndRead( std::string const & path,
 		if (this->check502(it->second, req))
 			this->readDynamicFile(path, it->second, req);
 		else
-			return (false);
+			return (true);
 	}
 	else if ((!this->_cgi && req.get_request("Method") == "GET") || isError)
 		this->readStaticFile(ifs);

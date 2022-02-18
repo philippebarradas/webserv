@@ -3,7 +3,7 @@ server{
 	server_name localhost;
 	listen 8003;
 
-	autoindex on;
+	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	cgi .php /usr/bin/php-cgi;
 
@@ -12,8 +12,8 @@ server{
 	accepted_methods	GET POST;
 
 	location / {
-		index form.html;
-		cgi .xphp /usr/bin/php-cgi;
+		index cookie.php;
+		cgi .php /usr/bin/php-cgi;
 		accepted_methods	GET POST DELETE;
 	}
 
