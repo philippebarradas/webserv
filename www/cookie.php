@@ -5,32 +5,36 @@
 		<title>Webserv cookie/session</title>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
 	</head>
-    <body bgcolor="white">
+	<body bgcolor="white">
 
 		<center><h1>Webserv cookie.html</h1></center>
 		<hr><center>webcerveau/1.0 (Ubuntu)</center>
 		<?php
-			//@session_start();
 			if(isset($_COOKIE['cookPseudo']))
 			{
 				echo "Hello " . $_COOKIE['cookPseudo'] . " !";
 			}
 			//header("Location: index.php");
 		?>
-		<p>TEST COOKIE</p>
+
+		<?php if ( !isset($_COOKIE['cookPseudo']) ): ?>
+		<p>SET COOKIE COOKIE</p>
 		<form method="POST" enctype="application/x-www-form-urlencoded">
 			<input type="text" name="pseudo"></input>
 			<input type="submit" name="submit" value="phbdg valide"></input>
 		</form>
+		<?php endif; ?>
+
 		<?php
 			//@session_start();
 			if(isset($_POST['submit']) && !isset($_COOKIE['cookPseudo']))
 			{
 				$pseudo = $_POST['pseudo'];
 				//setcookie('cookPseudo', $pseudo, time() + 3600 * 24 * 365, null, null, false, true);
-				setcookie('cookPseudo', $pseudo, time() + 10, null, null, false, true);
+				setcookie('cookPseudo', $pseudo, time() + 60, null, null, false, true);
 				//$_SESSION['division'] = $divId[0];
 				unset($_POST['submit']);
+				header("Refresh:15");
 			}
 			//header("Location: index.php");
 		?>

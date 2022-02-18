@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/18 05:27:04 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/18 05:29:45 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ bool	TreatRequest::check502( std::string const & pathCgi, Parse_request & req )
 }
 
 
-// TODO NORM URGENT
+// TODO NORM URGENT / REMOVE isError
 bool	TreatRequest::openAndRead( std::string const & path,
 	Parse_request & req, bool const & isError )
 {
