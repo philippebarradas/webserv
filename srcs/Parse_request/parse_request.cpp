@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/17 16:37:46 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/21 16:08:59 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,48 +25,14 @@ Parse_request::Parse_request() : _nbr_line(0)
 
 	// GET /../../../Makefile HTTP/1.1 = invalid
 
-	std::string  elements[42] = {
+	std::string  elements[6] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
 		"Query", //ok
 		"Protocol", //ok
 		"Host:", //ok
-		"A-IM:", 
-		"Transfer-Encoding:", //ok
-		"Accept:",
-		"Accept-Charset:",
-		"Accept-Encoding:",
-		"Accept-Language:",
-		"Accept-Datetime:",
-		"Access-Control-Request-Method:",
-		"Access-Control-Request-Headers:",
-		"Authorization:",
-		"Cache-Control:",
-		"Connection:", //ok
-		"Content-Length:", //ok
-		"Content-Type:",
-		"Cookie:",
-		"Date:",
-		"Expect:",
-		"Forwarded:","From:",
-		"If-Match:",
-		"If-Modified-Since:", //
-		"If-None-Match:",
-		"If-Range:",
-		"If-Unmodified-Since:", //
-		"Max-Forwards:",
-		"Origin:",
-		"Pragma:",
-		"Proxy-Authorization:",
-		"Range:",
-		"Referer:",
-		"TE:",
-		"User-Agent:",
-		"Upgrade:",
-		"Via:",
-		"Last-Modified:",
-		"Warning:"};
+	};
 
 	
 	std::string empty = "";
@@ -75,7 +41,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 	_request_body = "";
 
 
-	for (size_t x = 0; x < 42; x++)
+	for (size_t x = 0; x < 6; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 }
 
@@ -221,6 +187,60 @@ int		Parse_request::fill_variables()
 	size_t	final_pose = 0;
 	size_t	found = 0;
 	bool	bn = false;
+	std::string buff_parsed = _buffer;
+	std::map<std::string, std::string>::iterator replace;
+	
+
+	while ((found = buff_parsed.find(":")) != std::string::npos)
+	{
+		found += 1;
+		for (std::string::iterator it = buff_parsed.begin(); it != buff_parsed.end() && bn == false; ++it)
+		{
+			final_pose++;
+			cmp = *it;
+			if (final_pose > found && cmp.compare("\n") == 0)
+				bn = true;
+		}
+		if (bn == true)
+		{
+			_header_tab.insert(std::pair<std::string, std::string>
+			(buff_parsed.substr(0, found)
+			,fill_header_tab(buff_parsed.substr(found, final_pose - found))));
+
+			//std::cout << RED << "buff=[" << buff_parsed.substr(0, found) << "] = " << END;
+			//std::cout << RED << "element=[" << fill_header_tab(buff_parsed.substr(found , //final_pose - found)) << "]" << END << std::endl;
+			//std::cout << BLUE << "final_pose=[" << final_pose << "]" << END << std::endl;
+			//std::cout << BLUE << "found=[" << found << "]" << END << std::endl;
+			//std::cout << BLUE << "buff_parsed=[" << buff_parsed << "]" << END << std::endl;
+			bn = false;
+		}
+		buff_parsed = buff_parsed.substr(final_pose, buff_parsed.size() - (final_pose));
+		final_pose = 0;
+	}
+	if (get_request("Expect:") == "100-continue")
+	{
+		set_next_buffer_is_body(TRUE);
+		std::cout << GREEN <<"FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+	}
+	//DISPLAY VALID ELEMENTS
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+    {
+		if (it->second.size() != 0)
+			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
+	}
+	//
+	//std::cout << RED << "_=[" << _buffer<< "]" << END << std::endl;
+	std::cout << "{seg}" << std::endl;
+	return (KEEP);
+}
+
+
+/* int		Parse_request::fill_variables()
+{
+	std::string cmp;
+	size_t	final_pose = 0;
+	size_t	found = 0;
+	bool	bn = false;
 
 	std::map<std::string, std::string>::iterator replace;
 	for (std::map<std::string, std::string>::iterator ith = _header_tab.begin() ; ith != _header_tab.end(); ++ith)
@@ -252,14 +272,14 @@ int		Parse_request::fill_variables()
 	//DISPLAY VALID ELEMENTS
 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
-		if (it->second.size() != 0)
+		//if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	}
 	//
 	//std::cout << RED << "_=[" << _buffer<< "]" << END << std::endl;
 	std::cout << "{seg}" << std::endl;
 	return (KEEP);
-}
+}*/
 
 int		Parse_request::init_buffer(char *buff)
 {
