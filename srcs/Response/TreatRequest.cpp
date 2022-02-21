@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/18 23:47:54 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/21 19:19:39 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -731,6 +731,9 @@ std::string	TreatRequest::treat( Parse_request & req )
 		else
 			this->permMethod(req);
 	}
+
+	if (this->_cgi)
+		req.setTransfer("chunked");
 
 	Response	rep(req, *this);
 	//std::cout << "rep.getHeader()\t=\t" << rep.getHeader() << std::endl;

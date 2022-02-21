@@ -34,7 +34,7 @@
 				setcookie('cookPseudo', $pseudo, time() + 10, null, null, false, true);
 				//$_SESSION['division'] = $divId[0];
 				unset($_POST['submit']);
-				//header("Refresh: 5");
+				header("Refresh: 50");
 				while (list($var,$value) = each($_SERVER))
 				echo "$var => $value <br />";
 			}

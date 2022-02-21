@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/21 16:34:43 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/21 19:23:21 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ Parse_request::Parse_request() : _nbr_line(0)
 		"Path", //ok
 		"Query", //ok
 		"Protocol", //ok
-		"Host-uncut-comme-les-casquettes"
+		"Host-uncut-comme-les-casquettes",
+		"Connection:"
 	};
 
 	std::string empty = "";

@@ -64,6 +64,8 @@ class Parse_request
 		void	incr_nbr_line(){this->_nbr_line++;};
 
 		void	setStatus( std::string const & code ) { this->_header_tab["Status"] = code; }
+		void	setTransfer( std::string const & method ) { this->_header_tab["Transfer-Encoding:"] = method; }
+
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
 
 		bool		_next_buffer_is_body;
@@ -71,6 +73,7 @@ class Parse_request
 		size_t		_client_max_body_size;
 
 	private:
+
 		std::string	_request_body;
 		std::string	fill_header_tab(std::string str);
 		int			parse_first_line();

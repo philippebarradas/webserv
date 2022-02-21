@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/18 23:30:38 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/21 19:49:34 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 	this->_header += "Server: webserv/1.0 (Ubuntu)\r\n";
 	this->writeDate();
 	this->writeType(treat.getExtension(), treat);
+
 	this->writeLenght(treat.getFile());
+
 	this->_header += treat.getLocation()[0]
 		? "Location: " + treat.getLocation() + "\r\n"
 		: "";
@@ -119,8 +121,9 @@ void	Response::writeType( std::string const & extension, TreatRequest const & tr
 	}
 }
 
-void	Response::writeLenght( std::string const & page )
+void	Response::writeLenght( std::string const & page, bool const & isDynamic )
 {
+	// TODO LENGHT
 	std::stringstream conv;
 
 	conv << page.length();
