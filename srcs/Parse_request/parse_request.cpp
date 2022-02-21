@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 20:01:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/21 16:34:43 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,49 +23,14 @@ Parse_request::Parse_request() : _nbr_line(0)
 {
 	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 // GET /../../../Makefile HTTP/1.1 = invalid mais bon
-    std::string  elements[] = {
+	std::string  elements[] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
-		"Query",
+		"Query", //ok
 		"Protocol", //ok
-		"Host:", //ok
-		"Host-uncut-comme-les-casquettes",
-		"A-IM:",
-		"Transfer-Encoding:"
-		"Accept:",
-		"Accept-Charset:",
-		"Accept-Encoding:",
-		"Accept-Language:",
-		"Accept-Datetime:",
-		"Access-Control-Request-Method:",
-		"Access-Control-Request-Headers:",
-		"Authorization:",
-		"Cache-Control:",
-		"Connection:", //ok
-		"Content-Length:", //ok
-		"Content-Type:",
-		"Cookie:",
-		"Date:",
-		"Expect:",
-		"Forwarded:","From:",
-		"If-Match:",
-		"If-Modified-Since:", //
-		"If-None-Match:",
-		"If-Range:",
-		"If-Unmodified-Since:", //
-		"Max-Forwards:",
-		"Origin:",
-		"Pragma:",
-		"Proxy-Authorization:",
-		"Range:",
-		"Referer:",
-		"TE:",
-		"User-Agent:",
-		"Upgrade:",
-		"Via:",
-		"Last-Modified:",
-		"Warning:"};
+		"Host-uncut-comme-les-casquettes"
+	};
 
 	std::string empty = "";
 	size_t len = sizeof(elements) / sizeof(std::string);
@@ -80,7 +45,7 @@ Parse_request::Parse_request() : _nbr_line(0)
 		_client_max_body_size = 10;
 	//if (_next_buffer_is_body != 1)
 	//{
-		for (size_t x = 0; x < 42; x++)
+		for (size_t x = 0; x < len; x++)
 			_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 	//}
 }
@@ -216,43 +181,53 @@ int		Parse_request::fill_variables()
 	size_t	final_pose = 0;
 	size_t	found = 0;
 	bool	bn = false;
-
+	std::string buff_parsed = _buffer;
 	std::map<std::string, std::string>::iterator replace;
-	for (std::map<std::string, std::string>::iterator ith = _header_tab.begin() ; ith != _header_tab.end(); ++ith)
+
+
+	while ((found = buff_parsed.find(":")) != std::string::npos)
 	{
-		found = _buffer.rfind(ith->first);
-		if (found != std::string::npos)
+		found += 1;
+		for (std::string::iterator it = buff_parsed.begin(); it != buff_parsed.end() && bn == false; ++it)
 		{
-			final_pose = 0;
-			bn = false;
-			for (std::string::iterator it = _buffer.begin(); it != _buffer.end() && bn == false; ++it)
-			{
-				final_pose++;
-				cmp = *it;
-				if (final_pose > found && cmp.compare("\n") == 0)
-					bn = true;
-			}
-			replace = _header_tab.find(ith->first);
-			if (check_double_content(replace) == -1)
-				return (STOP);
-			if (replace->first.find(":") != std::string::npos)
-				replace->second = fill_header_tab(_buffer.substr(found + (ith->first).size(), final_pose - (found + (ith->first).size())));
+			final_pose++;
+			cmp = *it;
+			if (final_pose > found && cmp.compare("\n") == 0)
+				bn = true;
 		}
+		if (bn == true)
+		{
+			_header_tab.insert(std::pair<std::string, std::string>
+			(buff_parsed.substr(0, found)
+			,fill_header_tab(buff_parsed.substr(found, final_pose - found))));
+
+			//std::cout << RED << "buff=[" << buff_parsed.substr(0, found) << "] = " << END;
+			//std::cout << RED << "element=[" << fill_header_tab(buff_parsed.substr(found , //final_pose - found)) << "]" << END << std::endl;
+			//std::cout << BLUE << "final_pose=[" << final_pose << "]" << END << std::endl;
+			//std::cout << BLUE << "found=[" << found << "]" << END << std::endl;
+			//std::cout << BLUE << "buff_parsed=[" << buff_parsed << "]" << END << std::endl;
+			bn = false;
+		}
+		buff_parsed = buff_parsed.substr(final_pose, buff_parsed.size() - (final_pose));
+		final_pose = 0;
 	}
-	if (get_request("Expect:").compare("100-continue") == 0)
+	if (get_request("Expect:") == "100-continue")
 	{
 		set_next_buffer_is_body(TRUE);
 		std::cout << GREEN <<"FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
 	//DISPLAY VALID ELEMENTS
-	/* for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
-	{
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+    {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	} */
+	}
 	//
+	//std::cout << RED << "_=[" << _buffer<< "]" << END << std::endl;
+	std::cout << "{seg}" << std::endl;
 	return (KEEP);
 }
+
 
 int		Parse_request::init_buffer(char *buff)
 {

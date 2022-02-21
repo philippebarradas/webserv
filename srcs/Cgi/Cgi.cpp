@@ -101,7 +101,7 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	}
-	//this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
+	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server

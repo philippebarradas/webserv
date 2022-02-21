@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 11:31:49 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/21 16:34:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,5 +207,6 @@ int		Parse_request::check_request()
 		return (1);
 
 	}
+	std::cout << "CRASSSHHHH" << std::endl;
 	return (KEEP);
 }

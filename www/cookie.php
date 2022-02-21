@@ -31,10 +31,12 @@
 			{
 				$pseudo = $_POST['pseudo'];
 				//setcookie('cookPseudo', $pseudo, time() + 3600 * 24 * 365, null, null, false, true);
-				setcookie('cookPseudo', $pseudo, time() + 20, null, null, false, true);
+				setcookie('cookPseudo', $pseudo, time() + 10, null, null, false, true);
 				//$_SESSION['division'] = $divId[0];
 				unset($_POST['submit']);
-				header("Refresh:0");
+				//header("Refresh: 5");
+				while (list($var,$value) = each($_SERVER))
+				echo "$var => $value <br />";
 			}
 			//header("Location: index.php");
 		?>
