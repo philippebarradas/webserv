@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 20:26:42 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/22 18:41:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,17 +80,17 @@ std::ostream &			operator<<( std::ostream & o, TreatRequest const & i )
 template <typename T>
 void printMap(T & map, std::string const & name)
 {
-	typename	T::iterator	it;
+/* 	typename	T::iterator	it;
 	typename	T::iterator	end;
 
-	std::cout << "----------------" << std::endl;
-	std::cout << name << " contains:" << std::endl;
+	//std::cout << "----------------" << std::endl;
+	//std::cout << name << " contains:" << std::endl;
 
 	end = map.end();
 	for (it = map.begin() ; it != end ; it++)
 		std::cout << it->first << " => " << it->second << std::endl;
 	std::cout << "size = " << map.size() << std::endl;
-	std::cout << "----------------\n" << std::endl;
+	std::cout << "----------------\n" << std::endl; */
 }
 
 bool	TreatRequest::check_precondition( Parse_request const & req, struct tm const & timefile ) const
@@ -167,6 +167,7 @@ void	TreatRequest::readDynamicFile( std::string const & path, std::string const 
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
 
 	this->_file = obj_cgi.getSend_content();
+
 	this->_type_cgi = obj_cgi.getType_Cgi();
 }
 

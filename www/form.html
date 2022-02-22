@@ -20,24 +20,35 @@
 			<input type="submit" value="phbdg valide"> </input>
 		</form>
 
-
-		<a href="http://localhost:8001/jpg.jpg"
-		download="jpg.jpg"> Telecharger l'image</a>
-
-			<br>
-
-
-			<a href="/favicon.ico"
-			download="favicon.ico">1 l'image</a>
-
-				<br>
-
-
-		<a href="/form.html"
-		download="form.html"> Telecharger l'image</a>
-
+		<form action="env.php" method="POST" enctype="multipart/form-data">
+			<label for="file">Fichier</label>
+			<input type="file" name="myfile">
+			<button type="submit">Enregistrer</button>
+		</form>
+		<p> file </p>
 		<br>
+		<form method="POST" action="env.php" enctype="multipart/form-data">
+			<!-- On limite le fichier à 100Ko -->
+			<input type="hidden" name="MAX_FILE_SIZE" value="100000" >
+			Fichier : <input type="file" name="myfile"  >
+			<input type="submit" name="envoyer" value="Envoyer le fichier">
+	   </form>
 
-		<a href="/jpg.jpg" download>Texte pour le lien</a>
+		
+
+	   <div class="collapse" id="upload_avatar">
+		<div class="card card-body">
+			<form enctype="multipart/form-data" action="" method="POST">
+				<p class="text-left">Upload Avatar:</p>
+				<input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+				<input name="myfile" type="file" /><br>
+				<button class="form-control mr-sm-2 btn btn-outline-success my-2 my-sm-0" type="submit" name="avatar_upload" aria-controls="collapse_upload_avatar">
+					Upload
+				</button>
+			</form>
+		</div>
+	</div>
+
+
 	</body>
 </html>

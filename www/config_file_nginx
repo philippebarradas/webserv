@@ -3,8 +3,23 @@ user www-data;
 events {}
 http{
 server{
-	server_name hello1 hello3;
-	listen 7777;
+	server_name hello4;
+
+	listen 7778;
+	autoindex on;
+
+	root /tmp;
+
+	error_page 404 404.html;
+
+	location /404.html {
+		alias /tmp/test;
+	}
+}
+
+server{
+	server_name hello12 hello55;
+	listen 7775;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;

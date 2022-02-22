@@ -3,30 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/16 11:31:49 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/22 18:38:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse_request.hpp"
 
+int		Parse_request::check_path()
+{
+	if (get_request("Path") == "")
+		return (1);
+	else if (get_request("Path").at(0) != '/')
+		return (1);
+	if (get_request("Path").find("../") != std::string::npos)
+		return (1);
+	return (0);
+}
+
 int     Parse_request::check_first_line(size_t full_size)
 {
 	std::map<std::string, std::string>::iterator replace;
+	//std::cout << RED << "check_path()=[" << check_path() << "]" << END << std::endl;
 
     replace = _header_tab.find("Status");
 	if ((get_request("Method").compare("GET") != 0 && get_request("Method").compare("POST") != 0
-	&& get_request("Method").compare("DELETE") != 0) || (get_request("Path").at(0) != '/'))
+	&& get_request("Method").compare("DELETE") != 0) || (check_path() != 0))
 	{
 		replace->second = "400";
 		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
+		std::cout << "{ERROR 400}" << std::endl;
 		return (STOP);
 	}
 	else if (get_request("Protocol").compare("HTTP/1.1") != 0)
 	{
-		replace->second = "404";
+		if (get_request("Protocol").find("HTTP/") != std::string::npos)
+			replace->second = "505";
+		else
+			replace->second = "404";
 		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
 		return (STOP);
 	}
@@ -82,75 +98,16 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 	return (KEEP);
 }
 
-#include <sys/stat.h>
 int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
-
-	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
+	std::cout <<  time_test << std::endl;
+	if (time_test.compare("") == 0)
+		return (KEEP);
+ 	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
 		return (STOP);
 	if(_buffer.rfind("If-Unmodified-Since\r\n") != std::string::npos)
 		return (STOP);
-	if (time_test.compare("") == 0)
-		return (KEEP);
-	if (time_test.size() < 13)
-		return (STOP);
-
-    std::string filename = "srcs/Config/default/html_page/404_not_found.html";
-    struct stat result;
-
-   	if (stat(filename.c_str(), &result) == -1)
-	{
-	    std::cout << "stat failed" << std::endl;
-		return (STOP);
-	}
-
-	char time_modified_file [200];
-	struct tm * timeinfo;
-
-	timeinfo = localtime (&result.st_ctim.tv_sec);
-	strftime(time_modified_file, 200, "%a, %d %b %G %T %Z", timeinfo);
-	std::string actual_time(time_modified_file);
-
-    struct tm timeinfo_modif;
-    struct tm timeinfo_test;
-
-    strptime(time_modified_file , "%a, %d %b %G %T %Z", &timeinfo_modif);
-    strptime(time_test.c_str(), "%a, %d %b %G %T %Z", &timeinfo_test);
-
-
-	if (timeinfo_modif.tm_year > timeinfo_test.tm_year)
-		return (STOP);
-	else if (timeinfo_modif.tm_year < timeinfo_test.tm_year)
-		return (KEEP);
-	else
-	{
-		if (timeinfo_modif.tm_yday > timeinfo_test.tm_yday)
-			return (STOP);
-		else if (timeinfo_modif.tm_yday < timeinfo_test.tm_yday)
-			return (KEEP);
-		else
-		{
-			if (timeinfo_modif.tm_hour > timeinfo_test.tm_hour)
-				return (STOP);
-			else if (timeinfo_modif.tm_hour < timeinfo_test.tm_hour)
-				return (KEEP);
-			else
-			{
-				if (timeinfo_modif.tm_min > timeinfo_test.tm_min)
-					return (STOP);
-				else if (timeinfo_modif.tm_min < timeinfo_test.tm_min)
-					return (KEEP);
-				else
-				{
-					if (timeinfo_modif.tm_sec > timeinfo_test.tm_sec)
-						return (STOP);
-					else if (timeinfo_modif.tm_sec < timeinfo_test.tm_sec)
-						return (KEEP);
-				}
-			}
-		}
-	}
 	return (KEEP);
 }
 
@@ -158,6 +115,11 @@ int		Parse_request::check_request()
 {
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
+	
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+    {
+		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
+	}
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
