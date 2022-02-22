@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/22 16:20:41 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 18:30:53 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ int			str_is_lnt(std::string str)
 	std::string accept = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPKRSTUVWXYZ-0123456789";
 	bool v = false;
 	
-	std::cout << BLUE << "str=[" << str << "]" << END << std::endl;
+	//std::cout << BLUE << "str=[" << str << "]" << END << std::endl;
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
 	{
 		v = false;
@@ -200,11 +200,11 @@ void		Parse_request::fill_param_request_tab()
 		//final_pose = 0;
 		x++;
 	}
-	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+/* 	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
     {
 		//if (it->second.size() != 0)
 		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	}
+	} */
 }
 
 int		Parse_request::fill_variables()
@@ -243,14 +243,14 @@ int		Parse_request::fill_variables()
 	if (get_request("Expect:") == "100-continue")
 	{
 		set_next_buffer_is_body(TRUE);
-		std::cout << GREEN <<"FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
 	//DISPLAY VALID ELEMENTS
-	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+/* 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
+	} */
 	//
 	//std::cout << RED << "_=[" << _buffer<< "]" << END << std::endl;
 	return (KEEP);

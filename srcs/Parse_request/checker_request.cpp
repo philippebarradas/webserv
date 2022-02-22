@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/22 18:23:39 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 18:31:03 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int		Parse_request::check_path()
 int     Parse_request::check_first_line(size_t full_size)
 {
 	std::map<std::string, std::string>::iterator replace;
-	std::cout << RED << "check_path()=[" << check_path() << "]" << END << std::endl;
+	//std::cout << RED << "check_path()=[" << check_path() << "]" << END << std::endl;
 
     replace = _header_tab.find("Status");
 	if ((get_request("Method").compare("GET") != 0 && get_request("Method").compare("POST") != 0
