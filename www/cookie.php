@@ -7,7 +7,7 @@
 	</head>
 	<body bgcolor="white">
 
-		<center><h1>Webserv cookie.html</h1></center>
+		<center><h1>Webserv cookie.php</h1></center>
 		<hr><center>webcerveau/1.0 (Ubuntu)</center>
 
 		<?php if ( !isset($_COOKIE['cookPseudo']) ): ?>

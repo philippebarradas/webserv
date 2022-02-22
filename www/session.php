@@ -11,7 +11,7 @@
 	</head>
 	<body bgcolor="white">
 
-		<center><h1>Webserv session.html</h1></center>
+		<center><h1>Webserv session.php</h1></center>
 		<hr><center>webcerveau/1.0 (Ubuntu)</center>
 
 		<?php
@@ -24,8 +24,9 @@
 		<?php else: ?>
 			<?php echo "Hello " . $_SESSION['sessPseudo'] . " !";?>
 			<form method="POST" enctype="application/x-www-form-urlencoded">
-				<input type="submit" name="delete_button" value="Delete cookie">
+				<input type="submit" name="delete_button" value="Delete session">
 			</form>
+			<p>check session on another <a href="/">page </a></p>
 		<?php endif; ?>
 
 		<?php
@@ -36,7 +37,7 @@
 			echo "deff pseudo = " . $_POST['pseudo'];
 
 			$_SESSION['sessPseudo'] = $pseudo;
-			header("Refresh: 0");
+			header("Refresh: ");
 			//while (list($var,$value) = each($_SERVER))
 			//echo "$var => $value <br />";
 		}
