@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/17 16:37:30 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 13:00:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,11 @@ int		Parse_request::check_request()
 {
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
+
+		for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+		{
+			std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
+		}
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)

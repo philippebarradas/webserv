@@ -39,7 +39,7 @@ Connexion::Connexion(Connexion const & src )
 
 Connexion::~Connexion()
 {
-	std::cout << GREEN << "----------------- End of server -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- End of Connec -----------------" << END << std::endl << std::endl;
 }
 
 /*
@@ -48,7 +48,12 @@ Connexion::~Connexion()
 
 Connexion&				Connexion::operator=( Connexion const & rhs )
 {
-
+	this->recv_len = rhs.recv_len;
+	this->is_sendable = rhs.is_sendable;
+	this->is_parsed = rhs.is_parsed;
+	this->request_header_size = rhs.request_header_size;
+	this->fill_request = rhs.fill_request;
+	this->b = rhs.b;
 	return *this;
 }
 

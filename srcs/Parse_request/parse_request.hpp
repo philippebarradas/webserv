@@ -70,7 +70,7 @@ class Parse_request
 		void 	reinit_obj();
 
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
-
+		std::map<std::string, std::string>	get_param_request_tab( void ) const {return this->_param_request_tab;}
 		bool		_next_buffer_is_body;
 		size_t		_request_body_size;
 		std::string	_request_body;
@@ -86,6 +86,8 @@ class Parse_request
 		int			parse_first_line();
 		void		parse_path();
 		int			fill_variables();
+		void		fill_param_request_tab();
+
 		int			init_buffer(char *buff);
 		void		is_body(size_t found);
 
@@ -96,7 +98,7 @@ class Parse_request
 
 
 		std::vector<std::string> full_path;
-
+       	std::map<std::string, std::string> _param_request_tab;
 		std::map<std::string, std::string> _header_tab;
 		std::string _buffer;
 		size_t _nbr_line;
@@ -105,3 +107,5 @@ class Parse_request
 /////////////////////////////////////////////////////////
 
 #endif
+
+//  qeqwe465-  :

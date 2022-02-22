@@ -82,7 +82,8 @@ class Connexion
 		std::string fill_request;
 		bool	is_parsed;
 		bool	is_sendable;
-
+		char b;
+		
 	private:
 
 		// VARIABLES

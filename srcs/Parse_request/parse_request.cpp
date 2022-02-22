@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/21 16:08:59 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 14:08:24 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,16 @@
 
 Parse_request::Parse_request() : _nbr_line(0)
 {
-	std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
 	// GET /../../../Makefile HTTP/1.1 = invalid
 
-	std::string  elements[6] = {
+	std::string  elements[] = {
 		"Status", //ok
 		"Method", //ok
 		"Path", //ok
 		"Query", //ok
-		"Protocol", //ok
-		"Host:", //ok
+		"Protocol",
 	};
 
 	
@@ -41,8 +40,25 @@ Parse_request::Parse_request() : _nbr_line(0)
 	_request_body = "";
 
 
-	for (size_t x = 0; x < 6; x++)
+	for (size_t x = 0; x < 5; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
+
+	//for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+   // {
+	//	std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
+	//}
+}
+
+Parse_request&				Parse_request::operator=( Parse_request const & rhs )
+{
+	this->_buffer = rhs._buffer;
+	this->_next_buffer_is_body = rhs._next_buffer_is_body;
+	this->_request_body_size = rhs._request_body_size;
+	this->_request_body = rhs._request_body;
+	this->_header_tab = rhs._header_tab;
+	this->_nbr_line = rhs._nbr_line;
+	this->full_b = rhs.full_b;
+	return *this;
 }
 
 /*
@@ -84,11 +100,14 @@ int		Parse_request::parse_request_buffer(std::string full_b)
 	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 
+
 	//if (init_buffer(buff) == -1)
 	//	return (KEEP);
 	std::cout << PURPLE << "element=[" << get_nbr_line() << "]" << END << std::endl;
 	
 	this->_buffer = full_b;
+	std::cout << PURPLE << "full_b=[" << full_b << "]" << END << std::endl;
+	//std::cout << PURPLE << "buffer=[" << this->_buffer << "]" << END << std::endl;
 
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
@@ -181,6 +200,58 @@ void	Parse_request::parse_path()
 	}
 }
 
+int			str_is_lnt(std::string str)
+{
+	return (0);
+}
+
+void		Parse_request::fill_param_request_tab()
+{
+	std::string cmp;
+	size_t	final_pose = 0;
+	size_t debut = 0;
+	size_t	found = 0;
+	bool	bn = false;
+	std::string buff_parsed = _buffer;
+	size_t x = 0;
+	std::map<std::string, std::string>::iterator replace;
+
+	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
+	{
+		found += 0;
+		//if ((final_pose = _buffer.find("\r\n", found + 2)) != std::string::npos)
+		//{
+		//}
+			//if (check_double_content(_header_tab.find(buff_parsed.substr(0, found))) == -1)
+			//	return (STOP);
+		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
+		{
+			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos)
+			{
+				_param_request_tab.insert(std::pair<std::string, std::string>
+				(buff_parsed.substr(0, debut)
+				,fill_header_tab(buff_parsed.substr(debut + 1, final_pose - debut - 1))));
+			}
+		}
+		else if (x != 0 && str_is_lnt(buff_parsed.substr(0, found)) == 0)
+			_param_request_tab.insert(std::pair<std::string, std::string>(buff_parsed.substr(0, found), ""));//fill_header_tab(buff_parsed.substr(found, final_pose - found))));
+
+			//std::cout << RED << "buff=[" << buff_parsed.substr(0, found) << "] = " << END;
+			//std::cout << RED << "element=[" << fill_header_tab(buff_parsed.substr(found , //final_pose - found)) << "]" << END << std::endl;
+			//std::cout << BLUE << "final_pose=[" << final_pose << "]" << END << std::endl;
+			//std::cout << BLUE << "found=[" << found << "]" << END << std::endl;
+			//std::cout << BLUE << "buff_parsed=[" << buff_parsed << "]" << END << std::endl;
+		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (final_pose));
+		//final_pose = 0;
+		x++;
+	}
+	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+    {
+		//if (it->second.size() != 0)
+		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
+	}
+}
+
 int		Parse_request::fill_variables()
 {
 	std::string cmp;
@@ -190,6 +261,7 @@ int		Parse_request::fill_variables()
 	std::string buff_parsed = _buffer;
 	std::map<std::string, std::string>::iterator replace;
 	
+	fill_param_request_tab();
 
 	while ((found = buff_parsed.find(":")) != std::string::npos)
 	{
@@ -198,11 +270,13 @@ int		Parse_request::fill_variables()
 		{
 			final_pose++;
 			cmp = *it;
-			if (final_pose > found && cmp.compare("\n") == 0)
+			if (final_pose > found && cmp.compare("\r") == 0)
 				bn = true;
 		}
 		if (bn == true)
 		{
+			//if (check_double_content(_header_tab.find(buff_parsed.substr(0, found))) == -1)
+			//	return (STOP);
 			_header_tab.insert(std::pair<std::string, std::string>
 			(buff_parsed.substr(0, found)
 			,fill_header_tab(buff_parsed.substr(found, final_pose - found))));
@@ -325,9 +399,3 @@ Parse_request::~Parse_request()
 /*
 ** --------------------------------- OVERLOAD ---------------------------------
 */
-
-Parse_request&				Parse_request::operator=( Parse_request const & rhs )
-{
-	(void)rhs;
-	return *this;
-}
