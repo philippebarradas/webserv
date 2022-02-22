@@ -18,7 +18,7 @@
 #define KEEP 0
 #define STOP -1
 
-std::string		int_to_string(size_t x);
+std::string		sizet_to_string(size_t const & x);
 
 class Server;
 
@@ -53,7 +53,7 @@ class Parse_request
 		std::map<std::string, std::string>	get_param_request_tab( void ) const {return this->_param_request_tab;}
 		
 		std::string get_request_body() const { return (_request_body); }
-		std::string get_request_body_size() const { return (int_to_string(_request_body_size)); };
+		size_t get_request_body_size() const { return (_request_body_size); };
 		
 		void	set_next_buffer_is_body(bool val){ _next_buffer_is_body = val; };
 		void set_request_body(std::string new_request_body) { _request_body = new_request_body; }

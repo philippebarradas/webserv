@@ -23,50 +23,6 @@ Engine::Engine()
 {
 }
 
-Engine::Engine(const std::vector<Server> & src)
-{
-	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
-	setup_socket_server(src);
-	loop_server(src);
-}
-
-Engine::Engine( Engine const & src )
-{
-	*this = src;
-}
-
-/*
-** -------------------------------- DESTRUCTOR --------------------------------
-*/
-
-Engine::~Engine()
-{
-	std::cout << GREEN << "----------------- End of server -----------------" << END << std::endl << std::endl;
-}
-
-/*
-** --------------------------------- OVERLOAD ---------------------------------
-*/
-
-Engine&				Engine::operator=( Engine const & rhs )
-{
-	if (this != &rhs)
-	{
-		this->_addr = rhs._addr;
-		this->_buff_send = rhs._buff_send;
-		this->_epfd = rhs._epfd;
-		this->_i_server = rhs._i_server;
-		this->_i_server_binded = rhs._i_server_binded;
-		this->_nbr_servers = rhs._nbr_servers;
-		this->_port = rhs._port;
-		this->_remote_addr = rhs._remote_addr;
-		this->_remote_port = rhs._remote_port;
-		this->_timeout = rhs._timeout;
-		this->_valread = rhs._valread;
-	}
-	return *this;
-}
-
 /*
 ** --------------------------------- PRIVATE METHODS ----------------------------------
 */
@@ -170,9 +126,6 @@ bool	Engine::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Engine::Engine()
-{
-}
 
 Engine::Engine(const std::vector<Server> & src)
 {
