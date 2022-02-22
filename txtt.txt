@@ -45,7 +45,7 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 					_stop = true;
 				
 				std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-				std::cout << RED << "full_b.size()=[" << connexion[i].fill_request.size() << "]" << END << std::endl;
+				std::cout << RED << "full_buffer.size()=[" << connexion[i].fill_request.size() << "]" << END << std::endl;
 			} 
 			else
 				_stop = true;
@@ -63,14 +63,14 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 
 			// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
+			while (valread != 0 && parse_head[i].full_buffer.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
 			&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				//std::cout << "{x}";
 				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;
+				parse_head[i].full_buffer += b;
 			}
 		}
 		else if(parse_head[i].get_request("Expect:") == "100-continue"
@@ -81,18 +81,18 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
+ 			while (valread != 0 && parse_head[i].full_buffer.find("0\r\n\r\n") == std::string::npos)
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;;
+				parse_head[i].full_buffer += b;;
 			}
 			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
+			std::cout << RED << "full_buffer.size()=[" << parse_head[i].full_buffer.size() << "]" << END << std::endl;
 		}
 
-		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_b) == 0)
+		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_buffer) == 0)
 		{
 			std::cout << "{parse_request_buffer = 0}" << std::endl;
 			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
@@ -107,7 +107,7 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 
 /* 	if (parse_head[i].get_request("Content-Length:") != "")
 	{
-		if (parse_head[i].full_b.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
+		if (parse_head[i].full_buffer.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
 			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
 	} */
 
@@ -154,14 +154,14 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 
 			// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
+			while (valread != 0 && parse_head[i].full_buffer.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
 			&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				//std::cout << "{x}";
 				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;
+				parse_head[i].full_buffer += b;
 			}
 		}
 		else if(parse_head[i].get_request("Expect:") == "100-continue"
@@ -172,18 +172,18 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
+ 			while (valread != 0 && parse_head[i].full_buffer.find("0\r\n\r\n") == std::string::npos)
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;;
+				parse_head[i].full_buffer += b;;
 			}
 			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
+			std::cout << RED << "full_buffer.size()=[" << parse_head[i].full_buffer.size() << "]" << END << std::endl;
 		}
 
-		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_b) == 0)
+		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_buffer) == 0)
 		{
 			std::cout << "{parse_request_buffer = 0}" << std::endl;
 			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
@@ -198,7 +198,7 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 
 /* 	if (parse_head[i].get_request("Content-Length:") != "")
 	{
-		if (parse_head[i].full_b.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
+		if (parse_head[i].full_buffer.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
 			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
 	} */
 
@@ -217,14 +217,14 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 
 				// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-				if (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
+				if (valread != 0 && parse_head[i].full_buffer.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
 				&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
 				{
 					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 					//std::cout << "{x}";
 					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 					parse_head[i].recv_len += valread;
-					parse_head[i].full_b += b;
+					parse_head[i].full_buffer += b;
 				}
 			}
 			else if(parse_head[i].get_request("Expect:") == "100-continue"
@@ -235,15 +235,15 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 				//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
-				if (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
+				if (valread != 0 && parse_head[i].full_buffer.find("0\r\n\r\n") == std::string::npos)
 				{
 					//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 					valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 					parse_head[i].recv_len += valread;
-					parse_head[i].full_b += b;;
+					parse_head[i].full_buffer += b;;
 				}
 				std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-				std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
+				std::cout << RED << "full_buffer.size()=[" << parse_head[i].full_buffer.size() << "]" << END << std::endl;
 			} */
 			//else
 			//{
@@ -264,14 +264,14 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 
 			// << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && parse_head[i].full_b.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
+			while (valread != 0 && parse_head[i].full_buffer.size() < parse_head[i].head + std::stoi(parse_head[i].get_request("Content-Length:"))
 			&& parse_head[i].head < std::stoi(parse_head[i].get_request("Content-Length:")))
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				//std::cout << "{x}";
 				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;
+				parse_head[i].full_buffer += b;
 			}
 		}
 		else if(parse_head[i].get_request("Expect:") == "100-continue"
@@ -282,18 +282,18 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 			send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && parse_head[i].full_b.find("0\r\n\r\n") == std::string::npos)
+ 			while (valread != 0 && parse_head[i].full_buffer.find("0\r\n\r\n") == std::string::npos)
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				valread = recv(this->_fds_events[i].data.fd, &b, 1, 0);
 				parse_head[i].recv_len += valread;
-				parse_head[i].full_b += b;;
+				parse_head[i].full_buffer += b;;
 			}
 			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << parse_head[i].full_b.size() << "]" << END << std::endl;
+			std::cout << RED << "full_buffer.size()=[" << parse_head[i].full_buffer.size() << "]" << END << std::endl;
 		}
 
-		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_b) == 0)
+		if (parse_head[i].parse_request_buffer(buff, parse_head[i].full_buffer) == 0)
 		{
 			std::cout << "{parse_request_buffer = 0}" << std::endl;
 			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;
@@ -308,7 +308,7 @@ else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos)
 
 /* 	if (parse_head[i].get_request("Content-Length:") != "")
 	{
-		if (parse_head[i].full_b.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
+		if (parse_head[i].full_buffer.size() == std::stoi(parse_head[i].get_request("Content-Length:")))
 			send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
 	} */
 
@@ -352,7 +352,7 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 	//struct
 	size_t	recv_len = 0;
 	size_t	head;
-	std::string full_b;
+	std::string full_buffer;
 
 	std::cout << "{xx}" << std::endl;
 
@@ -368,10 +368,10 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 		else
 			recv_len += valread;
 		head = valread;
-		full_b += buff;
+		full_buffer += buff;
 		std::cout << "-buf-\n-|" << GREEN << buff << END << "|-\n-end-" << std::endl;
 
-		std::cout << RED << "parse_head.parse_request_buffer(buff)=[" << parse_head.parse_request_buffer(buff, full_b) << "]" << END << std::endl;
+		std::cout << RED << "parse_head.parse_request_buffer(buff)=[" << parse_head.parse_request_buffer(buff, full_buffer) << "]" << END << std::endl;
 		//parse_head.parse_request_buffer(buff);
 
 
@@ -389,20 +389,20 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 			send(fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 
 
-			std::cout << GREEN << "full_b=[" << full_b << "]" << END << std::endl;
+			std::cout << GREEN << "full_buffer=[" << full_buffer << "]" << END << std::endl;
 			std::cout << GREEN << "OPEN SIZE =[" << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
 			std::cout << GREEN << "valread=[" << valread << "]" << END << std::endl;
-			std::cout << GREEN << "full_b.size()=[" << full_b.size() << "]" << END << std::endl;
+			std::cout << GREEN << "full_buffer.size()=[" << full_buffer.size() << "]" << END << std::endl;
 			std::cout << GREEN << "head + std::stoi(parse_head.get_request(\"Content-Length:\"))=["
 			 << head << " " << std::stoi(parse_head.get_request("Content-Length:")) << "]" << END << std::endl;
-			while (valread != 0 && full_b.size() < head + std::stoi(parse_head.get_request("Content-Length:"))
+			while (valread != 0 && full_buffer.size() < head + std::stoi(parse_head.get_request("Content-Length:"))
 			&& head < std::stoi(parse_head.get_request("Content-Length:")))
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				//std::cout << "{x}";
 				valread = recv(fd, &b, 1, 0);
 				recv_len += valread;
-				full_b += b;
+				full_buffer += b;
 			}
 		}
 		else if(parse_head.get_request("Expect:") == "100-continue"
@@ -413,18 +413,18 @@ void	Engine::read_send_data(int fd, const std::vector<Server> & src)//,Parse_req
 			//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 			send(fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 			//valread = recv(fd, &buff[recv_len], client_max_body_size - recv_len, 0);
- 			while (valread != 0 && full_b.find("0\r\n\r\n") == std::string::npos)
+ 			while (valread != 0 && full_buffer.find("0\r\n\r\n") == std::string::npos)
 			{
 				//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 				valread = recv(fd, &b, 1, 0);
 				recv_len += valread;
-				full_b += b;;
+				full_buffer += b;;
 			}
 			std::cout << RED << "-buf-\n-|" << buff << END << "|-\n-end-" << std::endl;
-			std::cout << RED << "full_b.size()=[" << full_b.size() << "]" << END << std::endl;
+			std::cout << RED << "full_buffer.size()=[" << full_buffer.size() << "]" << END << std::endl;
 		}
 
-		if (parse_head.parse_request_buffer(buff, full_b) == 0)
+		if (parse_head.parse_request_buffer(buff, full_buffer) == 0)
 		{
 			std::cout << "{parse_request_buffer = 0}" << std::endl;
 			//std::cout << RED << "pare_head._request_body_size=[" << parse_head._request_body_size << "]" << END << std::endl;

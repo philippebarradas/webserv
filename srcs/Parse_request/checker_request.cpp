@@ -6,22 +6,35 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/22 13:00:48 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 18:23:39 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse_request.hpp"
 
+int		Parse_request::check_path()
+{
+	if (get_request("Path") == "")
+		return (1);
+	else if (get_request("Path").at(0) != '/')
+		return (1);
+	if (get_request("Path").find("../") != std::string::npos)
+		return (1);
+	return (0);
+}
+
 int     Parse_request::check_first_line(size_t full_size)
 {
 	std::map<std::string, std::string>::iterator replace;
+	std::cout << RED << "check_path()=[" << check_path() << "]" << END << std::endl;
 
     replace = _header_tab.find("Status");
 	if ((get_request("Method").compare("GET") != 0 && get_request("Method").compare("POST") != 0
-	&& get_request("Method").compare("DELETE") != 0) || (get_request("Path").at(0) != '/'))
+	&& get_request("Method").compare("DELETE") != 0) || (check_path() != 0))
 	{
 		replace->second = "400";
 		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
+		std::cout << "{ERROR 400}" << std::endl;
 		return (STOP);
 	}
 	else if (get_request("Protocol").compare("HTTP/1.1") != 0)
@@ -102,11 +115,11 @@ int		Parse_request::check_request()
 {
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
-
-		for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
-		{
-			std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
-		}
+	
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+    {
+		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
+	}
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)

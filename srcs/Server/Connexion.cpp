@@ -18,16 +18,6 @@ Connexion::Connexion()
 	fill_request = "";
 }
 
-void	Connexion::reinit_obj()
-{
-	recv_len = 0;
-	is_sendable = false;
-	is_parsed = false;
-	request_header_size = 0;
-	fill_request = "";
-}
-
-
 Connexion::Connexion(Connexion const & src )
 {
 	*this = src;

@@ -200,13 +200,13 @@ void	Engine::read_send_data(int i, int new_socket, const std::vector<Server> & s
 	{
 		valread = recv(this->_fds_events[i].data.fd, & connexion[i].b, 1, 0);
 		if (valread == -1)
-			throw std::runtime_error("[Error] recv() failed");
-		else
+			throw std::runtime_error("[Error] recv() failed");		
+		else if (!((connexion[i].b == 13 || connexion[i].b == 10) && connexion[i].fill_request.size() == 0))
+		{
 			connexion[i].recv_len += valread;
-		std::cout << RED  << "[" <<  connexion[i].b << "]" << END;
-		
-		
-		connexion[i].fill_request +=  connexion[i].b;
+			connexion[i].fill_request +=  connexion[i].b;
+		}
+		std::cout << connexion[i].b;
 		if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos) // header rempli
 		{
 			//std::cout << "{EPOLLOUT}" << std::endl;
@@ -288,6 +288,7 @@ void	Engine::send_data(int valread, int fd,const std::vector<Server> & src, cons
 	{
 		TreatRequest	treatment(src, *this);
 		this->_buff_send = treatment.treat(parse_head);
+
 		//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
 		nbr_bytes_send = send(fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
