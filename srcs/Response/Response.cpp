@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/21 19:49:34 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/22 08:38:13 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 	this->writeDate();
 	this->writeType(treat.getExtension(), treat);
 
-	this->writeLenght(treat.getFile());
+	this->writeLenght(treat.getFile(), treat.getIs_Cgi());
 
 	this->_header += treat.getLocation()[0]
 		? "Location: " + treat.getLocation() + "\r\n"
@@ -108,17 +108,17 @@ void	Response::writeRequestStatus( std::string const & code )
 void	Response::writeType( std::string const & extension, TreatRequest const & treat )
 {
 	if (treat.getIs_Cgi())
-		this->_header += treat.getType_Cgi() + "\r\n";
+		this->_header += treat.getType_Cgi();
 	else
 	{
-		//std::cout << "extension\t=\t" << extension << std::endl;
 		this->_header += "Content-Type: ";
+		//std::cout << "extension\t=\t" << extension << std::endl;
 		if (extension == ".html")
 			this->_header += "text/html";
 		else
 			this->_header += "text/plain";
-		this->_header += "\r\n";
 	}
+	this->_header += "\r\n";
 }
 
 void	Response::writeLenght( std::string const & page, bool const & isDynamic )
@@ -126,7 +126,13 @@ void	Response::writeLenght( std::string const & page, bool const & isDynamic )
 	// TODO LENGHT
 	std::stringstream conv;
 
-	conv << page.length();
+	if (isDynamic)
+	{
+		//std::cout << "&page[page.rfind(rn)]\t=\t" <<  &page[page.rfind("\r\n")] << std::endl;
+		conv << std::string(&page[page.rfind("\r\n") + 3]).length();
+	}
+	else
+		conv << page.length();
 	this->_header += "Content-Length: " + conv.str() + "\r\n";
 }
 
