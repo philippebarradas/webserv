@@ -16,7 +16,7 @@
 
 		<?php
 		if ( isset($_SESSION['sessPseudo']) ): ?>
-			<p>Hello <?php $_SESSION['sessPseudo'] ?> !</p>
+			<p>Hello <?php echo $_SESSION['sessPseudo']; ?> !</p>
 		<?php else: ?>
 			<p>Session was not define.</p>
 			<?php endif; ?>

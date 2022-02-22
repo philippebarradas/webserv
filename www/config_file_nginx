@@ -4,7 +4,7 @@ events {}
 http{
 server{
 	server_name hello1 hello3;
-	listen 7777;
+	listen 777;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;

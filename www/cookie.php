@@ -28,23 +28,15 @@
 			if(isset($_POST['sub_pseudo']) && !isset($_COOKIE['cookPseudo']))
 			{
 				$pseudo = $_POST['pseudo'];
-				//setcookie('cookPseudo', $pseudo, time() + 3600 * 24 * 365, null, null, false, true);
 				setcookie('cookPseudo', $pseudo, time() + 3600 * 24 * 365, null, null, false, true);
-				//$_SESSION['division'] = $divId[0];
-				//unset($_POST['submit']);
 				header("Refresh: 0");
-				//while (list($var,$value) = each($_SERVER))
-				//echo "$var => $value <br />";
 			}
 			if(isset($_POST['delete_button']))
 			{
 				unset($_COOKIE['cookPseudo']);
 				setcookie('cookPseudo', null, -1, '/');
 				header("Refresh: 0");
-				//while (list($var,$value) = each($_SERVER))
-				//echo "$var => $value <br />";
 			}
-			//header("Location: index.php");
 		?>
 
 	</body>

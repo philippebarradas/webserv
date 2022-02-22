@@ -1,7 +1,7 @@
 
 server{
 	server_name localhost;
-	listen 8003;
+	listen 8004;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
