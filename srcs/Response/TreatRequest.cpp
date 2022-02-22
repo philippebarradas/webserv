@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/21 19:19:39 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/22 10:17:00 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void	TreatRequest::cpyInfo( std::string const & extension,
 	struct stat	result;
 	char		time_modified_file[50];
 
-	if (req.get_request("Status") == "200")
+	if (req.get_request("Status") == "200" && !this->_cgi)
 	{
 		stat(path.c_str(), &result);
 		timeinfo = localtime(&result.st_ctim.tv_sec);

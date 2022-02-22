@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 08:38:13 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/22 10:43:53 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 	this->writeRequestStatus(req.get_request("Status"));
 	this->_header += "Server: webserv/1.0 (Ubuntu)\r\n";
 	this->writeDate();
-	this->writeType(treat.getExtension(), treat);
-
-	this->writeLenght(treat.getFile(), treat.getIs_Cgi());
-
+	if (req.get_request("Status") != "204")
+	{
+		this->writeType(treat.getExtension(), treat);
+		this->writeLenght(treat.getFile(), treat.getIs_Cgi());
+	}
 	this->_header += treat.getLocation()[0]
 		? "Location: " + treat.getLocation() + "\r\n"
 		: "";
@@ -32,7 +33,6 @@ Response::Response( Parse_request const & req, TreatRequest const & treat )
 		? "Last-Modified: " + treat.getLastModif() + "\r\n"
 		: "";
 	this->_header += "Connection: " + req.get_request("Connection:") + "\r\n";
-
 	this->_header += (treat.getIs_Cgi() ? "" : "\r\n") + treat.getFile();
 }
 
@@ -107,11 +107,11 @@ void	Response::writeRequestStatus( std::string const & code )
 
 void	Response::writeType( std::string const & extension, TreatRequest const & treat )
 {
+	this->_header += "Content-Type: ";
 	if (treat.getIs_Cgi())
-		this->_header += treat.getType_Cgi();
+		this->_header += std::string(&treat.getType_Cgi()[14]);
 	else
 	{
-		this->_header += "Content-Type: ";
 		//std::cout << "extension\t=\t" << extension << std::endl;
 		if (extension == ".html")
 			this->_header += "text/html";
@@ -123,7 +123,6 @@ void	Response::writeType( std::string const & extension, TreatRequest const & tr
 
 void	Response::writeLenght( std::string const & page, bool const & isDynamic )
 {
-	// TODO LENGHT
 	std::stringstream conv;
 
 	if (isDynamic)

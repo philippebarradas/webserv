@@ -24,7 +24,6 @@
 		<?php endif; ?>
 
 		<?php
-			//@session_start();
 			if(isset($_POST['sub_pseudo']) && !isset($_COOKIE['cookPseudo']))
 			{
 				$pseudo = $_POST['pseudo'];
