@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 10:43:53 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/22 11:09:24 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void	Response::writeDate( void )
 */
 
 
-std::string const &	Response::getHeader( void ) const
+std::string const &	Response::getResponse( void ) const
 {
 	std::cout << "_header\t=\t\r\n" << _header << std::endl;
 	return (this->_header);

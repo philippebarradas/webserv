@@ -38,7 +38,7 @@ class Response
 
 		Response &		operator=( Response const & rhs );
 
-		std::string const &	getHeader( void ) const;
+		std::string const &	getResponse( void ) const;
 
 	private:
 

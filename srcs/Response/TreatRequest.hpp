@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/21 18:29:28 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/22 11:05:11 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,9 @@ class TreatRequest
 		void	generateAutoIndex( Parse_request & req,
 			std::string const & path );
 
+		bool	is_dynamic( Parse_request const & req,
+			std::string const & extension,
+			std::map<std::string, std::string>::const_iterator & it ) const;
 		void	force_open( Parse_request const & req );
 		void	readStaticFile( std::ifstream & ifs );
 		void	readDynamicFile( std::string const & path,
@@ -113,7 +116,7 @@ class TreatRequest
 		void	cpyInfo( std::string const & extension,
 			std::string const & path, Parse_request & req );
 		bool	openAndRead( std::string const & path,
-			Parse_request & req, bool const & isError );
+			Parse_request & req );
 		bool	check_precondition( Parse_request const & req, struct tm const & timefile ) const;
 
 		void	error_page( Parse_request & req );
