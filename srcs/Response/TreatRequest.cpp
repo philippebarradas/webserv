@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 07:49:23 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/23 09:02:08 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,8 @@ bool	TreatRequest::openAndRead( std::string const & path,
 		{
 			if (extension == it->first)
 			{
-				this->_cgi = true;		// TODO check plusieurs def de .php dans la confi
+				this->_cgi = true;	
+					// TODO check plusieurs def de .php dans la confi
 				break;
 			}
 		}
@@ -588,24 +589,35 @@ void	TreatRequest::permMethod( Parse_request & req )
 {
 	std::string	cmd;
 	std::set<std::string>::const_iterator	it;
+	std::set<std::string>::iterator	ite;
 
 	cmd = req.get_request("Method");
 	it = this->_loc->second.getMethods().find(cmd);
 	//std::cout << "CRASH" << std::endl;
-	//std::cout << "*it\t=\t" << *it << std::endl;
+	std::cout << "*it\t=\t" << *it << std::endl;
+	std::cout << "cmd\t=\t" << cmd << std::endl;
+	
+	
+	//std::cout << "*ite\t=\t" << *ite << std::endl;
+
+
+
 	if (it == this->_loc->second.getMethods().end()
 		|| (cmd != "GET"
 		&& cmd != "POST"
 		&& cmd != "DELETE"))
 	{
-		//std::cout << "NO METHOD" << std::endl;
+		std::cout << "NO METHOD" << std::endl;
 		req.setStatus("405");
 		this->error_page(req);
 	}
 	else
 	{
 		if (cmd == "POST" || cmd == "GET")
+		{
+			std::cout << "{exec}" << std::endl;
 			this->exec(req);
+		}
 		//else
 		//	TODO DELETE
 	}
@@ -627,6 +639,8 @@ std::string	TreatRequest::treat(Parse_request & req )
 		//std::cout << "location\t=\t" << _loc->first << std::endl
 			//<< _loc->second << std::endl;
 
+		std::cout << PURPLE2 << "request_body_size=[" << req.get_request_body_size() << "]" << END << std::endl;
+		std::cout << PURPLE2 << "this->_loc->second.getMaxbody()=[" << this->_loc->second.getMaxbody() << "]" << END << std::endl;
 		if (req.get_request_body_size() > this->_loc->second.getMaxbody()
 			&& this->_loc->second.getMaxbody() != 0)
 			req.setStatus("413");

@@ -1,20 +1,18 @@
 
 server{
 	server_name localhost;
-	listen 8003;
+	listen 8001;
 
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	cgi .php /usr/bin/php-cgi;
 
-	client_max_body_size 100000;
-
 	accepted_methods	GET POST;
 
 	location / {
 		index form.html;
-		cgi .xphp /usr/bin/php-cgi;
+		cgi .php /usr/bin/php-cgi;
 		accepted_methods	GET POST DELETE;
 	}
 
