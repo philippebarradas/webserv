@@ -4,14 +4,12 @@ events {}
 http{
 server{
 	server_name hello1 hello3;
-	listen 7775;
+	listen 7777;
 
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	error_page 404 /env.php;
 
-	client_max_body_size 100M;
-	
 	index phpinfo.php;
 	dav_methods DELETE;
 

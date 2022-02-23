@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/11 16:54:33 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 18:37:36 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@
 // My class
 #include "../Server/Engine.hpp"
 #include "../Config/Server.hpp"
+#include "../Config/utils.hpp"
 
 class Server;
 class Request;
@@ -85,6 +86,7 @@ class Cgi
 		void	exec_cgi(char **argv, char **env, const Parse_request & src_header);
 		std::string	body_response_from_fd(int fd);
 		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
+		void	upload_file(std::string response);
 
 		// GETTERS
 		std::map<std::string, std::string>	getEnv() const;

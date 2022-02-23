@@ -101,7 +101,7 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	}
-	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
+	//this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server
@@ -124,12 +124,15 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
-	this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
+	if (src_header.get_request("Query").compare(""))
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
+	else
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu;
 	this->_env["SCRIPT_FILENAME"] = this->_path_file_executed;
 	this->_env["DOCUMENT_ROOT"] = this->_root;
 	this->_env["DOCUMENT_URI"] = this->_path_file_executed_absolu;
 	this->_env["SERVER_PROTOCOL"] = src_header.get_request("Protocol");
-	this->_env["SERVER_PORT"] = int_to_string((size_t)src_engine.GetAccessPort());
+	this->_env["SERVER_PORT"] = sizet_to_string(src_engine.GetAccessPort());
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
@@ -137,9 +140,8 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	//this->_env["CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-	//std::cout << RED << "element=[" << src_header.get_request_body_size() << "]" << END << std::endl;
-	this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
+	this->_env["CONTENT_LENGTH"] = sizet_to_string(src_header.get_request_body_size());
+	//this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
@@ -228,8 +230,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 
 std::string	Cgi::body_response_from_fd(int fd)
 {
-    __gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
-    std::istream is(&filebuf);
+	__gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
+	std::istream is(&filebuf);
 	std::string ret, line;
 	std::string content_type = "Content-type:";
 	while (std::getline(is, line))
@@ -243,7 +245,20 @@ std::string	Cgi::body_response_from_fd(int fd)
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		}
 	}
+	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
+}
+
+void	Cgi::upload_file(std::string response)
+{
+	//response = "0123456789\n";
+	//std::cout << "Je suis dans upload" << std::endl;
+	std::ofstream out("www/uploads/file_created.txt");
+
+	//std::cout << GREEN << "response = " << std::endl << "|" <<
+	//response << "|" << std::endl << END;
+	out << response;
+	out.close();
 }
 
 /*

@@ -1,27 +1,28 @@
 
 server{
 	server_name localhost;
-	listen 8001;
+	listen 8004;
 
-	client_max_body_size	 9000000000000000001;
+	autoindex on;
 
-	cgi .php php-cgi;
-	cgi .py cgi_python;
+	root /home/user42/Bureau/webserv/www;
 
-	accepted_methods	GET POST DELETE;
 
-	root /home/user42/Bureau/webserv/srcs/Config/default/html_page;
-	index my_index.html;
-	autoindex off;
+	accepted_methods	GET POST;
+	cgi .php /usr/bin/php-cgi;
+	cgi .html /usr/bin/php-cgi;
+	error_page 404 /env.php;
 
 	location / {
-		index form.html;
-		cgi .php /usr/bin/php-cgi;
-		accepted_methods	GET POST DELETE;
+		index no.html;
+	}
+
+
+	location /404.html {
 		root /tmp/test;
 	}
 
-	location /salut {
-		root yo;
+	location /test/403/bad_dir_perm{
+		index hello_good_perm.txt;
 	}
 }

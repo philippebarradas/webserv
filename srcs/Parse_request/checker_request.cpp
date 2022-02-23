@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/22 18:31:03 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/22 18:38:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,8 +144,14 @@ int		Parse_request::check_request()
 		else if (get_request("Host:").find(":") != std::string::npos)
 		{
 			found = get_request("Host:").find(":");
+
+			replace = _header_tab.find("Host-uncut-comme-les-casquettes");
+			replace->second = get_request("Host:").substr(0, found);
+
 			replace = _header_tab.find("Host:");
 			replace->second = get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
+
+
 		}
 		if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
 		|| (_buffer.rfind("Content-Length\r\n") != std::string::npos))
@@ -154,12 +160,12 @@ int		Parse_request::check_request()
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 		}
-		else if (check_precondition() == -1)
+		/* else if (check_precondition() == -1)
 		{
 			std::cout << "ERROR = Precondition Failed" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "412";
-		}
+		} */
 		return (1);
 
 	}

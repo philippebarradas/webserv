@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 10:11:41 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/08 13:52:40 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/10 10:33:51 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,31 +86,31 @@ std::string	Autoindex::getPage( void ) const
 	{
 		if (it->first[it->first.length() - 1] == '/')
 		{
-			page += "<a href=\"" + it->first + "\">" + it->first + "</a>"
-				+ it->second + "\n";
+			if (it->first == "../")
+				page += "<a href=\"" + it->first + "\">" + it->first + "</a>\n";
+			else
+				page += "<a href=\"" + it->first + "\">" + it->second + "\n";
 		}
 	}
-	end = this->_href.end();
 	for (it = this->_href.begin() ; it != end ; ++it)
 	{
 		if (it->first[it->first.length() - 1] != '/')
 		{
-			page += "<a href=\"" + it->first + "\">" + it->first + "</a>"
-				+ it->second + "\n";
+			page += "<a href=\"" + it->first + "\">" + it->second + "\n";
 		}
 	}
-
 	page += "</pre><hr></body>\n</html>\n";
 
 	return (page);
 }
 
-void		Autoindex::insertAlign( std::string const & path,
+void		Autoindex::insertAlign( std::string & path,
 	time_t const & date, off_t const & size )
 {
 	struct tm			*timeinfo;
 	char				buffer[30];
-	std::string			log, log_size, log_date;
+	std::string			log, log_size, log_date, href;
+	int					align_path, align_log;
 
 	bzero(&buffer, 30);
 	timeinfo = localtime(&date);
@@ -124,20 +124,30 @@ void		Autoindex::insertAlign( std::string const & path,
 	}
 	else
 		log_size = "-";
+	href = path;
 	log_date = std::string(buffer);
 	log_date.erase(log_date.length() - 3, 3);
 
-	log = std::string(51 - path.length(), ' ') + log_date
+	align_path = 50 - path.length();
+	align_log = 20 - log_size.length();
+	align_log = align_log < 0 ? 0 : align_log;
+	if (align_path < 0)
+	{
+		path.erase((path.begin()+47), path.end());
+		path.insert(path.length(), "..>");
+	}
+
+	log = path + "</a>" + std::string(51 - path.length(), ' ') + log_date
 		+ std::string(20 - log_size.length(), ' ') + log_size;
 
-	this->_href.insert(std::make_pair(path, log));
+	this->_href.insert(std::make_pair(href, log));
 }
 
 void		Autoindex::setAllHref( DIR *dir, const char *root )
 {
 	struct dirent	*pDirent;
 	struct stat		attr;
-	std::string		pathfile;
+	std::string		pathfile, tmpPath;
 
 	while ((pDirent = readdir(dir)))
 	{
@@ -147,11 +157,15 @@ void		Autoindex::setAllHref( DIR *dir, const char *root )
 			stat(pathfile.c_str(), &attr);
 
 			if (S_ISDIR(attr.st_mode))
-				this->insertAlign(std::string(pDirent->d_name) + "/",
-					attr.st_mtim.tv_sec, -1);
+			{
+				tmpPath = std::string(pDirent->d_name) + "/";
+				this->insertAlign(tmpPath, attr.st_mtim.tv_sec, -1);
+			}
 			else
-				this->insertAlign(std::string(pDirent->d_name),
-					attr.st_mtim.tv_sec, attr.st_size);
+			{
+				tmpPath = std::string(pDirent->d_name);
+				this->insertAlign(tmpPath, attr.st_mtim.tv_sec, attr.st_size);
+			}
 		}
 		else if (strcmp(pDirent->d_name, "..") == 0)
 			this->_href.insert(std::make_pair("../", ""));

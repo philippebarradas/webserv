@@ -1,0 +1,11 @@
+------WebKitFormBoundaryXVz0YLSALBhXQdlC
+Content-Disposition: form-data; name="userfile"; filename="10o.txt"
+Content-Type: text/plain
+
+0123456789
+
+------WebKitFormBoundaryXVz0YLSALBhXQdlC
+Content-Disposition: form-data; name="submit"
+
+Upload Image
+------WebKitFormBoundaryXVz0YLSALBhXQdlC--

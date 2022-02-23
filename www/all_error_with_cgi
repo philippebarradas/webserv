@@ -1,0 +1,8 @@
+Quand un fichier existe pas mais que c'est un fichier dynamique (php, py), envoyez une reponse:
+
+
+curl -X POST localhost:7777/not_exist.php
+	-404 -> File not found.
+curl -X POST localhost:7777/form.html
+	-405 not allowed
+
