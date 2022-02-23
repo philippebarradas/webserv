@@ -17,18 +17,22 @@ server{
 		accepted_methods	GET POST DELETE;
 	}
 
-	location /test {
+}
 
+server{
+	server_name localhost;
+	listen 8002;
+
+
+	autoindex off;
+	root /home/user42/Bureau/webserv/www;
+	location / {
+		index form.html;
+		cgi .php /usr/bin/php-cgi;
+		accepted_methods	GET POST DELETE;
 	}
 
 	location /salut {
 		root yo;
 	}
-
-	location /hello.html {
-		error_page 502 /env.php;
-		root /home/user42/Bureau/webserv/www/test;
-		cgi .html /usr/bin/php-cgie;
-	}
 }
-

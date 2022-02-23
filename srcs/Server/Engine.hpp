@@ -49,10 +49,11 @@
 // My class
 #include "../Config/Server.hpp"
 #include "../Parse_request/parse_request.hpp"
+#include "Connexion.hpp"
 
 class Server;
 class Parse_request;
-class Treat_request;
+class Connexion;
 
 class Engine
 {
@@ -78,6 +79,8 @@ class Engine
 		std::string	GetRemote_Port() const;
 		std::string	GetRemote_Addr() const;
 		int			GetAccessPort( void ) const;
+
+		
 
 	private:
 
@@ -106,7 +109,10 @@ class Engine
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-		void	read_send_data(int fd, const std::vector<Server> & src);//,Parse_request & parse_head);
+		void	read_send_data(int i, int new_socket, const std::vector<Server> & src, Parse_request parse_head[MAX_EVENTS], Connexion	connexion[MAX_EVENTS]);
+		void	read_request_body(int i, const std::vector<Server> & src, Parse_request parse_head[MAX_EVENTS], Connexion connexion[MAX_EVENTS]);
+		void	send_data(int valread, int fd,const std::vector<Server> & src, Parse_request & parse_head);
+
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
 };
 

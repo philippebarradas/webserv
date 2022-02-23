@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/02/09 13:28:57 by user42           ###   ########.fr        #
+#    Updated: 2022/02/17 10:43:26 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,8 @@ CGI			= Cgi.cpp
 
 CONFIG		= Config.cpp Server.cpp utils.cpp
 
+CONNEXION	= Connexion.cpp
+
 SERVER			= Engine.cpp
 
 PARSE_REQUEST	= parse_request.cpp checker_request.cpp body.cpp
@@ -55,6 +57,7 @@ MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/Cgi/, $(CGI)) \
+				$(addprefix srcs/Server/, $(CONNEXION)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/Parse_request/, $(PARSE_REQUEST)) \
 				$(addprefix srcs/Autoindex/, $(AUTO_INDEX)) \

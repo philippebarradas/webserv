@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 11:22:47 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 11:10:54 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,17 +81,17 @@ TreatRequest &				TreatRequest::operator=( TreatRequest const & rhs )
 template <typename T>
 void printMap(T & map, std::string const & name)
 {
-	typename	T::iterator	it;
+/* 	typename	T::iterator	it;
 	typename	T::iterator	end;
 
-	std::cout << "----------------" << std::endl;
-	std::cout << name << " contains:" << std::endl;
+	//std::cout << "----------------" << std::endl;
+	//std::cout << name << " contains:" << std::endl;
 
 	end = map.end();
 	for (it = map.begin() ; it != end ; it++)
 		std::cout << it->first << " => " << it->second << std::endl;
 	std::cout << "size = " << map.size() << std::endl;
-	std::cout << "----------------\n" << std::endl;
+	std::cout << "----------------\n" << std::endl; */
 }
 
 bool	TreatRequest::check_precondition( Parse_request const & req,
@@ -162,6 +162,7 @@ void	TreatRequest::readDynamicFile( std::string const & path,
 		obj_cgi.convert_env(obj_cgi.getEnv()), req);
 
 	this->_file = obj_cgi.getSend_content();
+
 	this->_type_cgi = obj_cgi.getType_Cgi();
 }
 
@@ -613,7 +614,7 @@ void	TreatRequest::permMethod( Parse_request & req )
 		this->exec(req, method);
 }
 
-std::string	TreatRequest::treat( Parse_request & req )
+std::string	TreatRequest::treat(Parse_request & req )
 {
 	// DISPLAY (TODO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();

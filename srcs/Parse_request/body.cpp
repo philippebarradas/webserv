@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 11:58:10 by user42            #+#    #+#             */
-/*   Updated: 2022/02/09 08:57:26 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/16 13:09:14 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	Parse_request::is_body(size_t found)
 
 	//std::cout << "transfet = " << get_request("Transfer-Encoding:") << std::endl;
 
-	if (get_request("Transfer-Encoding:").compare("chunked") == 0)
+	if (get_request("Transfer-Encoding:") == "chunked")
 	{
 		std::cout << "---------START----------" << std::endl;
 		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
@@ -96,6 +96,10 @@ void	Parse_request::is_body(size_t found)
 
 	if (_request_body_size == 0)
 		_request_body_size = _request_body.size();
+	else if (_request_body_size == 0 && get_request("Content-Length:").compare("") != 0)
+	{
+		_request_body_size = std::stoi(get_request("Content-Length:"));
+	}
 	std::cout << RED << "_request_body_size = [" << _request_body_size << "]" << END << std::endl;
 
 	if (_next_buffer_is_body == 1 && _request_body_size != 0)

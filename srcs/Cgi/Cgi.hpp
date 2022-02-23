@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/22 13:41:12 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 11:07:13 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ class Cgi
 
 		// OPERATORS
 		Cgi &		operator=( Cgi const & rhs );
-
+		size_t _still;
 	private:
 
 		// VARIABLES
