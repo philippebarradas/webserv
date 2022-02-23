@@ -185,7 +185,6 @@ void		Parse_request::fill_param_request_tab()
 		else if (x != 0 && str_is_lnt(buff_parsed.substr(0, found)) == 0)
 			_param_request_tab.insert(std::pair<std::string, std::string>(buff_parsed.substr(0, found), ""));//fill_header_tab(buff_parsed.substr(found, final_pose - found))));
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (final_pose));
-		//final_pose = 0;
 		x++;
 	}
 /* 	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
@@ -217,8 +216,6 @@ int		Parse_request::fill_variables()
 		}
 		if (bn == true)
 		{
-			//if (check_double_content(_header_tab.find(buff_parsed.substr(0, found))) == -1)
-			//	return (STOP);
 			_header_tab.insert(std::pair<std::string, std::string>
 			(buff_parsed.substr(0, found)
 			,fill_header_tab(buff_parsed.substr(found, final_pose - found))));
@@ -256,6 +253,61 @@ std::string	Parse_request::fill_header_tab(std::string str)
 	while (!str.empty() && str[0] == ' ')
 		str.erase(0,1);
 	return (str);
+}
+
+size_t	hexa_to_size(std::string nbr)
+{
+	std::stringstream ss;
+	std::string hex = "0123456789abcdefABCDEF";
+	size_t found;
+	size_t res = 0;
+	size_t p = 0;
+
+	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
+	{
+		if ((found = hex.find(*it)) == std::string::npos)
+			return (-1);
+	}
+	ss << std::hex << nbr;
+	ss >> res;
+	return (res);
+}
+
+void	Parse_request::is_body(size_t found)
+{
+	size_t line_size = 0;
+	size_t pos = 0;
+	size_t size = -1;
+	std::string _request_body_unchanked;
+	std::string cmp = "\r\n";
+
+	if (found != 0)
+		found += 4;
+	if (_buffer.size() > found)
+		_request_body = _buffer.substr(found, _buffer.size() - found);
+	if (_request_body.size() == 0)
+		return ;
+	std::string split_body = _request_body;
+	if (get_request("Transfer-Encoding:") == "chunked")
+	{
+		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
+		{
+			found += cmp.size();
+			size = hexa_to_size(split_body.substr(0, found - cmp.size()));
+			if (size != -1)
+				_request_body_size += size;
+			else
+				_request_body_unchanked += split_body.substr(0, found - cmp.size());
+			split_body = split_body.substr(found, split_body.size() - found);
+		}
+		_request_body = _request_body_unchanked;
+	}
+	if (_request_body_size == 0)
+		_request_body_size = _request_body.size();
+	else if (_request_body_size == 0 && get_request("Content-Length:").compare("") != 0)
+		_request_body_size = std::stoi(get_request("Content-Length:"));
+	if (_next_buffer_is_body == 1 && _request_body_size != 0)
+		_next_buffer_is_body = 0;
 }
 
 /*

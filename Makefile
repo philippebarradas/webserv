@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/02/23 13:47:07 by user42           ###   ########.fr        #
+#    Updated: 2022/02/23 15:15:16 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ CONNEXION	= Connexion.cpp
 
 SERVER			= Engine.cpp
 
-PARSE_REQUEST	= parse_request.cpp checker_request.cpp body.cpp
+PARSE_REQUEST	= parse_request.cpp checker_request.cpp
 
 AUTO_INDEX		= Autoindex.cpp
 

@@ -50,9 +50,6 @@ class Parse_request
 		
 
 	private:
-		bool		_next_buffer_is_body;
-		size_t		_request_body_size;
-		std::string	_request_body;
 		std::string	fill_header_tab(std::string str);
 		int			fill_variables();
 		void		fill_param_request_tab();
@@ -64,14 +61,18 @@ class Parse_request
 		int			check_request();
 		int			check_path();
 		int			check_first_line(size_t full_size);
-		int			check_double_content(std::map<std::string, std::string>::iterator replace);
+		int			check_double_content();
 		int			check_precondition();
 
        	std::map<std::string, std::string> _param_request_tab;
 		std::map<std::string, std::string> _header_tab;
 
 		std::string	_buffer;
+		std::string	_request_body;
+
 		size_t		_nbr_line;
+		size_t		_request_body_size;
+		bool		_next_buffer_is_body;
 };
 
 /////////////////////////////////////////////////////////
