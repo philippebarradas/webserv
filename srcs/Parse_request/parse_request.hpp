@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Parse_request.hpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/11 18:24:00 by user42            #+#    #+#             */
-/*   Updated: 2022/01/26 17:04:54 by user42           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef Parse_request_HPP
 # define Parse_request_HPP
 
@@ -56,14 +44,15 @@ class Parse_request
 		size_t get_request_body_size() const { return (_request_body_size); };
 		
 		void	set_next_buffer_is_body(bool val){ _next_buffer_is_body = val; };
+		bool	get_next_buffer_is_body(){ return(_next_buffer_is_body); };
+
 		void set_request_body(std::string new_request_body) { _request_body = new_request_body; }
 		
+
+	private:
 		bool		_next_buffer_is_body;
 		size_t		_request_body_size;
 		std::string	_request_body;
-
-
-	private:
 		std::string	fill_header_tab(std::string str);
 		int			fill_variables();
 		void		fill_param_request_tab();
@@ -81,8 +70,8 @@ class Parse_request
        	std::map<std::string, std::string> _param_request_tab;
 		std::map<std::string, std::string> _header_tab;
 
-		std::string _buffer;
-		size_t _nbr_line;
+		std::string	_buffer;
+		size_t		_nbr_line;
 };
 
 /////////////////////////////////////////////////////////

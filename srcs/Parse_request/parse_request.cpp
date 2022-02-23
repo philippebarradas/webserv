@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parse_request.cpp                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/22 18:39:23 by user42           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "parse_request.hpp"
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -27,6 +15,7 @@ Parse_request::Parse_request()
 		"Path", //ok
 		"Query", //ok
 		"Protocol",
+		"Host-uncut-comme-les-casquettes",
 	};
 
 	
@@ -36,7 +25,7 @@ Parse_request::Parse_request()
 	_nbr_line = 0;
 	_request_body = "";
 
-	for (size_t x = 0; x < 5; x++)
+	for (size_t x = 0; x < 6; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 
 	//for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
@@ -71,9 +60,8 @@ int		Parse_request::parse_request_buffer(std::string full_buffer)
 		return (check_request());
 	}
 
-
-	//std::cout << PURPLE << "element=[" << get_nbr_line() << "]" << END << std::endl;
 	this->_buffer = full_buffer;
+	//std::cout << PURPLE << "element=[" << get_nbr_line() << "]" << END << std::endl;
 	//std::cout << PURPLE << "full_buffer=[" << full_buffer << "]" << END << std::endl;
 	//std::cout << PURPLE << "buffer=[" << this->_buffer << "]" << END << std::endl;
 
@@ -217,7 +205,6 @@ int		Parse_request::fill_variables()
 	std::map<std::string, std::string>::iterator replace;
 	
 	fill_param_request_tab();
-
 	while ((found = buff_parsed.find(":")) != std::string::npos)
 	{
 		found += 1;
@@ -240,19 +227,20 @@ int		Parse_request::fill_variables()
 		buff_parsed = buff_parsed.substr(final_pose, buff_parsed.size() - (final_pose));
 		final_pose = 0;
 	}
+	if (get_request("Connection:") == "")
+		_header_tab.insert(std::pair<std::string, std::string>("Connection:", "close"));
 	if (get_request("Expect:") == "100-continue")
 	{
 		set_next_buffer_is_body(TRUE);
 		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
-	//DISPLAY VALID ELEMENTS
+	//
 /* 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	} */
 	//
-	//std::cout << RED << "_=[" << _buffer<< "]" << END << std::endl;
 	return (KEEP);
 }
 
