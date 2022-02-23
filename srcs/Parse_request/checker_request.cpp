@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/23 11:07:21 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 17:58:00 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,10 @@ int		Parse_request::check_request()
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
 
-	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+	/* for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
-	}
+	} */
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
