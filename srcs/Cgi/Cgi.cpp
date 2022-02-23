@@ -105,9 +105,11 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 {
 	std::map<std::string, std::string>::const_iterator	it, end;
 
-	//end = src_header.get;
+	// end = .end();
 	for (it ; it != end ; ++it)
+	{
 		this->_env[this->normVar(it->first)] = it->second;
+	}
 
 	/*this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
