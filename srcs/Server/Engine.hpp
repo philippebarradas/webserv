@@ -6,6 +6,8 @@
 # include <string>
 # include <fstream>
 # include <cstring>
+# include <cctype>
+
 
 // C
 #include <stdio.h>
@@ -80,7 +82,7 @@ class Engine
 		std::string	GetRemote_Addr() const;
 		int			GetAccessPort( void ) const;
 
-		
+
 
 	private:
 

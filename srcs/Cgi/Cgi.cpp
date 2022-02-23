@@ -93,11 +93,11 @@ std::string	Cgi::normVar( std::string src )
 {
 	for (size_t i = 0 ; src[i] ; ++i)
 	{
-		toupper(src[i]);
+		src[i] = std::toupper(src[i]);
 		if (src[i] == '-')
 			src[i] = '_';
 	}
-	return (src);
+	return ("HTTP_" + src);
 }
 
 // var from client
@@ -105,8 +105,8 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 {
 	std::map<std::string, std::string>::const_iterator	it, end;
 
-	// end = .end();
-	for (it ; it != end ; ++it)
+	end = src_header.get_param_request_tab().end();
+	for (it = src_header.get_param_request_tab().begin(); it != end ; ++it)
 	{
 		this->_env[this->normVar(it->first)] = it->second;
 	}
@@ -146,8 +146,6 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	// remplacer "/env.php" par le bon fichier apres traitement de requete:
 	//this->_env["AUTH_TYPE"] = "HTTP";
 	//this->_env["REQUEST_SCHEME"] = "http";
-	if (src_header.get_request("Cookie:") != "")
-		this->_env["HTTP_COOKIE"] = src_header.get_request("Cookie:");	// debrouille toi avec ca. La bise !
 	if (src_header.get_request("Query").compare(""))
 		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' + src_header.get_request("Query");//query string ;
 	else
@@ -225,7 +223,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	if (this->_pid == -1)
 		std::cout << RED << "FAIL PID -1" << END << std::endl;
 	else if (this->_pid == 0)
-	{		
+	{
 		if (src_header.get_request("Method").compare("POST") == 0)
 		{
 			write(fd_stdin, body_string.c_str(),body_string.size());
@@ -235,7 +233,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 		dup2(fd_stdout, STDOUT_FILENO);
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
-	}	
+	}
 	//std::cout << "{waitpid}" << std::endl;
 	//std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
 	waitpid(this->_pid, &status, 0);

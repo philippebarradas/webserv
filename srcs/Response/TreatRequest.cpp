@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 11:10:54 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 15:04:01 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,6 +237,8 @@ bool	TreatRequest::is_dynamic( Parse_request const & req,
 	end = it = this->_loc->second.getCgi().end();
 	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 	{
+		std::cout << "it->first\t=\t" << it->first << std::endl;
+		std::cout << "extenson\t=\t" << extension << std::endl;
 		if (extension == it->first)
 			return (true);
 	}
@@ -260,6 +262,9 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
 	this->_cgi = this->is_dynamic(req, extension, it_cgi);
+
+	std::cout << _loc->second << std::endl;
+	std::cout << "_cgi\t=\t" << _cgi << std::endl;
 
 	if (this->_cgi)
 	{
@@ -361,6 +366,7 @@ bool	TreatRequest::search_index( Parse_request & req,
 		tmp = path + *it;
 		if (this->openAndRead(tmp, req))
 			return (true);
+		this->_cgi = false;
 	}
 	return (false);
 }
@@ -637,9 +643,6 @@ std::string	TreatRequest::treat(Parse_request & req )
 		else
 			this->permMethod(req);
 	}
-
-	if (this->_cgi)
-		req.setTransfer("chunked");
 
 	Response	rep(req, *this);
 

@@ -52,7 +52,7 @@ class Parse_request
 		void	setTransfer( std::string const & method ) { this->_header_tab["Transfer-Encoding:"] = method; }
 
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
-		std::map<std::string, std::string>	get_param_request_tab( void ) const {return this->_param_request_tab;}
+		std::map<std::string, std::string>	const & get_param_request_tab( void ) const {return this->_param_request_tab;}
 
 		std::string get_request_body() const { return (_request_body); }
 		size_t get_request_body_size() const { return (_request_body_size); };

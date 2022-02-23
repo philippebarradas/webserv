@@ -3,9 +3,10 @@ server{
 	server_name localhost;
 	listen 8004;
 
-	autoindex off;
+	autoindex on;
 	root /home/user42/Bureau/webserv/www;
 	cgi .php /usr/bin/php-cgi;
+	cgi .py /usr/bin/python2.7;
 
 	client_max_body_size 100000;
 
@@ -13,7 +14,7 @@ server{
 
 	location / {
 		index cookie.php;
-		cgi .php /usr/bin/php-cgi;
+
 		accepted_methods	GET POST DELETE;
 	}
 

@@ -3,7 +3,7 @@ user www-data;
 events {}
 http{
 server{
-	server_name hello1 hello3;
+	server_name hello3 hello1 ;
 	listen 777;
 
 	autoindex off;
@@ -12,7 +12,7 @@ server{
 	index cookie.php;
 
 	location ~ \.php$ {
-		fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+		fastcgi_pass unix:/usr/bin/python2.7;
 		fastcgi_index hello.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include /etc/nginx/fastcgi_params;
