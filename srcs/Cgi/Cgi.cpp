@@ -89,11 +89,31 @@ void	Cgi::init_path(std::string const & root, std::string const & path, std::str
 	//this->_home = "/home/user42/Bureau/webserv/www";
 }
 
+std::string	Cgi::normVar( std::string src )
+{
+	for (size_t i = 0 ; src[i] ; ++i)
+	{
+		toupper(src[i]);
+		if (src[i] == '-')
+			src[i] = '_';
+	}
+	return (src);
+}
+
 // var from client
 void	Cgi::init_env_client_var(const Parse_request & src_header)
 {
-	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
+	std::map<std::string, std::string>::const_iterator	it, end;
+
+	//end = src_header.get;
+	for (it ; it != end ; ++it)
+		this->_env[this->normVar(it->first)] = it->second;
+
+	/*this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
 	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
+	this->_env["HTTP_ACCEPT_ENCODING"] = src_header.get_request("Accept-Encoding:");
+	this->_env["HTTP_SEC_FETCH_DEST"] = src_header.get_request("Sec-Fetch-Dest:");
+	this->_env["HTTP_SEC_FETCH_USER"] = src_header.get_request("Sec-Fetch-User:");
 	this->_env["HTTP_USER_AGENT"] = src_header.get_request("User-Agent:");
 	this->_env["HTTP_CONNECTION"] = src_header.get_request("Connection:");
 	if (src_header.get_request("Method").compare("POST") == 0)
@@ -101,7 +121,7 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
 		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	}
-	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
+	this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");*/
 }
 
 // var server

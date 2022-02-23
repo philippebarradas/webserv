@@ -1,23 +1,26 @@
+events {}
 
+http{
 server {
-	listen 8003;
-	autoindex on;
+	listen 8006;
 
-	cgi .bla /home/user42/Bureau/webserv/ubuntu_cgi_tester;
 	root /home/user42/Bureau/webserv/tests;
-	accepted_methods POST;
 	location / {
-		accepted_methods GET;
 	}
 
 	location /post_body {
-		accepted_methods POST;
 		client_max_body_size	100;
 	}
 	location /directory/ {
 		error_page 404 youpi.bad_extension;
-		accepted_methods GET;
+		autoindex on;
 		root /home/user42/Bureau/webserv/tests/YoupiBanane;
 		index youpi.bad_extension;
 	}
-}
+
+	location ~ \.bla$ {
+		fastcgi_pass unix:/home/user42/Bureau/webserv/ubuntu_cgi_tester;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include /etc/nginx/fastcgi_params;
+	}
+}}
