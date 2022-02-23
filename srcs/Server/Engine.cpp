@@ -279,7 +279,6 @@ void	Engine::read_request_body(int i, const std::vector<Server> & src, Parse_req
 	}
 	else
 	{
-		std::cout << "{ap send ELSE}" << std::endl;
 		send_data(valread, this->_fds_events[i].data.fd, src, parse_head[i]);
 		parse_head[i] = Parse_request();
 		connexion[i] = Connexion();
@@ -287,7 +286,7 @@ void	Engine::read_request_body(int i, const std::vector<Server> & src, Parse_req
 	}
 }
 
-void	Engine::send_data(int valread, int fd,const std::vector<Server> & src, const Parse_request & parse_head)
+void	Engine::send_data(int valread, int fd,const std::vector<Server> & src, Parse_request & parse_head)
 {
 	int		nbr_bytes_send = 0;
 

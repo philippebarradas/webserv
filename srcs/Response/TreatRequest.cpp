@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 18:41:19 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/23 07:49:23 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,6 @@ void	TreatRequest::cpyInfo( std::string const & extension,
 
 void	TreatRequest::readStaticFile( std::ifstream & ifs )
 {
-	std::cout << "--------------------\nSTATIC READ" << std::endl;
 	std::string	line;
 
 	while (std::getline(ifs, line))
@@ -612,7 +611,7 @@ void	TreatRequest::permMethod( Parse_request & req )
 	}
 }
 
-std::string	TreatRequest::treat( Parse_request & req )
+std::string	TreatRequest::treat(Parse_request & req )
 {
 	// DISPLAY (TO DELETE)
 	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();

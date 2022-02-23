@@ -34,7 +34,6 @@
 #define FALSE 0
 #define MAX_EVENTS 300
 #define MAX_SERVERS 100
-#define BUFFER_SIZE 1000
 
 // My class
 #include "../Config/Server.hpp"
