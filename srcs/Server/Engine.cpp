@@ -195,20 +195,23 @@ void	Engine::read_header(int new_socket, const std::vector<Server> & src, Client
 	char	b;
 
 	bzero(_buff, BUFFER_SIZE);
-	_valread = recv(client.getEvents().data.fd, &this->_buff, BUFFER_SIZE, 0);
-	std::cout << "------------- READ ------------------" << std::endl;
+	_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+	//std::cout << "------------- READ ------------------" << std::endl;
 	if (_valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
 	else
 		client.recv_len += _valread;
-	client.fill_request += this->_buff;
+	client.fill_request += b;
 	if (client.fill_request.find("\r\n\r\n") != std::string::npos) // header rempli
 	{
 		//std::cout << "it->fill_request\t=\t" << client.fill_request << std::endl;
 		//std::cout << "{EPOLLOUT}" << std::endl;
-		client.getEvents().events = EPOLLOUT;
-		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, new_socket, &client.getEvents()) == -1)
-			throw std::runtime_error("[Error] epoll_ctl_mod() failed");
+		if (client.getParse_head().get_request("Content-Length:") == "") // pas de body
+		{
+			client.getEvents().events = EPOLLOUT;
+			if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, new_socket, &client.getEvents()) == -1)
+				throw std::runtime_error("[Error] epoll_ctl_mod() failed");
+		}
 		//std::cout << RED << " this->_fds_events=[" << this->_fds_events[i].events << "]";
 		client.request_header_size = client.fill_request.size();
 	}
@@ -219,8 +222,8 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	char b;
 	int f;
 
-	std::cout << "je suis dans read request body" << std::endl;
-	std::cout << "_buff\t=\t" << _buff << std::endl;
+	//std::cout << "je suis dans read request body" << std::endl;
+	//std::cout << "_buff\t=\t" << _buff << std::endl;
 	if (client.getParse_head().get_request("Expect:") == "100-continue"
 		&& client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
@@ -228,9 +231,9 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 		//send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 		if (_valread != 0 && client.fill_request.find("0\r\n\r\n") == std::string::npos)
 		{
-			_valread = recv(client.getEvents().data.fd, &this->_buff, BUFFER_SIZE, 0);
+			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
 			client.recv_len += _valread;
-			client.fill_request += this->_buff;
+			client.fill_request += b;
 		}
 		else
 		{
@@ -240,17 +243,19 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	}
 	else
 	{
-		std::cout << "client.fill_request.size()\t=\t" << client.fill_request.size() << std::endl;
-		std::cout << "taille header + c length = " << client.request_header_size +
-			std::stoi(client.getParse_head().get_request("Content-Length:")) << std::endl;
+		//std::cout << YELLOW << "client.fill_request.size()\t=\t" << client.fill_request << END << std::endl;
+		//std::cout << "taille header + c length = " << client.request_header_size +
+			//std::stoi(client.getParse_head().get_request("Content-Length:")) << std::endl;
 		if (_valread != 0
 		&& client.fill_request.size() < client.request_header_size +
 			std::stoi(client.getParse_head().get_request("Content-Length:")))
+			//&& client.fill_request.find("\r\n", client.request_header_size) == std::string::npos)
 		{
-			_valread = recv(client.getEvents().data.fd, &this->_buff, BUFFER_SIZE, 0);
-			std::cout << "_valread\t=\t" << _valread << std::endl;
+			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+			//std::cout << "_valread\t=\t" << _valread << std::endl;
 			client.recv_len += _valread;
-			client.fill_request += this->_buff;
+			client.fill_request += b;
+			//printf("%d\n", b);
 		}
 		else
 		{
@@ -259,6 +264,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 			client.is_sendable = true;
 		}
 	}
+	//std::cout << "------------- READ ------------------" << std::endl;
 }
 
 void	Engine::send_data(int valread, const std::vector<Server> & src, Client & client)
@@ -322,7 +328,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 		{
 			std::cout << PURPLE2 << "_fds_events[i].data.fd\t=\t" << _fds_events[i].data.fd << std::endl << END;
 		} */
-		std::cout << "------------- WAIT ------------------" << std::endl;
+		//std::cout << "------------- WAIT ------------------" << std::endl;
 		for (i = 0; i < nbr_connexions; i++)
 		{
 			if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
@@ -390,7 +396,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 				}
 			}
 		}
-		std::cout << "lol" << std::endl;
+		//std::cout << "lol" << std::endl;
 	}
 }
 
