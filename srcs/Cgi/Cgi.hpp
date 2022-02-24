@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/22 18:37:36 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/23 11:07:13 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ class Cgi
 
 		// METHODS
 		void	delete_argv_env(char **argv, char **env);
+		std::string	normVar( std::string src );
 		std::string	to_string(size_t nb);
 		bool	is_file_cgi(std::string path_extension);
 		void	init_path(std::string const & root, std::string const & path, std::string const & pathCgi);

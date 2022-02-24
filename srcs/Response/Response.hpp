@@ -38,7 +38,7 @@ class Response
 
 		Response &		operator=( Response const & rhs );
 
-		std::string const &	getHeader( void ) const;
+		std::string const &	getResponse( void ) const;
 
 	private:
 
@@ -48,7 +48,7 @@ class Response
 		void	writeRequestStatus( unsigned int const & code );
 		void	writeDate( void );
 		void	writeType( std::string const & extension, TreatRequest const & treat );
-		void	writeLenght( std::string const & page );
+		void	writeLenght( std::string const & page, bool const & isDynamic );
 
 		std::string _header;
 

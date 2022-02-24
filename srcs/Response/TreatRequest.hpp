@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 18:41:27 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/23 11:11:12 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TREATREQUEST_HPP
 # define TREATREQUEST_HPP
 
-# include <iostream>
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
@@ -21,9 +20,13 @@
 # include "../Config/utils.hpp"
 
 # include "Response.hpp"
+# include <iostream>
 # include <string>
 # include <dirent.h>
 # include <sys/stat.h>
+# include <unistd.h>
+# include <grp.h>
+# include <pwd.h>
 
 # define DEFAULT_ROOT_ERROR "srcs/Config/default/error_page/"
 
@@ -76,7 +79,10 @@ class TreatRequest
 			std::string const & path );
 
 		//bool	exist( std::string const & path, Parse_request & req) const;
+		void	parce_end_path( std::string & src );
+		bool	check_access_delete( Parse_request & req, std::string path );
 		bool	check_access( Parse_request & req, std::string path );
+		bool	del( char const * path );
 		bool	exist_file( std::string const & path) const;
 		bool	exist_dir( std::string const & root) const;
 		bool	exist( std::string const & root) const;
@@ -84,7 +90,8 @@ class TreatRequest
 		void	permMethod( Parse_request & req );
 		void	redirect( Parse_request & req, std::string const & path );
 		void	exec_root( Parse_request & req, std::string const & path );
-		void	exec( Parse_request & req );
+		void	exec( Parse_request & req, std::string const & method );
+		void	exec_delete( Parse_request & req, std::string const & path );
 
 		std::map<std::string, Server>::const_iterator	selectLocation(
 			std::string const &	path,
@@ -96,6 +103,9 @@ class TreatRequest
 		void	generateAutoIndex( Parse_request & req,
 			std::string const & path );
 
+		bool	is_dynamic( Parse_request const & req,
+			std::string const & extension,
+			std::map<std::string, std::string>::const_iterator & it ) const;
 		void	force_open( Parse_request const & req );
 		void	readStaticFile( std::ifstream & ifs );
 		void	readDynamicFile( std::string const & path,
@@ -106,7 +116,7 @@ class TreatRequest
 		void	cpyInfo( std::string const & extension,
 			std::string const & path, Parse_request & req );
 		bool	openAndRead( std::string const & path,
-			Parse_request & req, bool const & isError );
+			Parse_request & req );
 		bool	check_precondition( Parse_request const & req, struct tm const & timefile ) const;
 
 		void	error_page( Parse_request & req );

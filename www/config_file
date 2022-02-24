@@ -1,34 +1,23 @@
 
 server{
 	server_name localhost;
-	listen 8001;
+	listen 8004;
 
-
-	autoindex off;
+	autoindex on;
 	root /home/user42/Bureau/webserv/www;
 	cgi .php /usr/bin/php-cgi;
+	cgi .py /usr/bin/python2.7;
+
+	client_max_body_size 1000000000;
 
 	accepted_methods	GET POST;
 
 	location / {
-		index form.html;
-		cgi .php /usr/bin/php-cgi;
+		index cookie.php;
+
 		accepted_methods	GET POST DELETE;
 	}
 
-	location /test {
-
-	}
-
-	location /salut {
-		root yo;
-	}
-
-	location /hello.html {
-		error_page 502 /env.php;
-		root /home/user42/Bureau/webserv/www/test;
-		cgi .html /usr/bin/php-cgie;
-	}
 }
 
 server{
@@ -36,6 +25,7 @@ server{
 	listen 8002;
 
 
+	client_max_body_size 1000000000;
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	location / {
