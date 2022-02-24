@@ -7,8 +7,6 @@ Parse_request::Parse_request()
 {
 	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 
-	// GET /../../../Makefile HTTP/1.1 = invalid
-
 	std::string  elements[] = {
 		"Status", //ok
 		"Method", //ok
@@ -17,21 +15,21 @@ Parse_request::Parse_request()
 		"Protocol",
 		"Host-uncut-comme-les-casquettes",
 	};
-
 	
 	std::string empty = "";
 	_next_buffer_is_body = 0;
 	_request_body_size = 0;
 	_nbr_line = 0;
 	_request_body = "";
-
+	firs_line_is_parsed = false;
+	
 	for (size_t x = 0; x < 6; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
+}
 
-	//for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
-   // {
-	//	std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
-	//}
+Parse_request::~Parse_request()
+{
+	//std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
 }
 
 Parse_request&				Parse_request::operator=( Parse_request const & rhs )
@@ -49,26 +47,27 @@ Parse_request&				Parse_request::operator=( Parse_request const & rhs )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-int		Parse_request::parse_request_buffer(std::string full_buffer)
+int		Parse_request::parse_request(std::string full_buffer)
 {
 	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 
-	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
+/* 	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
 		this->_buffer = full_buffer;
 		return (check_request());
-	}
+	} */
 
-	this->_buffer = full_buffer;
-	//std::cout << PURPLE << "element=[" << get_nbr_line() << "]" << END << std::endl;
-	//std::cout << PURPLE << "full_buffer=[" << full_buffer << "]" << END << std::endl;
-	//std::cout << PURPLE << "buffer=[" << this->_buffer << "]" << END << std::endl;
+ 	this->_buffer = full_buffer;
+	std::cout << _nbr_line << std::endl;
 
 	this->incr_nbr_line();
+	std::cout << _nbr_line << std::endl;
+
 	if (get_nbr_line() == 1)
 	{
-		if ((start = parse_first_line()) == -1)
+		std::cout << "{fill first line}" << std::endl;
+		if ((start = fill_first_line()) == -1)
 			return (STOP);
 		if (start >= _buffer.size())
 			return (KEEP);
@@ -80,71 +79,9 @@ int		Parse_request::parse_request_buffer(std::string full_buffer)
 	return (check_request());
 }
 
-int		Parse_request::parse_first_line()
-{
-	std::string cmp;
-	size_t start = 0;
-	size_t size = 0;
-	size_t full_size = 0;
-	size_t rank = 0;
-	std::map<std::string, std::string>::iterator replace;
-
-	for (std::string::iterator it = _buffer.begin(); it != _buffer.end() && rank <= 2; ++it)
-	{
-		cmp = *it;
-		if (cmp.compare(" ") != 0 && cmp.compare("\n") != 0 && it != _buffer.end())
-			size++;
-		else if ((cmp.compare(" ") == 0 || cmp.compare("\n") == 0) && it != _buffer.end())
-		{
-			if (rank == 0)
-			{
-				replace = _header_tab.find("Method");
-				replace->second = _buffer.substr(start, size);
-			}
-			else if (rank == 1)
-			{
-				replace = _header_tab.find("Path");
-				replace->second = _buffer.substr(start, size);
-			}
-			else if (rank == 2)
-			{
-				replace = _header_tab.find("Protocol");
-				if (cmp.compare("\n") == 0)
-					replace->second = _buffer.substr(start, size - 1);
-				else
-					replace->second =  _buffer.substr(start, size);
-			}
-			full_size += size + 1;
-			start = full_size;
-			size = 0;
-			rank++;
-		}
-	}	
-
-	parse_path();
-	return (check_first_line(full_size));
-}
-
-void	Parse_request::parse_path()
-{
-	size_t to;
-	size_t stop = 0;
-	size_t start = 0;
-	std::map<std::string, std::string>::iterator replace;
-
-	if (get_request("Path").find("?") != std::string::npos)
-	{
-		start = get_request("Path").find("?");
-		replace = _header_tab.find("Query");
-		replace->second = get_request("Path").substr(start + 1, get_request("Path").size() - start);
-		replace = _header_tab.find("Path");
-		replace->second = get_request("Path").substr(0, start);
-	}
-}
-
 int			str_is_lnt(std::string str)
 {
-	std::string accept = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPKRSTUVWXYZ-0123456789";
+	std::string accept = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789";
 	bool v = false;
 	
 	//std::cout << BLUE << "str=[" << str << "]" << END << std::endl;
@@ -231,13 +168,11 @@ int		Parse_request::fill_variables()
 		set_next_buffer_is_body(TRUE);
 		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
-	//
 /* 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
 	} */
-	//
 	return (KEEP);
 }
 
@@ -254,71 +189,3 @@ std::string	Parse_request::fill_header_tab(std::string str)
 		str.erase(0,1);
 	return (str);
 }
-
-size_t	hexa_to_size(std::string nbr)
-{
-	std::stringstream ss;
-	std::string hex = "0123456789abcdefABCDEF";
-	size_t found;
-	size_t res = 0;
-	size_t p = 0;
-
-	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
-	{
-		if ((found = hex.find(*it)) == std::string::npos)
-			return (-1);
-	}
-	ss << std::hex << nbr;
-	ss >> res;
-	return (res);
-}
-
-void	Parse_request::is_body(size_t found)
-{
-	size_t line_size = 0;
-	size_t pos = 0;
-	size_t size = -1;
-	std::string _request_body_unchanked;
-	std::string cmp = "\r\n";
-
-	if (found != 0)
-		found += 4;
-	if (_buffer.size() > found)
-		_request_body = _buffer.substr(found, _buffer.size() - found);
-	if (_request_body.size() == 0)
-		return ;
-	std::string split_body = _request_body;
-	if (get_request("Transfer-Encoding:") == "chunked")
-	{
-		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
-		{
-			found += cmp.size();
-			size = hexa_to_size(split_body.substr(0, found - cmp.size()));
-			if (size != -1)
-				_request_body_size += size;
-			else
-				_request_body_unchanked += split_body.substr(0, found - cmp.size());
-			split_body = split_body.substr(found, split_body.size() - found);
-		}
-		_request_body = _request_body_unchanked;
-	}
-	if (_request_body_size == 0)
-		_request_body_size = _request_body.size();
-	else if (_request_body_size == 0 && get_request("Content-Length:").compare("") != 0)
-		_request_body_size = std::stoi(get_request("Content-Length:"));
-	if (_next_buffer_is_body == 1 && _request_body_size != 0)
-		_next_buffer_is_body = 0;
-}
-
-/*
-** -------------------------------- DESTRUCTOR --------------------------------
-*/
-
-Parse_request::~Parse_request()
-{
-	//std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
-}
-
-/*
-** --------------------------------- OVERLOAD ---------------------------------
-*/

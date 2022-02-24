@@ -216,6 +216,8 @@ void	Engine::read_send_data(int i, int new_socket, const std::vector<Server> & s
 			connexion[i].fill_request +=  connexion[i].b;
 		}
 		std::cout << connexion[i].b;
+
+
 		if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos) // header rempli
 		{
 			//std::cout << "{EPOLLOUT}" << std::endl;
@@ -224,13 +226,21 @@ void	Engine::read_send_data(int i, int new_socket, const std::vector<Server> & s
 				throw std::runtime_error("[Error] epoll_ctl_mod() failed");
 			//std::cout << RED << " this->_fds_events=[" << this->_fds_events[i].events << "]";
 			connexion[i].request_header_size = connexion[i].fill_request.size();
+		}
+		else if (connexion[i].fill_request.find("\r\n") != std::string::npos && parse_head[i].firs_line_is_parsed == false)
+		{
+			std::cout << "{parse first line}" << std::endl;
+			parse_head[i].parse_first_line(connexion[i].fill_request);
+			parse_head[i].firs_line_is_parsed = true;
 		} 
 	}
 	else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == false)
 	{
+		
 		//std::cout << YELLOW << "element=[" << connexion[i].fill_request << "]" << END << std::endl;
-		std::cout << YELLOW << "client n*[" << i << "]" << END << std::endl;
-		f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+		//std::cout << YELLOW << "client n*[" << i << "]" << END << std::endl;
+		std::cout << "{parse first request}" << std::endl;
+		f = parse_head[i].parse_request(connexion[i].fill_request);
 		connexion[i].is_parsed = true;
 	}
 	else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == true)
@@ -256,8 +266,9 @@ void	Engine::read_request_body(int i, const std::vector<Server> & src, Parse_req
 				connexion[i].fill_request +=  connexion[i].b;
 			}
 			else
-			{			
-				f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+			{
+				std::cout << "{parse first body 1}" << std::endl;
+				f = parse_head[i].parse_body(connexion[i].fill_request);
 				connexion[i].is_sendable = true;
 			}
 		}
@@ -272,7 +283,8 @@ void	Engine::read_request_body(int i, const std::vector<Server> & src, Parse_req
 			}
 			else
 			{
-				f = parse_head[i].parse_request_buffer(connexion[i].fill_request);
+				std::cout << "{parse first body 2}" << std::endl;
+				f = parse_head[i].parse_body(connexion[i].fill_request);
 				connexion[i].is_sendable = true;
 			}
 		}

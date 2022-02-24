@@ -32,7 +32,10 @@ class Parse_request
 			return ("");
 		};
 
-		int		parse_request_buffer(std::string full_buffer);
+		int		parse_request(std::string full_buffer);
+		int		parse_first_line(std::string full_buffer);
+		int		parse_body(std::string full_buffer);
+
 		size_t	get_nbr_line() const {return this->_nbr_line;};
 		void	incr_nbr_line(){this->_nbr_line++;};
 
@@ -47,20 +50,27 @@ class Parse_request
 		bool	get_next_buffer_is_body(){ return(_next_buffer_is_body); };
 
 		void set_request_body(std::string new_request_body) { _request_body = new_request_body; }
-		
+		bool firs_line_is_parsed;
 
 	private:
 		std::string	fill_header_tab(std::string str);
 		int			fill_variables();
 		void		fill_param_request_tab();
 
-		int			parse_first_line();
+	// FIRST LINE
+		int			fill_first_line();
+
 		void		parse_path();
+
+		int			check_first_line(size_t full_size);
+		int			check_path();
+	// REQUEST
+
+	// BODY
+
 		void		is_body(size_t found);
 
 		int			check_request();
-		int			check_path();
-		int			check_first_line(size_t full_size);
 		int			check_double_content();
 		int			check_precondition();
 
