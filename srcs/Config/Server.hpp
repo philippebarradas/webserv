@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 10:05:32 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 08:34:50 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include "../Server/Engine.hpp"
 
 # define MAX_MAXBODY       9000000000000
-# define MAXBODY_DEFAULT   1000000
+# define MAXBODY_DEFAULT   10000000
 # define AUTOINDEX_DEFAULT false
 
 class Engine;

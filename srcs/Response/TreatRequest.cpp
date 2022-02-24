@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/24 13:33:29 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/24 15:39:12 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,9 +260,6 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
 	this->_cgi = this->is_dynamic(req, extension, it_cgi);
-
-	//std::cout << _loc->second << std::endl;
-	//std::cout << "_cgi\t=\t" << _cgi << std::endl;
 
 	if (this->_cgi)
 	{
@@ -584,25 +581,21 @@ void	TreatRequest::exec( Parse_request & req, std::string const & method )
 		path_alias.erase(0, this->_loc->first.length());
 
 		path = this->_loc->second.getRoot() + path_alias;
-		if (method == "POST" || method == "GET")
-			this->exec_root(req, path);
-		else if (method == "DELETE")
-			this->exec_delete(req, path);
 	}
 	else
-	{
 		path = this->_loc->second.getRoot() + req.get_request("Path");
-		if (method == "POST" || method == "GET")
-			this->exec_root(req, path);
-		else if (method == "DELETE")
-			this->exec_delete(req, path);
-	}
+
+	if (method == "POST" || method == "GET")
+		this->exec_root(req, path);
+	else if (method == "DELETE")
+		this->exec_delete(req, path);
 }
 
 void	TreatRequest::permMethod( Parse_request & req )
 {
 	std::string	method;
 	std::set<std::string>::const_iterator	it;
+	std::set<std::string>::iterator	ite;
 
 	method = req.get_request("Method");
 	it = this->_loc->second.getMethods().find(method);
@@ -633,6 +626,8 @@ std::string	TreatRequest::treat(Parse_request & req )
 		this->_loc = this->selectLocation(req.get_request("Path"),
 			this->_conf[this->_i_conf].getLocation());
 
+		std::cout << PURPLE2 << "request_body_size=[" << req.get_request_body_size() << "]" << END << std::endl;
+		std::cout << PURPLE2 << "this->_loc->second.getMaxbody()=[" << this->_loc->second.getMaxbody() << "]" << END << std::endl;
 		if (req.get_request_body_size() > this->_loc->second.getMaxbody()
 			&& this->_loc->second.getMaxbody() != 0)
 			req.setStatus("413");
