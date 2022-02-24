@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 18:29:39 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/24 13:33:29 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,8 +261,8 @@ bool	TreatRequest::openAndRead( std::string const & path,
 	extension = &path[path.rfind('.')];
 	this->_cgi = this->is_dynamic(req, extension, it_cgi);
 
-	std::cout << _loc->second << std::endl;
-	std::cout << "_cgi\t=\t" << _cgi << std::endl;
+	//std::cout << _loc->second << std::endl;
+	//std::cout << "_cgi\t=\t" << _cgi << std::endl;
 
 	if (this->_cgi)
 	{
@@ -621,8 +621,8 @@ void	TreatRequest::permMethod( Parse_request & req )
 std::string	TreatRequest::treat(Parse_request & req )
 {
 	// DISPLAY (TODO DELETE)
-	std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	printMap(pol, "Tableau de merde");
+	//std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
+	//printMap(pol, "Tableau de merde");
 
 	if (req.get_request("Status") == "400"
 		|| req.get_request("Status") == "505") // TODO 505 test when merge

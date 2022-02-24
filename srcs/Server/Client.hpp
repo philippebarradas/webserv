@@ -1,5 +1,5 @@
-#ifndef ENGINE_HPP
-# define ENGINE_HPP
+#ifndef CLIENT_HPP
+# define CLIENT_HPP
 
 // C++
 # include <iostream>
@@ -39,51 +39,58 @@
 #define WHITE	"\033[1;37m"
 #define END		"\033[0m"
 
-// Utils macro
-#define MAX_EVENTS 300
-#define MAX_SERVERS 100
-#define BUFFER_SIZE 1
-
 // My class
 #include "../Config/Server.hpp"
 #include "../Parse_request/parse_request.hpp"
-#include "Client.hpp"
 
 class Server;
 class Parse_request;
-class Client;
 
-class Engine
+class Client
 {
 	public:
 
 		// CONSTRUCTOR
-		Engine();
-		Engine(const std::vector<Server> & src);
-		Engine( Engine const & src );
+		Client(epoll_event & ev);
+
+		Client( Client const & src );
 
 		// DESTRUCTOR
-		~Engine();
+		~Client();
 
 		// METHODS
-		void	setup_socket_server(const std::vector<Server> & src);
-		void	loop_server(const std::vector<Server> & src);
+
 
 		// OPERATORS
-		Engine &		operator=( Engine const & rhs );
+		Client &		operator=( Client const & rhs );
+
+		// SETTERS
+
 
 		// GETTERS
 
-		std::string	GetRemote_Port() const;
-		std::string	GetRemote_Addr() const;
-		int			GetAccessPort( void ) const;
+		Parse_request & getParse_head();
+		epoll_event & getEvents();
 
+		//bool _is_create
 
+		void	reinit_obj();
+
+		size_t	recv_len;
+		size_t	request_header_size;
+		std::string fill_request;
+		bool	is_parsed;
+		bool	is_sendable;
+
+		int		fd;
 
 	private:
 
+		Client();
+		Parse_request *_parse_head;
+		epoll_event _events;
 		// VARIABLES
-		struct	sockaddr_in _addr;
+	/* 	struct	sockaddr_in _addr;
 		struct	epoll_event _fds_events[MAX_EVENTS];
 		size_t	_i_server;
 		size_t	_i_server_binded;
@@ -105,17 +112,14 @@ class Engine
 		bool	is_binded(int port_config);
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
-		int		accept_connexions(int listen_fd);
-		void	set_remote_var(struct sockaddr_in & addr_client);
-		//void	read_send_data(int i, int new_socket, const std::vector<Server> & src,
-			//Parse_request & parse_head, Client & client);
+		int		accept_Clients(int listen_fd);
+		void	set_remote_var(struct sockaddr_in & addr_Client);
+		void	read_send_data(int fd, const std::vector<Server> & src);
+		void	send_data(int valread, int fd,const std::vector<Server> & src, const Parse_request & parse_head);
 
-		void	read_header(int new_socket, const std::vector<Server> & src, Client & client);
-		void	read_body(const std::vector<Server> & src, Client & client);
-		void	send_data(int valread, const std::vector<Server> & src, Client & client);
-		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
+		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src); */
 };
 
-std::ostream &			operator<<( std::ostream & o, Engine const & i );
+std::ostream &			operator<<( std::ostream & o, Client & i );
 
-#endif /* ********************************************************* Engine_H */
+#endif /* ********************************************************* Client_H */

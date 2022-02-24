@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 11:09:24 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 17:57:40 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void	Response::writeDate( void )
 
 std::string const &	Response::getResponse( void ) const
 {
-	std::cout << "_header\t=\t\r\n" << _header << std::endl;
+	//std::cout << "_header\t=\t\r\n" << _header << std::endl;
 	return (this->_header);
 }
 
