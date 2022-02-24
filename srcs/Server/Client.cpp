@@ -44,7 +44,7 @@ Client::Client(Client const & src )
 Client::~Client()
 {
 	delete _parse_head;
-	std::cout << GREEN << "----------------- End of Client -----------------" << END << std::endl << std::endl;
+	//std::cout << GREEN << "----------------- End of Client -----------------" << END << std::endl << std::endl;
 }
 
 /*

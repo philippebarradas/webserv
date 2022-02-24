@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 17:57:40 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/24 18:18:55 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,18 +107,16 @@ void	Response::writeRequestStatus( std::string const & code )
 
 void	Response::writeType( std::string const & extension, TreatRequest const & treat )
 {
-	this->_header += "Content-Type: ";
-	if (treat.getIs_Cgi())
-		this->_header += std::string(&treat.getType_Cgi()[14]);
-	else
+	if (!treat.getIs_Cgi())
 	{
+		this->_header += "Content-Type: ";
 		//std::cout << "extension\t=\t" << extension << std::endl;
 		if (extension == ".html")
 			this->_header += "text/html";
 		else
 			this->_header += "text/plain";
+		this->_header += "\r\n";
 	}
-	this->_header += "\r\n";
 }
 
 void	Response::writeLenght( std::string const & page, bool const & isDynamic )
@@ -156,7 +154,7 @@ void	Response::writeDate( void )
 
 std::string const &	Response::getResponse( void ) const
 {
-	//std::cout << "_header\t=\t\r\n" << _header << std::endl;
+	std::cout << "_header\t=\t\r\n" GREEN << _header << END << std::endl;
 	return (this->_header);
 }
 

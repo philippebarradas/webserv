@@ -144,13 +144,14 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
-	std::cout << YELLOW << "src_header.get_request(Query);=[" << src_header.get_request("Query") << "]" << END << std::endl;
+	//std::cout << YELLOW << "src_header.get_request(Query);=[" << src_header.get_request("Query") << "]" << END << std::endl;
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["CONTENT_LENGTH"] = sizet_to_string(src_header.get_request_body_size());
 	//this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
+	this->_env["PATH_INFO"] = "/home/user42/Bureau/webserv/www/env.php";
 }
 
 void	Cgi::init_env(const Parse_request & src_header, const Engine & src_engine)
@@ -212,7 +213,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	{
 		if (src_header.get_request("Method").compare("POST") == 0)
 		{
-			std::cout << "J'ecris" << std::endl;
+			//std::cout << "J'ecris" << std::endl;
 			write(fd_stdin, body_string.c_str(),body_string.size());
 			lseek(fd_stdin, 0, SEEK_SET);
 		}
@@ -242,19 +243,21 @@ std::string	Cgi::body_response_from_fd(int fd)
 	__gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
 	std::istream is(&filebuf);
 	std::string ret, line;
-	std::string content_type = "Content-type:";
+	//std::string content_type = "Content-type:";
 	while (std::getline(is, line))
 	{
-		if (line.compare(0, content_type.size(), content_type) == 0)
-			this->_type_cgi = line;
-		else
-		{
+		//if (line.compare(0, content_type.size(), content_type) == 0)
+			//this->_type_cgi = line;
+		//else
+		//{
 			ret += line;
+			std::cout << "line\t=\t" << line << std::endl;
 			ret += '\n';
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
-		}
+		//}
 	}
 	ret += '\n';
+	std::cout << "ret\t=\t" << ret << std::endl;
 	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }

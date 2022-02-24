@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_request.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/23 18:01:09 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/24 16:08:29 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,7 @@ void		Parse_request::fill_param_request_tab()
 		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
 	} */
 	//std::cout << "\n\n\n" << std::endl;
+
 	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
 	{
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
@@ -206,11 +207,11 @@ void		Parse_request::fill_param_request_tab()
 		//final_pose = 0;
 		x++;
 	}
- 	/* for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
-    {
+ 	 for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+	{
 		//if (it->second.size() != 0)
 		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	} */
+	}
 	//std::cout << "ENDDDDDDDDDDDDDDDdd" << std::endl;
 }
 

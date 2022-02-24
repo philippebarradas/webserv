@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/24 15:39:12 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/24 16:19:58 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,23 +77,6 @@ TreatRequest &				TreatRequest::operator=( TreatRequest const & rhs )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-// DISPLAY (TODE DELETE)
-template <typename T>
-void printMap(T & map, std::string const & name)
-{
-/* 	typename	T::iterator	it;
-	typename	T::iterator	end;
-
-	//std::cout << "----------------" << std::endl;
-	//std::cout << name << " contains:" << std::endl;
-
-	end = map.end();
-	for (it = map.begin() ; it != end ; it++)
-		std::cout << it->first << " => " << it->second << std::endl;
-	std::cout << "size = " << map.size() << std::endl;
-	std::cout << "----------------\n" << std::endl; */
-}
-
 bool	TreatRequest::check_precondition( Parse_request const & req,
 	struct tm const & timefile ) const
 {
@@ -109,13 +92,13 @@ bool	TreatRequest::check_precondition( Parse_request const & req,
 	if (timefile.tm_year != timereq.tm_year)
 		return (timefile.tm_year < timereq.tm_year);
 	if (timefile.tm_yday != timereq.tm_yday)
-		return (timefile.tm_yday < timefile.tm_yday);
-	if (timefile.tm_hour != timefile.tm_hour)
-		return (timefile.tm_hour < timefile.tm_hour);
-	if (timefile.tm_min != timefile.tm_min)
-		return (timefile.tm_min < timefile.tm_min);
-	if (timefile.tm_sec != timefile.tm_sec)
-		return (timefile.tm_sec < timefile.tm_sec);
+		return (timefile.tm_yday < timereq.tm_yday);
+	if (timefile.tm_hour != timereq.tm_hour)
+		return (timefile.tm_hour < timereq.tm_hour);
+	if (timefile.tm_min != timereq.tm_min)
+		return (timefile.tm_min < timereq.tm_min);
+	if (timefile.tm_sec != timereq.tm_sec)
+		return (timefile.tm_sec < timereq.tm_sec);
 	return (true);
 }
 
@@ -613,10 +596,6 @@ void	TreatRequest::permMethod( Parse_request & req )
 
 std::string	TreatRequest::treat(Parse_request & req )
 {
-	// DISPLAY (TODO DELETE)
-	//std::map<std::string, std::string> pol = req.getBigMegaSuperTab();
-	//printMap(pol, "Tableau de merde");
-
 	if (req.get_request("Status") == "400"
 		|| req.get_request("Status") == "505") // TODO 505 test when merge
 		force_open(req);
@@ -626,8 +605,6 @@ std::string	TreatRequest::treat(Parse_request & req )
 		this->_loc = this->selectLocation(req.get_request("Path"),
 			this->_conf[this->_i_conf].getLocation());
 
-		std::cout << PURPLE2 << "request_body_size=[" << req.get_request_body_size() << "]" << END << std::endl;
-		std::cout << PURPLE2 << "this->_loc->second.getMaxbody()=[" << this->_loc->second.getMaxbody() << "]" << END << std::endl;
 		if (req.get_request_body_size() > this->_loc->second.getMaxbody()
 			&& this->_loc->second.getMaxbody() != 0)
 			req.setStatus("413");

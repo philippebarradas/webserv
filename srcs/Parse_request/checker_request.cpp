@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/23 17:58:00 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/24 15:59:38 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 			pos = _buffer.find(replace->first, pos);
 			if (pos != std::string::npos)
 			{
-				std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
+				//std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
 				replace = _header_tab.find("Status");
 				replace->second = "400";
 				return (STOP);
@@ -77,7 +77,7 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 		pos = _buffer.find("If-Unmodified-Since\r\n", pos + 1);
 		if (pos != std::string::npos)
 		{
-			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
+			//std::cout << "ERROR DOUBLE un - modified since" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 			return (STOP);
@@ -89,7 +89,7 @@ int		Parse_request::check_double_content(std::map<std::string, std::string>::ite
 		pos = _buffer.find("If-Modified-Since\r\n", pos + 1);
 		if (pos != std::string::npos)
 		{
-			std::cout << "ERROR DOUBLE modified since" << std::endl;
+			//std::cout << "ERROR DOUBLE modified since" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 			return (STOP);
@@ -137,7 +137,7 @@ int		Parse_request::check_request()
 		}
 		if (get_request("Host:").compare("") == 0)
 		{
-            std::cout << "ERROR = NO HOST" << std::endl;
+           // std::cout << "ERROR = NO HOST" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 		}
@@ -156,7 +156,7 @@ int		Parse_request::check_request()
 		if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
 		|| (_buffer.rfind("Content-Length\r\n") != std::string::npos))
 		{
-			std::cout << "ERROR = BAD CONTENT LENGTH" << std::endl;
+			//std::cout << "ERROR = BAD CONTENT LENGTH" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 		}

@@ -8,4 +8,8 @@
 		echo "not define <br />";
 ?>
 
+
+
 <?php var_dump($_POST);?>
+
+<?php print_r($_SERVER);?>

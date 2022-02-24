@@ -54,7 +54,7 @@ void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_addr.s_addr = INADDR_ANY;
 	this->_addr.sin_port = htons(port_config);
-	std::cout << GREEN << "Port: " << port_config << std::endl << END;
+	//std::cout << GREEN << "Port: " << port_config << std::endl << END;
 	if (is_binded(port_config) == false)
 	{
 		if (bind(listen_fd, (struct sockaddr *)&this->_addr, sizeof(this->_addr)) < 0)
@@ -89,7 +89,7 @@ int	Engine::accept_connexions(int listen_fd)
 	int new_socket = 0;
 	int client_len = sizeof(addr_client);
 
-	std::cout << "listen fd = " << listen_fd << std::endl;
+	//std::cout << "listen fd = " << listen_fd << std::endl;
 	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client, (socklen_t *)&client_len);
 	set_remote_var(addr_client);
 	if (new_socket < 0)
@@ -121,7 +121,7 @@ Engine::Engine()
 
 Engine::Engine(const std::vector<Server> & src)
 {
-	std::cout << BLUE << "----------------- Starting server -----------------" << std::endl << std::endl;
+	std::cout << BLUE << "----------------- Starting server -----------------" END << std::endl << std::endl;
 	setup_socket_server(src);
 	loop_server(src);
 }
@@ -227,7 +227,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	if (client.getParse_head().get_request("Expect:") == "100-continue"
 		&& client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
-		std::cout << "{else if}" << std::endl;
+		//std::cout << "{else if}" << std::endl;
 		//send(this->_fds_events[i].data.fd, "HTTP/1.1 100 Continue\r\n\r\n", 25, 0);
 		if (_valread != 0 && client.fill_request.find("0\r\n\r\n") == std::string::npos)
 		{
@@ -259,7 +259,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 		}
 		else
 		{
-			std::cout << "j'ai read le body" << std::endl;
+			//std::cout << "j'ai read le body" << std::endl;
 			f = client.getParse_head().parse_request_buffer(client.fill_request);
 			client.is_sendable = true;
 		}
@@ -279,14 +279,14 @@ void	Engine::send_data(int valread, const std::vector<Server> & src, Client & cl
 		TreatRequest	treatment(src, *this);
 		this->_buff_send = treatment.treat(client.getParse_head());
 		//std::cout << "this->_buff_send\t=\t" << this->_buff_send << std::endl;
-		std::cout << "AVANT LE SEND" << std::endl;
+		//std::cout << "AVANT LE SEND" << std::endl;
 		//epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout);
-		std::cout << "client fd\t=\t" << client.getEvents().data.fd << std::endl;
+		//std::cout << "client fd\t=\t" << client.getEvents().data.fd << std::endl;
 		nbr_bytes_send = send(client.getEvents().data.fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 		//if (nbr_bytes_send == -1)
 			//throw std::runtime_error("[Error] sent() failed");
-		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+		//std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
 	//close(fd);
 }
@@ -335,11 +335,11 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			{
 				new_socket = accept_connexions(this->_fds_events[i].data.fd);
 				this->_fds_events[i].events = EPOLLIN;
-				std::cout << "{epol accept}" << std::endl;
+				//std::cout << "{epol accept}" << std::endl;
 				this->_fds_events[i].data.fd = new_socket;
 				if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket, &this->_fds_events[i]) == -1)
 					throw std::runtime_error("[Error] epoll_ctl_add() failed");
-				std::cout << "bfr push" << std::endl;
+				//std::cout << "bfr push" << std::endl;
 				v.push_back(Client(this->_fds_events[i]));
 				//std::cout << "v.size()\t=\t" << v.size() << std::endl;
 				//std::cout << "after push" << std::endl;
@@ -376,20 +376,20 @@ void	Engine::loop_server(const std::vector<Server> & src)
 				//if (it->getEvents().events == EPOLLOUT && it->is_sendable == true)
 				if (it->is_sendable == true)
 				{
-					std::cout << "{ap send ELSE}" << std::endl;
-					std::cout << "valread\t=\t" << _valread << std::endl;
+					//std::cout << "{ap send ELSE}" << std::endl;
+					//std::cout << "valread\t=\t" << _valread << std::endl;
 					send_data(_valread, src, *it);
-					std::cout << "Avant le erase" << std::endl;
+					//std::cout << "Avant le erase" << std::endl;
 					//std::cout << YELLOW << "xx[" << it->fill_request << "]" << END << std::endl;
 					//if (it->getParse_head().get_request("Connection:") == "close")
 					//{
 					//if (this->_fds_events[i].data.fd > 0)
 					//{
-					std::cout << CYAN "Je suis avant le close" END << std::endl;
+					//std::cout << CYAN "Je suis avant le close" END << std::endl;
 					close(it->getEvents().data.fd);
-					std::cout << CYAN "Je suis closed" END << std::endl;
+					//std::cout << CYAN "Je suis closed" END << std::endl;
 					it = v.erase(it);
-					std::cout << CYAN "Je suis erased" END << std::endl;
+					//std::cout << CYAN "Je suis erased" END << std::endl;
 					//it = v.begin();
 					if (it == v.end())
 						break ;
