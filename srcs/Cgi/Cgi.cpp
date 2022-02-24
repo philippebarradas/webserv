@@ -254,6 +254,7 @@ std::string	Cgi::body_response_from_fd(int fd)
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		}
 	}
+	ret += '\n';
 	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }
