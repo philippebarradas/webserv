@@ -13,13 +13,13 @@
 Client::Client(epoll_event & ev)
 {
 	_parse_head = new Parse_request();
-	recv_len = 0;
-	request_header_size = 0;
-	is_parsed = false;
-	is_sendable = false;
-	fill_request = "";
+	_recv_len = 0;
+	_request_header_size = 0;
+	_header_parsed = false;
+	_is_sendable = false;
+	_fill_request = "";
 	_events = ev;
-	fd = _events.data.fd;
+	_fd = _events.data.fd;
 
 	std::map<std::string, std::string>::const_iterator it, end;
 	//std::map<std::string, std::string> map = _parse_head->getBigMegaSuperTab();
@@ -56,32 +56,51 @@ Client&				Client::operator=( Client const & rhs )
 	if (this != &rhs)
 	{
 		this->_parse_head = new Parse_request();
-		this->recv_len = rhs.recv_len;
-		this->is_sendable = rhs.is_sendable;
-		this->is_parsed = rhs.is_parsed;
-		this->fill_request = rhs.fill_request;
-		this->request_header_size = rhs.request_header_size;
+		this->_recv_len = rhs._recv_len;
+		this->_is_sendable = rhs._is_sendable;
+		this->_header_parsed = rhs._header_parsed;
+		this->_fill_request = rhs._fill_request;
+		this->_request_header_size = rhs._request_header_size;
 		this->_events = rhs._events;
 		*this->_parse_head = *rhs._parse_head;
-		fd = rhs.fd;
+		this->_fd = rhs._fd;
 	}
 	return *this;
-}
-
-std::ostream &			operator<<( std::ostream & o, Client & i )
-{
-	std::cout << "ope" << std::endl;
-	o << RED << i.fill_request << std::endl;
-	o << "fd =" << i.fd << std::endl;
-	o << i.getEvents().data.fd << std::endl;
-	std::cout << "after" << std::endl;
-	o << i.getEvents().events << std::endl << END;
-	return o;
 }
 
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
+
+void	Client::setRecv_len(const int & recv_len)
+{
+	this->_recv_len += recv_len;
+}
+
+void	Client::setRequest_header_size(const size_t & header_size)
+{
+	this->_request_header_size = header_size;
+}
+
+void	Client::setFill_request(const char & fill_request)
+{
+	this->_fill_request += fill_request;
+}
+
+void	Client::setHeader_parsed(const bool & header_parsed)
+{
+	this->_header_parsed = header_parsed;
+}
+
+void	Client::setIs_sendable(bool const & is_sendable)
+{
+	this->_is_sendable = is_sendable;
+}
+
+void		Client::setFd(int const & fd)
+{
+	this->_fd = fd;
+}
 
 Parse_request & Client::getParse_head()
 {
@@ -91,4 +110,34 @@ Parse_request & Client::getParse_head()
 epoll_event & Client::getEvents()
 {
 	return (this->_events);
+}
+
+int	& Client::getRecv_len()
+{
+	return (this->_recv_len);
+}
+
+size_t & Client::getRequest_header_size()
+{
+	return (this->_request_header_size);
+}
+
+std::string & Client::getFill_request()
+{
+	return (this->_fill_request);
+}
+
+bool	& Client::getHeader_parsed()
+{
+	return (this->_header_parsed);
+}
+
+bool	& Client::getIs_sendable()
+{
+	return (this->_is_sendable);
+}
+
+int		& Client::getFd()
+{
+	return (this->_fd);
 }
