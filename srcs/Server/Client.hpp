@@ -82,11 +82,13 @@ class Client
 		bool	is_parsed;
 		bool	is_sendable;
 
+		int		fd;
+
 	private:
 
 		Client();
 		Parse_request *_parse_head;
-		epoll_event *_events;
+		epoll_event _events;
 		// VARIABLES
 	/* 	struct	sockaddr_in _addr;
 		struct	epoll_event _fds_events[MAX_EVENTS];
@@ -118,6 +120,6 @@ class Client
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src); */
 };
 
-std::ostream &			operator<<( std::ostream & o, Client const & i );
+std::ostream &			operator<<( std::ostream & o, Client & i );
 
 #endif /* ********************************************************* Client_H */

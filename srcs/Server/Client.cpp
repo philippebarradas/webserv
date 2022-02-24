@@ -18,7 +18,8 @@ Client::Client(epoll_event & ev)
 	is_parsed = false;
 	is_sendable = false;
 	fill_request = "";
-	_events = &ev;
+	_events = ev;
+	fd = _events.data.fd;
 
 	std::map<std::string, std::string>::const_iterator it, end;
 	//std::map<std::string, std::string> map = _parse_head->getBigMegaSuperTab();
@@ -62,8 +63,20 @@ Client&				Client::operator=( Client const & rhs )
 		this->request_header_size = rhs.request_header_size;
 		this->_events = rhs._events;
 		*this->_parse_head = *rhs._parse_head;
+		fd = rhs.fd;
 	}
 	return *this;
+}
+
+std::ostream &			operator<<( std::ostream & o, Client & i )
+{
+	std::cout << "ope" << std::endl;
+	o << RED << i.fill_request << std::endl;
+	o << "fd =" << i.fd << std::endl;
+	o << i.getEvents().data.fd << std::endl;
+	std::cout << "after" << std::endl;
+	o << i.getEvents().events << std::endl << END;
+	return o;
 }
 
 /*
@@ -77,5 +90,5 @@ Parse_request & Client::getParse_head()
 
 epoll_event & Client::getEvents()
 {
-	return (*this->_events);
+	return (this->_events);
 }

@@ -196,6 +196,7 @@ void	Engine::read_header(int new_socket, const std::vector<Server> & src, Client
 
 	bzero(_buff, BUFFER_SIZE);
 	_valread = recv(client.getEvents().data.fd, &this->_buff, BUFFER_SIZE, 0);
+	std::cout << "------------- READ ------------------" << std::endl;
 	if (_valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
 	else
@@ -321,6 +322,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 		{
 			std::cout << PURPLE2 << "_fds_events[i].data.fd\t=\t" << _fds_events[i].data.fd << std::endl << END;
 		} */
+		std::cout << "------------- WAIT ------------------" << std::endl;
 		for (i = 0; i < nbr_connexions; i++)
 		{
 			if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
@@ -338,44 +340,57 @@ void	Engine::loop_server(const std::vector<Server> & src)
 				//std::map<std::string, std::string> pol = v.begin()->getParse_head().getBigMegaSuperTab();
 				//printMap(pol, "Tableau de merde");
 			}
-			for (it = v.begin(); it != v.end();)
+		}
+		/*for (it = v.begin(); it != v.end(); ++it)
+			std::cout << "client selected = " << *it << std::endl;*/
+
+		for (it = v.begin(); it != v.end(); ++it)
+		{
+			//std::cout << "client selected = " << *it << std::endl;
+			//std::cout << "v.size()\t=\t" << v.size();
+			//std::cout << " de " << it->getEvents().data.fd << std::endl;
+			//std::cout << RED << "fill_request=[" << it->fill_request << "]" << END << std::endl;
+			if (it->getEvents().events == EPOLLIN && it->is_parsed == false)
+				read_header(new_socket, src, *it);
+			else if (it->fill_request.find("\r\n\r\n") != std::string::npos && it->is_parsed == false)
+			// on a tout read le header
 			{
-				if (it->getEvents().events == EPOLLIN && it->is_parsed == false)
-					read_header(new_socket, src, *it);
-				else if (it->fill_request.find("\r\n\r\n") != std::string::npos && it->is_parsed == false)
-				// on a tout read le header
+				//std::cout << "read fini" << std::endl;
+				//std::cout << RED << "fill_request=[" << it->fill_request << "]" << END << std::endl;
+				it->getParse_head().parse_request_buffer(it->fill_request);
+				it->is_parsed = true;
+				//std::cout << "it->is_parsed in read header\t=\t" << it->is_parsed << std::endl;
+			}
+			if (it->getParse_head().get_request("Content-Length:") != ""  && it->is_sendable == false)
+				read_body(src, *it);
+			else
+			{
+				if (it->getParse_head().get_request("Content-Length:") == "" && it->is_parsed == true)
+					it->is_sendable = true;
+				//if (it->getEvents().events == EPOLLOUT && it->is_sendable == true)
+				if (it->is_sendable == true)
 				{
-					//std::cout << RED << "fill_request=[" << it->fill_request << "]" << END << std::endl;
-					it->getParse_head().parse_request_buffer(it->fill_request);
-					it->is_parsed = true;
-					std::cout << "it->is_parsed in read header\t=\t" << it->is_parsed << std::endl;
-				}
-				if (it->getParse_head().get_request("Content-Length:") != ""  && it->is_sendable == false)
-					read_body(src, *it);
-				else
-				{
-					if (it->getParse_head().get_request("Content-Length:") == "" && it->is_parsed == true)
-						it->is_sendable = true;
-					//if (it->getEvents().events == EPOLLOUT && it->is_sendable == true)
-					if (it->is_sendable == true)
-					{
-						std::cout << "{ap send ELSE}" << std::endl;
-						std::cout << "valread\t=\t" << _valread << std::endl;
-						send_data(_valread, src, *it);
-						std::cout << "Avant le erase" << std::endl;
-						//std::cout << YELLOW << "xx[" << it->fill_request << "]" << END << std::endl;
-						//if (it->getParse_head().get_request("Connection:") == "close")
-						//{
-						//if (this->_fds_events[i].data.fd > 0)
-						//{
-						std::cout << CYAN "Je suis avant le close" END << std::endl;
-						close(this->_fds_events[i].data.fd);
-						it = v.erase(it);
-						//it = v.begin();
-					}
+					std::cout << "{ap send ELSE}" << std::endl;
+					std::cout << "valread\t=\t" << _valread << std::endl;
+					send_data(_valread, src, *it);
+					std::cout << "Avant le erase" << std::endl;
+					//std::cout << YELLOW << "xx[" << it->fill_request << "]" << END << std::endl;
+					//if (it->getParse_head().get_request("Connection:") == "close")
+					//{
+					//if (this->_fds_events[i].data.fd > 0)
+					//{
+					std::cout << CYAN "Je suis avant le close" END << std::endl;
+					close(it->getEvents().data.fd);
+					std::cout << CYAN "Je suis closed" END << std::endl;
+					it = v.erase(it);
+					std::cout << CYAN "Je suis erased" END << std::endl;
+					//it = v.begin();
+					if (it == v.end())
+						break ;
 				}
 			}
 		}
+		std::cout << "lol" << std::endl;
 	}
 }
 

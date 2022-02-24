@@ -42,7 +42,7 @@
 // Utils macro
 #define MAX_EVENTS 300
 #define MAX_SERVERS 100
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 1
 
 // My class
 #include "../Config/Server.hpp"
