@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 15:04:01 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/23 18:29:39 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,8 +237,6 @@ bool	TreatRequest::is_dynamic( Parse_request const & req,
 	end = it = this->_loc->second.getCgi().end();
 	for (it = this->_loc->second.getCgi().begin() ; it != end ; ++it)
 	{
-		std::cout << "it->first\t=\t" << it->first << std::endl;
-		std::cout << "extenson\t=\t" << extension << std::endl;
 		if (extension == it->first)
 			return (true);
 	}
