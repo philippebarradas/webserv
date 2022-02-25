@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 10:11:41 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/10 10:33:51 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 17:50:05 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,17 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-Autoindex::Autoindex(const char *root, std::string const & path): _pathStr(path)
+Autoindex::Autoindex(const char *root, std::string const & path):
+	_pathStr(path)
 {
 	DIR	*dir;
 
 	dir = opendir(root);
-	if (!dir)
-		throw InvalidRoot();
-	this->setAllHref(dir, root);
-	closedir(dir);
+	if (dir)
+	{
+		this->setAllHref(dir, root);
+		closedir(dir);
+	}
 }
 
 Autoindex::Autoindex()
@@ -87,7 +89,8 @@ std::string	Autoindex::getPage( void ) const
 		if (it->first[it->first.length() - 1] == '/')
 		{
 			if (it->first == "../")
-				page += "<a href=\"" + it->first + "\">" + it->first + "</a>\n";
+				page += "<a href=\"" + it->first + "\">"
+					+ it->first + "</a>\n";
 			else
 				page += "<a href=\"" + it->first + "\">" + it->second + "\n";
 		}
@@ -95,9 +98,7 @@ std::string	Autoindex::getPage( void ) const
 	for (it = this->_href.begin() ; it != end ; ++it)
 	{
 		if (it->first[it->first.length() - 1] != '/')
-		{
 			page += "<a href=\"" + it->first + "\">" + it->second + "\n";
-		}
 	}
 	page += "</pre><hr></body>\n</html>\n";
 
@@ -172,10 +173,6 @@ void		Autoindex::setAllHref( DIR *dir, const char *root )
 	}
 }
 
-char const *Autoindex::InvalidRoot::what() const throw()
-{
-	return "[Error] Cannot open directory.";
-}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------

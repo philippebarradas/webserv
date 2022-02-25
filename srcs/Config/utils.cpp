@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:33:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 18:41:55 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 std::string	sizet_to_string(size_t const & x)
 {
-	return (static_cast<std::ostringstream*>( &(std::ostringstream() << x))->str());
+	return (static_cast<std::ostringstream*>(
+		&(std::ostringstream() << x))->str());
 }
 
 size_t	stost_size( size_t const & min, size_t const & max,
@@ -105,7 +106,8 @@ void	checkNbArgMin( size_t const & toCheck, size_t const & size,
 	}
 }
 
-std::string	parceBrackets( std::string const & src, size_t & i, std::string & ret )
+std::string	parceBrackets( std::string const & src, size_t & i,
+	std::string & ret )
 {
 	size_t brackets_open;
 
@@ -170,21 +172,5 @@ std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 		else if (src[i] == ';' && !tmp.size())
 			++i;
 	}
-
-	// print content (to delete)
-	/*std::cout << "start print:" << std::endl;
-	std::vector< std::vector<std::string> >::const_iterator	it, end;
-	std::vector<std::string>::const_iterator	sit, send;
-	int j = 0;
-
-	end = ret.end();
-	for (it = ret.begin() ; it != end ; ++it)
-	{
-		std::cout << ++j << std::endl;
-		send = (*it).end();
-		for (sit = (*it).begin() ; sit != send ; ++sit)
-			std::cout << "-" << *sit << "\n";
-		std::cout << "\n";
-	}*/
 	return (ret);
 }

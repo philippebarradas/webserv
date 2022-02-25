@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 17:57:40 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/25 19:01:02 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,16 @@ Response::~Response()
 Response &				Response::operator=( Response const & rhs )
 {
 	(void)rhs;
-	//if ( this != &rhs )
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if ( this != &rhs )
+	{
+		this->_header = rhs._header;
+	}
 	return *this;
 }
 
 std::ostream &			operator<<( std::ostream & o, Response const & i )
 {
-	(void)i;
-	//o << "Value = " << i.getValue();
+	o << i.getResponse();
 	return o;
 }
 
@@ -87,8 +86,8 @@ void	Response::writeRequestStatus( std::string const & code )
 		"405", "409", "412", "413", "500", "502", "505"};
 	std::string		all_status[] = {"OK", "No Content", "Moved Permanently",
 		"Bad Request", "Forbidden", "Not Found", "Not Allowed", "Conflict",
-		"Precondition Failed", "Request Entity Too Large", "Internal Server Error",
-		"Bad Gateway", "HTTP Version not supported"};
+		"Precondition Failed", "Request Entity Too Large",
+		"Internal Server Error", "Bad Gateway", "HTTP Version not supported"};
 	size_t			len, i;
 
 	this->_header += "HTTP/1.1 " + code;
@@ -105,31 +104,27 @@ void	Response::writeRequestStatus( std::string const & code )
 	this->_header += " Not Define\r\n";
 }
 
-void	Response::writeType( std::string const & extension, TreatRequest const & treat )
+void	Response::writeType( std::string const & extension,
+	TreatRequest const & treat )
 {
-	this->_header += "Content-Type: ";
-	if (treat.getIs_Cgi())
-		this->_header += std::string(&treat.getType_Cgi()[14]);
-	else
+	if (!treat.getIs_Cgi())
 	{
-		//std::cout << "extension\t=\t" << extension << std::endl;
+		this->_header += "Content-Type: ";
 		if (extension == ".html")
 			this->_header += "text/html";
 		else
 			this->_header += "text/plain";
+		this->_header += "\r\n";
 	}
-	this->_header += "\r\n";
 }
 
-void	Response::writeLenght( std::string const & page, bool const & isDynamic )
+void	Response::writeLenght( std::string const & page,
+	bool const & isDynamic )
 {
 	std::stringstream conv;
 
 	if (isDynamic)
-	{
-		//std::cout << "&page[page.rfind(rn)]\t=\t" <<  &page[page.rfind("\r\n")] << std::endl;
 		conv << std::string(&page[page.rfind("\r\n") + 3]).length();
-	}
 	else
 		conv << page.length();
 	this->_header += "Content-Length: " + conv.str() + "\r\n";
@@ -143,7 +138,6 @@ void	Response::writeDate( void )
 
 	time (&rawtime);
 	timeinfo = localtime(&rawtime);
-
 	strftime(buffer, 200, "%a, %d %b %G %T %Z",timeinfo);
 	this->_header += "Date: " + std::string(buffer) + "\r\n";
 }
@@ -156,7 +150,6 @@ void	Response::writeDate( void )
 
 std::string const &	Response::getResponse( void ) const
 {
-	//std::cout << "_header\t=\t\r\n" << _header << std::endl;
 	return (this->_header);
 }
 

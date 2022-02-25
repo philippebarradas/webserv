@@ -52,72 +52,49 @@ class Client
 
 		// CONSTRUCTOR
 		Client(epoll_event & ev);
-
 		Client( Client const & src );
 
 		// DESTRUCTOR
 		~Client();
 
 		// METHODS
-
+		void	reinit_obj();
 
 		// OPERATORS
 		Client &		operator=( Client const & rhs );
 
 		// SETTERS
-
+		void	setRecv_len(size_t const &recv_len);
+		void	setFill_request(char const & fill_request);
+		void	setRequest_header_size(size_t const & rq_header_size);
+		void	setFd(int const & fd);
+		void	setIs_sendable(bool const & is_sendable);
+		void	setHeader_parsed(bool const & header_parsed);
+		void	setHeader_readed(bool const & header_readed);
 
 		// GETTERS
-
-		Parse_request & getParse_head();
-		epoll_event & getEvents();
-
-		//bool _is_create
-
-		void	reinit_obj();
-
-		size_t	recv_len;
-		size_t	request_header_size;
-		std::string fill_request;
-		bool	is_parsed;
-		bool	is_sendable;
-
-		int		fd;
-
+		size_t &		getRecv_len();
+		size_t &		getRequest_header_size();
+		std::string &	getFill_request();
+		bool &			getHeader_parsed();
+		bool &			getHeader_readed();
+		bool &			getIs_sendable();
+		int &			getFd();
+		Parse_request &	getParse_head();
+		epoll_event &	getEvents();
 	private:
 
-		Client();
-		Parse_request *_parse_head;
-		epoll_event _events;
 		// VARIABLES
-	/* 	struct	sockaddr_in _addr;
-		struct	epoll_event _fds_events[MAX_EVENTS];
-		size_t	_i_server;
-		size_t	_i_server_binded;
-		size_t	_nbr_servers;
-		int	_epfd;
-		int	_listen_fd[MAX_SERVERS];
-		int	_port_binded[MAX_SERVERS];
-		int	_port;
-		int	_timeout; // time before poll expiration
-		int	_valread;
-		char	_buff[BUFFER_SIZE];
-		std::string	_buff_send;
-		std::string	_remote_port;
-		std::string	_remote_addr;
-
-		// METHODS
-		int		create_socket();
-		void	set_socket(int listen_fd);
-		bool	is_binded(int port_config);
-		void	bind_socket(int listen_fd, const std::vector<Server> & src);
-		void	listen_socket(int listen_fd);
-		int		accept_Clients(int listen_fd);
-		void	set_remote_var(struct sockaddr_in & addr_Client);
-		void	read_send_data(int fd, const std::vector<Server> & src);
-		void	send_data(int valread, int fd,const std::vector<Server> & src, const Parse_request & parse_head);
-
-		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src); */
+		Client();
+		Parse_request	*_parse_head;
+		epoll_event		_events;
+		size_t			_recv_len;
+		size_t			_request_header_size;
+		std::string		_fill_request;
+		bool			_header_parsed;
+		bool			_header_readed;
+		bool			_is_sendable;
+		int				_fd;
 };
 
 std::ostream &			operator<<( std::ostream & o, Client & i );

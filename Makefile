@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
+#    By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/02/23 17:54:53 by dodjian          ###   ########.fr        #
+#    Updated: 2022/02/25 19:11:55 by tsannie          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,7 @@ CONFIG			= Config.cpp Server.cpp utils.cpp
 
 SERVER			= Engine.cpp Client.cpp
 
-PARSE_REQUEST	= parse_request.cpp checker_request.cpp body.cpp
+PARSE_REQUEST	= parse_request.cpp parse_first_line.cpp parse_body.cpp checker_request.cpp
 
 AUTO_INDEX		= Autoindex.cpp
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/23 11:07:13 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 16:36:56 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ class Cgi
 		void	exec_cgi(char **argv, char **env, const Parse_request & src_header);
 		std::string	body_response_from_fd(int fd);
 		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
-		void	upload_file(std::string response);
 
 		// GETTERS
 		std::map<std::string, std::string>	getEnv() const;

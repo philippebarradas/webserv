@@ -3,40 +3,68 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 18:35:52 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/25 18:44:45 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config/Config.hpp"
 #include "Cgi/Cgi.hpp"
 
-int	main( int ac, char *av[] )
+void signal_to_exit( int ssignum ) { throw SignalStop(); }
+
+bool	init_conf( Config & conf, char *path_conf_file )
 {
-	if (ac != 2)
-		return (1);
-
-	Config		conf;
-	std::vector<Server> vec_serv;
-
 	try
 	{
-		conf = Config(av[1]);
-		std::cout << conf << std::endl;
-		vec_serv = conf.getConfig();
+		conf = Config(path_conf_file);
+	}
+	catch( const std::exception& e )
+	{
+		std::cerr << "An error has been found in the execution of webserv:\n"
+			<< e.what() << std::endl;
+		return (false);
+	}
+	return (true);
+}
 
-		Engine serv(vec_serv);
+bool	start_engine( Engine & serv, Config const & conf )
+{
+	try
+	{
+		signal(SIGINT, signal_to_exit);
+		serv = Engine(conf.getConfig());
+	}
+	catch( SignalStop const & e )
+	{
+		static_cast<void>(e);
 	}
 	catch( std::exception const & e )
 	{
-		//std::cerr << "An error has been found on the config file:" << std::endl;
-		std::cerr << e.what() << std::endl;
+		std::cerr << "An error has been found on the config file:\n"
+			<< e.what() << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
+int	main( int ac, char *av[] )
+{
+	if (ac != 2)
+	{
+		std::cerr << "Error\nUsage: ./webserv \"[config_file]\"" << std::endl;
 		return (1);
 	}
-	//std::cout << conf.getConfig().size() << std::endl;
-	//std::cout << conf << std::endl;
+
+	Config		conf;
+	if (!init_conf(conf, av[1]))
+		return (1);
+
+	Engine		serv;
+	if (!start_engine(serv, conf))
+		return (1);
 
 	return (0);
 }

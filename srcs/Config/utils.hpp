@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:27:37 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 18:38:03 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/25 16:07:01 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@
 # define BCYAN		"\033[1;36m"
 # define BWHITE		"\033[1;37m"
 # define END		"\033[0m"
+
+class SignalStop: public std::exception {
+public:
+	virtual const char * what() const throw() {
+		return ("Sign");
+	}
+};
 
 template <typename T>
 inline void	printContainers( T const & ctn, std::ostream & o )

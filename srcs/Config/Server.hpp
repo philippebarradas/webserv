@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:02 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 08:34:50 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/25 16:59:09 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,11 @@ class Server
 		void	setCgi( std::vector<std::string> const & src );
 		void	setLocation( std::vector<std::string> const & src );
 
-		void	parsingAll( std::vector< std::vector<std::string> > const & src );
 		void	fillLocation( void );
 		void	initServ( void );
 		void	initLocation( void );
+		void	parsingAll(
+					std::vector< std::vector<std::string> > const & src );
 
 		bool	_alreadySetIndex;
 		bool	_alreadySetMethods;

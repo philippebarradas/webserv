@@ -4,17 +4,16 @@ server{
 	listen 8004;
 
 	autoindex on;
-	root /home/user42/Bureau/webserv/www;
-	cgi .php /usr/bin/php-cgi;
-	cgi .py /usr/bin/python2.7;
+
 
 	client_max_body_size 1000000000;
 
 	accepted_methods	GET POST;
 
 	location / {
+		cgi .php /usr/bin/php-cgi;
 		index cookie.php;
-
+		root /home/user42/Bureau/webserv;
 		accepted_methods	GET POST DELETE;
 	}
 

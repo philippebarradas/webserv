@@ -144,13 +144,14 @@ void	Cgi::init_env_request_var(const Parse_request & src_header, const Engine & 
 	this->_env["REQUEST_METHOD"] = src_header.get_request("Method"); // pas bien
 	this->_env["SCRIPT_NAME"] = this->_path_file_executed_absolu;
 	this->_env["QUERY_STRING"] = src_header.get_request("Query");
-	std::cout << YELLOW << "src_header.get_request(Query);=[" << src_header.get_request("Query") << "]" << END << std::endl;
+	//std::cout << YELLOW << "src_header.get_request(Query);=[" << src_header.get_request("Query") << "]" << END << std::endl;
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	this->_env["CONTENT_LENGTH"] = sizet_to_string(src_header.get_request_body_size());
 	//this->_env["CONTENT_LENGTH"] = src_header.get_request_body_size();
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
+	this->_env["PATH_INFO"] = "/home/user42/Bureau/webserv/www/env.php";
 }
 
 void	Cgi::init_env(const Parse_request & src_header, const Engine & src_engine)
@@ -204,25 +205,22 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	int	fd_stdin = fileno(file_stdin);
 	int	fd_stdout = fileno(file_stdout);
 	int		status = 0;
-	this->_pid = fork();
 
+	this->_pid = fork();
 	if (this->_pid == -1)
 		std::cout << RED << "FAIL PID -1" << END << std::endl;
 	else if (this->_pid == 0)
 	{
 		if (src_header.get_request("Method").compare("POST") == 0)
 		{
-			std::cout << "J'ecris" << std::endl;
-			write(fd_stdin, body_string.c_str(),body_string.size());
-			lseek(fd_stdin, 0, SEEK_SET);
+			std::fputs(body_string.c_str(), file_stdin);
+			rewind(file_stdin);
 		}
 		dup2(fd_stdin, STDIN_FILENO);
 		dup2(fd_stdout, STDOUT_FILENO);
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}
-	//std::cout << "{waitpid}" << std::endl;
-	//std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
 	waitpid(this->_pid, &status, 0);
 	lseek(fd_stdout, 0, SEEK_SET);
 	this->_send_content = body_response_from_fd(fd_stdout);
@@ -242,34 +240,26 @@ std::string	Cgi::body_response_from_fd(int fd)
 	__gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
 	std::istream is(&filebuf);
 	std::string ret, line;
-	std::string content_type = "Content-type:";
+	//std::string content_type = "Content-type:";
 	while (std::getline(is, line))
 	{
-		if (line.compare(0, content_type.size(), content_type) == 0)
-			this->_type_cgi = line;
-		else
-		{
+		//if (line.compare(0, content_type.size(), content_type) == 0)
+			//this->_type_cgi = line;
+		//else
+		//{
 			ret += line;
+			//std::cout << "line\t=\t" << line << std::endl;
 			ret += '\n';
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
-		}
+		//}
 	}
+	// TODO check that
 	ret += '\n';
 	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }
 
-void	Cgi::upload_file(std::string response)
-{
-	//response = "0123456789\n";
-	//std::cout << "Je suis dans upload" << std::endl;
-	std::ofstream out("www/uploads/file_created.txt");
 
-	//std::cout << GREEN << "response = " << std::endl << "|" <<
-	//response << "|" << std::endl << END;
-	out << response;
-	out.close();
-}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
