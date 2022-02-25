@@ -121,7 +121,7 @@ Engine::Engine()
 
 Engine::Engine(const std::vector<Server> & src)
 {
-	std::cout << BLUE << "----------------- Starting server -----------------" END << std::endl << std::endl;
+	std::cout << BPURPLE "-------- Starting webserv --------\n" END << std::endl;
 	setup_socket_server(src);
 	loop_server(src);
 }
@@ -137,7 +137,7 @@ Engine::Engine( Engine const & src )
 
 Engine::~Engine()
 {
-	std::cout << GREEN << "----------------- End of server -----------------" << END << std::endl << std::endl;
+	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
 }
 
 /*

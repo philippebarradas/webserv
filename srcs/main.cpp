@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 18:39:46 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 18:44:45 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,8 @@ bool	init_conf( Config & conf, char *path_conf_file )
 	}
 	catch( const std::exception& e )
 	{
-		std::cerr << "An error has been found in the execution of webserv:"
-			<< std::endl;
-		std::cerr << e.what() << std::endl;
+		std::cerr << "An error has been found in the execution of webserv:\n"
+			<< e.what() << std::endl;
 		return (false);
 	}
 	return (true);
@@ -44,8 +43,8 @@ bool	start_engine( Engine & serv, Config const & conf )
 	}
 	catch( std::exception const & e )
 	{
-		std::cerr << "An error has been found on the config file:" << std::endl;
-		std::cerr << e.what() << std::endl;
+		std::cerr << "An error has been found on the config file:\n"
+			<< e.what() << std::endl;
 		return (false);
 	}
 	return (true);
@@ -60,10 +59,10 @@ int	main( int ac, char *av[] )
 	}
 
 	Config		conf;
-	Engine		serv;
-
 	if (!init_conf(conf, av[1]))
 		return (1);
+
+	Engine		serv;
 	if (!start_engine(serv, conf))
 		return (1);
 
