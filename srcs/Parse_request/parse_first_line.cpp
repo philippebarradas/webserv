@@ -1,4 +1,3 @@
-
 #include "parse_request.hpp"
 
 int		Parse_request::parse_first_line(std::string full_buffer)
@@ -28,9 +27,7 @@ int		Parse_request::fill_first_line()
 	size_t size = 0;
 	size_t full_size = 0;
 	size_t rank = 0;
-	std::map<std::string, std::string>::iterator replace;
-	std::cout << RED << _buffer << END << std::endl;
-
+	//std::cout << RED << _buffer << END << std::endl;
 	
 	for (std::string::iterator it = _buffer.begin(); it != _buffer.end() && rank <= 2; ++it)
 	{
@@ -40,22 +37,15 @@ int		Parse_request::fill_first_line()
 		else if ((cmp.compare(" ") == 0 || cmp.compare("\n") == 0) && it != _buffer.end())
 		{
 			if (rank == 0)
-			{
-				replace = _header_tab.find("Method");
-				replace->second = _buffer.substr(start, size);
-			}
+				_header_tab["Method"] = _buffer.substr(start, size);
 			else if (rank == 1)
-			{
-				replace = _header_tab.find("Path");
-				replace->second = _buffer.substr(start, size);
-			}
+				_header_tab["Path"] = _buffer.substr(start, size);
 			else if (rank == 2)
 			{
-				replace = _header_tab.find("Protocol");
 				if (cmp.compare("\n") == 0)
-					replace->second = _buffer.substr(start, size - 1);
+					_header_tab["Protocol"] = _buffer.substr(start, size - 1);
 				else
-					replace->second =  _buffer.substr(start, size);
+					_header_tab["Protocol"] = _buffer.substr(start, size);
 			}
 			full_size += size + 1;
 			start = full_size;
@@ -72,15 +62,17 @@ void	Parse_request::parse_path()
 	size_t to;
 	size_t stop = 0;
 	size_t start = 0;
-	std::map<std::string, std::string>::iterator replace;
+	//std::map<std::string, std::string>::iterator replace;
 
 	if (get_request("Path").find("?") != std::string::npos)
 	{
-		start = get_request("Path").find("?");
-		replace = _header_tab.find("Query");
-		replace->second = get_request("Path").substr(start + 1, get_request("Path").size() - start);
-		replace = _header_tab.find("Path");
-		replace->second = get_request("Path").substr(0, start);
+		start = get_request("Path").find("?");	
+		_header_tab["Query"] = get_request("Path").substr(start + 1, get_request("Path").size() - start);
+		//replace = _header_tab.find("Query");
+		//replace->second = get_request("Path").substr(start + 1, get_request("Path").size() - start);
+		_header_tab["Path"] = get_request("Path").substr(0, start);
+		//replace = _header_tab.find("Path");
+		//replace->second = get_request("Path").substr(0, start);
 	}
 }
 
@@ -103,13 +95,10 @@ int		Parse_request::check_path()
 
 int     Parse_request::check_first_line(size_t full_size)
 {
-	std::map<std::string, std::string>::iterator replace;
-
-    replace = _header_tab.find("Status");
 	if ((get_request("Method").compare("GET") != 0 && get_request("Method").compare("POST") != 0
 	&& get_request("Method").compare("DELETE") != 0) || (check_path() != 0))
 	{
-		replace->second = "400";
+		_header_tab["Status"] = "400";
 		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
 		std::cout << "{ERROR 400}" << std::endl;
 		return (STOP);
@@ -117,13 +106,13 @@ int     Parse_request::check_first_line(size_t full_size)
 	else if (get_request("Protocol").compare("HTTP/1.1") != 0)
 	{
 		if (get_request("Protocol").find("HTTP/") != std::string::npos)
-			replace->second = "505";
+			_header_tab["Status"] = "505";
 		else
-			replace->second = "404";
-		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
+			_header_tab["Status"] = "404";
+		//std::cout << "request_status = " << _header_tab["Status"] << std::endl;
 		return (STOP);
 	}
 	else
-		replace->second = "200";
+		_header_tab["Status"] = "200";
 	return (full_size);
 }

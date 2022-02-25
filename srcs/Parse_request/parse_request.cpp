@@ -25,6 +25,7 @@ Parse_request::Parse_request()
 	
 	for (size_t x = 0; x < 6; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
+	_header_tab["Status"] = "200";
 }
 
 Parse_request::~Parse_request()
@@ -49,7 +50,6 @@ Parse_request&				Parse_request::operator=( Parse_request const & rhs )
 
 int		Parse_request::parse_request(std::string full_buffer)
 {
-	std::map<std::string, std::string>::iterator replace;
 	size_t	start = 0;
 
 /* 	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
@@ -105,9 +105,6 @@ void		Parse_request::fill_param_request_tab(std::string buff_parsed)
 	size_t debut = 0;
 	size_t	found = 0;
 
-	std::map<std::string, std::string>::iterator replace;
-
-
 	//std::cout << YELLOW << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
 	{
@@ -138,7 +135,6 @@ int		Parse_request::fill_variables()
 	size_t	found = 0;
 	bool	bn = false;
 	std::string buff_parsed = _buffer;
-	std::map<std::string, std::string>::iterator replace;
 	
 	//std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 	if ((found =_buffer.find("\r\n")) != std::string::npos)
@@ -174,11 +170,13 @@ int		Parse_request::fill_variables()
 		set_next_buffer_is_body(TRUE);
 		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
-/*  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+/*  
+	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	} */
+	}
+*/
 	return (KEEP);
 }
 

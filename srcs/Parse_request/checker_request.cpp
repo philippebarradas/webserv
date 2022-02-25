@@ -18,8 +18,9 @@ int		Parse_request::check_double_content()
 				if (pos != std::string::npos)
 				{
 					std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
-					replace = _header_tab.find("Status");
-					replace->second = "400";
+					_header_tab["Status"] = "400";
+					//replace = _header_tab.find("Status");
+					//replace->second = "400";
 					return (STOP);
 				}
 			}
@@ -30,8 +31,9 @@ int		Parse_request::check_double_content()
 		if ((pos = _buffer.find("If-Unmodified-Since\r\n", pos + 1)) != std::string::npos)
 		{
 			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
-			replace = _header_tab.find("Status");
-			replace->second = "400";
+			_header_tab["Status"] = "400";
+			//replace = _header_tab.find("Status");
+			//replace->second = "400";
 			return (STOP);
 		}
 	}
@@ -39,9 +41,10 @@ int		Parse_request::check_double_content()
 	{
 		if ((pos = _buffer.find("If-Modified-Since\r\n", pos + 1)) != std::string::npos)
 		{
-			std::cout << "ERROR DOUBLE modified since" << std::endl;
-			replace = _header_tab.find("Status");
-			replace->second = "400";
+			//std::cout << "ERROR DOUBLE modified since" << std::endl;
+			_header_tab["Status"] = "400";
+			//replace = _header_tab.find("Status");
+			//replace->second = "400";
 			return (STOP);
 		}
 	}
@@ -63,58 +66,62 @@ int		Parse_request::check_precondition()
 
 int		Parse_request::check_request()
 {
-	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
 	
-	std::cout << "CHECKER REQUEST" << std::endl;
-	
+ 	std::cout << "CHECKER REQUEST" << std::endl;
+	//
  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 	{
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
 	}
-
+	//
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
 	{
 		is_body(found);
 		if (get_request("Connection:").find("close") != std::string::npos)
 		{
-			replace = _header_tab.find("Connection:");
-			replace->second = "close";
+			_header_tab["Connection:"] = "close";
+			//replace = _header_tab.find("Connection:");
+			//replace->second = "close";
 		}
 		else
 		{
-			replace = _header_tab.find("Connection:");
-			replace->second = "keep-alive";
+			_header_tab["Connection:"] = "keep-alive";
+			//replace->second = "keep-alive";
 		}
 		if (get_request("Host:").compare("") == 0)
 		{
             std::cout << "ERROR = NO HOST" << std::endl;
-			replace = _header_tab.find("Status");
-			replace->second = "400";
+			_header_tab["Status"] = "400";
+			//replace = _header_tab.find("Status");
+			//replace->second = "400";
 		}
 		else if (get_request("Host:").find(":") != std::string::npos)
 		{
 			found = get_request("Host:").find(":");
 
-			replace = _header_tab.find("Host-uncut-comme-les-casquettes");
-			replace->second = get_request("Host:").substr(0, found);
-
-			replace = _header_tab.find("Host:");
-			replace->second = get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
+			_header_tab["Host-uncut-comme-les-casquettes"] = get_request("Host:").substr(0, found);
+			//replace = _header_tab.find("Host-uncut-comme-les-casquettes");
+			//replace->second = get_request("Host:").substr(0, found);
+			_header_tab["Host:"] =  get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
+			//replace = _header_tab.find("Host:");
+			//replace->second = get_request("Host:").substr(found + 1, get_request("Host:").size() - found);
 		}
 		if ((get_request("Content-Length:").compare("") != 0 && get_request("Content-Length:").find_first_not_of("0123456789") != std::string::npos)
 		|| (_buffer.rfind("Content-Length\r\n") != std::string::npos))
 		{
 			//std::cout << "ERROR = BAD CONTENT LENGTH" << std::endl;
-			replace = _header_tab.find("Status");
-			replace->second = "400";
+			_header_tab["Status"] = "400";
+			//replace = _header_tab.find("Status");
+			//replace->second = "400";
 		}
 		else if (check_precondition() == -1)
 		{
 			//std::cout << "ERROR = Precondition Failed" << std::endl;
-			replace = _header_tab.find("Status");
-			replace->second = "412";
+			_header_tab["Status"] = "412";
+			//replace = _header_tab.find("Status");
+			//replace->second = "412";
 		}		
 		return (1);
 	}

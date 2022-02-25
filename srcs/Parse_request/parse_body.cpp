@@ -1,4 +1,3 @@
-
 #include "parse_request.hpp"
 
 size_t	hexa_to_size(std::string nbr)
@@ -24,8 +23,7 @@ int			Parse_request::parse_body(std::string full_buffer)
     if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
 		this->_buffer = full_buffer;
-
-		std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
+		//std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
 		return (check_request());
 	}
 	return (0);
@@ -48,6 +46,7 @@ void	Parse_request::is_body(size_t found)
 	std::string split_body = _request_body;
 	if (get_request("Transfer-Encoding:") == "chunked")
 	{
+		std::cout << RED << "CHUNKED ~~~~~~~~~~~~~ " << END << std::endl;
 		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
 		{
 			found += cmp.size();
