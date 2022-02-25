@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/25 16:40:04 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 19:01:54 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,19 +182,13 @@ void		Parse_request::fill_param_request_tab()
 	size_t x = 0;
 	std::map<std::string, std::string>::iterator replace;
 
-	std::cout << RED <<  _buffer << std::endl;
-
-	//end = buff_parsed.find("\r\n\r\n");
 	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
 	{
 		end = buff_parsed.find("\r\n\r\n");
-		std::cout << "found\t=\t" << found << std::endl;
-		std::cout << "end\t=\t" << end << std::endl<< std::endl;
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
 		{
 			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos && str_is_lnt(buff_parsed.substr(0, debut)))
 			{
-				//std::cout << "OK" << std::endl;
 				_param_request_tab.insert(std::pair<std::string, std::string>
 					(buff_parsed.substr(0, debut)
 					,fill_header_tab(buff_parsed.substr(debut + 1, final_pose - debut - 1))));
@@ -208,11 +202,12 @@ void		Parse_request::fill_param_request_tab()
 		if (found == end)
 			break;
 	}
- 	 for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+
+ 	/*for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
 	{
 		//if (it->second.size() != 0)
 		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	}
+	}*/
 	//std::cout << "ENDDDDDDDDDDDDDDDdd" << std::endl;
 }
 
