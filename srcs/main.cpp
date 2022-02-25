@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 16:56:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 18:39:46 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,24 @@
 
 void signal_to_exit( int ssignum ) { throw SignalStop(); }
 
-int	main( int ac, char *av[] )
+bool	init_conf( Config & conf, char *path_conf_file )
 {
-	if (ac != 2)
-		return (1);
-
-
-	Config		conf;
-	Engine		serv;
-	std::vector<Server> vec_serv;
-
 	try
 	{
-		conf = Config(av[1]);
+		conf = Config(path_conf_file);
 	}
 	catch( const std::exception& e )
 	{
-		std::cerr << "An error has been found on the config file:" << std::endl;
+		std::cerr << "An error has been found in the execution of webserv:"
+			<< std::endl;
 		std::cerr << e.what() << std::endl;
+		return (false);
 	}
+	return (true);
+}
 
-
+bool	start_engine( Engine & serv, Config const & conf )
+{
 	try
 	{
 		signal(SIGINT, signal_to_exit);
@@ -47,10 +44,28 @@ int	main( int ac, char *av[] )
 	}
 	catch( std::exception const & e )
 	{
-		//std::cerr << "An error has been found on the config file:" << std::endl;
+		std::cerr << "An error has been found on the config file:" << std::endl;
 		std::cerr << e.what() << std::endl;
+		return (false);
+	}
+	return (true);
+}
+
+int	main( int ac, char *av[] )
+{
+	if (ac != 2)
+	{
+		std::cerr << "Error\nUsage: ./webserv \"[config_file]\"" << std::endl;
 		return (1);
 	}
+
+	Config		conf;
+	Engine		serv;
+
+	if (!init_conf(conf, av[1]))
+		return (1);
+	if (!start_engine(serv, conf))
+		return (1);
 
 	return (0);
 }

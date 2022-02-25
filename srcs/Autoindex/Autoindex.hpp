@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/17 13:52:00 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/09 16:42:48 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 17:49:40 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,6 @@ class Autoindex
 {
 
 	public:
-
-		class InvalidRoot : public std::exception
-		{
-			public:
-				virtual const char* what() const throw();
-		};
 
 		Autoindex(const char *root, std::string const & path);
 		Autoindex( Autoindex const & src );
