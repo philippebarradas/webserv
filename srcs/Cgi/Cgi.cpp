@@ -213,9 +213,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	{
 		if (src_header.get_request("Method").compare("POST") == 0)
 		{
-			//std::cout << "J'ecris" << std::endl;
-			write(fd_stdin, body_string.c_str(),body_string.size());
-			lseek(fd_stdin, 0, SEEK_SET);
+			std::fputs(body_string.c_str(), file_stdin);
+			rewind(file_stdin);
 		}
 		dup2(fd_stdin, STDIN_FILENO);
 		dup2(fd_stdout, STDOUT_FILENO);
@@ -254,20 +253,13 @@ std::string	Cgi::body_response_from_fd(int fd)
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		//}
 	}
+	// TODO check that
+	ret += '\n';
+	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }
 
-void	Cgi::upload_file(std::string response)
-{
-	//response = "0123456789\n";
-	//std::cout << "Je suis dans upload" << std::endl;
-	std::ofstream out("www/uploads/file_created.txt");
 
-	//std::cout << GREEN << "response = " << std::endl << "|" <<
-	//response << "|" << std::endl << END;
-	out << response;
-	out.close();
-}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------

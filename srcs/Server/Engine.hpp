@@ -78,26 +78,25 @@ class Engine
 		std::string	GetRemote_Addr() const;
 		int			GetAccessPort( void ) const;
 
-
-
 	private:
 
 		// VARIABLES
-		struct	sockaddr_in _addr;
-		struct	epoll_event _fds_events[MAX_EVENTS];
-		size_t	_i_server;
-		size_t	_i_server_binded;
-		size_t	_nbr_servers;
-		int	_epfd;
-		int	_listen_fd[MAX_SERVERS];
-		int	_port_binded[MAX_SERVERS];
-		int	_port;
-		int	_timeout; // time before poll expiration
-		int	_valread;
-		char	_buff[BUFFER_SIZE];
-		std::string	_buff_send;
-		std::string	_remote_port;
-		std::string	_remote_addr;
+		struct	sockaddr_in	_addr;
+		struct	epoll_event	_fds_events[MAX_EVENTS];
+		std::vector<Client>	_v;
+		size_t				_i_server;
+		size_t				_i_server_binded;
+		size_t				_nbr_servers;
+		int					_epfd;
+		int					_listen_fd[MAX_SERVERS];
+		int					_port_binded[MAX_SERVERS];
+		int					_port;
+		int					_timeout; // time before poll expiration
+		size_t				_valread;
+		char				_buff[BUFFER_SIZE];
+		std::string			_buff_send;
+		std::string			_remote_port;
+		std::string			_remote_addr;
 
 		// METHODS
 		int		create_socket();
@@ -106,14 +105,16 @@ class Engine
 		void	bind_socket(int listen_fd, const std::vector<Server> & src);
 		void	listen_socket(int listen_fd);
 		int		accept_connexions(int listen_fd);
+		void	loop_accept(int nbr_connexions, const std::vector<Server> & src);
+		void	loop_input_output(const std::vector<Server> & src);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-		//void	read_send_data(int i, int new_socket, const std::vector<Server> & src,
-			//Parse_request & parse_head, Client & client);
-
-		void	read_header(int new_socket, const std::vector<Server> & src, Client & client);
+		void	myRead(const std::vector<Server> & src, Client & client);
+		void	mySend(const std::vector<Server> & src, Client & client);
+		void	read_header(const std::vector<Server> & src, Client & client);
 		void	read_body(const std::vector<Server> & src, Client & client);
-		void	send_data(int valread, const std::vector<Server> & src, Client & client);
+		void	send_data(const std::vector<Server> & src, Client & client);
 		bool	is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src);
+		bool	is_body_empty(Client & client);
 };
 
 std::ostream &			operator<<( std::ostream & o, Engine const & i );
