@@ -59,8 +59,6 @@ int		Parse_request::fill_first_line()
 
 void	Parse_request::parse_path()
 {
-	size_t to;
-	size_t stop = 0;
 	size_t start = 0;
 	//std::map<std::string, std::string>::iterator replace;
 

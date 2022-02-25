@@ -11,7 +11,7 @@ size_t	hexa_to_size(std::string nbr)
 	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
 	{
 		if ((found = hex.find(*it)) == std::string::npos)
-			return (-1);
+			return (0);
 	}
 	ss << std::hex << nbr;
 	ss >> res;
@@ -20,19 +20,19 @@ size_t	hexa_to_size(std::string nbr)
 
 int			Parse_request::parse_body(std::string full_buffer)
 {
-    if (_next_buffer_is_body == TRUE && _request_body_size == 0)
-	{
+	//std::cout << RED << "_next_buffer_is_body = ["<< _next_buffer_is_body << "]" << END << std::endl;
+    //if (_next_buffer_is_body == true && _request_body_size == 0)
+//	{
 		this->_buffer = full_buffer;
-		//std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
+		std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
 		return (check_request());
-	}
-	return (0);
+	//}
+	//return (0);
 }
 
 void	Parse_request::is_body(size_t found)
 {
 	size_t line_size = 0;
-	size_t pos = 0;
 	size_t size = -1;
 	std::string _request_body_unchanked;
 	std::string cmp = "\r\n";
@@ -44,6 +44,9 @@ void	Parse_request::is_body(size_t found)
 	if (_request_body.size() == 0)
 		return ;
 	std::string split_body = _request_body;
+
+
+		//std::cout << RED << "request_body = ["<< _request_body << "]" << END << std::endl;
 	if (get_request("Transfer-Encoding:") == "chunked")
 	{
 		std::cout << RED << "CHUNKED ~~~~~~~~~~~~~ " << END << std::endl;
@@ -51,7 +54,7 @@ void	Parse_request::is_body(size_t found)
 		{
 			found += cmp.size();
 			size = hexa_to_size(split_body.substr(0, found - cmp.size()));
-			if (size != -1)
+			if (size != 0)
 				_request_body_size += size;
 			else
 				_request_body_unchanked += split_body.substr(0, found - cmp.size());
@@ -63,6 +66,6 @@ void	Parse_request::is_body(size_t found)
 		_request_body_size = _request_body.size();
 	else if (_request_body_size == 0 && get_request("Content-Length:").compare("") != 0)
 		_request_body_size = std::stoi(get_request("Content-Length:"));
-	if (_next_buffer_is_body == 1 && _request_body_size != 0)
-		_next_buffer_is_body = 0;
+	//if (_next_buffer_is_body == 1 && _request_body_size != 0)
+	//	_next_buffer_is_body = 0;
 }

@@ -89,19 +89,27 @@ void	Cgi::init_path(std::string const & root, std::string const & path, std::str
 	//this->_home = "/home/user42/Bureau/webserv/www";
 }
 
+std::string	Cgi::normVar( std::string src )
+{
+	for (size_t i = 0 ; src[i] ; ++i)
+	{
+		src[i] = std::toupper(src[i]);
+		if (src[i] == '-')
+			src[i] = '_';
+	}
+	return ("HTTP_" + src);
+}
+
 // var from client
 void	Cgi::init_env_client_var(const Parse_request & src_header)
 {
-	this->_env["HTTP_ACCEPT"] = src_header.get_request("Accept:");
-	this->_env["HTTP_ACCEPT_LANGUAGE"] = src_header.get_request("Accept-Language:");
-	this->_env["HTTP_USER_AGENT"] = src_header.get_request("User-Agent:");
-	this->_env["HTTP_CONNECTION"] = src_header.get_request("Connection:");
-	if (src_header.get_request("Method").compare("POST") == 0)
+	std::map<std::string, std::string>::const_iterator	it, end;
+
+	end = src_header.get_param_request_tab().end();
+	for (it = src_header.get_param_request_tab().begin(); it != end ; ++it)
 	{
-		this->_env["HTTP_CONTENT_LENGTH"] = src_header.get_request("Content-Length:");
-		this->_env["HTTP_CONTENT_TYPE"] = src_header.get_request("Content-Type:");
+		this->_env[this->normVar(it->first)] = it->second;
 	}
-	//this->_env["HTTP_REFERER"] = src_header.get_request("Referer:");
 }
 
 // var server
@@ -201,17 +209,10 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	if (this->_pid == -1)
 		std::cout << RED << "FAIL PID -1" << END << std::endl;
 	else if (this->_pid == 0)
-	{		
+	{
 		if (src_header.get_request("Method").compare("POST") == 0)
 		{
-			//std::ifstream fin((char *)file_stdin)
-			//std::cout << (char *)file_stdin << std::endl;
-			//std::istream is(&filebuf);
-			//in << body_string << std::endl;
-			//write(fd_stdin, body_string.c_str(),body_string.size());
 			std::fputs(body_string.c_str(), file_stdin);
-			//STDOUT_FILENO << body_string.c_str();
-			//lseek(file_stdin, 0, SEEK_SET);
 			rewind(file_stdin);
 		}
 		dup2(fd_stdin, STDIN_FILENO);
@@ -250,20 +251,12 @@ std::string	Cgi::body_response_from_fd(int fd)
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		}
 	}
+	ret += '\n';
+	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }
 
-void	Cgi::upload_file(std::string response)
-{
-	//response = "0123456789\n";
-	//std::cout << "Je suis dans upload" << std::endl;
-	std::ofstream out("www/uploads/file_created.txt");
 
-	//std::cout << GREEN << "response = " << std::endl << "|" <<
-	//response << "|" << std::endl << END;
-	out << response;
-	out.close();
-}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------

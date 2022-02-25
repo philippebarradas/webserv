@@ -14,16 +14,20 @@ Parse_request::Parse_request()
 		"Query", //ok
 		"Protocol",
 		"Host-uncut-comme-les-casquettes",
+		"Connection:"
 	};
 	
 	_nbr_line = 0;
 	_request_body = "";
 	std::string empty = "";
-	_next_buffer_is_body = 0;
+	//_next_buffer_is_body = 0;
 	_request_body_size = 0;
 	first_line_is_parsed = false;
-	
-	for (size_t x = 0; x < 6; x++)
+	error_first_line = false;
+
+
+	size_t len = sizeof(elements) / sizeof(std::string);
+	for (size_t x = 0; x < len; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
 	_header_tab["Status"] = "200";
 }
@@ -36,11 +40,12 @@ Parse_request::~Parse_request()
 Parse_request&				Parse_request::operator=( Parse_request const & rhs )
 {
 	this->_buffer = rhs._buffer;
-	this->_next_buffer_is_body = rhs._next_buffer_is_body;
+	//this->_next_buffer_is_body = rhs._next_buffer_is_body;
 	this->_request_body_size = rhs._request_body_size;
 	this->_request_body = rhs._request_body;
 	this->_header_tab = rhs._header_tab;
 	this->_nbr_line = rhs._nbr_line;
+	this->_param_request_tab = rhs._param_request_tab;
 	return *this;
 }
 
@@ -87,16 +92,10 @@ int			str_is_lnt(std::string str)
 	//std::cout << BLUE << "str=[" << str << "]" << END << std::endl;
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
 	{
-		v = false;
-		for (std::string::iterator ita = accept.begin(); ita != accept.end(); ++ita)
-		{
-			if (*it == *ita)
-				v = true;
-		}
-		if (v == false)
-			return (1);
+		if (!std::isalpha(*it) && !std::isdigit(*it) && *it != '-')
+			return (false);
 	}
-	return (0);
+	return (true);
 }
 
 void		Parse_request::fill_param_request_tab(std::string buff_parsed)
@@ -110,11 +109,12 @@ void		Parse_request::fill_param_request_tab(std::string buff_parsed)
 	{
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
 		{
-			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos)
+			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos && str_is_lnt(buff_parsed.substr(0, debut)))
 			{
+				//std::cout << "OK" << std::endl;
 				_param_request_tab.insert(std::pair<std::string, std::string>
-				(buff_parsed.substr(0, debut)
-				,fill_header_tab(buff_parsed.substr(debut + 1, final_pose - debut - 1))));
+					(buff_parsed.substr(0, debut)
+					,fill_header_tab(buff_parsed.substr(debut + 1, final_pose - debut - 1))));
 			}
 		}
 		else if (str_is_lnt(buff_parsed.substr(0, found)) == 0 && buff_parsed.substr(0, found).size() != 0)
@@ -165,11 +165,11 @@ int		Parse_request::fill_variables()
 	}
 	if (get_request("Connection:") == "")
 		_header_tab.insert(std::pair<std::string, std::string>("Connection:", "close"));
-	if (get_request("Expect:") == "100-continue")
-	{
-		set_next_buffer_is_body(TRUE);
-		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-	}
+	//if (get_request("Expect:") == "100-continue" || get_request("Content-Length:") != "")
+	//{
+		//set_next_buffer_is_body(TRUE);
+	//	std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
+	//}
 /*  
 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {

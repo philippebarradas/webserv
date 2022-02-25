@@ -1,14 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/02/24 13:10:28 by user42           ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
 
 ######################################################################
 #                            Informations                            #
@@ -39,13 +28,11 @@ NAMEC			= ${BLUE}${BOLD}$(NAME)${END}
 #                            Source Files                            #
 ######################################################################
 
-CGI			= Cgi.cpp
+CGI				= Cgi.cpp
 
-CONFIG		= Config.cpp Server.cpp utils.cpp
+CONFIG			= Config.cpp Server.cpp utils.cpp
 
-CONNEXION	= Connexion.cpp
-
-SERVER			= Engine.cpp
+SERVER			= Engine.cpp Client.cpp
 
 PARSE_REQUEST	= parse_request.cpp parse_first_line.cpp parse_body.cpp checker_request.cpp
 
@@ -57,7 +44,6 @@ MAIN			= main.cpp
 
 SRC				= $(addprefix srcs/Config/, $(CONFIG)) \
 				$(addprefix srcs/Cgi/, $(CGI)) \
-				$(addprefix srcs/Server/, $(CONNEXION)) \
 				$(addprefix srcs/Server/, $(SERVER)) \
 				$(addprefix srcs/Parse_request/, $(PARSE_REQUEST)) \
 				$(addprefix srcs/Autoindex/, $(AUTO_INDEX)) \

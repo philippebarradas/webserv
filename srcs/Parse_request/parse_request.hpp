@@ -40,18 +40,21 @@ class Parse_request
 		void	incr_nbr_line(){this->_nbr_line++;};
 
 		void	setStatus( std::string const & code ) { this->_header_tab["Status"] = code; }
+		void	setTransfer( std::string const & method ) { this->_header_tab["Transfer-Encoding:"] = method; }
+
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
-		std::map<std::string, std::string>	get_param_request_tab( void ) const {return this->_param_request_tab;}
-		
+		std::map<std::string, std::string>	const & get_param_request_tab( void ) const {return this->_param_request_tab;}
+
 		std::string get_request_body() const { return (_request_body); }
 		size_t get_request_body_size() const { return (_request_body_size); };
-		
-		void	set_next_buffer_is_body(bool val){ _next_buffer_is_body = val; };
-		bool	get_next_buffer_is_body(){ return(_next_buffer_is_body); };
+
+		//void	set_next_buffer_is_body(bool val){ _next_buffer_is_body = val; };
+		//bool	get_next_buffer_is_body(){ return(_next_buffer_is_body); };
 
 		void set_request_body(std::string new_request_body) { _request_body = new_request_body; }
+		
 		bool first_line_is_parsed;
-
+		bool error_first_line;
 	private:
 
 		std::string	_buffer;
@@ -77,7 +80,7 @@ class Parse_request
 
 		std::string	_request_body;
 		size_t		_request_body_size;
-		bool		_next_buffer_is_body;
+		//bool		_next_buffer_is_body;
 	//
 };
 

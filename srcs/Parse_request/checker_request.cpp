@@ -68,13 +68,13 @@ int		Parse_request::check_request()
 {
 	size_t	found = 0;
 	
- 	std::cout << "CHECKER REQUEST" << std::endl;
-	//
+/*  std::cout << "CHECKER REQUEST" << std::endl;
+	
  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 	{
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
 	}
-	//
+	 */
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
 	{
@@ -125,5 +125,6 @@ int		Parse_request::check_request()
 		}		
 		return (1);
 	}
+	std::cout << "CRASSSHHHH" << std::endl;
 	return (KEEP);
 }
