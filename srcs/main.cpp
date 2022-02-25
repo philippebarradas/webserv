@@ -3,31 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/22 18:35:52 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/25 16:47:20 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config/Config.hpp"
 #include "Cgi/Cgi.hpp"
 
+void signal_callback_handler( int ssignum )
+{
+	throw SignalStop();
+}
+
 int	main( int ac, char *av[] )
 {
 	if (ac != 2)
 		return (1);
 
+	signal(SIGINT, signal_callback_handler);
+
 	Config		conf;
+	Engine		serv;
 	std::vector<Server> vec_serv;
 
 	try
 	{
 		conf = Config(av[1]);
-		std::cout << conf << std::endl;
-		vec_serv = conf.getConfig();
+		serv = Engine(conf.getConfig());
+	}
+	catch( SignalStop const & e )
+	{
+		static_cast<void>(e);
+		//std::cerr << e.what() << std::endl;
 
-		Engine serv(vec_serv);
 	}
 	catch( std::exception const & e )
 	{
@@ -35,8 +46,6 @@ int	main( int ac, char *av[] )
 		std::cerr << e.what() << std::endl;
 		return (1);
 	}
-	//std::cout << conf.getConfig().size() << std::endl;
-	//std::cout << conf << std::endl;
 
 	return (0);
 }

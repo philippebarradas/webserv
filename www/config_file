@@ -11,7 +11,7 @@ server{
 	accepted_methods	GET POST;
 
 	location / {
-		cgi .php /home/user42/Bureau/webserv/ubuntu_cgi_tester;
+		cgi .php /usr/bin/php-cgi;
 		index cookie.php;
 		root /home/user42/Bureau/webserv;
 		accepted_methods	GET POST DELETE;

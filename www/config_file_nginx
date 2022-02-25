@@ -6,7 +6,7 @@ server{
 	server_name hello3 hello1 ;
 	listen 777;
 	autoindex off;
-	root /home/user42/Bureau/webserv;
+	root /home/user42/Bureau/webserv/www;
 	dav_methods DELETE;
 	index cookie.php;
 	client_max_body_size 10000000000000;

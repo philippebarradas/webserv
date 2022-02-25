@@ -8,11 +8,12 @@
 # include <cstring>
 
 // C
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <string.h>
+# include <fcntl.h>
+# include <signal.h>
 
 // Socket
 # include <sys/ioctl.h>
@@ -73,7 +74,6 @@ class Engine
 		Engine &		operator=( Engine const & rhs );
 
 		// GETTERS
-
 		std::string	GetRemote_Port() const;
 		std::string	GetRemote_Addr() const;
 		int			GetAccessPort( void ) const;

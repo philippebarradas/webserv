@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/24 16:08:29 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 16:40:04 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,22 +175,21 @@ bool	str_is_lnt(std::string const & str)
 
 void		Parse_request::fill_param_request_tab()
 {
-	size_t	final_pose = 0;
+	size_t	final_pose = 0, end = 0;
 	size_t debut = 0;
 	size_t	found = 0;
 	std::string buff_parsed = _buffer;
 	size_t x = 0;
 	std::map<std::string, std::string>::iterator replace;
 
- 	/* for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
-    {
-		//if (it->second.size() != 0)
-		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	} */
-	//std::cout << "\n\n\n" << std::endl;
+	std::cout << RED <<  _buffer << std::endl;
 
+	//end = buff_parsed.find("\r\n\r\n");
 	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
 	{
+		end = buff_parsed.find("\r\n\r\n");
+		std::cout << "found\t=\t" << found << std::endl;
+		std::cout << "end\t=\t" << end << std::endl<< std::endl;
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
 		{
 			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos && str_is_lnt(buff_parsed.substr(0, debut)))
@@ -206,6 +205,8 @@ void		Parse_request::fill_param_request_tab()
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (final_pose));
 		//final_pose = 0;
 		x++;
+		if (found == end)
+			break;
 	}
  	 for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
 	{
