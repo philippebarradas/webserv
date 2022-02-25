@@ -15,8 +15,8 @@ int		Parse_request::parse_first_line(std::string full_buffer)
 			return (STOP);
 		if (start >= _buffer.size())
 			return (KEEP);
-		else
-			_buffer = _buffer.substr(start, _buffer.size() - start);;
+		//else
+		//	_buffer = _buffer.substr(start, _buffer.size() - start);;
 	}
 	return (KEEP);
 }

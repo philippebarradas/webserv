@@ -227,11 +227,11 @@ void	Engine::read_send_data(int i, int new_socket, const std::vector<Server> & s
 			//std::cout << RED << " this->_fds_events=[" << this->_fds_events[i].events << "]";
 			connexion[i].request_header_size = connexion[i].fill_request.size();
 		}
-		else if (connexion[i].fill_request.find("\r\n") != std::string::npos && parse_head[i].firs_line_is_parsed == false)
+		else if (connexion[i].fill_request.find("\r\n") != std::string::npos && parse_head[i].first_line_is_parsed == false)
 		{
 			std::cout << "{parse first line}" << std::endl;
 			parse_head[i].parse_first_line(connexion[i].fill_request);
-			parse_head[i].firs_line_is_parsed = true;
+			parse_head[i].first_line_is_parsed = true;
 		} 
 	}
 	else if (connexion[i].fill_request.find("\r\n\r\n") != std::string::npos && connexion[i].is_parsed == false)

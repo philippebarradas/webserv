@@ -16,12 +16,12 @@ Parse_request::Parse_request()
 		"Host-uncut-comme-les-casquettes",
 	};
 	
+	_nbr_line = 0;
+	_request_body = "";
 	std::string empty = "";
 	_next_buffer_is_body = 0;
 	_request_body_size = 0;
-	_nbr_line = 0;
-	_request_body = "";
-	firs_line_is_parsed = false;
+	first_line_is_parsed = false;
 	
 	for (size_t x = 0; x < 6; x++)
 		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
@@ -108,7 +108,7 @@ void		Parse_request::fill_param_request_tab(std::string buff_parsed)
 	std::map<std::string, std::string>::iterator replace;
 
 
-	std::cout << YELLOW << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
+	//std::cout << YELLOW << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
 	{
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
@@ -125,10 +125,10 @@ void		Parse_request::fill_param_request_tab(std::string buff_parsed)
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (final_pose));
 	} 
 
-	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+/* 	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
     {
 		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	} 
+	}  */
 }
 
 int		Parse_request::fill_variables()
@@ -140,10 +140,10 @@ int		Parse_request::fill_variables()
 	std::string buff_parsed = _buffer;
 	std::map<std::string, std::string>::iterator replace;
 	
-	std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
+	//std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 	if ((found =_buffer.find("\r\n")) != std::string::npos)
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (found + 2));
-	std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
+	//std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 
 
 	fill_param_request_tab(buff_parsed);
@@ -174,11 +174,11 @@ int		Parse_request::fill_variables()
 		set_next_buffer_is_body(TRUE);
 		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
- 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+/*  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
+	} */
 	return (KEEP);
 }
 

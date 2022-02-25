@@ -50,25 +50,21 @@ class Parse_request
 		bool	get_next_buffer_is_body(){ return(_next_buffer_is_body); };
 
 		void set_request_body(std::string new_request_body) { _request_body = new_request_body; }
-		bool firs_line_is_parsed;
+		bool first_line_is_parsed;
 
 	private:
-		std::string	fill_header_tab(std::string str);
-		int			fill_variables();
-		void		fill_param_request_tab(std::string buff_parsed);
 
+		std::string	_buffer;
+		size_t		_nbr_line;
 	// FIRST LINE
 		int			fill_first_line();
-
 		void		parse_path();
-
 		int			check_first_line(size_t full_size);
 		int			check_path();
 	// REQUEST
-
-	// BODY
-
-		void		is_body(size_t found);
+		int			fill_variables();
+		std::string	fill_header_tab(std::string str);
+		void		fill_param_request_tab(std::string buff_parsed);
 
 		int			check_request();
 		int			check_double_content();
@@ -76,13 +72,13 @@ class Parse_request
 
        	std::map<std::string, std::string> _param_request_tab;
 		std::map<std::string, std::string> _header_tab;
+	// BODY
+		void		is_body(size_t found);
 
-		std::string	_buffer;
 		std::string	_request_body;
-
-		size_t		_nbr_line;
 		size_t		_request_body_size;
 		bool		_next_buffer_is_body;
+	//
 };
 
 /////////////////////////////////////////////////////////
