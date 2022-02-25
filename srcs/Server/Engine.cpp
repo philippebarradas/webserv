@@ -111,6 +111,14 @@ bool	Engine::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector
 	return (false);
 }
 
+bool	Engine::is_body_empty(Client & client)
+{
+	if (client.getParse_head().get_request("Content-Length:") != "" ||
+		client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
+		return (false);
+	return (true);
+}
+
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
@@ -205,12 +213,18 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 	client.setFill_request(b); // +=
 	if (client.getFill_request().find("\r\n\r\n") != std::string::npos) // header rempli
 	{
-		if (client.getParse_head().get_request("Content-Length:") == "") // pas de body
+		//std::cout << "te \t=\t" << client.getParse_head().get_request("Transfer-Encoding:") << std::endl;
+		//std::cout << "c_length \t=\t" << client.getParse_head().get_request("Content-Length:") << std::endl;
+
+		client.setHeader_readed(true);
+		//if (client.getParse_head().get_request("Content-Length:") == "") // pas de body
+		/* if (is_body_empty(client) == true)
 		{
+			std::cout << "body empty" << std::endl;
 			client.getEvents().events = EPOLLOUT;
 			if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd, &client.getEvents()) == -1)
 				throw std::runtime_error("[Error] epoll_ctl_mod() failed");
-		}
+		} */
 		client.setRequest_header_size(client.getFill_request().size());
 	}
 }
@@ -218,8 +232,8 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 void	Engine::read_body(const std::vector<Server> & src, Client & client)
 {
 	char b;
-	int f;
 
+	std::cout << "c_length \t=\t" << client.getParse_head().get_request("Content-Length:") << std::endl;
 	if (client.getParse_head().get_request("Expect:") == "100-continue"
 		&& client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
@@ -231,12 +245,16 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 		}
 		else
 		{
-			f = client.getParse_head().parse_request_buffer(client.getFill_request());
+			client.getParse_head().parse_request_buffer(client.getFill_request());
 			client.setIs_sendable(true);
 		}
 	}
 	else
 	{
+		std::cout << "1\t=\t" << client.getFill_request().size() << std::endl;
+		std::cout << "2\t=\t" << client.getRequest_header_size() +
+			std::stoi(client.getParse_head().get_request("Content-Length:")) << std::endl;
+		std::cout << "_valread\t=\t" << _valread << std::endl;
 		if (_valread != 0
 		&& client.getFill_request().size() < client.getRequest_header_size() +
 			std::stoi(client.getParse_head().get_request("Content-Length:")))
@@ -250,7 +268,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 		else
 		{
 			std::cout << "j'ai read le body" << std::endl;
-			f = client.getParse_head().parse_request_buffer(client.getFill_request());
+			client.getParse_head().parse_request_buffer(client.getFill_request());
 			client.setIs_sendable(true);
 		}
 	}
@@ -266,8 +284,6 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 		TreatRequest	treatment(src, *this);
 		this->_buff_send = treatment.treat(client.getParse_head());
 		//std::cout << "this->_buff_send\t=\t" << this->_buff_send << std::endl;
-		std::cout << "AVANT LE SEND" << std::endl;
-		std::cout << "client fd\t=\t" << client.getEvents().data.fd << std::endl;
 		nbr_bytes_send = send(client.getEvents().data.fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 		if (nbr_bytes_send == -1)
@@ -297,14 +313,30 @@ void	Engine::loop_accept(int nbr_connexions, const std::vector<Server> & src)
 
 void	Engine::myRead(const std::vector<Server> & src, Client & client)
 {
-	read_header(src, client);
-	if (client.getFill_request().find("\r\n\r\n") != std::string::npos && client.getHeader_parsed() == false)
+	if (client.getHeader_readed() == false)
+		read_header(src, client);
+	if (client.getHeader_parsed() == false && client.getHeader_readed() == true)
 	// on a tout read le header
 	{
 		//std::cout << RED << "fill_request=[" << it->fill_request << "]" << END << std::endl;
 		client.getParse_head().parse_request_buffer(client.getFill_request());
-		client.getHeader_parsed() = true;
+		client.setHeader_parsed(true);
+		if (is_body_empty(client) == true)
+		{
+			std::cout << "body empty" << std::endl;
+			client.getEvents().events = EPOLLOUT;
+			if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd, &client.getEvents()) == -1)
+				throw std::runtime_error("[Error] epoll_ctl_mod() failed");
+		}
 		//std::cout << "it->header_parsed in read header\t=\t" << it->header_parsed << std::endl;
+	}
+	else if (is_body_empty(client) == false && client.getHeader_parsed() == true)
+		read_body(src, client);
+	if (client.getIs_sendable() == true)
+	{
+		client.getEvents().events = EPOLLOUT;
+		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd, &client.getEvents()) == -1)
+			throw std::runtime_error("[Error] epoll_ctl_mod() failed");
 	}
 	//if (client.getParse_head().get_request("Content-Length:") != ""  && client.is_sendable == false)
 		//read_body(src, client);
@@ -317,8 +349,8 @@ void	Engine::loop_clients(const std::vector<Server> & src)
 	{
 		if (it->getEvents().events == EPOLLIN)
 			myRead(src, *it);
-		if (it->getParse_head().get_request("Content-Length:") != ""  && it->getIs_sendable() == false)
-			read_body(src, *it);
+		//if (it->getParse_head().get_request("Content-Length:") != ""  && it->getIs_sendable() == false)
+			//read_body(src, *it);
 		else if (it->getEvents().events == EPOLLOUT)
 		{
 			std::cout << "{ap send ELSE}" << std::endl;

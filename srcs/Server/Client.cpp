@@ -9,27 +9,17 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-
 Client::Client(epoll_event & ev)
 {
 	_parse_head = new Parse_request();
 	_recv_len = 0;
 	_request_header_size = 0;
 	_header_parsed = false;
+	_header_readed = false;
 	_is_sendable = false;
 	_fill_request = "";
 	_events = ev;
 	_fd = _events.data.fd;
-
-	std::map<std::string, std::string>::const_iterator it, end;
-	//std::map<std::string, std::string> map = _parse_head->getBigMegaSuperTab();
-
-	/* end = _parse_head->getBigMegaSuperTab().end();
-	for ( it = _parse_head->getBigMegaSuperTab().begin() ; it != end ; ++it)
-	{
-		//if (it->second.size() != 0)
-		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
-	} */
 }
 
 Client::Client(Client const & src )
@@ -59,6 +49,7 @@ Client&				Client::operator=( Client const & rhs )
 		this->_recv_len = rhs._recv_len;
 		this->_is_sendable = rhs._is_sendable;
 		this->_header_parsed = rhs._header_parsed;
+		this->_header_readed = rhs._header_readed;
 		this->_fill_request = rhs._fill_request;
 		this->_request_header_size = rhs._request_header_size;
 		this->_events = rhs._events;
@@ -69,7 +60,7 @@ Client&				Client::operator=( Client const & rhs )
 }
 
 /*
-** --------------------------------- METHODS ----------------------------------
+** --------------------------------- SETTERS ----------------------------------
 */
 
 void	Client::setRecv_len(const int & recv_len)
@@ -92,6 +83,11 @@ void	Client::setHeader_parsed(const bool & header_parsed)
 	this->_header_parsed = header_parsed;
 }
 
+void	Client::setHeader_readed(const bool & header_readed)
+{
+	this->_header_readed = header_readed;
+}
+
 void	Client::setIs_sendable(bool const & is_sendable)
 {
 	this->_is_sendable = is_sendable;
@@ -101,6 +97,10 @@ void		Client::setFd(int const & fd)
 {
 	this->_fd = fd;
 }
+
+/*
+** --------------------------------- GETTERS ----------------------------------
+*/
 
 Parse_request & Client::getParse_head()
 {
@@ -130,6 +130,11 @@ std::string & Client::getFill_request()
 bool	& Client::getHeader_parsed()
 {
 	return (this->_header_parsed);
+}
+
+bool	& Client::getHeader_readed()
+{
+	return (this->_header_readed);
 }
 
 bool	& Client::getIs_sendable()

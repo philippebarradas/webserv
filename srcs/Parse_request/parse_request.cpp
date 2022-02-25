@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/23 18:01:09 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/25 13:54:32 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,11 +206,11 @@ void		Parse_request::fill_param_request_tab()
 		//final_pose = 0;
 		x++;
 	}
- 	/* for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
-    {
-		//if (it->second.size() != 0)
-		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	} */
+	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+	{
+		if (it->second.size() != 0)
+			std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
+	}
 	//std::cout << "ENDDDDDDDDDDDDDDDdd" << std::endl;
 }
 

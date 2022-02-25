@@ -52,7 +52,6 @@ class Client
 
 		// CONSTRUCTOR
 		Client(epoll_event & ev);
-
 		Client( Client const & src );
 
 		// DESTRUCTOR
@@ -71,30 +70,31 @@ class Client
 		void	setFd(int const & fd);
 		void	setIs_sendable(bool const & is_sendable);
 		void	setHeader_parsed(bool const & header_parsed);
+		void	setHeader_readed(bool const & header_readed);
 
 		// GETTERS
 		int	& getRecv_len();
 		size_t & getRequest_header_size();
 		std::string & getFill_request();
 		bool	& getHeader_parsed();
+		bool	& getHeader_readed();
 		bool	& getIs_sendable();
 		int		& getFd();
 		Parse_request & getParse_head();
 		epoll_event & getEvents();
-
-
 	private:
 
 		// VARIABLES
 		Client();
-		Parse_request *_parse_head;
-		epoll_event _events;
-		int		_recv_len;
-		size_t	_request_header_size;
-		std::string _fill_request;
-		bool	_header_parsed;
-		bool	_is_sendable;
-		int		_fd;
+		Parse_request	*_parse_head;
+		epoll_event		_events;
+		int				_recv_len;
+		size_t			_request_header_size;
+		std::string		_fill_request;
+		bool			_header_parsed;
+		bool			_header_readed;
+		bool			_is_sendable;
+		int				_fd;
 };
 
 std::ostream &			operator<<( std::ostream & o, Client & i );
