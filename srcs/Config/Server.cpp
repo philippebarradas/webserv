@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/16 19:35:40 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 17:01:41 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ Server::Server()
 	this->initLocation();
 }
 
-/* CONSTRUCTOR FOR LOCATION */
 Server::Server( std::vector< std::vector<std::string> > const & src )
 {
 	this->initLocation();
@@ -38,7 +37,6 @@ Server::Server( std::string const & src )
 	this->parsingAll(toParce);
 
 	this->fillLocation();
-	//std::cout << std::endl << *this << std::endl;
 }
 
 Server::Server( Server const & src )
@@ -118,11 +116,6 @@ void	Server::fillLocation( void )
 
 	for (it = this->_location.begin() ; it != end ; ++it)
 	{
-		//std::cout << it->first << ":" << std::endl;
-		//std::cout << "autoi" << it->second._alreadySetAutoindex << std::endl;
-		//std::cout << "maxbod" << it->second._alreadySetMaxbody << std::endl;
-		//std::cout << std::endl;
-
 		if (!it->second._alreadySetIndex)
 			it->second._index = this->_index;
 		if (!it->second._alreadySetMethods)
@@ -138,9 +131,6 @@ void	Server::fillLocation( void )
 		if (!it->second._alreadySetCgi)
 			it->second._cgi = this->_cgi;
 	}
-	//std::cout << "leave" << std::endl;
-
-
 }
 
 void	Server::initLocation( void )
@@ -156,7 +146,6 @@ void	Server::initLocation( void )
 	this->_alreadySetMaxbody   = false;
 	this->_alreadySetError     = false;
 	this->_alreadySetCgi       = false;
-
 }
 
 void	Server::initServ( void )
@@ -170,7 +159,8 @@ void	Server::initServ( void )
 
 typedef void ( Server::*allFunction )( std::vector<std::string> const & );
 
-void	Server::parsingAll( std::vector< std::vector<std::string> > const & src )
+void	Server::parsingAll(
+	std::vector< std::vector<std::string> > const & src )
 {
 	std::string	nameAllowed[] = {"server_name", "index", "accepted_methods",
 		"listen", "root", "autoindex", "client_max_body_size", "error_page",
@@ -405,7 +395,8 @@ void	Server::setLocation( std::vector<std::string> const & src )
 			if (*((*it).begin()) == nameForbidden[i])
 			{
 				std::string thr("[Error] \'");
-				thr += nameForbidden[i] + "\' directive cannot be defined in location.";
+				thr += nameForbidden[i]
+					+ "\' directive cannot be defined in location.";
 				throw std::invalid_argument(thr);
 			}
 		}
