@@ -205,8 +205,8 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	int	fd_stdin = fileno(file_stdin);
 	int	fd_stdout = fileno(file_stdout);
 	int		status = 0;
-	this->_pid = fork();
 
+	this->_pid = fork();
 	if (this->_pid == -1)
 		std::cout << RED << "FAIL PID -1" << END << std::endl;
 	else if (this->_pid == 0)
@@ -222,8 +222,6 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 		if (execve(this->_path_cgi.c_str(), argv, env) == -1)
 			std::cout << "error execve cgi" << std::endl;
 	}
-	//std::cout << "{waitpid}" << std::endl;
-	//std::cout << RED << "this->_pid=[" << this->_pid << "]" << END << std::endl;
 	waitpid(this->_pid, &status, 0);
 	lseek(fd_stdout, 0, SEEK_SET);
 	this->_send_content = body_response_from_fd(fd_stdout);
@@ -256,9 +254,6 @@ std::string	Cgi::body_response_from_fd(int fd)
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		//}
 	}
-	ret += '\n';
-	std::cout << "ret\t=\t" << ret << std::endl;
-	//std::cout << "this->_type_cgi\t=\t" << this->_type_cgi << std::endl;
 	return (ret);
 }
 
