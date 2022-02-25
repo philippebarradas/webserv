@@ -55,7 +55,7 @@ class Parse_request
 	private:
 		std::string	fill_header_tab(std::string str);
 		int			fill_variables();
-		void		fill_param_request_tab();
+		void		fill_param_request_tab(std::string buff_parsed);
 
 	// FIRST LINE
 		int			fill_first_line();

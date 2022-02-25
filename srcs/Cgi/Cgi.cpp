@@ -197,6 +197,9 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	int	fd_stdout = fileno(file_stdout);
 	int		status = 0;
 
+
+
+
 	this->_pid = fork();
 	if (this->_pid == -1)
 		std::cout << RED << "FAIL PID -1" << END << std::endl;
@@ -204,8 +207,17 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	{		
 		if (src_header.get_request("Method").compare("POST") == 0)
 		{
-			write(fd_stdin, body_string.c_str(),body_string.size());
-			lseek(fd_stdin, 0, SEEK_SET);
+
+			//std::ifstream fin((char *)file_stdin);
+
+			//std::cout << (char *)file_stdin << std::endl;
+			//std::istream is(&filebuf);
+			//in << body_string << std::endl;
+			//write(fd_stdin, body_string.c_str(),body_string.size());
+			std::fputs(body_string.c_str(), file_stdin);
+			//STDOUT_FILENO << body_string.c_str();
+			//lseek(file_stdin, 0, SEEK_SET);
+			rewind(file_stdin);
 		}
 		dup2(fd_stdin, STDIN_FILENO);
 		dup2(fd_stdout, STDOUT_FILENO);

@@ -66,10 +66,12 @@ int		Parse_request::check_request()
 	std::map<std::string, std::string>::iterator replace;
 	size_t	found = 0;
 	
-/* 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+	std::cout << "CHECKER REQUEST" << std::endl;
+	
+ 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 	{
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
-	} */
+	}
 
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
@@ -87,7 +89,7 @@ int		Parse_request::check_request()
 		}
 		if (get_request("Host:").compare("") == 0)
 		{
-            //std::cout << "ERROR = NO HOST" << std::endl;
+            std::cout << "ERROR = NO HOST" << std::endl;
 			replace = _header_tab.find("Status");
 			replace->second = "400";
 		}

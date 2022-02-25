@@ -71,8 +71,8 @@ int		Parse_request::parse_request(std::string full_buffer)
 			return (STOP);
 		if (start >= _buffer.size())
 			return (KEEP);
-		else
-			_buffer = _buffer.substr(start, _buffer.size() - start);;
+		//else
+			//_buffer = _buffer.substr(start, _buffer.size() - start);;
 	}
 	if (fill_variables() == -1)
 		return (STOP);
@@ -99,15 +99,16 @@ int			str_is_lnt(std::string str)
 	return (0);
 }
 
-void		Parse_request::fill_param_request_tab()
+void		Parse_request::fill_param_request_tab(std::string buff_parsed)
 {
 	size_t	final_pose = 0;
 	size_t debut = 0;
 	size_t	found = 0;
-	std::string buff_parsed = _buffer;
-	size_t x = 0;
+
 	std::map<std::string, std::string>::iterator replace;
 
+
+	std::cout << YELLOW << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 	while ((found = buff_parsed.find("\r\n")) != std::string::npos)
 	{
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
@@ -119,16 +120,15 @@ void		Parse_request::fill_param_request_tab()
 				,fill_header_tab(buff_parsed.substr(debut + 1, final_pose - debut - 1))));
 			}
 		}
-		else if (x != 0 && str_is_lnt(buff_parsed.substr(0, found)) == 0)
+		else if (str_is_lnt(buff_parsed.substr(0, found)) == 0 && buff_parsed.substr(0, found).size() != 0)
 			_param_request_tab.insert(std::pair<std::string, std::string>(buff_parsed.substr(0, found), ""));//fill_header_tab(buff_parsed.substr(found, final_pose - found))));
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (final_pose));
-		x++;
-	}
-/* 	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
+	} 
+
+	for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
     {
-		//if (it->second.size() != 0)
 		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	} */
+	} 
 }
 
 int		Parse_request::fill_variables()
@@ -140,7 +140,13 @@ int		Parse_request::fill_variables()
 	std::string buff_parsed = _buffer;
 	std::map<std::string, std::string>::iterator replace;
 	
-	fill_param_request_tab();
+	std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
+	if ((found =_buffer.find("\r\n")) != std::string::npos)
+		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (found + 2));
+	std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
+
+
+	fill_param_request_tab(buff_parsed);
 	while ((found = buff_parsed.find(":")) != std::string::npos)
 	{
 		found += 1;
@@ -168,11 +174,11 @@ int		Parse_request::fill_variables()
 		set_next_buffer_is_body(TRUE);
 		std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
 	}
-/* 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
+ 	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
     {
 		if (it->second.size() != 0)
 			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	} */
+	}
 	return (KEEP);
 }
 

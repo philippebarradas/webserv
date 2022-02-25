@@ -24,6 +24,8 @@ int			Parse_request::parse_body(std::string full_buffer)
     if (_next_buffer_is_body == TRUE && _request_body_size == 0)
 	{
 		this->_buffer = full_buffer;
+
+		std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
 		return (check_request());
 	}
 	return (0);
