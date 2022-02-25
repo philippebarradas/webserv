@@ -9,6 +9,10 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
+Client::Client()
+{
+}
+
 Client::Client(epoll_event & ev)
 {
 	_parse_head = new Parse_request();
@@ -63,7 +67,7 @@ Client&				Client::operator=( Client const & rhs )
 ** --------------------------------- SETTERS ----------------------------------
 */
 
-void	Client::setRecv_len(const int & recv_len)
+void	Client::setRecv_len(size_t const & recv_len)
 {
 	this->_recv_len += recv_len;
 }
@@ -112,7 +116,7 @@ epoll_event & Client::getEvents()
 	return (this->_events);
 }
 
-int	& Client::getRecv_len()
+size_t	& Client::getRecv_len()
 {
 	return (this->_recv_len);
 }

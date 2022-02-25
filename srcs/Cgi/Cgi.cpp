@@ -259,17 +259,7 @@ std::string	Cgi::body_response_from_fd(int fd)
 	return (ret);
 }
 
-void	Cgi::upload_file(std::string response)
-{
-	//response = "0123456789\n";
-	//std::cout << "Je suis dans upload" << std::endl;
-	std::ofstream out("www/uploads/file_created.txt");
 
-	//std::cout << GREEN << "response = " << std::endl << "|" <<
-	//response << "|" << std::endl << END;
-	out << response;
-	out.close();
-}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
