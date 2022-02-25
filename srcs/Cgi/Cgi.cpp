@@ -248,7 +248,7 @@ std::string	Cgi::body_response_from_fd(int fd)
 		//else
 		//{
 			ret += line;
-			std::cout << "line\t=\t" << line << std::endl;
+			//std::cout << "line\t=\t" << line << std::endl;
 			ret += '\n';
 			//std::cout << CYAN << "line=[" << line << "]" << END << std::endl;
 		//}

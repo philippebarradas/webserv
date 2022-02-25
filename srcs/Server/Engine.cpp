@@ -224,7 +224,7 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 	else if (client.getFill_request().find("\r\n") != std::string::npos &&
 	client.getParse_head().first_line_is_parsed == false)
 	{
-		std::cout << "{parse first line}" << std::endl;
+		//std::cout << "{parse first line}" << std::endl;
 		client.getParse_head().parse_first_line(client.getFill_request());
 		client.getParse_head().first_line_is_parsed = true;
  		if(client.getParse_head().get_request("Status") != "200")
@@ -280,14 +280,14 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 
 	if (_valread != 0)
 	{
-		std::cout << "------------- SEND ------------------" << std::endl;
+		//std::cout << "------------- SEND ------------------" << std::endl;
 		TreatRequest	treatment(src, *this);
 		this->_buff_send = treatment.treat(client.getParse_head());
 		nbr_bytes_send = send(client.getEvents().data.fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
-		std::cout << RED << "End of connexion" << END << std::endl << std::endl;
+		//std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
 }
 

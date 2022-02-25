@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/25 19:15:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 19:22:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ int		Parse_request::parse_request(std::string full_buffer)
 	} */
 
  	this->_buffer = full_buffer;
-	std::cout << _nbr_line << std::endl;
+	//std::cout << _nbr_line << std::endl;
 
 	this->incr_nbr_line();
-	std::cout << _nbr_line << std::endl;
+	//std::cout << _nbr_line << std::endl;
 
 	if (get_nbr_line() == 1)
 	{

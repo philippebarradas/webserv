@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/25 19:13:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/25 19:20:47 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int		Parse_request::check_double_content()
 int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
-	std::cout <<  time_test << std::endl;
+	//std::cout <<  time_test << std::endl;
 	if (time_test.compare("") == 0)
 		return (KEEP);
  	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
