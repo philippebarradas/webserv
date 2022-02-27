@@ -26,7 +26,7 @@ server{
 
 	client_max_body_size 1000000000;
 	autoindex off;
-	root /home/user42/Bureau/webserv/www;
+	root /home/dodjian/Desktop/42/sixth_circle/webserv/www;
 	location / {
 		index form.html;
 		cgi .php /usr/bin/php-cgi;

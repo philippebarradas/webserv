@@ -15,6 +15,63 @@
 #include "../Parse_request/parse_request.hpp"
 #include "Client.hpp"
 
+/*
+** ------------------------------- CONSTRUCTOR --------------------------------
+*/
+
+Engine::Engine()
+{
+}
+
+Engine::Engine(const std::vector<Server> & src)
+{
+	std::cout << BPURPLE "-------- Starting webserv --------\n" END << std::endl;
+	setup_socket_server(src);
+	loop_server(src);
+}
+
+Engine::Engine( Engine const & src )
+{
+	*this = src;
+}
+
+/*
+** -------------------------------- DESTRUCTOR --------------------------------
+*/
+
+Engine::~Engine()
+{
+	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
+}
+
+/*
+** --------------------------------- OVERLOAD ---------------------------------
+*/
+
+Engine&				Engine::operator=( Engine const & rhs )
+{
+	if (this != &rhs)
+	{
+		this->_addr = rhs._addr;
+		this->_buff_send = rhs._buff_send;
+		this->_epfd = rhs._epfd;
+		this->_i_server = rhs._i_server;
+		this->_i_server_binded = rhs._i_server_binded;
+		this->_nbr_servers = rhs._nbr_servers;
+		this->_port = rhs._port;
+		this->_remote_addr = rhs._remote_addr;
+		this->_remote_port = rhs._remote_port;
+		this->_timeout = rhs._timeout;
+		this->_valread = rhs._valread;
+		this->_v = rhs._v;
+	}
+	return *this;
+}
+
+/*
+** --------------------------------- METHODS ----------------------------------
+*/
+
 // Creating socket file descriptor
 int	Engine::create_socket()
 {
@@ -98,7 +155,7 @@ int	Engine::accept_connexions(int listen_fd)
 }
 
 // savoir si le fd dans le epoll est un listener (socket d'un port) ou non
-bool	Engine::is_listener(int fd, int *tab_fd, int nbr_servers, const std::vector<Server> & src)
+bool	Engine::is_listener(const int & fd, const int *tab_fd, const int & nbr_servers, const std::vector<Server> & src)
 {
 	for (int i = 0; i < nbr_servers; i++)
 	{
@@ -119,63 +176,6 @@ bool	Engine::is_body_empty(Client & client)
 		return (false);
 	return (true);
 }
-
-/*
-** ------------------------------- CONSTRUCTOR --------------------------------
-*/
-
-Engine::Engine()
-{
-}
-
-Engine::Engine(const std::vector<Server> & src)
-{
-	std::cout << BPURPLE "-------- Starting webserv --------\n" END << std::endl;
-	setup_socket_server(src);
-	loop_server(src);
-}
-
-Engine::Engine( Engine const & src )
-{
-	*this = src;
-}
-
-/*
-** -------------------------------- DESTRUCTOR --------------------------------
-*/
-
-Engine::~Engine()
-{
-	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
-}
-
-/*
-** --------------------------------- OVERLOAD ---------------------------------
-*/
-
-Engine&				Engine::operator=( Engine const & rhs )
-{
-	if (this != &rhs)
-	{
-		this->_addr = rhs._addr;
-		this->_buff_send = rhs._buff_send;
-		this->_epfd = rhs._epfd;
-		this->_i_server = rhs._i_server;
-		this->_i_server_binded = rhs._i_server_binded;
-		this->_nbr_servers = rhs._nbr_servers;
-		this->_port = rhs._port;
-		this->_remote_addr = rhs._remote_addr;
-		this->_remote_port = rhs._remote_port;
-		this->_timeout = rhs._timeout;
-		this->_valread = rhs._valread;
-		this->_v = rhs._v;
-	}
-	return *this;
-}
-
-/*
-** --------------------------------- METHODS ----------------------------------
-*/
 
 /* cree la socket -> set la socket -> donne un nom a la socket ->
 	mets la socket comme passive -> set le premier events fd avec la socket passive */
@@ -206,25 +206,23 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 {
 	char	b;
 
-	bzero(_buff, BUFFER_SIZE);
 	_valread = recv(client.getEvents().data.fd, &b, 1, 0);
 	if (_valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
-	else if (!((b == 13 || b == 10)
-	&& client.getFill_request().size() == 0))
+	else if (!((b == '\n' || b == '\r')
+		&& client.getFill_request().size() == 0))
 	{
-		client.setRecv_len(_valread); // +=
-		client.setFill_request(b); // +=
+		client.setRecv_len(_valread);
+		client.setFill_request(b);
 	}
-	if (client.getFill_request().find("\r\n\r\n") != std::string::npos) // header rempli
+	if (client.getFill_request().find("\r\n\r\n") != std::string::npos)
 	{
 		client.setHeader_readed(true);
 		client.setRequest_header_size(client.getFill_request().size());
 	}
 	else if (client.getFill_request().find("\r\n") != std::string::npos &&
-	client.getParse_head().first_line_is_parsed == false)
+		client.getParse_head().first_line_is_parsed == false)
 	{
-		//std::cout << "{parse first line}" << std::endl;
 		client.getParse_head().parse_first_line(client.getFill_request());
 		client.getParse_head().first_line_is_parsed = true;
  		if(client.getParse_head().get_request("Status") != "200")
@@ -243,8 +241,8 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 		if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
 		{
 			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
-			client.setRecv_len(_valread); // +=
-			client.setFill_request(b); // +=
+			client.setRecv_len(_valread);
+			client.setFill_request(b);
 		}
 		if (client.getFill_request().find("0\r\n\r\n") != std::string::npos)
 		{
@@ -258,15 +256,12 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 			std::stoi(client.getParse_head().get_request("Content-Length:"))))
 		{
 			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
-			// recv len += valread
 			client.setRecv_len(_valread);
 			client.setFill_request(b);
 		}
-		if (client.getFill_request().size() == (client.getRequest_header_size() +
+		if (client.getFill_request().size() >= (client.getRequest_header_size() +
 			std::stoi(client.getParse_head().get_request("Content-Length:"))))
 		{
-			std::cout << "j'ai read le body" << std::endl;
-			std::cout << RED << "[parse body content length]]" << END << std::endl;
 			client.getParse_head().parse_body(client.getFill_request());
 			client.setIs_sendable(true);
 		}
@@ -280,14 +275,12 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 
 	if (_valread != 0)
 	{
-		//std::cout << "------------- SEND ------------------" << std::endl;
 		TreatRequest	treatment(src, *this);
 		this->_buff_send = treatment.treat(client.getParse_head());
 		nbr_bytes_send = send(client.getEvents().data.fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
-		//std::cout << RED << "End of connexion" << END << std::endl << std::endl;
 	}
 }
 
@@ -315,7 +308,6 @@ void	Engine::myRead(const std::vector<Server> & src, Client & client)
 	if (client.getHeader_readed() == false)
 		read_header(src, client);
 	if (client.getHeader_parsed() == false && client.getHeader_readed() == true)
-	// on a tout read le header
 	{
 		client.getParse_head().parse_request(client.getFill_request());
 		client.setHeader_parsed(true);
@@ -354,7 +346,7 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 void	Engine::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;
-	while (true) // serveur se lance
+	while (true)
 	{
 		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");

@@ -13,7 +13,7 @@
 if (isset($_FILES['userfile']))
 {
 	$_FILES['userfile'];
-	$uploaddir = '/home/user42/Bureau/webserv/www/uploads/';
+	$uploaddir = '/home/dodjian/Desktop/42/sixth_circle/webserv/www/uploads/';
 	$target_path = $uploaddir . basename($_FILES['userfile']['name']);
 }
 
