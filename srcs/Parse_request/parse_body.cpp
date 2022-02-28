@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:33:11 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:34:54 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 07:38:47 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int			Parse_request::parse_body(std::string full_buffer)
     //if (_next_buffer_is_body == true && _request_body_size == 0)
 //	{
 		this->_buffer = full_buffer;
-		std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
+		//std::cout << RED << "body ==  = ["<< full_buffer  << "]" << END << std::endl;
 		return (check_request());
 	//}
 	//return (0);
@@ -61,7 +61,7 @@ void	Parse_request::is_body(size_t found)
 		//std::cout << RED << "request_body = ["<< _request_body << "]" << END << std::endl;
 	if (get_request("Transfer-Encoding:") == "chunked")
 	{
-		std::cout << RED << "CHUNKED ~~~~~~~~~~~~~ " << END << std::endl;
+		//std::cout << RED << "CHUNKED ~~~~~~~~~~~~~ " << END << std::endl;
 		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
 		{
 			found += cmp.size();
