@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/28 08:02:27 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/28 10:13:56 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ class TreatRequest
 		bool	search_index( Parse_request & req,
 			std::string const & path );
 
-		//bool	exist( std::string const & path, Parse_request & req) const;
 		void	parce_end_path( std::string & src );
 		bool	check_access_delete( Parse_request & req, std::string path );
 		bool	check_access( Parse_request & req, std::string path );
