@@ -6,14 +6,18 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 08:54:38 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 18:44:45 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/28 08:00:31 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config/Config.hpp"
 #include "Cgi/Cgi.hpp"
 
-void signal_to_exit( int ssignum ) { throw SignalStop(); }
+void signal_to_exit( int ssignum )
+{
+	static_cast<void>(ssignum);
+	throw SignalStop();
+}
 
 bool	init_conf( Config & conf, char *path_conf_file )
 {
