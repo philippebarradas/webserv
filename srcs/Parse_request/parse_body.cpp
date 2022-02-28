@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:33:11 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:38:47 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 07:52:26 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int			Parse_request::parse_body(std::string full_buffer)
 
 void	Parse_request::is_body(size_t found)
 {
-	size_t line_size = 0;
 	size_t size = -1;
 	std::string _request_body_unchanked;
 	std::string cmp = "\r\n";
