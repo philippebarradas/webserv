@@ -40,6 +40,7 @@ class Parse_request
 		void	incr_nbr_line(){this->_nbr_line++;};
 
 		void	setStatus( std::string const & code ) { this->_header_tab["Status"] = code; }
+		void	setConnection( std::string const & status) { this->_header_tab["Connection:"] = status; }
 		void	setTransfer( std::string const & method ) { this->_header_tab["Transfer-Encoding:"] = method; }
 
 		std::map<std::string, std::string>	getBigMegaSuperTab( void ) const {return this->_header_tab;}
