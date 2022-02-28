@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_body.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/28 07:33:11 by user42            #+#    #+#             */
+/*   Updated: 2022/02/28 07:34:54 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parse_request.hpp"
 
 size_t	hexa_to_size(std::string nbr)
@@ -49,7 +61,7 @@ void	Parse_request::is_body(size_t found)
 		//std::cout << RED << "request_body = ["<< _request_body << "]" << END << std::endl;
 	if (get_request("Transfer-Encoding:") == "chunked")
 	{
-		//std::cout << RED << "CHUNKED ~~~~~~~~~~~~~ " << END << std::endl;
+		std::cout << RED << "CHUNKED ~~~~~~~~~~~~~ " << END << std::endl;
 		while (((found = split_body.find("\r\n")) != std::string::npos) && (size != 0))
 		{
 			found += cmp.size();

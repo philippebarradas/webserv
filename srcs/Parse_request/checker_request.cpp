@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/19 10:56:28 by user42            #+#    #+#             */
-/*   Updated: 2022/02/25 19:20:47 by tsannie          ###   ########.fr       */
+/*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
+/*   Updated: 2022/02/28 07:32:46 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int		Parse_request::check_double_content()
 int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
-	//std::cout <<  time_test << std::endl;
+	std::cout <<  time_test << std::endl;
 	if (time_test.compare("") == 0)
 		return (KEEP);
  	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
@@ -79,9 +79,9 @@ int		Parse_request::check_precondition()
 int		Parse_request::check_request()
 {
 	size_t	found = 0;
-
+	
 /*  std::cout << "CHECKER REQUEST" << std::endl;
-
+	
  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 	{
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
@@ -134,7 +134,7 @@ int		Parse_request::check_request()
 			_header_tab["Status"] = "412";
 			//replace = _header_tab.find("Status");
 			//replace->second = "412";
-		}
+		}		
 		return (1);
 	}
 	std::cout << "CRASSSHHHH" << std::endl;
