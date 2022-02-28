@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 08:09:12 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 10:58:40 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ int		Parse_request::check_double_content()
 				pos = _buffer.find(replace->first, pos);
 				if (pos != std::string::npos)
 				{
-					std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
 					_header_tab["Status"] = "400";
 					return (STOP);
 				}
@@ -40,7 +39,6 @@ int		Parse_request::check_double_content()
 	{
 		if ((pos = _buffer.find("If-Unmodified-Since\r\n", pos + 1)) != std::string::npos)
 		{
-			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
 			_header_tab["Status"] = "400";
 			return (STOP);
 		}
@@ -49,7 +47,6 @@ int		Parse_request::check_double_content()
 	{
 		if ((pos = _buffer.find("If-Modified-Since\r\n", pos + 1)) != std::string::npos)
 		{
-			//std::cout << "ERROR DOUBLE modified since" << std::endl;
 			_header_tab["Status"] = "400";
 			return (STOP);
 		}
@@ -74,12 +71,13 @@ int		Parse_request::check_request()
 {
 	size_t	found = 0;
 	
+/* 	std::cout << RED << "_buffer = ["<< _buffer << "]" << END << std::endl;
   std::cout << "CHECKER REQUEST" << std::endl;
 	
  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 	{
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
-	}
+	} */
 	
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
@@ -91,11 +89,11 @@ int		Parse_request::check_request()
 			//replace = _header_tab.find("Connection:");
 			//replace->second = "close";
 		}
-		else
-		{
-			_header_tab["Connection:"] = "keep-alive";
+		//else
+		//{
+			//_header_tab["Connection:"] = "keep-alive";
 			//replace->second = "keep-alive";
-		}
+		//}
 		if (get_request("Host:").compare("") == 0)
 		{
             std::cout << "ERROR = NO HOST" << std::endl;
@@ -128,7 +126,7 @@ int		Parse_request::check_request()
 			_header_tab["Status"] = "412";
 			//replace = _header_tab.find("Status");
 			//replace->second = "412";
-		}		
+		}	
 		return (1);
 	}
 	//std::cout << "CRASSSHHHH" << std::endl;

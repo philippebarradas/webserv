@@ -294,17 +294,18 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 // boucle pour accepter les connexions provenant des clients
 void	Engine::loop_accept(int nbr_connexions, const std::vector<Server> & src)
 {
-	int	new_socket = 0, i = 0;
-	for (i = 0; i < nbr_connexions; i++)
+	int	new_socket = 0;
+	this->_fd_i = 0;
+	for (_fd_i = 0; _fd_i < nbr_connexions; _fd_i++)
 	{
-		if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
+		if (is_listener(this->_fds_events[_fd_i].data.fd, this->_listen_fd, this->_nbr_servers, src))
 		{
-			new_socket = accept_connexions(this->_fds_events[i].data.fd);
-			this->_fds_events[i].events = EPOLLIN;
-			this->_fds_events[i].data.fd = new_socket;
-			if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket, &this->_fds_events[i]) == -1)
+			new_socket = accept_connexions(this->_fds_events[_fd_i].data.fd);
+			this->_fds_events[_fd_i].events = EPOLLIN;
+			this->_fds_events[_fd_i].data.fd = new_socket;
+			if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket, &this->_fds_events[_fd_i]) == -1)
 				throw std::runtime_error("[Error] epoll_ctl_add() failed");
-			this->_v.push_back(Client(this->_fds_events[i]));
+			this->_v.push_back(Client(this->_fds_events[_fd_i]));
 		}
 	}
 }
@@ -335,6 +336,7 @@ void	Engine::myRead(const std::vector<Server> & src, Client & client)
 void	Engine::loop_input_output(const std::vector<Server> & src)
 {
 	std::vector<Client>::iterator it;
+
 	for (it = _v.begin(); it != _v.end(); ++it)
 	{
 		if (it->getEvents().events & EPOLLIN)
@@ -342,10 +344,20 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);
-			close(it->getEvents().data.fd);
-			it = _v.erase(it);
-			if (it == _v.end())
-				break ;
+			if (it->getParse_head().get_request("Connection:") == "close")
+			{
+				std::cout << "CLOSE !" << std::endl;
+				close(it->getEvents().data.fd);
+				it = _v.erase(it);
+				if (it == _v.end())
+					break ;
+			}
+			else
+			{
+				//_v.erase(it);
+				//_v.clear();
+				it->reinit();
+			}
 		}
 	}
 }

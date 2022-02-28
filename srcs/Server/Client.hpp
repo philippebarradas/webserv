@@ -59,6 +59,7 @@ class Client
 
 		// METHODS
 		void	reinit_obj();
+		void	reinit( void );
 
 		// OPERATORS
 		Client &		operator=( Client const & rhs );
@@ -82,6 +83,8 @@ class Client
 		int &			getFd();
 		Parse_request &	getParse_head();
 		epoll_event &	getEvents();
+		epoll_event		getNewEvents();
+
 	private:
 
 		// VARIABLES

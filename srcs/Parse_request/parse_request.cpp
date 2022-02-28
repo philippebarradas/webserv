@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:32 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 08:15:59 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 10:47:13 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ Parse_request::Parse_request()
 		"Query", //ok
 		"Protocol",
 		"Host-uncut-comme-les-casquettes",
-		"Connection:"
 	};
 
 	_nbr_line = 0;
@@ -175,22 +174,8 @@ int		Parse_request::fill_variables()
 		buff_parsed = buff_parsed.substr(final_pose, buff_parsed.size() - (final_pose));
 		final_pose = 0;
 	}
-	if (get_request("Connection:") == "")
-		_header_tab["Connection:"] = "close";
-	
-	
-	//if (get_request("Expect:") == "100-continue" || get_request("Content-Length:") != "")
-	//{
-		//set_next_buffer_is_body(TRUE);
-	//	std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-	//}
-/*
-	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
-    {
-		if (it->second.size() != 0)
-			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
-*/
+	//if (get_request("Connection:") == "")
+	//	_header_tab["Connection:"] = "keep-alive";
 	return (KEEP);
 }
 

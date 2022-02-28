@@ -97,6 +97,7 @@ class Engine
 		std::string			_buff_send;
 		std::string			_remote_port;
 		std::string			_remote_addr;
+		size_t				_fd_i;
 
 		// METHODS
 		int		create_socket();

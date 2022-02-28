@@ -13,7 +13,7 @@ server{
 	location / {
 		cgi .php /usr/bin/php-cgi;
 		index cookie.php;
-		root /home/user42/Bureau/webserv;
+		root /home/user42/Bureau/webserv/www;
 		accepted_methods	GET POST DELETE;
 	}
 
