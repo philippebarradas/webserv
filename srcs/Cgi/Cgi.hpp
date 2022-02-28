@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/28 11:44:52 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/28 14:09:45 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,6 @@
 #define CYAN	"\033[1;36m"
 #define WHITE	"\033[1;37m"
 #define END		"\033[0m"
-
-// Utils macro
-#define TRUE 1
-#define FALSE 0
 
 // My class
 #include "../Server/Engine.hpp"

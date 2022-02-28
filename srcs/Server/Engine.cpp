@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/28 12:00:19 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/28 14:11:49 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,12 @@ Engine&				Engine::operator=( Engine const & rhs )
 
 int	Engine::create_socket()
 {
-	int _listen_fd = 0;
-	_listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_listen_fd == 0)
+	int listen_fd = 0;
+
+	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_fd == 0)
 		throw std::runtime_error("[Error] create_socket() failed");
-	return (_listen_fd);
+	return (listen_fd);
 }
 
 void	Engine::set_socket(const int & listen_fd)
@@ -222,7 +223,7 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 	{
 		client.getParse_head().parse_first_line(client.getFill_request());
 		client.getParse_head().first_line_is_parsed = true;
- 		if(client.getParse_head().get_request("Status") != "200")
+ 		if (client.getParse_head().get_request("Status") != "200")
 			client.getParse_head().error_first_line = true;
 	}
 
@@ -256,7 +257,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 			client.setRecv_len(_valread);
 			client.setFill_request(b);
 		}
-		if (client.getFill_request().size() >= (client.getRequest_header_size() +
+		if (client.getFill_request().size() == (client.getRequest_header_size() +
 			std::stoi(client.getParse_head().get_request("Content-Length:"))))
 		{
 			client.getParse_head().parse_body(client.getFill_request());
