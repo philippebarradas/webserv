@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/28 11:04:12 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 11:25:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,16 +394,20 @@ void	TreatRequest::error_page( Parse_request & req )
 	}
 	if (!find_custom)
 		this->force_open(req);
+	if (!req.get_request("Connection:")[0])
+		req.setConnection("close");
 }
 
 void	TreatRequest::redirect( Parse_request & req )
 {
 	this->_location = "http://"
-		+ req.get_request("Host-uncut-comme-les-casquettes")
+		+ req.get_request("Host-uncut")
 		+ ":" + sizet_to_string(this->_eng->GetAccessPort())
 		+ req.get_request("Path") + "/";
 	req.setStatus("301");
 	this->error_page(req);
+	if (!req.get_request("Connection:")[0])
+		req.setConnection("keep-alive");
 }
 
 bool	TreatRequest::check_access( Parse_request & req, std::string path )
@@ -557,6 +561,8 @@ void	TreatRequest::exec( Parse_request & req, std::string const & method )
 	std::string		path;
 	std::string		path_alias;
 
+	if (!req.get_request("Connection:")[0])
+		req.setConnection("keep-alive");
 	if (!this->exist(this->_loc->second.getRoot() + req.get_request("Path"))
 		&& this->_loc->first != "/")
 	{
@@ -598,7 +604,10 @@ std::string	TreatRequest::treat(Parse_request & req )
 {
 	if (req.get_request("Status") == "400"
 		|| req.get_request("Status") == "505") // TODO 505 test when merge
+	{
+		req.setConnection("close");
 		force_open(req);
+	}
 	else
 	{
 		this->_i_conf = this->selectConf(req);

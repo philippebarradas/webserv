@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 17:01:41 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/28 10:07:07 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,9 @@ void	Server::initServ( void )
 {
 	this->initLocation();
 
-	this->_listen = std::string("80");
-	this->_index.insert(std::string("index.html"));
-	this->_root = "html";
+	this->_listen = std::string(LISTEN_DEFAULT);
+	this->_index.insert(std::string(INDEX_DEFAULT));
+	this->_root = ROOT_DEFAULT;
 }
 
 typedef void ( Server::*allFunction )( std::vector<std::string> const & );

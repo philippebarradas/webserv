@@ -346,18 +346,13 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 			send_data(src, *it);
 			if (it->getParse_head().get_request("Connection:") == "close")
 			{
-				std::cout << "CLOSE !" << std::endl;
 				close(it->getEvents().data.fd);
 				it = _v.erase(it);
 				if (it == _v.end())
 					break ;
 			}
 			else
-			{
-				//_v.erase(it);
-				//_v.clear();
 				it->reinit();
-			}
 		}
 	}
 }
