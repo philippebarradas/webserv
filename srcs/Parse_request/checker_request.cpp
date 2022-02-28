@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:32:46 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 07:38:47 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,6 @@ int		Parse_request::check_request()
 		}		
 		return (1);
 	}
-	std::cout << "CRASSSHHHH" << std::endl;
+	//std::cout << "CRASSSHHHH" << std::endl;
 	return (KEEP);
 }

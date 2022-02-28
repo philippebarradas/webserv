@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:17 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:53:17 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/28 07:55:09 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,8 @@ int     Parse_request::check_first_line(size_t full_size)
 	&& get_request("Method").compare("DELETE") != 0) || (check_path() != 0))
 	{
 		_header_tab["Status"] = "400";
-		std::cout << "request_status = " << _header_tab["Status"] << std::endl;
-		std::cout << "{ERROR 400}" << std::endl;
+		//std::cout << "request_status = " << _header_tab["Status"] << std::endl;
+		//std::cout << "{ERROR 400}" << std::endl;
 		return (STOP);
 	}
 	else if (get_request("Protocol").compare("HTTP/1.1") != 0)

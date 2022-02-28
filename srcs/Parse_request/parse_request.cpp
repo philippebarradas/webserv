@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:32 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:35:51 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 07:52:02 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,8 @@ int		Parse_request::parse_request(std::string full_buffer)
 	return (check_request());
 }
 
-int			str_is_lnt(std::string str)
+bool			str_is_lnt(std::string str)
 {
-	std::string accept = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789";
-	bool v = false;
-
 	//std::cout << BLUE << "str=[" << str << "]" << END << std::endl;
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
 	{
