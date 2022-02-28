@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_first_line.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:17 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:35:18 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 07:53:17 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int		Parse_request::parse_first_line(std::string full_buffer)
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
-		std::cout << RED <<"buff = "<< _buffer << END << std::endl;
+		//std::cout << RED <<"buff = "<< _buffer << END << std::endl;
 
 		if ((start = fill_first_line()) == -1)
 			return (STOP);
@@ -40,7 +40,7 @@ int		Parse_request::fill_first_line()
 	size_t full_size = 0;
 	size_t rank = 0;
 	//std::cout << RED << _buffer << END << std::endl;
-	
+
 	for (std::string::iterator it = _buffer.begin(); it != _buffer.end() && rank <= 2; ++it)
 	{
 		cmp = *it;
@@ -64,7 +64,7 @@ int		Parse_request::fill_first_line()
 			size = 0;
 			rank++;
 		}
-	}	
+	}
 	parse_path();
 	return (check_first_line(full_size));
 }
@@ -76,7 +76,7 @@ void	Parse_request::parse_path()
 
 	if (get_request("Path").find("?") != std::string::npos)
 	{
-		start = get_request("Path").find("?");	
+		start = get_request("Path").find("?");
 		_header_tab["Query"] = get_request("Path").substr(start + 1, get_request("Path").size() - start);
 		//replace = _header_tab.find("Query");
 		//replace->second = get_request("Path").substr(start + 1, get_request("Path").size() - start);
