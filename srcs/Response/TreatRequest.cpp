@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/28 08:05:25 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 11:04:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -396,7 +396,7 @@ void	TreatRequest::error_page( Parse_request & req )
 		this->force_open(req);
 }
 
-void	TreatRequest::redirect( Parse_request & req, std::string const & path )
+void	TreatRequest::redirect( Parse_request & req )
 {
 	this->_location = "http://"
 		+ req.get_request("Host-uncut-comme-les-casquettes")
@@ -431,7 +431,7 @@ bool	TreatRequest::check_access( Parse_request & req, std::string path )
 			if (!this->permForOpen(testPath))
 				req.setStatus("403");
 			else
-				this->redirect(req, testPath);
+				this->redirect(req);
 			return (false);
 		}
 		else if (!this->exist(testPath))

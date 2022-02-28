@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 16:22:51 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/28 07:49:30 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ Config &				Config::operator=( Config const & rhs )
 
 std::ostream &			operator<<( std::ostream & o, Config const & i )
 {
-/* 	size_t e, y;
+	size_t e, y;
+
 	for (e = 0 ; e < i.getConfig().size() ; ++e)
 	{
 		std::cout << BGREEN "Config server #" << (e + 1)
@@ -78,7 +79,7 @@ std::ostream &			operator<<( std::ostream & o, Config const & i )
 		for (y = 0 ; y < 50 ; ++y)
 			o << '-';
 		std::cout << std::endl;
-	} */
+	}
 	return o;
 }
 

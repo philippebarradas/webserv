@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 11:11:12 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/02/28 08:02:27 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ class TreatRequest
 		bool	exist( std::string const & root) const;
 		bool	permForOpen( std::string const & path ) const;
 		void	permMethod( Parse_request & req );
-		void	redirect( Parse_request & req, std::string const & path );
+		void	redirect( Parse_request & req );
 		void	exec_root( Parse_request & req, std::string const & path );
 		void	exec( Parse_request & req, std::string const & method );
 		void	exec_delete( Parse_request & req, std::string const & path );
