@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:32 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:52:02 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 08:15:59 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,9 @@ int		Parse_request::fill_variables()
 		final_pose = 0;
 	}
 	if (get_request("Connection:") == "")
-		_header_tab.insert(std::pair<std::string, std::string>("Connection:", "close"));
+		_header_tab["Connection:"] = "close";
+	
+	
 	//if (get_request("Expect:") == "100-continue" || get_request("Content-Length:") != "")
 	//{
 		//set_next_buffer_is_body(TRUE);

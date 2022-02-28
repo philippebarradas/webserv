@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:33:11 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:52:26 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 08:11:35 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ size_t	hexa_to_size(std::string nbr)
 	std::stringstream ss;
 	std::string hex = "0123456789abcdefABCDEF";
 	size_t found;
-	size_t res = 0;
-	size_t p = 0;
+	size_t res = 0;	
 
 	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
 	{
@@ -77,6 +76,9 @@ void	Parse_request::is_body(size_t found)
 		_request_body_size = _request_body.size();
 	else if (_request_body_size == 0 && get_request("Content-Length:").compare("") != 0)
 		_request_body_size = std::stoi(get_request("Content-Length:"));
+		//_request_body_size = stost_size(0, MAX_MAXBODY, get_request("Content-Length:"), "_request_body_size");
+
+
 	//if (_next_buffer_is_body == 1 && _request_body_size != 0)
 	//	_next_buffer_is_body = 0;
 }

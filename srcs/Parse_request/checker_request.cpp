@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 07:38:47 by user42           ###   ########.fr       */
+/*   Updated: 2022/02/28 08:09:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ int		Parse_request::check_double_content()
 				{
 					std::cout << "ERROR DOUBLE CONTENT LENGTH" << std::endl;
 					_header_tab["Status"] = "400";
-					//replace = _header_tab.find("Status");
-					//replace->second = "400";
 					return (STOP);
 				}
 			}
@@ -44,8 +42,6 @@ int		Parse_request::check_double_content()
 		{
 			std::cout << "ERROR DOUBLE un - modified since" << std::endl;
 			_header_tab["Status"] = "400";
-			//replace = _header_tab.find("Status");
-			//replace->second = "400";
 			return (STOP);
 		}
 	}
@@ -55,8 +51,6 @@ int		Parse_request::check_double_content()
 		{
 			//std::cout << "ERROR DOUBLE modified since" << std::endl;
 			_header_tab["Status"] = "400";
-			//replace = _header_tab.find("Status");
-			//replace->second = "400";
 			return (STOP);
 		}
 	}
@@ -80,13 +74,13 @@ int		Parse_request::check_request()
 {
 	size_t	found = 0;
 	
-/*  std::cout << "CHECKER REQUEST" << std::endl;
+  std::cout << "CHECKER REQUEST" << std::endl;
 	
  	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
 	{
 		std::cout << CYAN << "[" << it->first << "] = [" << it->second << "]" << END << std::endl;
 	}
-	 */
+	
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
 	{

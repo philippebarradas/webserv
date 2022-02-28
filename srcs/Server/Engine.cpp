@@ -255,7 +255,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	else
 	{
 		if (client.getFill_request().size() < (client.getRequest_header_size() +
-			std::stoi(client.getParse_head().get_request("Content-Length:"))))
+			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
 		{
 			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
 			// recv len += valread
@@ -263,7 +263,7 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 			client.setFill_request(b);
 		}
 		if (client.getFill_request().size() == (client.getRequest_header_size() +
-			std::stoi(client.getParse_head().get_request("Content-Length:"))))
+			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
 		{
 			std::cout << "j'ai read le body" << std::endl;
 			std::cout << RED << "[parse body content length]]" << END << std::endl;

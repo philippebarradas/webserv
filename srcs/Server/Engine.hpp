@@ -27,7 +27,7 @@
 // My class
 # include "../Config/Server.hpp"
 # include "../Response/TreatRequest.hpp"
-
+# include "../Config/utils.hpp"
 // Colors
 #define PURPLE	"\033[0;35m"
 #define BLACK	"\033[1;30m"
