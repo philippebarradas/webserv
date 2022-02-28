@@ -20,13 +20,13 @@ server{
 }
 
 server{
-	server_name localhost;
+	server_name localhostt;
 	listen 8002;
 
 
 	client_max_body_size 1000000000;
 	autoindex off;
-	root /home/dodjian/Desktop/42/sixth_circle/webserv/www;
+	root /home/user42/Bureau/webserv/www;
 	location / {
 		index form.html;
 		cgi .php /usr/bin/php-cgi;

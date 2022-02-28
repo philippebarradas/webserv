@@ -74,9 +74,9 @@ class Engine
 		Engine &		operator=( Engine const & rhs );
 
 		// GETTERS
-		std::string	GetRemote_Port() const;
-		std::string	GetRemote_Addr() const;
-		int			GetAccessPort( void ) const;
+		std::string	const & GetRemote_Port() const;
+		std::string	const & GetRemote_Addr() const;
+		int			const & GetAccessPort( void ) const;
 
 	private:
 
@@ -100,12 +100,12 @@ class Engine
 
 		// METHODS
 		int		create_socket();
-		void	set_socket(int listen_fd);
-		bool	is_binded(int port_config);
-		void	bind_socket(int listen_fd, const std::vector<Server> & src);
-		void	listen_socket(int listen_fd);
-		int		accept_connexions(int listen_fd);
-		void	loop_accept(int nbr_connexions, const std::vector<Server> & src);
+		void	set_socket(const int & listen_fd);
+		bool	is_binded(const int & port_config);
+		void	bind_socket(const int & listen_fd, const std::vector<Server> & src);
+		void	listen_socket(const int & listen_fd);
+		int		accept_connexions(const int & listen_fd);
+		void	loop_accept(const int & nbr_connexions, const std::vector<Server> & src);
 		void	loop_input_output(const std::vector<Server> & src);
 		void	set_remote_var(struct sockaddr_in & addr_client);
 		void	myRead(const std::vector<Server> & src, Client & client);
@@ -117,7 +117,5 @@ class Engine
 			const int & nbr_servers, const std::vector<Server> & src);
 		bool	is_body_empty(Client & client);
 };
-
-std::ostream &			operator<<( std::ostream & o, Engine const & i );
 
 #endif /* ********************************************************* Engine_H */

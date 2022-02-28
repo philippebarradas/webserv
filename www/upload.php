@@ -13,7 +13,7 @@
 if (isset($_FILES['userfile']))
 {
 	$_FILES['userfile'];
-	$uploaddir = '/home/dodjian/Desktop/42/sixth_circle/webserv/www/uploads/';
+	$uploaddir = '/home/user42/Bureau/webserv/www/uploads/';
 	$target_path = $uploaddir . basename($_FILES['userfile']['name']);
 }
 
@@ -29,8 +29,6 @@ if (isset($_POST['submit']))
 	}
 }
 
-	while (list($var,$value) = each($_SERVER))
-		echo "$var => $value <br />";
 ?>
 
 </body>

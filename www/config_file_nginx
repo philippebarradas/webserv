@@ -8,7 +8,7 @@ server{
 	autoindex off;
 	root /home/user42/Bureau/webserv/www;
 	dav_methods DELETE;
-	index cookie.php;
+	index upload.php;
 	client_max_body_size 10000000000000;
 
 	location ~ \.php$ {
@@ -16,5 +16,6 @@ server{
 		fastcgi_index hello.php;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include /etc/nginx/fastcgi_params;
+		include /etc/nginx/mime.types;
 	}
 }}

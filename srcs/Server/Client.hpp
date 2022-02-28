@@ -57,9 +57,6 @@ class Client
 		// DESTRUCTOR
 		~Client();
 
-		// METHODS
-		void	reinit_obj();
-
 		// OPERATORS
 		Client &		operator=( Client const & rhs );
 
@@ -73,15 +70,15 @@ class Client
 		void	setHeader_readed(bool const & header_readed);
 
 		// GETTERS
-		size_t &		getRecv_len();
-		size_t &		getRequest_header_size();
-		std::string &	getFill_request();
-		bool &			getHeader_parsed();
-		bool &			getHeader_readed();
-		bool &			getIs_sendable();
-		int &			getFd();
-		Parse_request &	getParse_head();
-		epoll_event &	getEvents();
+		size_t const &		getRecv_len() const ;
+		size_t const &		getRequest_header_size() const;
+		std::string const &	getFill_request() const;
+		bool const &		getHeader_parsed() const;
+		bool const &		getHeader_readed() const;
+		bool const &		getIs_sendable() const;
+		int const &			getFd() const;
+		Parse_request &		getParse_head();
+		epoll_event &		getEvents();
 	private:
 
 		// VARIABLES

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:44 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/25 16:36:56 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/28 11:44:52 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ class Cgi
 
 		// CONSTRUCTOR
 		Cgi();
-		Cgi(std::string const & root, std::string const & path, std::string const & pathCgi, const Parse_request & src_header, const Engine & src_engine); // pour l'instant
+		Cgi(std::string const & root, std::string const & path, std::string const & pathCgi,
+			const Parse_request & src_header, const Engine & src_engine);
 		Cgi(Cgi const & src);
 
 		// DESTRUCTOR
@@ -75,7 +76,8 @@ class Cgi
 		std::string	normVar( std::string src );
 		std::string	to_string(size_t nb);
 		bool	is_file_cgi(std::string path_extension);
-		void	init_path(std::string const & root, std::string const & path, std::string const & pathCgi);
+		void	init_path(std::string const & root, std::string const & path,
+			std::string const & pathCgi);
 		void	init_env_client_var(const Parse_request & src_header);
 		void	init_env_server_var(const Parse_request & src_header);
 		void	init_env_request_var(const Parse_request & src_header,
@@ -86,7 +88,7 @@ class Cgi
 		char	**create_argv(std::string path_file_executed);
 		void	exec_cgi(char **argv, char **env, const Parse_request & src_header);
 		std::string	body_response_from_fd(int fd);
-		void	write_body_post_in_fd(std::string body_string); // body | php-cgi
+		void	write_body_post_in_fd(std::string body_string);
 
 		// GETTERS
 		std::map<std::string, std::string>	getEnv() const;
@@ -104,9 +106,9 @@ class Cgi
 
 		// VARIABLES
 		std::string	_type_cgi;
-		std::string	_root; // 1
-		std::string	_path_file_executed_absolu; // 2
-		std::string	_path_file_executed; // 1 + 2
+		std::string	_root;
+		std::string	_path_file_executed_absolu;
+		std::string	_path_file_executed;
 		std::string	_path_cgi;
 		std::string	_user;
 		std::string	_home;
@@ -114,7 +116,5 @@ class Cgi
 		int	_pid;
 		std::map<std::string, std::string>	_env;
 };
-
-std::ostream &			operator<<( std::ostream & o, Cgi const & i );
 
 #endif /* ************************************************************* CGI_H */

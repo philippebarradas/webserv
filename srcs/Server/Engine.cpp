@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2021/12/17 18:58:04dodjian          ###   ########.fr       */
+/*   Updated: 2022/02/28 12:00:19 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ Engine::Engine()
 {
 }
 
-Engine::Engine(const std::vector<Server> & src)
+Engine::Engine(std::vector<Server> const & src)
 {
-	std::cout << BPURPLE "-------- Starting webserv --------\n" END << std::endl;
+	std::cout << BBLUE "-------- Starting webserv --------\n" END << std::endl;
 	setup_socket_server(src);
 	loop_server(src);
 }
 
-Engine::Engine( Engine const & src )
+Engine::Engine(Engine const & src)
 {
 	*this = src;
 }
@@ -72,7 +72,6 @@ Engine&				Engine::operator=( Engine const & rhs )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-// Creating socket file descriptor
 int	Engine::create_socket()
 {
 	int _listen_fd = 0;
@@ -82,8 +81,7 @@ int	Engine::create_socket()
 	return (_listen_fd);
 }
 
-// Set socket file descriptor to be reusable
-void	Engine::set_socket(int listen_fd)
+void	Engine::set_socket(const int & listen_fd)
 {
 	int opt = 1;
 	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
@@ -91,8 +89,7 @@ void	Engine::set_socket(int listen_fd)
 		throw std::runtime_error("[Error] set_socket() failed");
 }
 
-// Check if port config is binded
-bool	Engine::is_binded(int port_config)
+bool	Engine::is_binded(const int & port_config)
 {
 	for (int i = 0; i < this->_i_server_binded; i++)
 	{
@@ -102,8 +99,7 @@ bool	Engine::is_binded(int port_config)
 	return (false);
 }
 
-// Put a name to a socket
-void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
+void	Engine::bind_socket(const int & listen_fd, const std::vector<Server> & src)
 {
 	int port_config = 0;
 
@@ -111,24 +107,24 @@ void	Engine::bind_socket(int listen_fd, const std::vector<Server> & src)
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_addr.s_addr = INADDR_ANY;
 	this->_addr.sin_port = htons(port_config);
-	//std::cout << GREEN << "Port: " << port_config << std::endl << END;
+	std::cout << PURPLE2 << "[webserv] listen on: " << port_config
+		<< std::endl << std::endl << END;
 	if (is_binded(port_config) == false)
 	{
-		if (bind(listen_fd, (struct sockaddr *)&this->_addr, sizeof(this->_addr)) < 0)
+		if (bind(listen_fd, (struct sockaddr *)&this->_addr,
+			sizeof(this->_addr)) < 0)
 			throw std::runtime_error("[Error] Bind failed");
 		this->_port_binded[this->_i_server_binded] = port_config;
 		this->_i_server_binded++;
 	}
 }
 
-// Make the socket passive, waiting to accept
-void	Engine::listen_socket(int listen_fd)
+void	Engine::listen_socket(const int & listen_fd)
 {
 	if (listen(listen_fd, MAX_EVENTS) < 0)
 		throw std::runtime_error("[Error] listen_socket() failed");
 }
 
-// Set remote addr and remote port
 void	Engine::set_remote_var(struct sockaddr_in & addr_client)
 {
 	int i_remote_port = ntohs(addr_client.sin_port);
@@ -139,23 +135,24 @@ void	Engine::set_remote_var(struct sockaddr_in & addr_client)
 	this->_remote_addr = inet_ntoa(addr_client.sin_addr);
 }
 
-// Accept connexion and return socket accepted
-int	Engine::accept_connexions(int listen_fd)
+int	Engine::accept_connexions(const int & listen_fd)
 {
 	struct sockaddr_in addr_client;
 	int new_socket = 0;
 	int client_len = sizeof(addr_client);
 
-	//std::cout << "listen fd = " << listen_fd << std::endl;
-	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client, (socklen_t *)&client_len);
+	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client,
+		(socklen_t *)&client_len);
+	std::cout << PURPLE2 << "[webserv] new client accept on: " << this->_port
+		<< std::endl << END;
 	set_remote_var(addr_client);
 	if (new_socket < 0)
 		throw std::runtime_error("[Error] accept_connexions() failed");
 	return (new_socket);
 }
 
-// savoir si le fd dans le epoll est un listener (socket d'un port) ou non
-bool	Engine::is_listener(const int & fd, const int *tab_fd, const int & nbr_servers, const std::vector<Server> & src)
+bool	Engine::is_listener(const int & fd, const int *tab_fd,
+	const int & nbr_servers, const std::vector<Server> & src)
 {
 	for (int i = 0; i < nbr_servers; i++)
 	{
@@ -168,7 +165,6 @@ bool	Engine::is_listener(const int & fd, const int *tab_fd, const int & nbr_serv
 	return (false);
 }
 
-// savoir si le body est vide
 bool	Engine::is_body_empty(Client & client)
 {
 	if (client.getParse_head().get_request("Content-Length:") != "" ||
@@ -177,8 +173,6 @@ bool	Engine::is_body_empty(Client & client)
 	return (true);
 }
 
-/* cree la socket -> set la socket -> donne un nom a la socket ->
-	mets la socket comme passive -> set le premier events fd avec la socket passive */
 void	Engine::setup_socket_server(const std::vector<Server> & src)
 {
 	this->_v.reserve(MAX_EVENTS);
@@ -188,12 +182,16 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	this->_epfd = epoll_create(MAX_EVENTS);
 	if (this->_epfd < 0)
 		throw std::runtime_error("[Error] epoll_create() failed");
-	for (this->_i_server = 0; this->_i_server < this->_nbr_servers; this->_i_server++)
+	for (this->_i_server = 0; this->_i_server < this->_nbr_servers;
+		this->_i_server++)
 	{
 		this->_listen_fd[this->_i_server] = create_socket();
-		this->_fds_events[this->_i_server].data.fd = this->_listen_fd[this->_i_server];
+		this->_fds_events[this->_i_server].data.fd =
+			this->_listen_fd[this->_i_server];
 		this->_fds_events[this->_i_server].events = EPOLLIN;
-		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, this->_listen_fd[this->_i_server], &this->_fds_events[this->_i_server]) == -1)
+		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD,
+			this->_listen_fd[this->_i_server],
+				&this->_fds_events[this->_i_server]) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 		set_socket(this->_listen_fd[this->_i_server]);
 		bind_socket(this->_listen_fd[this->_i_server], src);
@@ -201,7 +199,6 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-// read le header de la requete
 void	Engine::read_header(const std::vector<Server> & src, Client & client)
 {
 	char	b;
@@ -231,11 +228,11 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 
 }
 
-// read le body de la requete
 void	Engine::read_body(const std::vector<Server> & src, Client & client)
 {
 	char b;
 
+	std::cout << "read body" << std::endl;
 	if (client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
 		if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
@@ -268,7 +265,6 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	}
 }
 
-// traite et envoie la reponse au client
 void	Engine::send_data(const std::vector<Server> & src, Client & client)
 {
 	int		nbr_bytes_send = 0;
@@ -277,32 +273,33 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 	{
 		TreatRequest	treatment(src, *this);
 		this->_buff_send = treatment.treat(client.getParse_head());
-		nbr_bytes_send = send(client.getEvents().data.fd, this->_buff_send.c_str(), this->_buff_send.size(), 0);
+		nbr_bytes_send = send(client.getEvents().data.fd,
+			this->_buff_send.c_str(), this->_buff_send.size(), 0);
 
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
 	}
 }
 
-// boucle pour accepter les connexions provenant des clients
-void	Engine::loop_accept(int nbr_connexions, const std::vector<Server> & src)
+void	Engine::loop_accept(const int & nbr_connexions, const std::vector<Server> & src)
 {
 	int	new_socket = 0, i = 0;
 	for (i = 0; i < nbr_connexions; i++)
 	{
-		if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd, this->_nbr_servers, src))
+		if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd,
+			this->_nbr_servers, src))
 		{
 			new_socket = accept_connexions(this->_fds_events[i].data.fd);
 			this->_fds_events[i].events = EPOLLIN;
 			this->_fds_events[i].data.fd = new_socket;
-			if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket, &this->_fds_events[i]) == -1)
+			if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket,
+				&this->_fds_events[i]) == -1)
 				throw std::runtime_error("[Error] epoll_ctl_add() failed");
 			this->_v.push_back(Client(this->_fds_events[i]));
 		}
 	}
 }
 
-// read les datas de la requete
 void	Engine::myRead(const std::vector<Server> & src, Client & client)
 {
 	if (client.getHeader_readed() == false)
@@ -314,16 +311,17 @@ void	Engine::myRead(const std::vector<Server> & src, Client & client)
 	}
 	else if (is_body_empty(client) == false)
 		read_body(src, client);
-	if (client.getIs_sendable() == true || client.getParse_head().error_first_line == true ||
-		(client.getHeader_parsed() == true && is_body_empty(client) == true))
+	if (client.getIs_sendable() == true ||
+		client.getParse_head().error_first_line == true ||
+			(client.getHeader_parsed() == true && is_body_empty(client) == true))
 	{
 		client.getEvents().events = EPOLLOUT;
-		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd, &client.getEvents()) == -1)
+		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd,
+			&client.getEvents()) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_mod() failed");
 	}
 }
 
-// boucle d'input output
 void	Engine::loop_input_output(const std::vector<Server> & src)
 {
 	std::vector<Client>::iterator it;
@@ -342,13 +340,13 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 	}
 }
 
-// boucle infini du serveur
 void	Engine::loop_server(const std::vector<Server> & src)
 {
 	int nbr_connexions = 0;
 	while (true)
 	{
-		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events, MAX_EVENTS, this->_timeout)) < 0)
+		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events,
+			MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		loop_accept(nbr_connexions, src);
 		loop_input_output(src);
@@ -359,17 +357,17 @@ void	Engine::loop_server(const std::vector<Server> & src)
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-int			Engine::GetAccessPort() const
+int			const & Engine::GetAccessPort() const
 {
 	return (this->_port);
 }
 
-std::string	Engine::GetRemote_Port() const
+std::string	const & Engine::GetRemote_Port() const
 {
 	return (this->_remote_port);
 }
 
-std::string	Engine::GetRemote_Addr() const
+std::string	const & Engine::GetRemote_Addr() const
 {
 	return (this->_remote_addr);
 }
