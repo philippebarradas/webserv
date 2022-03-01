@@ -37,7 +37,6 @@ Client::Client(Client const & src )
 
 Client::~Client()
 {
-	//std::cout << GREEN << "----------------- End of Client -----------------" << END << std::endl << std::endl;
 }
 
 /* void	Client::reinit( void )
