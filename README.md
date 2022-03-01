@@ -12,7 +12,7 @@ export PATH=$HOME/homebrew/bin:$PATH
 
 Install telnet:
 
-brew install telnet
+brew install telnet.
 
 Install nginx:
 

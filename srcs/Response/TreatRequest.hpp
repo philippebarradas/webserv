@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/01 12:14:39 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 15:27:26 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ class TreatRequest
 		bool	search_index( Parse_request & req,
 			std::string const & path );
 
-		//bool	exist( std::string const & path, Parse_request & req) const;
 		void	parce_end_path( std::string & src );
 		bool	check_access_delete( Parse_request & req, std::string path );
 		bool	check_access( Parse_request & req, std::string path );
@@ -88,7 +87,7 @@ class TreatRequest
 		bool	exist( std::string const & root) const;
 		bool	permForOpen( std::string const & path ) const;
 		void	permMethod( Parse_request & req );
-		void	redirect( Parse_request & req, std::string const & path );
+		void	redirect( Parse_request & req );
 		void	exec_root( Parse_request & req, std::string const & path );
 		void	exec( Parse_request & req, std::string const & method );
 		void	exec_delete( Parse_request & req, std::string const & path );

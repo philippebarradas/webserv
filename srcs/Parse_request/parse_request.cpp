@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/11 18:25:34 by user42            #+#    #+#             */
-/*   Updated: 2022/02/25 19:22:35 by tsannie          ###   ########.fr       */
+/*   Created: 2022/02/28 07:35:32 by user42            #+#    #+#             */
+/*   Updated: 2022/03/01 13:17:47 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,42 +17,43 @@
 
 Parse_request::Parse_request()
 {
-	//std::cout << GREEN << "----------------- Start Parse Header -----------------" << END << std::endl << std::endl;
 	size_t		len;
 	std::string	elements[] = {
-		"Status", //ok
-		"Method", //ok
-		"Path", //ok
-		"Query", //ok
+		"Status",
+		"Method",
+		"Path",
+		"Query",
 		"Protocol",
-		"Host-uncut-comme-les-casquettes",
-		"Connection:"
+		"Host-uncut",
 	};
-
 	_nbr_line = 0;
 	_request_body = "";
 	std::string empty = "";
-	//_next_buffer_is_body = 0;
 	_request_body_size = 0;
 	first_line_is_parsed = false;
 	error_first_line = false;
 
-
 	len = sizeof(elements) / sizeof(std::string);
 	for (size_t x = 0; x < len; x++)
-		_header_tab.insert(std::pair<std::string, std::string>(elements[x], empty));
+		_header_tab.insert(std::pair<std::string,
+			std::string>(elements[x], empty));
 	_header_tab["Status"] = "200";
 }
 
 Parse_request::~Parse_request()
 {
-	//std::cout << GREEN << "----------------- End Parse Header -----------------" << END << std::endl << std::endl;
 }
 
-Parse_request&				Parse_request::operator=( Parse_request const & rhs )
+Parse_request::Parse_request( Parse_request const & src )
 {
+	*this = src;
+}
+
+Parse_request&	Parse_request::operator=( Parse_request const & rhs )
+{
+	this->error_first_line = rhs.error_first_line;
+	this->first_line_is_parsed = rhs.first_line_is_parsed;
 	this->_buffer = rhs._buffer;
-	//this->_next_buffer_is_body = rhs._next_buffer_is_body;
 	this->_request_body_size = rhs._request_body_size;
 	this->_request_body = rhs._request_body;
 	this->_header_tab = rhs._header_tab;
@@ -69,39 +70,22 @@ int		Parse_request::parse_request(std::string full_buffer)
 {
 	size_t	start = 0;
 
-/* 	if (_next_buffer_is_body == TRUE && _request_body_size == 0)
-	{
-		this->_buffer = full_buffer;
-		return (check_request());
-	} */
-
  	this->_buffer = full_buffer;
-	//std::cout << _nbr_line << std::endl;
-
 	this->incr_nbr_line();
-	//std::cout << _nbr_line << std::endl;
-
 	if (get_nbr_line() == 1)
 	{
-		std::cout << "{fill first line}" << std::endl;
 		if ((start = fill_first_line()) == -1)
-			return (STOP);
+			return (-1);
 		if (start >= _buffer.size())
-			return (KEEP);
-		//else
-			//_buffer = _buffer.substr(start, _buffer.size() - start);;
+			return (0);
 	}
 	if (fill_variables() == -1)
-		return (STOP);
+		return (-1);
 	return (check_request());
 }
 
-int			str_is_lnt(std::string str)
+bool			str_is_lnt(std::string str)
 {
-	std::string accept = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ-0123456789";
-	bool v = false;
-
-	//std::cout << BLUE << "str=[" << str << "]" << END << std::endl;
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
 	{
 		if (!std::isalpha(*it) && !std::isdigit(*it) && *it != '-')
@@ -121,26 +105,23 @@ void		Parse_request::fill_param_request_tab(std::string buff_parsed)
 		end = buff_parsed.find("\r\n\r\n");
 		if ((debut = buff_parsed.substr(0, found).find(":")) != std::string::npos)
 		{
-			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos && str_is_lnt(buff_parsed.substr(0, debut)))
+			if ((final_pose = buff_parsed.find("\r\n")) != std::string::npos
+				&& str_is_lnt(buff_parsed.substr(0, debut)))
 			{
 				_param_request_tab.insert(std::pair<std::string, std::string>
 					(buff_parsed.substr(0, debut)
-					,fill_header_tab(buff_parsed.substr(debut + 1, final_pose - debut - 1))));
+					,fill_header_tab(buff_parsed.substr(debut + 1
+						,final_pose - debut - 1))));
 			}
 		}
-		else if (str_is_lnt(buff_parsed.substr(0, found)) == 0 && buff_parsed.substr(0, found).size() != 0)
-			_param_request_tab.insert(std::pair<std::string, std::string>(buff_parsed.substr(0, found), ""));//fill_header_tab(buff_parsed.substr(found, final_pose - found))));
+		else if (str_is_lnt(buff_parsed.substr(0, found)) == 0
+			&& buff_parsed.substr(0, found).size() != 0)
+			_param_request_tab.insert(std::pair<std::string, std::string>
+				(buff_parsed.substr(0, found), ""));
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (final_pose));
 		if (found == end)
 			break;
 	}
-
- 	/*for (std::map<std::string, std::string>::iterator it = _param_request_tab.begin(); it != _param_request_tab.end(); ++it)
-	{
-		//if (it->second.size() != 0)
-		std::cout << YELLOW << "[" << it->first << "] = [" << it->second << "]" <<  END << std::endl;
-	}*/
-	//std::cout << "ENDDDDDDDDDDDDDDDdd" << std::endl;
 }
 
 int		Parse_request::fill_variables()
@@ -151,17 +132,15 @@ int		Parse_request::fill_variables()
 	bool	bn = false;
 	std::string buff_parsed = _buffer;
 
-	//std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
 	if ((found =_buffer.find("\r\n")) != std::string::npos)
 		buff_parsed = buff_parsed.substr(found + 2, buff_parsed.size() - (found + 2));
-	//std::cout << GREEN << "buff_parsed = ["<< buff_parsed << "]" << END << std::endl;
-
 
 	fill_param_request_tab(buff_parsed);
 	while ((found = buff_parsed.find(":")) != std::string::npos)
 	{
 		found += 1;
-		for (std::string::iterator it = buff_parsed.begin(); it != buff_parsed.end() && bn == false; ++it)
+		for (std::string::iterator it = buff_parsed.begin();
+			it != buff_parsed.end() && bn == false; ++it)
 		{
 			final_pose++;
 			cmp = *it;
@@ -178,21 +157,7 @@ int		Parse_request::fill_variables()
 		buff_parsed = buff_parsed.substr(final_pose, buff_parsed.size() - (final_pose));
 		final_pose = 0;
 	}
-	if (get_request("Connection:") == "")
-		_header_tab.insert(std::pair<std::string, std::string>("Connection:", "close"));
-	//if (get_request("Expect:") == "100-continue" || get_request("Content-Length:") != "")
-	//{
-		//set_next_buffer_is_body(TRUE);
-	//	std::cout << GREEN << "FIND 100-continue  _next_buffer_is_body " << _next_buffer_is_body << END << std::endl << std::endl;
-	//}
-/*
-	for (std::map<std::string, std::string>::iterator it = _header_tab.begin(); it != _header_tab.end(); ++it)
-    {
-		if (it->second.size() != 0)
-			std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
-	}
-*/
-	return (KEEP);
+	return (0);
 }
 
 
@@ -207,4 +172,73 @@ std::string	Parse_request::fill_header_tab(std::string str)
 	while (!str.empty() && str[0] == ' ')
 		str.erase(0,1);
 	return (str);
+}
+
+// GET
+
+std::string Parse_request::get_request(std::string request) const
+{
+	for (std::map<std::string, std::string>::const_iterator
+		it = _header_tab.begin(); it != _header_tab.end(); ++it)
+	{
+		if (request.compare(it->first) == 0)
+		{
+			if (it->second.compare("") != 0)
+				return (it->second);
+			return ("");
+		}
+	}
+	return ("");
+}
+
+size_t	Parse_request::get_nbr_line() const
+{
+	return this->_nbr_line;
+}
+
+std::map<std::string, std::string>	Parse_request::getBigMegaSuperTab(void) const
+{
+	return this->_header_tab;
+}
+
+std::map<std::string, std::string>	const & Parse_request::get_param_request_tab( void ) const
+{
+	return this->_param_request_tab;
+}
+
+std::string Parse_request::get_request_body() const
+{
+	return (_request_body);
+}
+
+size_t Parse_request::get_request_body_size() const
+{
+	return (_request_body_size);
+}
+
+// SET
+
+void	Parse_request::setStatus( std::string const & code )
+{
+	this->_header_tab["Status"] = code;
+}
+
+void	Parse_request::setConnection( std::string const & status)
+{
+	this->_header_tab["Connection:"] = status;
+}
+
+void	Parse_request::setTransfer( std::string const & method )
+{
+	this->_header_tab["Transfer-Encoding:"] = method;
+}
+
+void 	Parse_request::set_request_body(std::string new_request_body)
+{
+	_request_body = new_request_body;
+}
+
+void	Parse_request::incr_nbr_line()
+{
+	this->_nbr_line++;
 }

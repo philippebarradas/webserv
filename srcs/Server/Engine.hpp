@@ -27,7 +27,7 @@
 // My class
 # include "../Config/Server.hpp"
 # include "../Response/TreatRequest.hpp"
-
+# include "../Config/utils.hpp"
 // Colors
 #define PURPLE	"\033[0;35m"
 #define BLACK	"\033[1;30m"
@@ -97,6 +97,7 @@ class Engine
 		std::string			_buff_send;
 		std::string			_remote_port;
 		std::string			_remote_addr;
+		size_t				_fd_i;
 
 		// METHODS
 		int		create_socket();

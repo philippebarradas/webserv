@@ -6,7 +6,7 @@
 #    By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/06 17:08:23 by tsannie           #+#    #+#              #
-#    Updated: 2022/03/01 12:59:41 by dodjian          ###   ########.fr        #
+#    Updated: 2022/03/01 15:26:16 by dodjian          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 NAME			= webserv
 CC				= @clang++
-CFLAGS			= #-Wall -Wextra -Werror -std=c++98
+CFLAGS			= #-Wall -Wextra -std=c++98#-Werror #
 RM				= @rm -rf
 
 ######################################################################

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 14:06:00 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 15:30:34 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,6 +325,7 @@ void	Engine::myRead(Client & client)
 void	Engine::loop_input_output(const std::vector<Server> & src)
 {
 	std::vector<Client>::iterator it;
+
 	for (it = _v.begin(); it != _v.end(); ++it)
 	{
 		if (it->getEvents().events & EPOLLIN)
@@ -332,10 +333,15 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);
-			close(it->getEvents().data.fd);
-			it = _v.erase(it);
-			if (it == _v.end())
-				break ;
+			//if (it->getParse_head().get_request("Connection:") == "close")
+			//{
+				close(it->getEvents().data.fd);
+				it = _v.erase(it);
+				if (it == _v.end())
+					break ;
+			//}
+			//else
+			//	it->reinit();
 		}
 	}
 }

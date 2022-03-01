@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 16:40:33 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 19:01:02 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 12:51:26 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,8 @@ void	Response::writeType( std::string const & extension,
 		this->_header += "Content-Type: ";
 		if (extension == ".html")
 			this->_header += "text/html";
+		else if (extension == ".css")
+			this->_header += "text/css";
 		else
 			this->_header += "text/plain";
 		this->_header += "\r\n";
