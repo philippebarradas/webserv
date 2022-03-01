@@ -40,7 +40,7 @@ Client::~Client()
 	//std::cout << GREEN << "----------------- End of Client -----------------" << END << std::endl << std::endl;
 }
 
-void	Client::reinit( void )
+/* void	Client::reinit( void )
 {
 	_parse_head.pop_back();
 	_parse_head.push_back(Parse_request());
@@ -52,7 +52,7 @@ void	Client::reinit( void )
 	_fill_request.clear();
 	_fill_request = "";
 	_events.events = EPOLLIN;
-}
+} */
 
 /*
 ** --------------------------------- OVERLOAD ---------------------------------
@@ -121,52 +121,47 @@ void		Client::setFd(int const & fd)
 ** --------------------------------- GETTERS ----------------------------------
 */
 
-Parse_request & Client::getParse_head()
+Parse_request	& Client::getParse_head()
 {
 	return (this->_parse_head[0]);
 }
 
-epoll_event & Client::getEvents()
+epoll_event	& Client::getEvents()
 {
 	return (this->_events);
 }
 
-epoll_event	Client::getNewEvents()
-{
-	return (this->_events);
-}
-
-size_t	& Client::getRecv_len()
+size_t	const & Client::getRecv_len() const
 {
 	return (this->_recv_len);
 }
 
-size_t & Client::getRequest_header_size()
+size_t	const & Client::getRequest_header_size() const
 {
 	return (this->_request_header_size);
 }
 
-std::string & Client::getFill_request()
+std::string	const & Client::getFill_request() const
 {
 	return (this->_fill_request);
 }
 
-bool	& Client::getHeader_parsed()
+bool	const & Client::getHeader_parsed() const
 {
 	return (this->_header_parsed);
 }
 
-bool	& Client::getHeader_readed()
+bool	const & Client::getHeader_readed() const
 {
 	return (this->_header_readed);
 }
 
-bool	& Client::getIs_sendable()
+bool	const & Client::getIs_sendable() const
 {
 	return (this->_is_sendable);
 }
 
-int		& Client::getFd()
+int	const & Client::getFd() const
 {
 	return (this->_fd);
 }

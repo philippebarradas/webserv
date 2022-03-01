@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_body.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:33:11 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 11:27:58 by user42           ###   ########.fr       */
+/*   Updated: 2022/03/01 15:27:04 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	hexa_to_size(std::string nbr)
 	std::stringstream ss;
 	std::string hex = "0123456789abcdefABCDEF";
 	size_t found;
-	size_t res = 0;	
+	size_t res = 0;
 
 	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
 	{

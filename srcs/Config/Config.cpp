@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/30 18:51:45 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/28 10:14:22 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 15:26:43 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ Config &				Config::operator=( Config const & rhs )
 std::ostream &			operator<<( std::ostream & o, Config const & i )
 {
 	size_t e, y;
-
 	for (e = 0 ; e < i.getConfig().size() ; ++e)
 	{
 		o << BGREEN "Config server #" << (e + 1)
