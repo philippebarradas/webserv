@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
-/*   Updated: 2022/03/01 11:24:44 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 14:28:15 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ int		Parse_request::check_request()
 		is_body(found);
 		if (get_request("Connection:").find("close") != std::string::npos)
 			_header_tab["Connection:"] = "close";
+		else
+			_header_tab["Connection:"] = "keep-alive";
 		if (get_request("Host:").compare("") == 0)
 			_header_tab["Status"] = "400";
 		else if (get_request("Host:").find(":") != std::string::npos)

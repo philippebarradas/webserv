@@ -1,7 +1,7 @@
 
 server{
 	server_name localhost;
-	listen 8008;
+	listen 8030;
 
 	accepted_methods	GET POST DELETE;
 	autoindex on;
@@ -10,7 +10,7 @@ server{
 
 server{
 	server_name localhost hello;
-	listen 8007;
+	listen 8020;
 
 	client_max_body_size 1000000000;
 	autoindex off;
