@@ -344,15 +344,15 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);
-			if (it->getParse_head().get_request("Connection:") == "close")
-			{
+			//if (it->getParse_head().get_request("Connection:") == "close")
+			//{
 				close(it->getEvents().data.fd);
 				it = _v.erase(it);
 				if (it == _v.end())
 					break ;
-			}
-			else
-				it->reinit();
+			//}
+			//else
+			//	it->reinit();
 		}
 	}
 }

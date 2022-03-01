@@ -1,7 +1,7 @@
 
 server{
 	server_name localhost;
-	listen 8004;
+	listen 8007;
 
 	autoindex on;
 
