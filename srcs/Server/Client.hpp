@@ -67,7 +67,9 @@ class Client
 		// SETTERS
 		void	setRecv_len(size_t const &recv_len);
 		void	setFill_request(char const & fill_request);
-		void	setRequest_header_size(size_t const & rq_header_size);
+		void	setFill_request_body(const char *fill_request, const size_t & valread);
+
+		void	setRequest_header_size(const size_t & rq_header_size);
 		void	setFd(int const & fd);
 		void	setIs_sendable(bool const & is_sendable);
 		void	setHeader_parsed(bool const & header_parsed);

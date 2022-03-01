@@ -206,7 +206,7 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 {
 	char	b;
 
-	bzero(_buff, BUFFER_SIZE);
+	//bzero(_buff, BUFFER_SIZE);
 	_valread = recv(client.getEvents().data.fd, &b, 1, 0);
 	if (_valread == -1)
 		throw std::runtime_error("[Error] recv() failed");
@@ -233,18 +233,56 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 
 }
 
+size_t	hexa_to_size(std::string nbr)
+{
+	std::stringstream ss;
+	std::string hex = "0123456789abcdefABCDEF";
+	size_t found;
+	size_t res = 0;	
+
+	for (std::string::iterator it = nbr.begin(); it != nbr.end(); ++it)
+	{
+		if ((found = hex.find(*it)) == std::string::npos)
+			return (0);
+	}
+	ss << std::hex << nbr;
+	ss >> res;
+	return (res);
+}
 // read le body de la requete
 void	Engine::read_body(const std::vector<Server> & src, Client & client)
 {
 	char b;
 
+	size_t length_body;
+	size_t length_request;
+
+	bzero(_buff, BUFFER_SIZE);
 	if (client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
+		//std::cout << "qweqwes" << std::endl;
 		if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
 		{
-			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
-			client.setRecv_len(_valread); // +=
-			client.setFill_request(b); // +=
+			if (_length_chunk_string.find("\r\n") != std::string::npos)
+			{
+				_length_chunk = hexa_to_size(_length_chunk_string);
+			}
+			if (_length_chunk == 0)
+			{
+				_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+				_length_chunk_string += b;
+				client.setRecv_len(_valread); // +=
+				client.setFill_request(b); // +=
+				std::cout << RED << b << END;
+			}
+			else
+			{
+				_valread = recv(client.getEvents().data.fd, &_buff, _length_chunk, 0);
+				client.setRecv_len(_valread); // +=
+				client.setFill_request_body(_buff, _valread); //
+			}
+			
+
 		}
 		if (client.getFill_request().find("0\r\n\r\n") != std::string::npos)
 		{
@@ -254,19 +292,39 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	}
 	else
 	{
-		if (client.getFill_request().size() < (client.getRequest_header_size() +
-			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
+		length_body =  stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size");
+		length_request =  (client.getRequest_header_size() + length_body);
+		if (client.getFill_request().size() < length_request)
 		{
-			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+			std::cout << "STOOOP" << std::endl;
+			std::cout << BLUE <<"request actual size =  ["<<  client.getFill_request().size() << "]" << END << std::endl;
+			std::cout << RED << "length_request =       ["<< length_request << "]" << END << std::endl;
+			std::cout << RED << "1 - 2 =                ["<< length_request - (client.getFill_request().size()) << "]" << END << std::endl;
+
+			if (client.getFill_request().size() + BUFFER_SIZE > length_request)
+				_valread = recv(client.getEvents().data.fd, &_buff, length_request - (client.getFill_request().size()), 0);
+			else
+				_valread = recv(client.getEvents().data.fd, &_buff, BUFFER_SIZE, 0);
 			// recv len += valread
+
+			std::cout << RED << "_valread = ["<< _valread << "]" << END << std::endl;
+			std::cout << BLUE << _buff << END;
+
 			client.setRecv_len(_valread);
-			client.setFill_request(b);
+			client.setFill_request_body(_buff, _valread);
+
+			//client.setFill_request(b);
+			std::cout << "---------------------------------------------------------" << std::endl;
+			//exit(1);
+
 		}
-		if (client.getFill_request().size() == (client.getRequest_header_size() +
+		if (client.getFill_request().size() >= (client.getRequest_header_size() +
 			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
 		{
+
 			std::cout << "j'ai read le body" << std::endl;
-			std::cout << RED << "[parse body content length]]" << END << std::endl;
+			//std::cout << RED << "[parse body content length]]" << END << std::endl;
+
 			client.getParse_head().parse_body(client.getFill_request());
 			client.setIs_sendable(true);
 		}

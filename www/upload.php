@@ -25,12 +25,15 @@ if (isset($_POST['submit']))
 	}
 	else
 	{
+
 		echo "Possible move failed!\n";
 	}
 }
 
-	while (list($var,$value) = each($_SERVER))
-		echo "$var => $value <br />";
+	echo "\n\n\n";
+	print_r($_FILES);
+	//while (list($var,$value) = each($_SERVER))
+	//	echo "$var => $value <br />";
 ?>
 
 </body>

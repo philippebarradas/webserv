@@ -78,6 +78,9 @@ class Engine
 		std::string	GetRemote_Addr() const;
 		int			GetAccessPort( void ) const;
 
+		std::string _length_chunk_string;
+		size_t _length_chunk;
+
 	private:
 
 		// VARIABLES

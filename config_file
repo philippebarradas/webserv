@@ -5,16 +5,16 @@ server{
 
 	accepted_methods	GET POST DELETE;
 	autoindex on;
-	root /mnt/nfs/homes/tsannie/goinfre/webserv/www2;
+	root /mnt/nfs/homes/tsannie/goinfre/webserv/www;
 }
 
 server{
 	server_name localhost hello;
 	listen 8020;
 
-	client_max_body_size 1000000000;
+	client_max_body_size 8000000000000;
 	autoindex off;
-	root /mnt/nfs/homes/tsannie/goinfre/webserv/www;
+	root /home/user42/Bureau/webserv/www;
 
 	location / {
 		cgi .php /usr/bin/php-cgi;
