@@ -1,39 +1,27 @@
 
 server{
-	server_name localhost;
+	server_name localhost hello;
 	listen 8007;
 
-	autoindex on;
-
-
 	client_max_body_size 1000000000;
-
-	accepted_methods	GET POST;
+	autoindex on;
 
 	location / {
 		cgi .php /usr/bin/php-cgi;
-		index cookie.php;
 		root /home/user42/Bureau/webserv/www;
-		accepted_methods	GET POST DELETE;
+		accepted_methods	GET POST;
 	}
 
+	location /delete_loc {
+		root /mnt/nfs/homes/tsannie/goinfre/webserv/www/del;
+		accepted_methods	DELETE;
+	}
 }
 
 server{
-	server_name localhost;
+	server_name test_name;
 	listen 8002;
 
-
-	client_max_body_size 1000000000;
-	autoindex off;
-	root /home/user42/Bureau/webserv/www;
-	location / {
-		index form.html;
-		cgi .php /usr/bin/php-cgi;
-		accepted_methods	GET POST DELETE;
-	}
-
-	location /salut {
-		root yo;
-	}
+	autoindex on;
+	root /;
 }
