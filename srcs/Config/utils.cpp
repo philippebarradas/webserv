@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 18:41:55 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 11:24:19 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,6 @@ std::string	nextWord( std::string const & src, size_t & i )
 	std::string	ret;
 
 	for (; isspace(src[i]) && src[i] ; ++i) {}
-	//std::cout << "start with " << src[i] << std::endl;
 	for (; !isspace(src[i]) && src[i] != ';' && src[i] ; ++i)
 	{
 		if (src[i] == '{')

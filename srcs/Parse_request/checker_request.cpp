@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker_request.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 11:26:44 by user42           ###   ########.fr       */
+/*   Updated: 2022/03/01 11:24:44 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int		Parse_request::check_double_content()
 int		Parse_request::check_precondition()
 {
     std::string time_test = get_request("If-Unmodified-Since:");
-	std::cout <<  time_test << std::endl;
 	if (time_test.compare("") == 0)
 		return (0);
  	if(_buffer.rfind("If-Match\r\n") != std::string::npos)
@@ -73,7 +72,7 @@ int		Parse_request::check_precondition()
 int		Parse_request::check_request()
 {
 	size_t	found = 0;
-	
+
 	found = _buffer.find("\r\n\r\n");
 	if (found != std::string::npos)
 	{

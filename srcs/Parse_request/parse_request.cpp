@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_request.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:32 by user42            #+#    #+#             */
-/*   Updated: 2022/02/28 11:39:03 by user42           ###   ########.fr       */
+/*   Updated: 2022/03/01 11:24:59 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ int		Parse_request::parse_request(std::string full_buffer)
 	this->incr_nbr_line();
 	if (get_nbr_line() == 1)
 	{
-		std::cout << "{fill first line}" << std::endl;
 		if ((start = fill_first_line()) == -1)
 			return (-1);
 		if (start >= _buffer.size())
@@ -201,7 +200,7 @@ std::map<std::string, std::string>	const & Parse_request::get_param_request_tab(
 }
 
 std::string Parse_request::get_request_body() const
-{ 
+{
 	return (_request_body);
 }
 
@@ -213,7 +212,7 @@ size_t Parse_request::get_request_body_size() const
 // SET
 
 void	Parse_request::setStatus( std::string const & code )
-{ 
+{
 	this->_header_tab["Status"] = code;
 }
 
