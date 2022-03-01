@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 12:58:45 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 14:06:00 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,6 @@ void	Engine::read_body(Client & client)
 {
 	char b;
 
-	std::cout << "read body" << std::endl;
 	if (client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
 		if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
