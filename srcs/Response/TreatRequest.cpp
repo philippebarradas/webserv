@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/01 15:27:14 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 18:46:45 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,8 @@ size_t		TreatRequest::selectConf( Parse_request const & req ) const
 	size_t i;
 	std::set<std::string>::const_iterator	it, end;
 	std::set<std::string>	name;
+
+	std::cout << "req.get_request\t=\t" << req.get_request("Host:") << std::endl;
 
 	for (i = 0 ; i < this->_conf.size() ; ++i)
 	{
@@ -602,7 +604,7 @@ void	TreatRequest::permMethod( Parse_request & req )
 std::string	TreatRequest::treat(Parse_request & req )
 {
 	if (req.get_request("Status") == "400"
-		|| req.get_request("Status") == "505") // TODO 505 test when merge
+		|| req.get_request("Status") == "505")
 	{
 		req.setConnection("close");
 		force_open(req);
