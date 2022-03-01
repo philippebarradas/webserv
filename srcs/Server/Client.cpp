@@ -39,20 +39,6 @@ Client::~Client()
 {
 }
 
-/* void	Client::reinit( void )
-{
-	_parse_head.pop_back();
-	_parse_head.push_back(Parse_request());
-	_recv_len = 0;
-	_request_header_size = 0;
-	_header_parsed = false;
-	_header_readed = false;
-	_is_sendable = false;
-	_fill_request.clear();
-	_fill_request = "";
-	_events.events = EPOLLIN;
-} */
-
 /*
 ** --------------------------------- OVERLOAD ---------------------------------
 */

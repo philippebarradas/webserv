@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 15:44:41 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 18:48:15 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,15 +334,10 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);
-			//if (it->getParse_head().get_request("Connection:") == "close")
-			//{
-				close(it->getEvents().data.fd);
-				it = _v.erase(it);
-				if (it == _v.end())
-					break ;
-			//}
-			//else
-			//	it->reinit();
+			close(it->getEvents().data.fd);
+			it = _v.erase(it);
+			if (it == _v.end())
+				break ;
 		}
 	}
 }
