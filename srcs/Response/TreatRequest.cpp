@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/24 16:19:58 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 12:33:06 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ TreatRequest::TreatRequest( void )
 }
 
 TreatRequest::TreatRequest( std::vector<Server> const & conf,
-	Engine const & eng )
+	const Engine & eng )
 {
 	int	comp;
 
@@ -142,10 +142,9 @@ void	TreatRequest::readDynamicFile( std::string const & path,
 	Cgi	obj_cgi(this->_loc->second.getRoot(), path, pathCgi, req, *this->_eng);
 
 	obj_cgi.exec_cgi(obj_cgi.create_argv(path),
-		obj_cgi.convert_env(obj_cgi.getEnv()), req);
+		obj_cgi.convert_env(), req);
 
 	this->_file = obj_cgi.getSend_content();
-
 	this->_type_cgi = obj_cgi.getType_Cgi();
 }
 

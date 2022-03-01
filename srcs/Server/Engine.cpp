@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/28 14:11:49 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 12:58:45 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ Engine::Engine()
 {
 }
 
-Engine::Engine(std::vector<Server> const & src)
+Engine::Engine(const std::vector<Server> & src)
 {
 	std::cout << BBLUE "-------- Starting webserv --------\n" END << std::endl;
 	setup_socket_server(src);
 	loop_server(src);
 }
 
-Engine::Engine(Engine const & src)
+Engine::Engine(const Engine & src)
 {
 	*this = src;
 }
@@ -48,7 +48,7 @@ Engine::~Engine()
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-Engine&				Engine::operator=( Engine const & rhs )
+Engine&				Engine::operator=(const Engine & rhs)
 {
 	if (this != &rhs)
 	{
@@ -92,7 +92,7 @@ void	Engine::set_socket(const int & listen_fd)
 
 bool	Engine::is_binded(const int & port_config)
 {
-	for (int i = 0; i < this->_i_server_binded; i++)
+	for (size_t i = 0; i < this->_i_server_binded; i++)
 	{
 		if (port_config == this->_port_binded[i])
 			return (true);
@@ -200,7 +200,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	}
 }
 
-void	Engine::read_header(const std::vector<Server> & src, Client & client)
+void	Engine::read_header(Client & client)
 {
 	char	b;
 
@@ -229,7 +229,7 @@ void	Engine::read_header(const std::vector<Server> & src, Client & client)
 
 }
 
-void	Engine::read_body(const std::vector<Server> & src, Client & client)
+void	Engine::read_body(Client & client)
 {
 	char b;
 
@@ -251,14 +251,14 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 	else
 	{
 		if (client.getFill_request().size() < (client.getRequest_header_size() +
-			std::stoi(client.getParse_head().get_request("Content-Length:"))))
+			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
 		{
 			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
 			client.setRecv_len(_valread);
 			client.setFill_request(b);
 		}
 		if (client.getFill_request().size() == (client.getRequest_header_size() +
-			std::stoi(client.getParse_head().get_request("Content-Length:"))))
+			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
 		{
 			client.getParse_head().parse_body(client.getFill_request());
 			client.setIs_sendable(true);
@@ -301,17 +301,17 @@ void	Engine::loop_accept(const int & nbr_connexions, const std::vector<Server> &
 	}
 }
 
-void	Engine::myRead(const std::vector<Server> & src, Client & client)
+void	Engine::myRead(Client & client)
 {
 	if (client.getHeader_readed() == false)
-		read_header(src, client);
+		read_header(client);
 	if (client.getHeader_parsed() == false && client.getHeader_readed() == true)
 	{
 		client.getParse_head().parse_request(client.getFill_request());
 		client.setHeader_parsed(true);
 	}
 	else if (is_body_empty(client) == false)
-		read_body(src, client);
+		read_body(client);
 	if (client.getIs_sendable() == true ||
 		client.getParse_head().error_first_line == true ||
 			(client.getHeader_parsed() == true && is_body_empty(client) == true))
@@ -329,7 +329,7 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 	for (it = _v.begin(); it != _v.end(); ++it)
 	{
 		if (it->getEvents().events & EPOLLIN)
-			myRead(src, *it);
+			myRead(*it);
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);

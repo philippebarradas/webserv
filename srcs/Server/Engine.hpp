@@ -61,7 +61,7 @@ class Engine
 		// CONSTRUCTOR
 		Engine();
 		Engine(const std::vector<Server> & src);
-		Engine( Engine const & src );
+		Engine(const Engine & src);
 
 		// DESTRUCTOR
 		~Engine();
@@ -71,12 +71,12 @@ class Engine
 		void	loop_server(const std::vector<Server> & src);
 
 		// OPERATORS
-		Engine &		operator=( Engine const & rhs );
+		Engine &		operator=(const Engine & rhs);
 
 		// GETTERS
 		std::string	const & GetRemote_Port() const;
 		std::string	const & GetRemote_Addr() const;
-		int			const & GetAccessPort( void ) const;
+		int			const & GetAccessPort(void) const;
 
 	private:
 
@@ -92,7 +92,7 @@ class Engine
 		int					_port_binded[MAX_SERVERS];
 		int					_port;
 		int					_timeout; // time before poll expiration
-		size_t				_valread;
+		ssize_t				_valread;
 		char				_buff[BUFFER_SIZE];
 		std::string			_buff_send;
 		std::string			_remote_port;
@@ -108,10 +108,10 @@ class Engine
 		void	loop_accept(const int & nbr_connexions, const std::vector<Server> & src);
 		void	loop_input_output(const std::vector<Server> & src);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-		void	myRead(const std::vector<Server> & src, Client & client);
+		void	myRead(Client & client);
 		void	mySend(const std::vector<Server> & src, Client & client);
-		void	read_header(const std::vector<Server> & src, Client & client);
-		void	read_body(const std::vector<Server> & src, Client & client);
+		void	read_header(Client & client);
+		void	read_body(Client & client);
 		void	send_data(const std::vector<Server> & src, Client & client);
 		bool	is_listener(const int & fd, const int *tab_fd,
 			const int & nbr_servers, const std::vector<Server> & src);

@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/02/28 11:44:45 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 13:05:10 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,15 @@ Cgi::Cgi()
 {
 }
 
-Cgi::Cgi(std::string const & root, std::string const & path,
-	std::string const & pathCgi, Parse_request const & src_header,
-		Engine const & src_engine)
+Cgi::Cgi(const std::string & root, const std::string & path,
+	const std::string & pathCgi, const Parse_request & src_header,
+		const Engine & src_engine)
 {
 	init_path(root, path, pathCgi);
 	init_env(src_header, src_engine);
 }
 
-Cgi::Cgi( const Cgi & src )
+Cgi::Cgi(const Cgi & src)
 {
 	*this = src;
 }
@@ -46,14 +46,18 @@ Cgi::~Cgi()
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-Cgi &				Cgi::operator=( Cgi const & rhs )
+Cgi &				Cgi::operator=(const Cgi & rhs)
 {
-	if ( this != &rhs )
+	if (this != &rhs)
 	{
-		this->_path_cgi = rhs.getPath_cgi();
-		this->_send_content = rhs.getSend_content();
-		this->_env = rhs.getEnv();
-		this->_pid = rhs.getPid();
+		this->_send_content = rhs._send_content;
+		this->_type_cgi = rhs._type_cgi;
+		this->_root = rhs._root;
+		this->_path_file_executed = rhs._path_file_executed;
+		this->_path_file_executed_absolu = rhs._path_file_executed_absolu;
+		this->_path_cgi = rhs._path_cgi;
+		this->_pid = rhs._pid;
+		this->_env = rhs._env;
 	}
 	return *this;
 }
@@ -72,8 +76,8 @@ void	Cgi::delete_argv_env(char **argv, char **env)
 	delete [] argv;
 }
 
-void	Cgi::init_path(std::string const & root, std::string const & path,
-	std::string const & pathCgi)
+void	Cgi::init_path(const std::string & root, const std::string & path,
+	const std::string & pathCgi)
 {
 	this->_path_file_executed = path;
 	this->_path_cgi = pathCgi;
@@ -81,7 +85,6 @@ void	Cgi::init_path(std::string const & root, std::string const & path,
 	this->_path_file_executed_absolu =
 		this->_path_file_executed.substr(this->_root.size(),
 			this->_path_file_executed.size());
-	this->_user = "user42";
 }
 
 std::string	Cgi::normVar( std::string src )
@@ -106,9 +109,8 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 	}
 }
 
-void	Cgi::init_env_server_var(const Parse_request & src_header)
+void	Cgi::init_env_server_var()
 {
-	this->_env["USER"] = this->_user;
 	this->_env["SERVER_SOFTWARE"] = "webserv/1.0";
 	this->_env["GATEWAY_INTERFACE"] = "CGI/1.1";
 }
@@ -132,26 +134,28 @@ void	Cgi::init_env_request_var(const Parse_request & src_header,
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	this->_env["CONTENT_LENGTH"] =
-		sizet_to_string(src_header.get_request_body_size());
+	std::cout << "body size\t=\t" << sizet_to_string(src_header.get_request_body_size()) << std::endl;
+	if (sizet_to_string(src_header.get_request_body_size()) != "0")
+		this->_env["CONTENT_LENGTH"] =
+			sizet_to_string(src_header.get_request_body_size());
+	else
+		this->_env["CONTENT_LENGTH"] = "";
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
 }
 
-void	Cgi::init_env(Parse_request const & src_header,
-	Engine const & src_engine)
+void	Cgi::init_env(const Parse_request & src_header,
+	const Engine & src_engine)
 {
-	std::map<std::string, std::string>::iterator it_env;
-
 	init_env_client_var(src_header);
-	init_env_server_var(src_header);
+	init_env_server_var();
 	init_env_request_var(src_header, src_engine);
 }
 
-char **Cgi::convert_env(std::map<std::string, std::string>)
+char **Cgi::convert_env()
 {
-	std::map<std::string, std::string>::const_iterator it_env;
+	std::map<std::string, std::string>::const_iterator	it_env;
 	char	**env = new char *[this->_env.size() + 1];
-	int	j = 0;
+	int		j = 0;
 	for (it_env = this->_env.begin(); it_env != this->_env.end(); it_env++)
 	{
 		std::string	content = it_env->first + "=" + it_env->second;
@@ -163,7 +167,7 @@ char **Cgi::convert_env(std::map<std::string, std::string>)
 	return (env);
 }
 
-char	**Cgi::create_argv(std::string path_file_executed)
+char	**Cgi::create_argv(const std::string & path_file_executed)
 {
 	int		nbr_argv = 2;
 	char	**argv = new char *[nbr_argv + 1];
@@ -177,7 +181,7 @@ char	**Cgi::create_argv(std::string path_file_executed)
 }
 
 void	Cgi::exec_cgi(char **argv, char **env,
-	Parse_request const & src_header)
+	const Parse_request & src_header)
 {
 	std::string	body_string = src_header.get_request_body();
 	int			real_stdin = dup(STDIN_FILENO);
@@ -195,7 +199,7 @@ void	Cgi::exec_cgi(char **argv, char **env,
 	{
 		if (src_header.get_request("Method") == "POST")
 		{
-			std::fputs(body_string.c_str(), file_stdin);
+			std::fputs(body_string.c_str(), file_stdin); // to change
 			rewind(file_stdin);
 		}
 		dup2(fd_stdin, STDIN_FILENO);
@@ -217,7 +221,7 @@ void	Cgi::exec_cgi(char **argv, char **env,
 	delete_argv_env(argv, env);
 }
 
-std::string	Cgi::body_response_from_fd(int fd)
+std::string	Cgi::body_response_from_fd(const int & fd)
 {
 	__gnu_cxx::stdio_filebuf<char> filebuf(fd, std::ios::in);
 	std::istream is(&filebuf);
@@ -231,40 +235,13 @@ std::string	Cgi::body_response_from_fd(int fd)
 	return (ret);
 }
 
-
-
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
 
-std::map<std::string, std::string> Cgi::getEnv() const
-{
-	return (this->_env);
-}
-
 std::string	Cgi::getSend_content() const
 {
 	return (this->_send_content);
-}
-
-std::string	Cgi::getPath_cgi() const
-{
-	return (this->_path_cgi);
-}
-
-std::string	Cgi::getUser() const
-{
-	return (this->_user);
-}
-
-std::string	Cgi::getHome() const
-{
-	return (this->_home);
-}
-
-int	Cgi::getPid() const
-{
-	return (this->_pid);
 }
 
 std::string	Cgi::getType_Cgi() const

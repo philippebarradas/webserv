@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/23 11:11:12 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 12:14:39 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ class TreatRequest
 	public:
 
 		TreatRequest( std::vector<Server> const & conf,
-			Engine const & eng );
+			const Engine & eng );
 		TreatRequest( TreatRequest const & src );
 		~TreatRequest();
 

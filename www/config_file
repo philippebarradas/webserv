@@ -13,7 +13,7 @@ server{
 	location / {
 		cgi .php /usr/bin/php-cgi;
 		index cookie.php;
-		root /home/user42/Bureau/webserv;
+		root /sgoinfre/goinfre/Perso/dodjian/webserv/www;
 		accepted_methods	GET POST DELETE;
 	}
 
@@ -26,7 +26,7 @@ server{
 
 	client_max_body_size 1000000000;
 	autoindex off;
-	root /home/user42/Bureau/webserv/www;
+	root /sgoinfre/goinfre/Perso/dodjian/webserv/www;
 	location / {
 		index form.html;
 		cgi .php /usr/bin/php-cgi;
