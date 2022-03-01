@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 15:30:34 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 15:44:41 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void	Engine::bind_socket(const int & listen_fd, const std::vector<Server> & src)
 	this->_addr.sin_addr.s_addr = INADDR_ANY;
 	this->_addr.sin_port = htons(port_config);
 	std::cout << PURPLE2 << "[webserv] listen on: " << port_config
-		<< std::endl << std::endl << END;
+		<< std::endl << END;
 	if (is_binded(port_config) == false)
 	{
 		if (bind(listen_fd, (struct sockaddr *)&this->_addr,
@@ -198,6 +198,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 		bind_socket(this->_listen_fd[this->_i_server], src);
 		listen_socket(this->_listen_fd[this->_i_server]);
 	}
+	std::cout << std::endl;
 }
 
 void	Engine::read_header(Client & client)
