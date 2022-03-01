@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 13:05:10 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/01 14:37:49 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ void	Cgi::init_env_request_var(const Parse_request & src_header,
 	this->_env["REMOTE_PORT"] = src_engine.GetRemote_Port();
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
-	std::cout << "body size\t=\t" << sizet_to_string(src_header.get_request_body_size()) << std::endl;
 	if (sizet_to_string(src_header.get_request_body_size()) != "0")
 		this->_env["CONTENT_LENGTH"] =
 			sizet_to_string(src_header.get_request_body_size());
