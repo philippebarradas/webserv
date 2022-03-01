@@ -4,24 +4,36 @@ server{
 	listen 8007;
 
 	client_max_body_size 1000000000;
-	autoindex on;
+	autoindex off;
+	root /mnt/nfs/homes/tsannie/goinfre/webserv/www;
 
 	location / {
 		cgi .php /usr/bin/php-cgi;
-		root /home/user42/Bureau/webserv/www;
 		accepted_methods	GET POST;
+		index my_index.html;
+	}
+
+	location /all_test {
+		cgi .php /usr/bin/php-cgi;
+		root /mnt/nfs/homes/tsannie/goinfre/webserv/www/test;
+		accepted_methods	GET POST;
+		autoindex on;
 	}
 
 	location /delete_loc {
 		root /mnt/nfs/homes/tsannie/goinfre/webserv/www/del;
 		accepted_methods	DELETE;
 	}
+
+	location /no_perm {
+	}
 }
 
 server{
 	server_name test_name;
-	listen 8002;
+	listen 8007;
 
+	accepted_methods	GET;
 	autoindex on;
 	root /;
 }
