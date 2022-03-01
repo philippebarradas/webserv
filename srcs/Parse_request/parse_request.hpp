@@ -10,7 +10,7 @@ class Server;
 class Parse_request
 {
 	public:
-	    Parse_request();
+		Parse_request();
 		Parse_request( Parse_request const & src );
 		~Parse_request();
 		Parse_request &		operator=( Parse_request const & rhs );

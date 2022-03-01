@@ -89,15 +89,15 @@ class Client
 
 		// VARIABLES
 		Client();
-		Parse_request	*_parse_head;
-		epoll_event		_events;
-		size_t			_recv_len;
-		size_t			_request_header_size;
-		std::string		_fill_request;
-		bool			_header_parsed;
-		bool			_header_readed;
-		bool			_is_sendable;
-		int				_fd;
+		std::vector<Parse_request>	_parse_head;
+		epoll_event					_events;
+		size_t						_recv_len;
+		size_t						_request_header_size;
+		std::string					_fill_request;
+		bool						_header_parsed;
+		bool						_header_readed;
+		bool						_is_sendable;
+		int							_fd;
 };
 
 std::ostream &			operator<<( std::ostream & o, Client & i );

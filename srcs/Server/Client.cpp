@@ -15,7 +15,7 @@ Client::Client()
 
 Client::Client(epoll_event & ev)
 {
-	_parse_head = new Parse_request();
+	_parse_head.push_back(Parse_request());
 	_recv_len = 0;
 	_request_header_size = 0;
 	_header_parsed = false;
@@ -37,14 +37,11 @@ Client::Client(Client const & src )
 
 Client::~Client()
 {
-	delete _parse_head;
 	//std::cout << GREEN << "----------------- End of Client -----------------" << END << std::endl << std::endl;
 }
 
 void	Client::reinit( void )
 {
-	delete _parse_head;
-	_parse_head = new Parse_request();
 	_recv_len = 0;
 	_request_header_size = 0;
 	_header_parsed = false;
@@ -62,7 +59,6 @@ Client&				Client::operator=( Client const & rhs )
 {
 	if (this != &rhs)
 	{
-		this->_parse_head = new Parse_request();
 		this->_recv_len = rhs._recv_len;
 		this->_is_sendable = rhs._is_sendable;
 		this->_header_parsed = rhs._header_parsed;
@@ -70,7 +66,10 @@ Client&				Client::operator=( Client const & rhs )
 		this->_fill_request = rhs._fill_request;
 		this->_request_header_size = rhs._request_header_size;
 		this->_events = rhs._events;
-		*this->_parse_head = *rhs._parse_head;
+		if (rhs._parse_head.size())
+			this->_parse_head = rhs._parse_head;
+		else
+			this->_parse_head.push_back(Parse_request());
 		this->_fd = rhs._fd;
 	}
 	return *this;
@@ -121,7 +120,7 @@ void		Client::setFd(int const & fd)
 
 Parse_request & Client::getParse_head()
 {
-	return (*this->_parse_head);
+	return (this->_parse_head[0]);
 }
 
 epoll_event & Client::getEvents()

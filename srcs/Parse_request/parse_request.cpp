@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:35:32 by user42            #+#    #+#             */
-/*   Updated: 2022/03/01 11:24:59 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 13:17:47 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,15 @@ Parse_request::~Parse_request()
 {
 }
 
+Parse_request::Parse_request( Parse_request const & src )
+{
+	*this = src;
+}
+
 Parse_request&	Parse_request::operator=( Parse_request const & rhs )
 {
+	this->error_first_line = rhs.error_first_line;
+	this->first_line_is_parsed = rhs.first_line_is_parsed;
 	this->_buffer = rhs._buffer;
 	this->_request_body_size = rhs._request_body_size;
 	this->_request_body = rhs._request_body;

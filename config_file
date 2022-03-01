@@ -1,5 +1,14 @@
 
 server{
+	server_name localhost;
+	listen 8008;
+
+	accepted_methods	GET POST DELETE;
+	autoindex on;
+	root /mnt/nfs/homes/tsannie/goinfre/webserv/www2;
+}
+
+server{
 	server_name localhost hello;
 	listen 8007;
 
@@ -35,5 +44,5 @@ server{
 
 	accepted_methods	GET;
 	autoindex on;
-	root /;
+	root /mnt/nfs/homes/tsannie/goinfre/webserv;
 }
