@@ -40,7 +40,7 @@ Client::~Client()
 	//std::cout << GREEN << "----------------- End of Client -----------------" << END << std::endl << std::endl;
 }
 
-void	Client::reinit( void )
+/* void	Client::reinit( void )
 {
 	_parse_head.pop_back();
 	_parse_head.push_back(Parse_request());
@@ -52,7 +52,7 @@ void	Client::reinit( void )
 	_fill_request.clear();
 	_fill_request = "";
 	_events.events = EPOLLIN;
-}
+} */
 
 /*
 ** --------------------------------- OVERLOAD ---------------------------------
