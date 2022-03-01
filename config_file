@@ -1,11 +1,11 @@
-
 server{
-	server_name localhost;
-	listen 8030;
+	server_name server_test;
+	listen 8042;
 
 	accepted_methods	GET POST DELETE;
 	autoindex on;
-	root /mnt/nfs/homes/tsannie/goinfre/webserv/www2;
+	cgi .php /usr/bin/php-cgi;
+	root /mnt/nfs/homes/tsannie/goinfre/webserv/www/test;
 }
 
 server{
@@ -19,10 +19,17 @@ server{
 	location / {
 		cgi .php /usr/bin/php-cgi;
 		accepted_methods	GET POST;
-		index my_index.html;
+		index index.html;
+	}
+
+	location /noindex {
+		autoindex on;
+		accepted_methods	GET POST;
+		index not_exist.html;
 	}
 
 	location /all_test {
+		cgi .py /usr/bin/python3.7;
 		cgi .php /usr/bin/php-cgi;
 		root /mnt/nfs/homes/tsannie/goinfre/webserv/www/test;
 		accepted_methods	GET POST;
@@ -40,7 +47,7 @@ server{
 
 server{
 	server_name test_name;
-	listen 8007;
+	listen 8020;
 
 	accepted_methods	GET;
 	autoindex on;
