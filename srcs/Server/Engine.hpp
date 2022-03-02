@@ -89,9 +89,9 @@ class Engine
 	private:
 
 		// VARIABLES
-		struct	sockaddr_in	_addr;
-		struct	epoll_event	_fds_events[MAX_EVENTS];
+		std::vector<struct	epoll_event>	_fd_poll;
 		std::vector<Client>	_v;
+		struct	sockaddr_in	_addr;
 		size_t				_i_server;
 		size_t				_i_server_binded;
 		size_t				_nbr_servers;

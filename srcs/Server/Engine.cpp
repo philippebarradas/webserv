@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 15:33:06 by user42           ###   ########.fr       */
+/*   Updated: 2022/03/02 16:42:19 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ bool	Engine::is_body_empty(Client & client)
 void	Engine::setup_socket_server(const std::vector<Server> & src)
 {
 	this->_v.reserve(MAX_EVENTS);
+	this->_fd_poll.reserve(MAX_EVENTS);
 	this->_port = 0, this->_i_server_binded = 0, this->_valread = -1;
 	this->_nbr_servers = src.size();
 	this->_timeout = 3 * 60 * 1000;
@@ -185,13 +186,14 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 		this->_i_server++)
 	{
 		this->_listen_fd[this->_i_server] = create_socket();
-		this->_fds_events[this->_i_server].data.fd =
-			this->_listen_fd[this->_i_server];
-		this->_fds_events[this->_i_server].events = EPOLLIN;
+		struct	epoll_event	tmp;
+		tmp.data.fd = this->_listen_fd[this->_i_server];
+		tmp.data.fd.events = EPOLLIN;
 		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD,
 			this->_listen_fd[this->_i_server],
-				&this->_fds_events[this->_i_server]) == -1)
+				&tmp) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
+		this->_fd_poll.push_back(tmp);
 		set_socket(this->_listen_fd[this->_i_server]);
 		bind_socket(this->_listen_fd[this->_i_server], src);
 		listen_socket(this->_listen_fd[this->_i_server]);
@@ -314,19 +316,22 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 void	Engine::loop_accept(const int & nbr_connexions,
 	const std::vector<Server> & src)
 {
+	std::vector<struct epoll_event>::iterator	it, end;
 	int	new_socket = 0, i = 0;
-	for (i = 0; i < nbr_connexions; i++)
+
+	end = _fd_poll.end();
+	for (it = _fd_poll.begin() ; it != end ; ++it)
 	{
-		if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd,
+		if (is_listener((*it).data.fd, this->_listen_fd,
 			this->_nbr_servers, src))
 		{
-			new_socket = accept_connexions(this->_fds_events[i].data.fd);
-			this->_fds_events[i].events = EPOLLIN;
-			this->_fds_events[i].data.fd = new_socket;
+			new_socket = accept_connexions((*it).data.fd);
+			(*it).events = EPOLLIN;
+			(*it).data.fd = new_socket;
 			if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket,
-				&this->_fds_events[i]) == -1)
+				&(*it)) == -1)
 				throw std::runtime_error("[Error] epoll_ctl_add() failed");
-			this->_v.push_back(Client(this->_fds_events[i]));
+			this->_v.push_back(Client(*it));
 		}
 	}
 }
@@ -374,7 +379,7 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 			send_data(src, *it);
 			if (epoll_ctl(this->_epfd, EPOLL_CTL_DEL, it->getEvents().data.fd,
 				&it->getEvents()) == -1)
-				throw std::runtime_error("[Error] epoll_ctl_del() failed");	
+				throw std::runtime_error("[Error] epoll_ctl_del() failed");
 			close(it->getEvents().data.fd);
 			it = _v.erase(it);
 			if (it == _v.end())
@@ -388,7 +393,7 @@ void	Engine::loop_server(const std::vector<Server> & src)
 	int	nbr_connexions = 0;
 	while (true)
 	{
-		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events,
+		if ((nbr_connexions = epoll_wait(this->_epfd, &_fd_poll.begin(),
 			MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		loop_accept(nbr_connexions, src);
