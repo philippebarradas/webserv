@@ -44,6 +44,8 @@
 #define MAX_EVENTS 300
 #define MAX_SERVERS 100
 #define BUFFER_SIZE 1024
+#define BUFFER_SIZE_CHUNKED 16372
+
 
 // My class
 #include "../Config/Server.hpp"
@@ -97,6 +99,7 @@ class Engine
 		int					_timeout; // time before poll expiration
 		size_t				_valread;
 		char				_buff[BUFFER_SIZE];
+		char				_buff_chunked[BUFFER_SIZE_CHUNKED];
 		std::string			_buff_send;
 		std::string			_remote_port;
 		std::string			_remote_addr;

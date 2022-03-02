@@ -206,6 +206,7 @@ void	Cgi::exec_cgi(char **argv, char **env, const Parse_request & src_header)
 	int	fd_stdout = fileno(file_stdout);
 	int		status = 0;
 	std::cout << RED << " BEFORE CGI "<< END << std::endl;
+	//std::cout << YELLOW << body_string << END << std::endl;
 
 	this->_pid = fork();
 	if (this->_pid == -1)
