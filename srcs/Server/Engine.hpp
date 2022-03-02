@@ -49,7 +49,7 @@
 # define	END		"\033[0m"
 
 // Utils macro
-# define	MAX_EVENTS			300
+# define	MAX_EVENTS			5
 # define	MAX_SERVERS			100
 # define	BUFFER_SIZE			1024
 # define	BUFFER_SIZE_CHUNKED	16372
@@ -89,9 +89,9 @@ class Engine
 	private:
 
 		// VARIABLES
+		std::vector<Client>	_v;
 		struct	sockaddr_in	_addr;
 		struct	epoll_event	_fds_events[MAX_EVENTS];
-		std::vector<Client>	_v;
 		size_t				_i_server;
 		size_t				_i_server_binded;
 		size_t				_nbr_servers;
@@ -109,6 +109,7 @@ class Engine
 		size_t				_fd_i;
 
 		// METHODS
+		std::vector<Client>::iterator	delete_client(std::vector<Client>::iterator it_to_delete);
 		int		create_socket();
 		void	set_socket(const int & listen_fd);
 		bool	is_binded(const int & port_config);

@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 15:33:06 by user42           ###   ########.fr       */
+/*   Updated: 2022/03/02 18:48:52 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Engine.hpp"
+
+void signal_to_exit( int ssignum )
+{
+	std::cout << "SIGNALLLLLLLLLLLLLLLLLLLLLLLLL" << std::endl;
+	static_cast<void>(ssignum);
+	throw SignalStop();
+}
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -23,8 +30,23 @@ Engine::Engine()
 Engine::Engine(const std::vector<Server> & src)
 {
 	std::cout << BBLUE "-------- Starting webserv --------\n" END << std::endl;
-	setup_socket_server(src);
-	loop_server(src);
+	try
+	{
+		signal(SIGINT, signal_to_exit);
+		bzero(this->_fds_events, sizeof(_fds_events));
+		for (size_t i = 0 ; i < MAX_EVENTS ; ++i)
+			_fds_events[i].data.fd = -1;
+		for (size_t i = 0 ; i < MAX_EVENTS ; ++i)
+			std::cout << _fds_events[i].data.fd << std::endl;
+		setup_socket_server(src);
+		loop_server(src);
+	}
+	catch( SignalStop const & e )
+	{
+		static_cast<void>(e);
+	}
+	std::cout << "--------------------------- LEAVE ---------------------------" << std::endl;
+
 }
 
 Engine::Engine(const Engine & src)
@@ -38,6 +60,23 @@ Engine::Engine(const Engine & src)
 
 Engine::~Engine()
 {
+	size_t i = 0;
+	for (i = 0 ; i < MAX_EVENTS ; ++i)
+	{
+		if (_fds_events[i].data.fd > 0)
+			close(_fds_events[i].data.fd);
+	}
+	close(_epfd);
+
+	std::cout << "_v.size()\t=\t" << _v.size() << std::endl;
+	while (_v.size())
+	{
+		std::cout << "DELETE" << std::endl;
+		delete_client(_v.begin());
+	}
+	std::cout << "_v.size()\t=\t" << _v.size() << std::endl;
+
+	//std::cout << ""\t=\t" << " << std::endl;
 	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
 }
 
@@ -68,6 +107,17 @@ Engine&				Engine::operator=(const Engine & rhs)
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
+
+
+std::vector<Client>::iterator	Engine::delete_client(std::vector<Client>::iterator it_to_delete)
+{
+	int fd;
+
+	fd = it_to_delete->getEvents().data.fd;
+	epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL);
+	close(fd);
+	return (_v.erase(it_to_delete));
+}
 
 int	Engine::create_socket()
 {
@@ -166,8 +216,8 @@ bool	Engine::is_listener(const int & fd, const int *tab_fd,
 
 bool	Engine::is_body_empty(Client & client)
 {
-	if (client.getParse_head().get_request("Content-Length:") != "" ||
-		client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
+	if (client.getParse_head().get_request("Content-Length:") != ""
+	|| client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 		return (false);
 	return (true);
 }
@@ -359,11 +409,10 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 
 	for (it = _v.begin(); it != _v.end(); ++it)
 	{
-		if (it->getEvents().events & EPOLLERR)
+		if (it->getEvents().events & EPOLLERR || it->getEvents().events & EPOLLHUP)
 		{
-			send_data(src, *it);
-			close(it->getEvents().data.fd);
-			it = _v.erase(it);
+			std::cout << "----------------------------- I CAN SEE CLEARY NOW -------------------------------" << std::endl;
+			it = delete_client(it);
 			if (it == _v.end())
 				break ;
 		}
@@ -372,11 +421,7 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);
-			if (epoll_ctl(this->_epfd, EPOLL_CTL_DEL, it->getEvents().data.fd,
-				&it->getEvents()) == -1)
-				throw std::runtime_error("[Error] epoll_ctl_del() failed");	
-			close(it->getEvents().data.fd);
-			it = _v.erase(it);
+			it = delete_client(it);
 			if (it == _v.end())
 				break ;
 		}
@@ -386,12 +431,15 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 void	Engine::loop_server(const std::vector<Server> & src)
 {
 	int	nbr_connexions = 0;
+
 	while (true)
 	{
 		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events,
 			MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		loop_accept(nbr_connexions, src);
+		std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
+		std::cout << "_v.size()\t=\t" << _v.size() << std::endl;
 		loop_input_output(src);
 	}
 }
