@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 07:32:26 by user42            #+#    #+#             */
-/*   Updated: 2022/03/01 14:28:15 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/01 18:53:18 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,8 @@ int		Parse_request::check_request()
 		else if (get_request("Host:").find(":") != std::string::npos)
 		{
 			found = get_request("Host:").find(":");
-			_header_tab["Host-uncut"] = get_request("Host:").substr(0, found);
-			_header_tab["Host:"] = get_request("Host:").substr(found + 1,
-				get_request("Host:").size() - found);
+			_header_tab["Host-uncut"] = get_request("Host:").substr(0, get_request("Host:").size());
+			_header_tab["Host:"] = get_request("Host:").substr(0, found);
 		}
 		if ((get_request("Content-Length:").compare("") != 0
 			&& get_request("Content-Length:").find_first_not_of("0123456789")

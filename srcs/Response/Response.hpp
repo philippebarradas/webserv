@@ -13,14 +13,6 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
-# include <iostream>
-# include <iomanip>
-# include <sstream>
-# include <string>
-# include <cctype>
-# include <fstream>
-# include <exception>
-# include "../Parse_request/parse_request.hpp"
 # include "TreatRequest.hpp"
 
 class	Parse_request;

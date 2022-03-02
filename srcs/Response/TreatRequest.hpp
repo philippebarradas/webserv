@@ -3,30 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/28 10:13:56 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:05:33 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TREATREQUEST_HPP
 # define TREATREQUEST_HPP
 
+# include "../Server/Engine.hpp"
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
 # include "../Cgi/Cgi.hpp"
-# include "../Config/utils.hpp"
-
 # include "Response.hpp"
-# include <iostream>
-# include <string>
-# include <dirent.h>
-# include <sys/stat.h>
-# include <unistd.h>
-# include <grp.h>
-# include <pwd.h>
+
 
 # define DEFAULT_ROOT_ERROR "srcs/Config/default/error_page/"
 
@@ -41,7 +34,7 @@ class TreatRequest
 	public:
 
 		TreatRequest( std::vector<Server> const & conf,
-			Engine const & eng );
+			const Engine & eng );
 		TreatRequest( TreatRequest const & src );
 		~TreatRequest();
 
@@ -72,8 +65,6 @@ class TreatRequest
 		bool		_cgi;
 		size_t		_i_conf;
 
-
-		bool	is_dir( std::string const & path ) const;
 
 		bool	search_index( Parse_request & req,
 			std::string const & path );
