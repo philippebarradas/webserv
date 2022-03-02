@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 15:24:11 by user42           ###   ########.fr       */
+/*   Updated: 2022/03/02 15:33:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ void	Engine::bind_socket(const int & listen_fd,
 	const std::vector<Server> & src)
 {
 	int	port_config = 0;
-	std::cout << RED << "listen_fd = ["<< listen_fd << "]" << END << std::endl;
 	std::istringstream(src[this->_i_server].getListen()) >> port_config;
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_addr.s_addr = INADDR_ANY;
@@ -362,7 +361,6 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 	{
 		if (it->getEvents().events & EPOLLERR)
 		{
-			std::cout << "EPOLLERR" << std::endl;
 			send_data(src, *it);
 			close(it->getEvents().data.fd);
 			it = _v.erase(it);
