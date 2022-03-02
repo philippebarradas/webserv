@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 14:37:49 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/02 11:32:08 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Cgi::Cgi()
 
 Cgi::Cgi(const std::string & root, const std::string & path,
 	const std::string & pathCgi, const Parse_request & src_header,
-		const Engine & src_engine)
+	const Engine & src_engine)
 {
 	init_path(root, path, pathCgi);
 	init_env(src_header, src_engine);
@@ -32,6 +32,7 @@ Cgi::Cgi(const Cgi & src)
 {
 	*this = src;
 }
+
 
 /*
 ** -------------------------------- DESTRUCTOR --------------------------------
@@ -62,6 +63,7 @@ Cgi &				Cgi::operator=(const Cgi & rhs)
 	return *this;
 }
 
+
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
@@ -84,7 +86,7 @@ void	Cgi::init_path(const std::string & root, const std::string & path,
 	this->_root = root;
 	this->_path_file_executed_absolu =
 		this->_path_file_executed.substr(this->_root.size(),
-			this->_path_file_executed.size());
+		this->_path_file_executed.size());
 }
 
 std::string	Cgi::normVar( std::string src )
@@ -104,9 +106,7 @@ void	Cgi::init_env_client_var(const Parse_request & src_header)
 
 	end = src_header.get_param_request_tab().end();
 	for (it = src_header.get_param_request_tab().begin(); it != end ; ++it)
-	{
 		this->_env[this->normVar(it->first)] = it->second;
-	}
 }
 
 void	Cgi::init_env_server_var()
@@ -119,8 +119,8 @@ void	Cgi::init_env_request_var(const Parse_request & src_header,
 	const Engine & src_engine)
 {
 	if (src_header.get_request("Query") != "")
-		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?' +
-			src_header.get_request("Query");
+		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu + '?'
+		+ src_header.get_request("Query");
 	else
 		this->_env["REQUEST_URI"] = this->_path_file_executed_absolu;
 	this->_env["SCRIPT_FILENAME"] = this->_path_file_executed;
@@ -135,8 +135,10 @@ void	Cgi::init_env_request_var(const Parse_request & src_header,
 	this->_env["REMOTE_ADDR"] = src_engine.GetRemote_Addr();
 	this->_env["CONTENT_TYPE"] = src_header.get_request("Content-Type:");
 	if (sizet_to_string(src_header.get_request_body_size()) != "0")
+	{
 		this->_env["CONTENT_LENGTH"] =
 			sizet_to_string(src_header.get_request_body_size());
+	}
 	else
 		this->_env["CONTENT_LENGTH"] = "";
 	this->_env["REDIRECT_STATUS"] = src_header.get_request("Status");
@@ -150,7 +152,7 @@ void	Cgi::init_env(const Parse_request & src_header,
 	init_env_request_var(src_header, src_engine);
 }
 
-char **Cgi::convert_env()
+char	**Cgi::convert_env()
 {
 	std::map<std::string, std::string>::const_iterator	it_env;
 	char	**env = new char *[this->_env.size() + 1];
@@ -234,6 +236,7 @@ std::string	Cgi::body_response_from_fd(const int & fd)
 	return (ret);
 }
 
+
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
@@ -247,4 +250,6 @@ std::string	Cgi::getType_Cgi() const
 {
 	return (this->_type_cgi);
 }
+
+
 /* ************************************************************************** */

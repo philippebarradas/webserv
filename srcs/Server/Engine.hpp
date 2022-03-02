@@ -14,6 +14,11 @@
 # include <string.h>
 # include <fcntl.h>
 # include <signal.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <ext/stdio_filebuf.h>
+# include <dirent.h>
+# include <sys/stat.h>
 
 // Socket
 # include <sys/ioctl.h>
@@ -28,27 +33,26 @@
 # include "../Config/Server.hpp"
 # include "../Response/TreatRequest.hpp"
 # include "../Config/utils.hpp"
+# include "../Parse_request/parse_request.hpp"
+# include "Client.hpp"
+
 // Colors
-#define PURPLE	"\033[0;35m"
-#define BLACK	"\033[1;30m"
-#define RED		"\033[1;31m"
-#define GREEN	"\033[1;32m"
-#define YELLOW	"\033[1;33m"
-#define BLUE	"\033[1;34m"
-#define PURPLE2 "\033[1;35m"
-#define CYAN	"\033[1;36m"
-#define WHITE	"\033[1;37m"
-#define END		"\033[0m"
+# define	PURPLE	"\033[0;35m"
+# define	BLACK	"\033[1;30m"
+# define	RED		"\033[1;31m"
+# define	GREEN	"\033[1;32m"
+# define	YELLOW	"\033[1;33m"
+# define	BLUE	"\033[1;34m"
+# define	PURPLE2	"\033[1;35m"
+# define	CYAN	"\033[1;36m"
+# define	WHITE	"\033[1;37m"
+# define	END		"\033[0m"
 
 // Utils macro
-#define MAX_EVENTS 300
-#define MAX_SERVERS 100
-#define BUFFER_SIZE 1024
+# define	MAX_EVENTS	300
+# define	MAX_SERVERS	100
+# define	BUFFER_SIZE	1024
 
-// My class
-#include "../Config/Server.hpp"
-#include "../Parse_request/parse_request.hpp"
-#include "Client.hpp"
 
 class Server;
 class Parse_request;
@@ -91,7 +95,7 @@ class Engine
 		int					_listen_fd[MAX_SERVERS];
 		int					_port_binded[MAX_SERVERS];
 		int					_port;
-		int					_timeout; // time before poll expiration
+		int					_timeout;
 		ssize_t				_valread;
 		char				_buff[BUFFER_SIZE];
 		std::string			_buff_send;

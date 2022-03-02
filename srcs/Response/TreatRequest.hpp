@@ -3,30 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/01 15:27:26 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/02 11:36:32 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TREATREQUEST_HPP
 # define TREATREQUEST_HPP
 
+# include "../Server/Engine.hpp"
 # include "../Parse_request/parse_request.hpp"
 # include "../Autoindex/Autoindex.hpp"
 # include "../Server/Engine.hpp"
 # include "../Cgi/Cgi.hpp"
-# include "../Config/utils.hpp"
-
 # include "Response.hpp"
-# include <iostream>
-# include <string>
-# include <dirent.h>
-# include <sys/stat.h>
-# include <unistd.h>
-# include <grp.h>
-# include <pwd.h>
+
 
 # define DEFAULT_ROOT_ERROR "srcs/Config/default/error_page/"
 

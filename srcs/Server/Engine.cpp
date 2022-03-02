@@ -6,14 +6,11 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/01 18:48:15 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 11:32:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Engine.hpp"
-#include "../Cgi/Cgi.hpp"
-#include "../Parse_request/parse_request.hpp"
-#include "Client.hpp"
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -100,7 +97,8 @@ bool	Engine::is_binded(const int & port_config)
 	return (false);
 }
 
-void	Engine::bind_socket(const int & listen_fd, const std::vector<Server> & src)
+void	Engine::bind_socket(const int & listen_fd,
+	const std::vector<Server> & src)
 {
 	int port_config = 0;
 
@@ -282,7 +280,8 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 	}
 }
 
-void	Engine::loop_accept(const int & nbr_connexions, const std::vector<Server> & src)
+void	Engine::loop_accept(const int & nbr_connexions,
+	const std::vector<Server> & src)
 {
 	int	new_socket = 0, i = 0;
 	for (i = 0; i < nbr_connexions; i++)
@@ -312,9 +311,9 @@ void	Engine::myRead(Client & client)
 	}
 	else if (is_body_empty(client) == false)
 		read_body(client);
-	if (client.getIs_sendable() == true ||
-		client.getParse_head().error_first_line == true ||
-			(client.getHeader_parsed() == true && is_body_empty(client) == true))
+	if (client.getIs_sendable() == true
+		|| client.getParse_head().error_first_line == true
+		|| (client.getHeader_parsed() == true && is_body_empty(client) == true))
 	{
 		client.getEvents().events = EPOLLOUT;
 		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd,
@@ -373,4 +372,6 @@ std::string	const & Engine::GetRemote_Addr() const
 {
 	return (this->_remote_addr);
 }
+
+
 /* ************************************************************************** */

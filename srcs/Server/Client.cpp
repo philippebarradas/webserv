@@ -1,9 +1,5 @@
 
 #include "Client.hpp"
-#include "../Cgi/Cgi.hpp"
-#include "../Parse_request/parse_request.hpp"
-
-
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -97,7 +93,7 @@ void	Client::setIs_sendable(bool const & is_sendable)
 	this->_is_sendable = is_sendable;
 }
 
-void		Client::setFd(int const & fd)
+void	Client::setFd(int const & fd)
 {
 	this->_fd = fd;
 }

@@ -1,47 +1,7 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-// C++
-# include <iostream>
-# include <string>
-# include <fstream>
-# include <cstring>
-
-// C
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-
-// Socket
-# include <sys/ioctl.h>
-# include <sys/poll.h>
-# include <sys/epoll.h>
-# include <sys/socket.h>
-# include <sys/time.h>
-# include <arpa/inet.h>
-# include <netinet/in.h>
-
-// My class
-# include "../Config/Server.hpp"
-# include "../Response/TreatRequest.hpp"
-
-// Colors
-#define PURPLE	"\033[0;35m"
-#define BLACK	"\033[1;30m"
-#define RED		"\033[1;31m"
-#define GREEN	"\033[1;32m"
-#define YELLOW	"\033[1;33m"
-#define BLUE	"\033[1;34m"
-#define PURPLE2 "\033[1;35m"
-#define CYAN	"\033[1;36m"
-#define WHITE	"\033[1;37m"
-#define END		"\033[0m"
-
-// My class
-#include "../Config/Server.hpp"
-#include "../Parse_request/parse_request.hpp"
+# include "Engine.hpp"
 
 class Server;
 class Parse_request;
@@ -79,6 +39,7 @@ class Client
 		int const &			getFd() const;
 		Parse_request &		getParse_head();
 		epoll_event &		getEvents();
+
 	private:
 
 		// VARIABLES
@@ -93,7 +54,5 @@ class Client
 		bool						_is_sendable;
 		int							_fd;
 };
-
-std::ostream &			operator<<( std::ostream & o, Client & i );
 
 #endif /* ********************************************************* Client_H */
