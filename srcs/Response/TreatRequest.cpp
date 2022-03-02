@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/02 11:02:36 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:13:32 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	TreatRequest::force_open( Parse_request const & req )
 
 bool	TreatRequest::permForOpen( std::string const & path ) const
 {
-	struct stat sbuf;
+	struct stat	sbuf;
 
 	int ret_stat = stat(path.c_str(), &sbuf);
 
@@ -173,7 +173,7 @@ bool	TreatRequest::permForOpen( std::string const & path ) const
 
 bool	TreatRequest::exist_file( std::string const & path) const
 {
-	struct stat path_stat;
+	struct stat	path_stat;
 
 	if (stat(path.c_str(), &path_stat) == -1)
 		return (false);
@@ -199,9 +199,6 @@ bool	TreatRequest::exist( std::string const & root) const
 bool	TreatRequest::check502( std::string const & pathCgi,
 	Parse_request & req )
 {
-	std::string	pathcustom;
-	std::map<unsigned int, std::string>				allError;
-
 	if (!this->exist_file(pathCgi) || !this->permForOpen(pathCgi))
 	{
 		req.setStatus("502");
@@ -228,9 +225,9 @@ bool	TreatRequest::is_dynamic( Parse_request const & req,
 bool	TreatRequest::openAndRead( std::string const & path,
 	Parse_request & req )
 {
-	std::ifstream ifs;
 	std::map<std::string, std::string>::const_iterator	it_cgi;
-	std::string	extension;
+	std::string		extension;
+	std::ifstream	ifs;
 
 	if (!exist_file(path))
 		return (false);
@@ -264,9 +261,9 @@ bool	TreatRequest::openAndRead( std::string const & path,
 
 size_t		TreatRequest::selectConf( Parse_request const & req ) const
 {
-	size_t i;
 	std::set<std::string>::const_iterator	it, end;
 	std::set<std::string>	name;
+	size_t	i;
 
 	for (i = 0 ; i < this->_conf.size() ; ++i)
 	{
@@ -320,22 +317,11 @@ std::map<std::string, Server>::const_iterator	TreatRequest::selectLocation(
 	return (ret);
 }
 
-bool	TreatRequest::is_dir( std::string const & path ) const
-{
-	DIR *pDir;
-
-	pDir = opendir(path.c_str());
-	if (pDir == NULL)
-		return false;
-	closedir(pDir);
-	return true;
-}
-
 bool	TreatRequest::search_index( Parse_request & req,
 	std::string const & path )
 {
 	std::set<std::string>::const_iterator	it, end;
-	std::string tmp, file;
+	std::string	tmp, file;
 
 	end = this->_loc->second.getIndex().end();
 	for (it = this->_loc->second.getIndex().begin() ; it != end ; ++it)
@@ -511,7 +497,7 @@ bool	TreatRequest::check_access_delete( Parse_request & req,
 
 bool	TreatRequest::del( char const * path )
 {
-	struct stat sb;
+	struct stat	sb;
 
 	if (stat(path, &sb) != -1)
 	{
@@ -575,9 +561,9 @@ void	TreatRequest::exec( Parse_request & req, std::string const & method )
 
 void	TreatRequest::permMethod( Parse_request & req )
 {
-	std::string	method;
+	std::string								method;
 	std::set<std::string>::const_iterator	it;
-	std::set<std::string>::iterator	ite;
+	std::set<std::string>::iterator			ite;
 
 	method = req.get_request("Method");
 	it = this->_loc->second.getMethods().find(method);

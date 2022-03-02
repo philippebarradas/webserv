@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/02 11:36:32 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:05:33 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,6 @@ class TreatRequest
 		bool		_cgi;
 		size_t		_i_conf;
 
-
-		bool	is_dir( std::string const & path ) const;
 
 		bool	search_index( Parse_request & req,
 			std::string const & path );
