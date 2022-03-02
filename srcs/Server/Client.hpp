@@ -42,8 +42,10 @@ class Client
 
 	private:
 
-		// VARIABLES
+		// CONSTRUCTOR
 		Client();
+
+		// VARIABLES
 		std::vector<Parse_request>	_parse_head;
 		epoll_event					_events;
 		size_t						_recv_len;
@@ -52,7 +54,6 @@ class Client
 		bool						_header_parsed;
 		bool						_header_readed;
 		bool						_is_sendable;
-		int							_fd;
 };
 
 #endif /* ********************************************************* Client_H */

@@ -1,6 +1,6 @@
 server{
 	server_name server_test;
-	listen 8042;
+	listen 8032;
 
 	accepted_methods	GET POST DELETE;
 	autoindex on;
@@ -10,7 +10,7 @@ server{
 
 server{
 	server_name localhost hello;
-	listen 8020;
+	listen 8010;
 
 	client_max_body_size 1000000000;
 	autoindex off;
@@ -47,7 +47,7 @@ server{
 
 server{
 	server_name test_name;
-	listen 8020;
+	listen 8010;
 
 	accepted_methods	GET;
 	autoindex on;

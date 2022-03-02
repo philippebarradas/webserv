@@ -19,7 +19,6 @@ Client::Client(epoll_event & ev)
 	_is_sendable = false;
 	_fill_request = "";
 	_events = ev;
-	_fd = _events.data.fd;
 }
 
 Client::Client(Client const & src )
@@ -54,7 +53,6 @@ Client&				Client::operator=( Client const & rhs )
 			this->_parse_head = rhs._parse_head;
 		else
 			this->_parse_head.push_back(Parse_request());
-		this->_fd = rhs._fd;
 	}
 	return *this;
 }
@@ -91,11 +89,6 @@ void	Client::setHeader_readed(const bool & header_readed)
 void	Client::setIs_sendable(bool const & is_sendable)
 {
 	this->_is_sendable = is_sendable;
-}
-
-void	Client::setFd(int const & fd)
-{
-	this->_fd = fd;
 }
 
 /*
@@ -140,9 +133,4 @@ bool	const & Client::getHeader_readed() const
 bool	const & Client::getIs_sendable() const
 {
 	return (this->_is_sendable);
-}
-
-int	const & Client::getFd() const
-{
-	return (this->_fd);
 }

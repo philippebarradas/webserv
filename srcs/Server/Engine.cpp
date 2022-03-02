@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 11:32:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:20:30 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ Engine&				Engine::operator=(const Engine & rhs)
 
 int	Engine::create_socket()
 {
-	int listen_fd = 0;
+	int	listen_fd = 0;
 
 	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_fd == 0)
@@ -81,7 +81,8 @@ int	Engine::create_socket()
 
 void	Engine::set_socket(const int & listen_fd)
 {
-	int opt = 1;
+	int	opt = 1;
+
 	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
 	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))
 		throw std::runtime_error("[Error] set_socket() failed");
@@ -100,7 +101,7 @@ bool	Engine::is_binded(const int & port_config)
 void	Engine::bind_socket(const int & listen_fd,
 	const std::vector<Server> & src)
 {
-	int port_config = 0;
+	int	port_config = 0;
 
 	std::istringstream(src[this->_i_server].getListen()) >> port_config;
 	this->_addr.sin_family = AF_INET;
@@ -126,7 +127,7 @@ void	Engine::listen_socket(const int & listen_fd)
 
 void	Engine::set_remote_var(struct sockaddr_in & addr_client)
 {
-	int i_remote_port = ntohs(addr_client.sin_port);
+	int	i_remote_port = ntohs(addr_client.sin_port);
 
 	std::stringstream ss;
 	ss << i_remote_port;
@@ -136,9 +137,9 @@ void	Engine::set_remote_var(struct sockaddr_in & addr_client)
 
 int	Engine::accept_connexions(const int & listen_fd)
 {
-	struct sockaddr_in addr_client;
-	int new_socket = 0;
-	int client_len = sizeof(addr_client);
+	struct sockaddr_in	addr_client;
+	int	new_socket;
+	int	client_len = sizeof(addr_client);
 
 	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client,
 		(socklen_t *)&client_len);
@@ -177,7 +178,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	this->_v.reserve(MAX_EVENTS);
 	this->_port = 0, this->_i_server_binded = 0, this->_valread = -1;
 	this->_nbr_servers = src.size();
-	this->_timeout = 3 * 60 * 1000; // 3 min de _timeout
+	this->_timeout = 3 * 60 * 1000;
 	this->_epfd = epoll_create(MAX_EVENTS);
 	if (this->_epfd < 0)
 		throw std::runtime_error("[Error] epoll_create() failed");
@@ -324,7 +325,7 @@ void	Engine::myRead(Client & client)
 
 void	Engine::loop_input_output(const std::vector<Server> & src)
 {
-	std::vector<Client>::iterator it;
+	std::vector<Client>::iterator	it;
 
 	for (it = _v.begin(); it != _v.end(); ++it)
 	{
@@ -343,7 +344,7 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 
 void	Engine::loop_server(const std::vector<Server> & src)
 {
-	int nbr_connexions = 0;
+	int	nbr_connexions = 0;
 	while (true)
 	{
 		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events,
