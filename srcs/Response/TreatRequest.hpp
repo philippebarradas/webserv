@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:34 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/02 12:05:33 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:44:08 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,7 @@ class TreatRequest
 		void	generateAutoIndex( Parse_request & req,
 			std::string const & path );
 
-		bool	is_dynamic( Parse_request const & req,
-			std::string const & extension,
+		bool	is_dynamic( std::string const & extension,
 			std::map<std::string, std::string>::const_iterator & it ) const;
 		void	force_open( Parse_request const & req );
 		void	readStaticFile( std::ifstream & ifs );

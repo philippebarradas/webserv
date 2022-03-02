@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 12:37:09 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:47:48 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,7 +239,7 @@ void	Engine::read_header(Client & client)
 	return (res);
 }
 
-void	Engine::read_body(const std::vector<Server> & src, Client & client)
+void	Engine::read_body(Client & client)
 {
 	char b;
 
@@ -263,7 +263,6 @@ void	Engine::read_body(const std::vector<Server> & src, Client & client)
 				_length_chunk_string += b;
 				client.setRecv_len(_valread);
 				client.setFill_request(b);
-				std::cout << RED << b << END;
 			}
 			else
 			{

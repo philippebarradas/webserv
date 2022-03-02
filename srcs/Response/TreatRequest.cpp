@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/02 12:13:32 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:44:31 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void	TreatRequest::force_open( Parse_request const & req )
 	std::string		pathErr;
 
 	pathErr = DEFAULT_ROOT_ERROR + req.get_request("Status") + ".html";
-	ifs.open(pathErr, std::ifstream::in);
+	ifs.open(pathErr.c_str(), std::ifstream::in);
 	this->readStaticFile(ifs);
 	this->_extension = ".html";
 	this->_cgi = false;
@@ -208,8 +208,7 @@ bool	TreatRequest::check502( std::string const & pathCgi,
 	return (true);
 }
 
-bool	TreatRequest::is_dynamic( Parse_request const & req,
-	std::string const & extension,
+bool	TreatRequest::is_dynamic( std::string const & extension,
 	std::map<std::string, std::string>::const_iterator & it ) const
 {
 	std::map<std::string, std::string>::const_iterator	end;
@@ -238,7 +237,7 @@ bool	TreatRequest::openAndRead( std::string const & path,
 
 	extension =	&path[path.rfind('/')];
 	extension = &path[path.rfind('.')];
-	this->_cgi = this->is_dynamic(req, extension, it_cgi);
+	this->_cgi = this->is_dynamic(extension, it_cgi);
 
 	if (this->_cgi)
 	{
