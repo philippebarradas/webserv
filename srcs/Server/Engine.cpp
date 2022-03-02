@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
+/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 12:20:30 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:47:48 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,17 +229,48 @@ void	Engine::read_header(Client & client)
 
 }
 
+ size_t	hexa_to_sizee(std::string nbr)
+{
+	std::stringstream ss;
+	size_t res = 0;
+
+	ss << std::hex << nbr;
+	ss >> res;
+	return (res);
+}
+
 void	Engine::read_body(Client & client)
 {
 	char b;
+
+	size_t length_body;
+	size_t length_request;
+	bzero(_buff, BUFFER_SIZE);
+	bzero(_buff_chunked, BUFFER_SIZE_CHUNKED);
 
 	if (client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
 	{
 		if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
 		{
-			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
-			client.setRecv_len(_valread);
-			client.setFill_request(b);
+			if (_length_chunk_string.find("\r\n") != std::string::npos)
+			{
+				_length_chunk = hexa_to_sizee(_length_chunk_string);
+				_length_chunk_string = "";
+			}
+			if (_length_chunk == 0)
+			{
+				_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+				_length_chunk_string += b;
+				client.setRecv_len(_valread);
+				client.setFill_request(b);
+			}
+			else
+			{
+				_valread = recv(client.getEvents().data.fd, &_buff_chunked, _length_chunk, 0);
+				client.setRecv_len(_valread);
+				client.setFill_request_body(_buff_chunked, _valread);
+				_length_chunk = 0;
+			}
 		}
 		if (client.getFill_request().find("0\r\n\r\n") != std::string::npos)
 		{
@@ -249,14 +280,18 @@ void	Engine::read_body(Client & client)
 	}
 	else
 	{
-		if (client.getFill_request().size() < (client.getRequest_header_size() +
-			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
+		length_body =  stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size");
+		length_request =  (client.getRequest_header_size() + length_body);
+		if (client.getFill_request().size() < length_request)
 		{
-			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+			if (client.getFill_request().size() + BUFFER_SIZE > length_request)
+				_valread = recv(client.getEvents().data.fd, &_buff, length_request - (client.getFill_request().size()), 0);
+			else
+				_valread = recv(client.getEvents().data.fd, &_buff, BUFFER_SIZE, 0);
 			client.setRecv_len(_valread);
-			client.setFill_request(b);
+			client.setFill_request_body(_buff, _valread);
 		}
-		if (client.getFill_request().size() == (client.getRequest_header_size() +
+		if (client.getFill_request().size() >= (client.getRequest_header_size() +
 			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
 		{
 			client.getParse_head().parse_body(client.getFill_request());

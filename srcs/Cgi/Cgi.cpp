@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/14 11:17:37 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 11:32:08 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 12:34:41 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,14 +184,14 @@ char	**Cgi::create_argv(const std::string & path_file_executed)
 void	Cgi::exec_cgi(char **argv, char **env,
 	const Parse_request & src_header)
 {
-	std::string	body_string = src_header.get_request_body();
-	int			real_stdin = dup(STDIN_FILENO);
-	int			real_stdout = dup(STDOUT_FILENO);
-	FILE		*file_stdin = tmpfile();
-	FILE		*file_stdout = tmpfile();
-	int			fd_stdin = fileno(file_stdin);
-	int			fd_stdout = fileno(file_stdout);
-	int			status = 0;
+	std::string body_string = src_header.get_request_body();
+	int		real_stdin = dup(STDIN_FILENO);
+	int		real_stdout = dup(STDOUT_FILENO);
+	FILE	*file_stdin = tmpfile();
+	FILE	*file_stdout = tmpfile();
+	int	fd_stdin = fileno(file_stdin);
+	int	fd_stdout = fileno(file_stdout);
+	int		status = 0;
 
 	this->_pid = fork();
 	if (this->_pid == -1)
@@ -200,8 +200,9 @@ void	Cgi::exec_cgi(char **argv, char **env,
 	{
 		if (src_header.get_request("Method") == "POST")
 		{
-			std::fputs(body_string.c_str(), file_stdin); // to change
-			rewind(file_stdin);
+			for (size_t x = 0; x < body_string.size(); x++)
+				std::fwrite(&body_string[x], sizeof(body_string[x]), 1, file_stdin);
+			fseek(file_stdin, 0, SEEK_SET);
 		}
 		dup2(fd_stdin, STDIN_FILENO);
 		dup2(fd_stdout, STDOUT_FILENO);
@@ -209,7 +210,7 @@ void	Cgi::exec_cgi(char **argv, char **env,
 			throw std::runtime_error("[Error] execve failed");
 	}
 	waitpid(this->_pid, &status, 0);
-	lseek(fd_stdout, 0, SEEK_SET);
+	fseek(file_stdout, 0, SEEK_SET);
 	this->_send_content = body_response_from_fd(fd_stdout);
 	dup2(real_stdin, STDIN_FILENO);
 	dup2(real_stdout, STDOUT_FILENO);

@@ -9,11 +9,10 @@
 </form>
 
 <?php
-
 if (isset($_FILES['userfile']))
 {
 	$_FILES['userfile'];
-	$uploaddir = '/sgoinfre/goinfre/Perso/dodjian/webserv/www/uploads/';
+	$uploaddir = '/mnt/nfs/homes/tsannie/goinfre/webserv/www/uploads/';
 	$target_path = $uploaddir . basename($_FILES['userfile']['name']);
 }
 
@@ -25,10 +24,10 @@ if (isset($_POST['submit']))
 	}
 	else
 	{
+
 		echo "Possible move failed!\n";
 	}
 }
-
 ?>
 
 </body>

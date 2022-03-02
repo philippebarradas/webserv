@@ -49,9 +49,10 @@
 # define	END		"\033[0m"
 
 // Utils macro
-# define	MAX_EVENTS	300
-# define	MAX_SERVERS	100
-# define	BUFFER_SIZE	1024
+# define	MAX_EVENTS			300
+# define	MAX_SERVERS			100
+# define	BUFFER_SIZE			1024
+# define	BUFFER_SIZE_CHUNKED	16372
 
 
 class Server;
@@ -82,6 +83,9 @@ class Engine
 		std::string	const & GetRemote_Addr() const;
 		int			const & GetAccessPort(void) const;
 
+		std::string _length_chunk_string;
+		size_t _length_chunk;
+
 	private:
 
 		// VARIABLES
@@ -98,6 +102,7 @@ class Engine
 		int					_timeout;
 		ssize_t				_valread;
 		char				_buff[BUFFER_SIZE];
+		char				_buff_chunked[BUFFER_SIZE_CHUNKED];
 		std::string			_buff_send;
 		std::string			_remote_port;
 		std::string			_remote_addr;

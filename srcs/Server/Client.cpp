@@ -76,6 +76,11 @@ void	Client::setFill_request(const char & fill_request)
 	this->_fill_request += fill_request;
 }
 
+void	Client::setFill_request_body(const char *fill_request, const size_t & valread)
+{
+	this->_fill_request.append(fill_request, valread);
+}
+
 void	Client::setHeader_parsed(const bool & header_parsed)
 {
 	this->_header_parsed = header_parsed;
