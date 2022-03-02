@@ -5,7 +5,7 @@ server{
 	accepted_methods	GET POST DELETE;
 	autoindex on;
 	cgi .php /usr/bin/php-cgi;
-	root /mnt/nfs/homes/tsannie/goinfre/webserv/www/test;
+	root /home/user42/Bureau/webserv/www/test;
 }
 
 server{
@@ -14,7 +14,7 @@ server{
 
 	client_max_body_size 8000000000000;
 	autoindex off;
-	root /mnt/nfs/homes/tsannie/goinfre/webserv/www;
+	root /home/user42/Bureau/webserv/www;
 
 	location / {
 		cgi .php /usr/bin/php-cgi;
@@ -31,25 +31,16 @@ server{
 	location /all_test {
 		cgi .py /usr/bin/python3.7;
 		cgi .php /usr/bin/php-cgi;
-		root /mnt/nfs/homes/tsannie/goinfre/webserv/www/test;
+		root /home/user42/Bureau/webserv/www/test;
 		accepted_methods	GET POST;
 		autoindex on;
 	}
 
 	location /delete_loc {
-		root /mnt/nfs/homes/tsannie/goinfre/webserv/www/del;
+		root /home/user42/Bureau/webserv/www/del;
 		accepted_methods	DELETE;
 	}
 
 	location /no_perm {
 	}
-}
-
-server{
-	server_name test_name;
-	listen 8020;
-
-	accepted_methods	GET;
-	autoindex on;
-	root /mnt/nfs/homes/tsannie/goinfre/webserv;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 15:27:37 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/25 16:07:01 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 13:12:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ size_t			stost_size( size_t const & min, size_t const & max,
 					std::string const & nb, std::string const & name );
 
 std::string		sizet_to_string(size_t const & x);
+size_t			hexa_to_size_brut(std::string nbr);
 
 
 #endif

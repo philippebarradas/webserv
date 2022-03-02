@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 12:47:48 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 15:24:11 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	Engine::create_socket()
 	int	listen_fd = 0;
 
 	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (listen_fd == 0)
+	if (listen_fd < 0)
 		throw std::runtime_error("[Error] create_socket() failed");
 	return (listen_fd);
 }
@@ -102,7 +102,7 @@ void	Engine::bind_socket(const int & listen_fd,
 	const std::vector<Server> & src)
 {
 	int	port_config = 0;
-
+	std::cout << RED << "listen_fd = ["<< listen_fd << "]" << END << std::endl;
 	std::istringstream(src[this->_i_server].getListen()) >> port_config;
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_addr.s_addr = INADDR_ANY;
@@ -229,75 +229,71 @@ void	Engine::read_header(Client & client)
 
 }
 
- size_t	hexa_to_sizee(std::string nbr)
+void Engine::read_content_length(Client & client)
 {
-	std::stringstream ss;
-	size_t res = 0;
+	size_t length_body =  stost_size(0, MAX_MAXBODY,
+		client.getParse_head().get_request("Content-Length:"), "_request_body_size");
+	size_t length_request = (client.getRequest_header_size() + length_body);
+	if (client.getFill_request().size() < length_request)
+	{
+		if (client.getFill_request().size() + BUFFER_SIZE > length_request)
+			_valread = recv(client.getEvents().data.fd, &_buff,
+			length_request - (client.getFill_request().size()), 0);
+		else
+			_valread = recv(client.getEvents().data.fd, &_buff, BUFFER_SIZE, 0);
+		client.setRecv_len(_valread);
+		client.setFill_request_body(_buff, _valread);
+	}
+	if (client.getFill_request().size() >= (client.getRequest_header_size() +
+		stost_size(0, MAX_MAXBODY,
+		client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
+	{
+		client.getParse_head().parse_body(client.getFill_request());
+		client.setIs_sendable(true);
+	}
+}
 
-	ss << std::hex << nbr;
-	ss >> res;
-	return (res);
+void Engine::read_chunked(Client & client)
+{
+	char b;
+
+	if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
+	{
+		if (_length_chunk_string.find("\r\n") != std::string::npos)
+		{
+			_length_chunk = hexa_to_size_brut(_length_chunk_string);
+			_length_chunk_string = "";
+		}
+		if (_length_chunk == 0)
+		{
+			_valread = recv(client.getEvents().data.fd, &b, 1, 0);
+			_length_chunk_string += b;
+			client.setRecv_len(_valread);
+			client.setFill_request(b);
+		}
+		else
+		{
+			_valread = recv(client.getEvents().data.fd, &_buff_chunked, _length_chunk, 0);
+			client.setRecv_len(_valread);
+			client.setFill_request_body(_buff_chunked, _valread);
+			_length_chunk = 0;
+		}
+	}
+	if (client.getFill_request().find("0\r\n\r\n") != std::string::npos)
+	{
+		client.getParse_head().parse_body(client.getFill_request());
+		client.setIs_sendable(true);
+	}
 }
 
 void	Engine::read_body(Client & client)
 {
-	char b;
-
-	size_t length_body;
-	size_t length_request;
 	bzero(_buff, BUFFER_SIZE);
 	bzero(_buff_chunked, BUFFER_SIZE_CHUNKED);
-
 	if (client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
-	{
-		if (client.getFill_request().find("0\r\n\r\n") == std::string::npos)
-		{
-			if (_length_chunk_string.find("\r\n") != std::string::npos)
-			{
-				_length_chunk = hexa_to_sizee(_length_chunk_string);
-				_length_chunk_string = "";
-			}
-			if (_length_chunk == 0)
-			{
-				_valread = recv(client.getEvents().data.fd, &b, 1, 0);
-				_length_chunk_string += b;
-				client.setRecv_len(_valread);
-				client.setFill_request(b);
-			}
-			else
-			{
-				_valread = recv(client.getEvents().data.fd, &_buff_chunked, _length_chunk, 0);
-				client.setRecv_len(_valread);
-				client.setFill_request_body(_buff_chunked, _valread);
-				_length_chunk = 0;
-			}
-		}
-		if (client.getFill_request().find("0\r\n\r\n") != std::string::npos)
-		{
-			client.getParse_head().parse_body(client.getFill_request());
-			client.setIs_sendable(true);
-		}
-	}
+		read_chunked(client);
 	else
-	{
-		length_body =  stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size");
-		length_request =  (client.getRequest_header_size() + length_body);
-		if (client.getFill_request().size() < length_request)
-		{
-			if (client.getFill_request().size() + BUFFER_SIZE > length_request)
-				_valread = recv(client.getEvents().data.fd, &_buff, length_request - (client.getFill_request().size()), 0);
-			else
-				_valread = recv(client.getEvents().data.fd, &_buff, BUFFER_SIZE, 0);
-			client.setRecv_len(_valread);
-			client.setFill_request_body(_buff, _valread);
-		}
-		if (client.getFill_request().size() >= (client.getRequest_header_size() +
-			stost_size(0, MAX_MAXBODY, client.getParse_head().get_request("Content-Length:"), "_request_body_size")))
-		{
-			client.getParse_head().parse_body(client.getFill_request());
-			client.setIs_sendable(true);
-		}
-	}
+		read_content_length(client);
 }
 
 void	Engine::send_data(const std::vector<Server> & src, Client & client)
@@ -364,11 +360,23 @@ void	Engine::loop_input_output(const std::vector<Server> & src)
 
 	for (it = _v.begin(); it != _v.end(); ++it)
 	{
-		if (it->getEvents().events & EPOLLIN)
+		if (it->getEvents().events & EPOLLERR)
+		{
+			std::cout << "EPOLLERR" << std::endl;
+			send_data(src, *it);
+			close(it->getEvents().data.fd);
+			it = _v.erase(it);
+			if (it == _v.end())
+				break ;
+		}
+		else if (it->getEvents().events & EPOLLIN)
 			myRead(*it);
 		else if (it->getEvents().events & EPOLLOUT)
 		{
 			send_data(src, *it);
+			if (epoll_ctl(this->_epfd, EPOLL_CTL_DEL, it->getEvents().data.fd,
+				&it->getEvents()) == -1)
+				throw std::runtime_error("[Error] epoll_ctl_del() failed");	
 			close(it->getEvents().data.fd);
 			it = _v.erase(it);
 			if (it == _v.end())

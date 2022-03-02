@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 19:02:55 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/01 11:24:19 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/02 13:11:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,4 +172,14 @@ std::vector< std::vector<std::string> >	sortInVec( std::string const & src )
 			++i;
 	}
 	return (ret);
+}
+
+size_t	hexa_to_size_brut(std::string nbr)
+{
+	std::stringstream ss;
+	size_t res = 0;
+
+	ss << std::hex << nbr;
+	ss >> res;
+	return (res);
 }

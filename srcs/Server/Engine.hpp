@@ -126,6 +126,11 @@ class Engine
 		bool	is_listener(const int & fd, const int *tab_fd,
 			const int & nbr_servers, const std::vector<Server> & src);
 		bool	is_body_empty(Client & client);
+
+		void read_content_length(Client & client);
+		void read_chunked(Client & client);
+
+
 };
 
 #endif /* ********************************************************* Engine_H */
