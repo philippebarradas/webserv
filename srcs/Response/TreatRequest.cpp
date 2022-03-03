@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TreatRequest.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:34:30 by tsannie           #+#    #+#             */
-/*   Updated: 2022/03/02 12:44:31 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/04 00:30:23 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,7 +383,7 @@ void	TreatRequest::error_page( Parse_request & req )
 void	TreatRequest::redirect( Parse_request & req )
 {
 	this->_location = "http://"
-		+ req.get_request("Host-uncut")
+		+ req.get_request("Host:")
 		+ ":" + sizet_to_string(this->_eng->GetAccessPort())
 		+ req.get_request("Path") + "/";
 	req.setStatus("301");

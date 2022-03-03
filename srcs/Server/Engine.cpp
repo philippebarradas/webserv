@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/04 00:00:10 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/04 00:07:16 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,10 +250,11 @@ void	Engine::read_header(Client & client, int const & fd)
 	char	b;
 
 	_valread = recv(fd, &b, 1, 0);
-	if (_valread == -1)
-		throw std::runtime_error("[Error] recv() failed");
-	else if (_valread == 0)
+	if (_valread == -1 || _valread == 0)
+	{
 		delete_client(fd);
+		return ;
+	}
 	else if (!((b == '\n' || b == '\r')
 		&& client.getFill_request().size() == 0))
 	{
@@ -288,6 +289,11 @@ void Engine::read_content_length(Client & client, int const & fd)
 			length_request - (client.getFill_request().size()), 0);
 		else
 			_valread = recv(fd, &_buff, BUFFER_SIZE, 0);
+		if (_valread == -1 || _valread == 0)
+		{
+			delete_client(fd);
+			return ;
+		}
 		client.setRecv_len(_valread);
 		client.setFill_request_body(_buff, _valread);
 	}
@@ -314,6 +320,11 @@ void Engine::read_chunked(Client & client, int const & fd)
 		if (_length_chunk == 0)
 		{
 			_valread = recv(fd, &b, 1, 0);
+			if (_valread == -1 || _valread == 0)
+			{
+				delete_client(fd);
+				return ;
+			}
 			_length_chunk_string += b;
 			client.setRecv_len(_valread);
 			client.setFill_request(b);
@@ -321,6 +332,11 @@ void Engine::read_chunked(Client & client, int const & fd)
 		else
 		{
 			_valread = recv(fd, &_buff_chunked, _length_chunk, 0);
+			if (_valread == -1 || _valread == 0)
+			{
+				delete_client(fd);
+				return ;
+			}
 			client.setRecv_len(_valread);
 			client.setFill_request_body(_buff_chunked, _valread);
 			_length_chunk = 0;
@@ -353,8 +369,11 @@ void	Engine::send_client(const std::vector<Server> & src, Client & client, int c
 		this->_buff_send = treatment.treat(client.getParse_head());
 		nbr_bytes_send = send(fd,
 			this->_buff_send.c_str(), this->_buff_send.size(), 0);
-		if (nbr_bytes_send == -1)
-			throw std::runtime_error("[Error] sent() failed");
+		if (nbr_bytes_send == -1 || nbr_bytes_send == 0)
+		{
+			delete_client(fd);
+			return ;
+		}
 		this->_ev.events = EPOLLIN;
 		this->_ev.data.fd = fd;
 		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, fd, &this->_ev) == -1)

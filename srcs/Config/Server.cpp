@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 14:02:09 by tsannie           #+#    #+#             */
-/*   Updated: 2022/02/28 10:07:07 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/04 00:51:34 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,6 +297,15 @@ void	Server::setListen( std::vector<std::string> const & src )
 {
 	checkRedefinition(this->_alreadySetListen, src[0]);
 	checkNbArg(src.size(), 2, src[0]);
+
+	std::string	list(src[1]);
+
+	for (size_t i = 0 ; list[i] ; ++i)
+	{
+		if (!std::isdigit(list[i]))
+			throw std::invalid_argument("[Error] invalid listen.");
+	}
+
 	this->_alreadySetListen = true;
 	this->_listen = *(++(src.begin()));
 }
