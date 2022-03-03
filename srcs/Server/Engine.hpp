@@ -49,7 +49,7 @@
 # define	END		"\033[0m"
 
 // Utils macro
-# define	MAX_EVENTS			6
+# define	MAX_EVENTS			2048
 # define	MAX_SERVERS			100
 # define	BUFFER_SIZE			1024
 # define	BUFFER_SIZE_CHUNKED	16372

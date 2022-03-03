@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/03 20:24:39 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/03 20:48:35 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,7 +393,7 @@ void	Engine::loop_accept(const int & to_accept)
 	if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket,
 		&this->_ev) == -1)
 		throw std::runtime_error("[Error] epoll_ctl_add() failed");
-	std::cout << "CLIENT ACCEPT" << std::endl;
+	//std::cout << "CLIENT ACCEPT" << std::endl;
 	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));		// TODO CHECK UTILITY OF CONSTRUCOTR BY STRUCT ??
 }
 
@@ -443,14 +443,25 @@ void	Engine::loop_server(const std::vector<Server> & src)
 
 	printMap(this->_port_fd, "fd");
 
+	for (size_t e = 0 ; e < MAX_EVENTS ; ++e)
+	{
+		events_fd[e].data.fd = -1;
+		events_fd[e].events = EPOLLIN;
+	}
+
 	while (true)
 	{
-		std::cout << "WAIT" << std::endl;
+		//std::cout << "WAIT" << std::endl;
 		if ((nbr_connexions = epoll_wait(this->_epfd, events_fd,
 			MAX_EVENTS, 200)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
-		std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
-		std::cout << "LOOP" << std::endl;
+		//std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
+		//std::cout << "LOOP" << std::endl;
+
+		//for (size_t e = 0 ; e < sizeof(events_fd) / sizeof(struct epoll_event) ; ++e)
+		//	std::cout << "events_fd[" << e << "]\t=\t" << events_fd[e].data.fd
+		//	<< " | "  << events_fd[e].events << std::endl;
+		//std::cout << std::endl;
 
 		for (i = 0 ; i < nbr_connexions ; ++i)
 		{
@@ -467,8 +478,8 @@ void	Engine::loop_server(const std::vector<Server> & src)
 			}
 		}
 		//loop_accept(nbr_connexions, src);
-		std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
-		std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
+		//std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
+		//std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
 	}
 }
 
