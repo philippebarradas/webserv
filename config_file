@@ -44,3 +44,7 @@ server{
 	location /no_perm {
 	}
 }
+
+server {
+
+}
