@@ -6,17 +6,11 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/04 00:07:16 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/04 00:53:51 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Engine.hpp"
-
-void signal_to_exit( int ssignum )
-{
-	static_cast<void>(ssignum);
-	throw SignalStop();
-}
 
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
@@ -31,7 +25,6 @@ Engine::Engine(const std::vector<Server> & src)
 	std::cout << BBLUE "-------- Starting webserv --------\n" END << std::endl;
 	try
 	{
-		signal(SIGINT, signal_to_exit);
 		setup_socket_server(src);
 		loop_server(src);
 	}
@@ -210,7 +203,7 @@ void	Engine::init_fd_port(int const & port)
 			throw std::runtime_error("[Error] Bind failed");
 	listen_socket(fd);
 
-	this->_port_fd.insert(std::make_pair(fd, port));	// TODO PRINT THAT TO CHECK
+	this->_port_fd.insert(std::make_pair(fd, port));
 }
 
 void	Engine::setup_socket_server(const std::vector<Server> & src)
@@ -391,7 +384,7 @@ void	Engine::accept_client(const int & to_accept)
 	if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket,
 		&this->_ev) == -1)
 		throw std::runtime_error("[Error] epoll_ctl_add() failed");
-	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));		// TODO CHECK UTILITY OF CONSTRUCOTR BY STRUCT ??
+	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));
 }
 
 void	Engine::read_client(Client & client, int const & fd)
