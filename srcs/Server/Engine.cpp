@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/03 19:43:48 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/03 20:24:39 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Engine::Engine(const std::vector<Server> & src)
 	try
 	{
 		signal(SIGINT, signal_to_exit);
-		/*bzero(this->_fds_events, sizeof(_fds_events));
+		/*bzero(events_fd, sizeof(_fds_events));
 		for (size_t i = 0 ; i < MAX_EVENTS ; ++i)
 			_fds_events[i].data.fd = -1;
 		for (size_t i = 0 ; i < MAX_EVENTS ; ++i)
@@ -60,12 +60,17 @@ Engine::Engine(const Engine & src)
 
 Engine::~Engine()
 {
-	size_t i = 0;
-	for (i = 0 ; i < MAX_EVENTS ; ++i)
-	{
-		if (_fds_events[i].data.fd > 0)
-			close(_fds_events[i].data.fd);
-	}
+	std::map<int, Client>::iterator		pc_it, pc_end;
+	std::map<int, int>::iterator		ps_it, ps_end;
+
+	pc_end = _client.end();
+	for (pc_it = _client.begin(); pc_it != pc_end ; ++pc_it)
+		close(pc_it->first);
+
+	ps_end = _port_fd.end();
+	for (ps_it = _port_fd.begin(); ps_it != ps_end ; ++ps_it)
+		close(ps_it->first);
+
 	close(_epfd);
 
 	/*std::cout << "_client.size()\t=\t" << _client.size() << std::endl;	// TODO fix that
@@ -74,7 +79,7 @@ Engine::~Engine()
 		std::cout << "DELETE" << std::endl;
 		delete_client(_client.begin());
 	}*/
-	std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
+	//std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
 
 	//std::cout << ""\t=\t" << " << std::endl;
 	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
@@ -97,6 +102,7 @@ Engine&				Engine::operator=(const Engine & rhs)
 		this->_timeout = rhs._timeout;
 		this->_valread = rhs._valread;
 		this->_client = rhs._client;
+		this->_port_fd = rhs._port_fd;
 	}
 	return *this;
 }
@@ -108,9 +114,9 @@ Engine&				Engine::operator=(const Engine & rhs)
 
 void	Engine::delete_client(int const & fd_to_delete)
 {
+	this->_client.erase(fd_to_delete);
 	epoll_ctl(_epfd, EPOLL_CTL_DEL, fd_to_delete, NULL);
 	close(fd_to_delete);
-	this->_client.erase(fd_to_delete);
 }
 
 int	Engine::create_socket()
@@ -348,14 +354,14 @@ void Engine::read_chunked(Client & client, int const & fd)
 	}
 }
 
-void	Engine::read_body(Client & client)
+void	Engine::read_body(Client & client, int const & fd)
 {
 	bzero(_buff, BUFFER_SIZE);
 	bzero(_buff_chunked, BUFFER_SIZE_CHUNKED);
 	if (client.getParse_head().get_request("Transfer-Encoding:") == "chunked")
-		read_chunked(client);
+		read_chunked(client, fd);
 	else
-		read_content_length(client);
+		read_content_length(client, fd);
 }
 
 void	Engine::send_data(const std::vector<Server> & src, Client & client, int const & fd)
@@ -370,8 +376,9 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client, int con
 			this->_buff_send.c_str(), this->_buff_send.size(), 0);
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
-		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket,
-		&this->_ev) == -1)
+		this->_ev.events = EPOLLIN;
+		this->_ev.data.fd = fd;
+		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, fd, &this->_ev) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 	}
 }
@@ -387,7 +394,7 @@ void	Engine::loop_accept(const int & to_accept)
 		&this->_ev) == -1)
 		throw std::runtime_error("[Error] epoll_ctl_add() failed");
 	std::cout << "CLIENT ACCEPT" << std::endl;
-	this->_client.insert(std::make_pair(this->_ev.data.fd, Client(this->_ev)));		// TODO CHECK UTILITY OF CONSTRUCOTR BY STRUCT ??
+	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));		// TODO CHECK UTILITY OF CONSTRUCOTR BY STRUCT ??
 }
 
 void	Engine::myRead(Client & client, int const & fd)
@@ -400,23 +407,17 @@ void	Engine::myRead(Client & client, int const & fd)
 		client.setHeader_parsed(true);
 	}
 	else if (is_body_empty(client) == false)
-		read_body(client);
+		read_body(client, fd);
 	if (client.getIs_sendable() == true
 		|| client.getParse_head().error_first_line == true
 		|| (client.getHeader_parsed() == true && is_body_empty(client) == true))
 	{
-		fd = EPOLLOUT;
+		this->_ev.events = EPOLLOUT;
+		this->_ev.data.fd = fd;
 		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, fd,
-			&fd) == -1)
+			&this->_ev) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_mod() failed");
 	}
-}
-
-void	Engine::loop_input_output(const std::vector<Server> & src)
-{
-	std::vector<Client>::iterator	it;
-
-
 }
 
 template <typename T>
@@ -438,13 +439,14 @@ void printMap(T & map, std::string const & name)
 void	Engine::loop_server(const std::vector<Server> & src)
 {
 	int	nbr_connexions = 0, i;
+	struct	epoll_event events_fd[MAX_EVENTS];
 
 	printMap(this->_port_fd, "fd");
 
 	while (true)
 	{
 		std::cout << "WAIT" << std::endl;
-		if ((nbr_connexions = epoll_wait(this->_epfd, this->_fds_events,
+		if ((nbr_connexions = epoll_wait(this->_epfd, events_fd,
 			MAX_EVENTS, 200)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
@@ -452,24 +454,21 @@ void	Engine::loop_server(const std::vector<Server> & src)
 
 		for (i = 0 ; i < nbr_connexions ; ++i)
 		{
-			if (this->_fds_events[i].events & EPOLLERR || this->_fds_events[i].events & EPOLLHUP)
+			if (events_fd[i].events & EPOLLERR || events_fd[i].events & EPOLLHUP)
+				delete_client(events_fd[i].data.fd);
+			else if (events_fd[i].events & EPOLLIN && is_listener(events_fd[i].data.fd))
+				loop_accept(events_fd[i].data.fd);
+			else if (events_fd[i].events & EPOLLIN)
+				myRead(this->_client[events_fd[i].data.fd], events_fd[i].data.fd);		// TODO send iterator of map
+			else if (events_fd[i].events & EPOLLOUT)
 			{
-				delete_client(this->_fds_events[i].data.fd);
-			}
-			else if (this->_fds_events[i].events & EPOLLIN && is_listener(this->_fds_events[i].data.fd))
-				loop_accept(this->_fds_events[i].data.fd);
-			else if (this->_fds_events[i].events & EPOLLIN)
-				myRead(this->_client[this->_fds_events[i].data.fd]);
-			else if (this->_fds_events[i].events & EPOLLOUT)
-			{
-				send_data(src, this->_client[this->_fds_events[i].data.fd]);
-				delete_client(this->_fds_events[i].data.fd);
+				send_data(src, this->_client[events_fd[i].data.fd], events_fd[i].data.fd);	// TODO send iterator of map
+				delete_client(events_fd[i].data.fd);
 			}
 		}
 		//loop_accept(nbr_connexions, src);
 		std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
 		std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
-		//loop_input_output(src);		// TODO DELETE
 	}
 }
 

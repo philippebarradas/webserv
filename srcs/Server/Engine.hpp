@@ -83,8 +83,8 @@ class Engine
 		std::string	const & GetRemote_Addr() const;
 		int			const & GetAccessPort(void) const;
 
-		std::string _length_chunk_string;
-		size_t _length_chunk;
+		std::string	_length_chunk_string;
+		size_t 		_length_chunk;				// TODO WHAT ARE YOU DOING ?
 
 	private:
 
@@ -93,7 +93,6 @@ class Engine
 		std::map<int, int>			_port_fd;				// (fd, port)  is _listen_fd
 		//std::vector<int>			_port_already_set;		// is _port_binded
 		struct	epoll_event			_ev;
-		struct	epoll_event			_fds_events[MAX_EVENTS];
 
 		size_t						_i_server_binded;
 		size_t						_nbr_servers;
@@ -118,18 +117,17 @@ class Engine
 		void	listen_socket(const int & listen_fd);
 		int		accept_connexions(const int & listen_fd);
 		void	loop_accept(const int & to_accept);
-		void	loop_input_output(const std::vector<Server> & src);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-		void	myRead(Client & client);
+		void	myRead(Client & client, int const & fd);
 		void	mySend(const std::vector<Server> & src, Client & client);
-		void	:read_header(Client & client, int const & fd);
-		void	read_body(Client & client);
-		void	send_data(const std::vector<Server> & src, Client & client);
+		void	read_header(Client & client, int const & fd);
+		void	read_body(Client & client, int const & fd);
+		void	send_data(const std::vector<Server> & src, Client & client, int const & fd);
 		bool	is_listener(const int & fd);
 		bool	is_body_empty(Client & client);
 
 		void 	read_content_length(Client & client, int const & fd);
-		void read_chunked(Client & client);
+		void	read_chunked(Client & client, int const & fd);
 
 
 };

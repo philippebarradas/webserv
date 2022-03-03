@@ -12,7 +12,6 @@ class Client
 
 		// CONSTRUCTOR
 		Client();
-		Client(epoll_event & ev);
 		Client( Client const & src );
 
 		// DESTRUCTOR
@@ -40,7 +39,6 @@ class Client
 		bool const &		getIs_sendable() const;
 		int const &			getFd() const;
 		Parse_request &		getParse_head();
-		epoll_event &		getEvents();
 
 	private:
 
@@ -48,7 +46,6 @@ class Client
 
 		// VARIABLES
 		std::vector<Parse_request>	_parse_head;
-		epoll_event					_events;
 		size_t						_recv_len;
 		size_t						_request_header_size;
 		std::string					_fill_request;
