@@ -6,7 +6,7 @@
 /*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/03 20:48:35 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/03 23:54:06 by tsannie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,16 +72,6 @@ Engine::~Engine()
 		close(ps_it->first);
 
 	close(_epfd);
-
-	/*std::cout << "_client.size()\t=\t" << _client.size() << std::endl;	// TODO fix that
-	while (_client.size())
-	{
-		std::cout << "DELETE" << std::endl;
-		delete_client(_client.begin());
-	}*/
-	//std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
-
-	//std::cout << ""\t=\t" << " << std::endl;
 	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
 }
 
@@ -229,10 +219,7 @@ void	Engine::init_fd_port(int const & port)
 	listen_socket(fd);
 
 	std::cout << "INSERT" << std::endl;
-	this->_port_fd.insert(std::make_pair(fd, port));	// TODO PRINT THAT TO CHECK
-
-	//this->_port_already_set.push_back(port);
-	//this->_port_fd.push_back(fd);
+	this->_port_fd.insert(std::make_pair(fd, port));
 }
 
 void	Engine::setup_socket_server(const std::vector<Server> & src)
@@ -241,7 +228,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	int		port_config;
 	size_t	i;
 
-	this->_port = 0, this->_valread = -1;		// TODO CHECK UTILITY
+	this->_port = 0, this->_valread = -1;
 	this->_timeout = 3 * 60 * 1000;
 	this->_epfd = epoll_create(MAX_EVENTS);
 
@@ -364,7 +351,7 @@ void	Engine::read_body(Client & client, int const & fd)
 		read_content_length(client, fd);
 }
 
-void	Engine::send_data(const std::vector<Server> & src, Client & client, int const & fd)
+void	Engine::send_client(const std::vector<Server> & src, Client & client, int const & fd)
 {
 	int		nbr_bytes_send = 0;
 
@@ -383,7 +370,7 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client, int con
 	}
 }
 
-void	Engine::loop_accept(const int & to_accept)
+void	Engine::accept_client(const int & to_accept)
 {
 	int	new_socket;
 
@@ -394,10 +381,10 @@ void	Engine::loop_accept(const int & to_accept)
 		&this->_ev) == -1)
 		throw std::runtime_error("[Error] epoll_ctl_add() failed");
 	//std::cout << "CLIENT ACCEPT" << std::endl;
-	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));		// TODO CHECK UTILITY OF CONSTRUCOTR BY STRUCT ??
+	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));
 }
 
-void	Engine::myRead(Client & client, int const & fd)
+void	Engine::read_client(Client & client, int const & fd)
 {
 	if (client.getHeader_readed() == false)
 		read_header(client, fd);
@@ -451,35 +438,23 @@ void	Engine::loop_server(const std::vector<Server> & src)
 
 	while (true)
 	{
-		//std::cout << "WAIT" << std::endl;
 		if ((nbr_connexions = epoll_wait(this->_epfd, events_fd,
-			MAX_EVENTS, 200)) < 0)
+			MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
-		//std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
-		//std::cout << "LOOP" << std::endl;
-
-		//for (size_t e = 0 ; e < sizeof(events_fd) / sizeof(struct epoll_event) ; ++e)
-		//	std::cout << "events_fd[" << e << "]\t=\t" << events_fd[e].data.fd
-		//	<< " | "  << events_fd[e].events << std::endl;
-		//std::cout << std::endl;
-
 		for (i = 0 ; i < nbr_connexions ; ++i)
 		{
 			if (events_fd[i].events & EPOLLERR || events_fd[i].events & EPOLLHUP)
 				delete_client(events_fd[i].data.fd);
 			else if (events_fd[i].events & EPOLLIN && is_listener(events_fd[i].data.fd))
-				loop_accept(events_fd[i].data.fd);
+				accept_client(events_fd[i].data.fd);
 			else if (events_fd[i].events & EPOLLIN)
-				myRead(this->_client[events_fd[i].data.fd], events_fd[i].data.fd);		// TODO send iterator of map
+				read_client(this->_client[events_fd[i].data.fd], events_fd[i].data.fd);
 			else if (events_fd[i].events & EPOLLOUT)
 			{
-				send_data(src, this->_client[events_fd[i].data.fd], events_fd[i].data.fd);	// TODO send iterator of map
+				send_client(src, this->_client[events_fd[i].data.fd], events_fd[i].data.fd);
 				delete_client(events_fd[i].data.fd);
 			}
 		}
-		//loop_accept(nbr_connexions, src);
-		//std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
-		//std::cout << "_client.size()\t=\t" << _client.size() << std::endl;
 	}
 }
 

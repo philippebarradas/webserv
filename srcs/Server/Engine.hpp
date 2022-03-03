@@ -116,13 +116,13 @@ class Engine
 		void	bind_socket(const int & listen_fd, const std::vector<Server> & src);
 		void	listen_socket(const int & listen_fd);
 		int		accept_connexions(const int & listen_fd);
-		void	loop_accept(const int & to_accept);
+		void	accept_client(const int & to_accept);
 		void	set_remote_var(struct sockaddr_in & addr_client);
-		void	myRead(Client & client, int const & fd);
+		void	read_client(Client & client, int const & fd);
 		void	mySend(const std::vector<Server> & src, Client & client);
 		void	read_header(Client & client, int const & fd);
 		void	read_body(Client & client, int const & fd);
-		void	send_data(const std::vector<Server> & src, Client & client, int const & fd);
+		void	send_client(const std::vector<Server> & src, Client & client, int const & fd);
 		bool	is_listener(const int & fd);
 		bool	is_body_empty(Client & client);
 
