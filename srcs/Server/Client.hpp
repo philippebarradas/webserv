@@ -11,6 +11,7 @@ class Client
 	public:
 
 		// CONSTRUCTOR
+		Client();
 		Client(epoll_event & ev);
 		Client( Client const & src );
 
@@ -44,7 +45,6 @@ class Client
 	private:
 
 		// CONSTRUCTOR
-		Client();
 
 		// VARIABLES
 		std::vector<Parse_request>	_parse_head;
