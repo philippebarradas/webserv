@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/03 23:57:53 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/03 23:59:39 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	int		port_config;
 	size_t	i;
 
-	this->_port = 0, this->_valread = -1;		// TODO CHECK UTILITY
+	this->_port = 0, this->_valread = -1;
 	this->_timeout = 3 * 60 * 1000;
 	this->_epfd = epoll_create(MAX_EVENTS);
 
@@ -345,7 +345,7 @@ void	Engine::read_body(Client & client, int const & fd)
 		read_content_length(client, fd);
 }
 
-void	Engine::send_data(const std::vector<Server> & src, Client & client, int const & fd)
+void	Engine::send_client(const std::vector<Server> & src, Client & client, int const & fd)
 {
 	int		nbr_bytes_send = 0;
 
@@ -364,7 +364,7 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client, int con
 	}
 }
 
-void	Engine::loop_accept(const int & to_accept)
+void	Engine::accept_client(const int & to_accept)
 {
 	int	new_socket;
 
@@ -377,7 +377,7 @@ void	Engine::loop_accept(const int & to_accept)
 	this->_client.insert(std::make_pair(this->_ev.data.fd, Client()));		// TODO CHECK UTILITY OF CONSTRUCOTR BY STRUCT ??
 }
 
-void	Engine::myRead(Client & client, int const & fd)
+void	Engine::read_client(Client & client, int const & fd)
 {
 	if (client.getHeader_readed() == false)
 		read_header(client, fd);
@@ -408,19 +408,19 @@ void	Engine::loop_server(const std::vector<Server> & src)
 	while (true)
 	{
 		if ((nbr_connexions = epoll_wait(this->_epfd, events_fd,
-			MAX_EVENTS, 200)) < 0)
+			MAX_EVENTS, this->_timeout)) < 0)
 			throw std::runtime_error("[Error] epoll_wait() failed");
 		for (i = 0 ; i < nbr_connexions ; ++i)
 		{
 			if (events_fd[i].events & EPOLLERR || events_fd[i].events & EPOLLHUP)
 				delete_client(events_fd[i].data.fd);
 			else if (events_fd[i].events & EPOLLIN && is_listener(events_fd[i].data.fd))
-				loop_accept(events_fd[i].data.fd);
+				accept_client(events_fd[i].data.fd);
 			else if (events_fd[i].events & EPOLLIN)
-				myRead(this->_client[events_fd[i].data.fd], events_fd[i].data.fd);		// TODO send iterator of map
+				read_client(this->_client[events_fd[i].data.fd], events_fd[i].data.fd);
 			else if (events_fd[i].events & EPOLLOUT)
 			{
-				send_data(src, this->_client[events_fd[i].data.fd], events_fd[i].data.fd);	// TODO send iterator of map
+				send_client(src, this->_client[events_fd[i].data.fd], events_fd[i].data.fd);
 				delete_client(events_fd[i].data.fd);
 			}
 		}
