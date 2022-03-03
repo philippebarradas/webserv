@@ -49,7 +49,7 @@
 # define	END		"\033[0m"
 
 // Utils macro
-# define	MAX_EVENTS			5
+# define	MAX_EVENTS			100
 # define	MAX_SERVERS			100
 # define	BUFFER_SIZE			1024
 # define	BUFFER_SIZE_CHUNKED	16372
@@ -91,6 +91,7 @@ class Engine
 		// VARIABLES
 		std::vector<Client>	_v;
 		struct	sockaddr_in	_addr;
+		struct	epoll_event	_one_event;
 		struct	epoll_event	_fds_events[MAX_EVENTS];
 		size_t				_i_server;
 		size_t				_i_server_binded;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Engine.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tsannie <tsannie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/02 18:48:52 by tsannie          ###   ########.fr       */
+/*   Updated: 2022/03/03 03:46:54 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ Engine::~Engine()
 	}
 	std::cout << "_v.size()\t=\t" << _v.size() << std::endl;
 
-	//std::cout << ""\t=\t" << " << std::endl;
 	std::cout << BBLUE "\n--------- End of webserv ---------" END << std::endl;
 }
 
@@ -88,6 +87,7 @@ Engine&				Engine::operator=(const Engine & rhs)
 {
 	if (this != &rhs)
 	{
+		this->_one_event = rhs._one_event;
 		this->_addr = rhs._addr;
 		this->_buff_send = rhs._buff_send;
 		this->_epfd = rhs._epfd;
@@ -111,11 +111,8 @@ Engine&				Engine::operator=(const Engine & rhs)
 
 std::vector<Client>::iterator	Engine::delete_client(std::vector<Client>::iterator it_to_delete)
 {
-	int fd;
-
-	fd = it_to_delete->getEvents().data.fd;
-	epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, NULL);
-	close(fd);
+	epoll_ctl(_epfd, EPOLL_CTL_DEL, it_to_delete->getEvents().data.fd, NULL);
+	close(it_to_delete->getEvents().data.fd);
 	return (_v.erase(it_to_delete));
 }
 
@@ -192,11 +189,22 @@ int	Engine::accept_connexions(const int & listen_fd)
 
 	new_socket = accept(listen_fd, (struct sockaddr *)&addr_client,
 		(socklen_t *)&client_len);
+	if (new_socket < 0)
+	{
+		if (errno != EWOULDBLOCK)
+		{
+			std::cerr << "Error: accept() failed" << '\n';
+			return (-1);
+		}
+		throw std::runtime_error("[Error] accept_connexions() failed");
+	}
+	/* if (fcntl(new_socket, F_SETFL, O_NONBLOCK) < 0)
+	{
+		throw std::runtime_error("[Error] fcntl() failed");
+	} */
 	std::cout << PURPLE2 << "[webserv] new client accept on: " << this->_port
 		<< std::endl << END;
 	set_remote_var(addr_client);
-	if (new_socket < 0)
-		throw std::runtime_error("[Error] accept_connexions() failed");
 	return (new_socket);
 }
 
@@ -234,13 +242,14 @@ void	Engine::setup_socket_server(const std::vector<Server> & src)
 	for (this->_i_server = 0; this->_i_server < this->_nbr_servers;
 		this->_i_server++)
 	{
+		std::memset((struct epoll_event *)&_one_event, 0, sizeof(_one_event));
 		this->_listen_fd[this->_i_server] = create_socket();
-		this->_fds_events[this->_i_server].data.fd =
+		_one_event.data.fd =
 			this->_listen_fd[this->_i_server];
-		this->_fds_events[this->_i_server].events = EPOLLIN;
+		_one_event.events = EPOLLIN;
 		if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD,
 			this->_listen_fd[this->_i_server],
-				&this->_fds_events[this->_i_server]) == -1)
+				&_one_event) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_add() failed");
 		set_socket(this->_listen_fd[this->_i_server]);
 		bind_socket(this->_listen_fd[this->_i_server], src);
@@ -358,6 +367,13 @@ void	Engine::send_data(const std::vector<Server> & src, Client & client)
 
 		if (nbr_bytes_send == -1)
 			throw std::runtime_error("[Error] sent() failed");
+		_one_event.events = EPOLLIN;
+		_one_event.data.fd = client.getEvents().data.fd;
+		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd,
+			&_one_event) == -1)
+			throw std::runtime_error("[Error] epoll_ctl_mod() failed");
+
+		Client new_client(_one_event.data.fd);
 	}
 }
 
@@ -365,18 +381,44 @@ void	Engine::loop_accept(const int & nbr_connexions,
 	const std::vector<Server> & src)
 {
 	int	new_socket = 0, i = 0;
-	for (i = 0; i < nbr_connexions; i++)
+	std::vector<Client>::iterator it, end;
+
+	it = _v.begin();
+	for (i = 0; i < nbr_connexions; i++, ++it)
 	{
-		if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd,
+		if (this->_fds_events[i].events & EPOLLERR || this->_fds_events[i].events & EPOLLHUP)
+		{
+			std::cout << "EPOLLERR" << std::endl;
+			if (is_listener(this->_fds_events[i].data.fd, this->_listen_fd,
+				this->_nbr_servers, src))
+			{
+				for (size_t i = 0; i < _nbr_servers; i++) // close server ports
+					close(_listen_fd[i]);
+			}
+			epoll_ctl(_epfd, EPOLL_CTL_DEL, it->getEvents().data.fd, NULL);
+			close(it->getEvents().data.fd);
+		}
+		else if (this->_fds_events[i].events & EPOLLIN &&
+			is_listener(this->_fds_events[i].data.fd, this->_listen_fd,
 			this->_nbr_servers, src))
 		{
 			new_socket = accept_connexions(this->_fds_events[i].data.fd);
-			this->_fds_events[i].events = EPOLLIN;
-			this->_fds_events[i].data.fd = new_socket;
+			_one_event.events = EPOLLIN;
+			_one_event.data.fd = new_socket;
+			std::cout << "_one_event.data.fd\t=\t" << _one_event.data.fd << std::endl;
 			if (epoll_ctl(this->_epfd, EPOLL_CTL_ADD, new_socket,
-				&this->_fds_events[i]) == -1)
+				&_one_event) == -1)
 				throw std::runtime_error("[Error] epoll_ctl_add() failed");
-			this->_v.push_back(Client(this->_fds_events[i]));
+			this->_v.push_back(Client(_one_event));
+		}
+		else if (this->_fds_events[i].events & EPOLLIN)
+			myRead(*it);
+		else if (this->_fds_events[i].events & EPOLLOUT)
+		{
+			send_data(src, *it);
+			it = delete_client(it);
+			if (it == _v.end())
+				break ;
 		}
 	}
 }
@@ -396,35 +438,11 @@ void	Engine::myRead(Client & client)
 		|| client.getParse_head().error_first_line == true
 		|| (client.getHeader_parsed() == true && is_body_empty(client) == true))
 	{
-		client.getEvents().events = EPOLLOUT;
+		_one_event.events = EPOLLOUT;
+		_one_event.data.fd = client.getEvents().data.fd;
 		if (epoll_ctl(this->_epfd, EPOLL_CTL_MOD, client.getEvents().data.fd,
-			&client.getEvents()) == -1)
+			&_one_event) == -1)
 			throw std::runtime_error("[Error] epoll_ctl_mod() failed");
-	}
-}
-
-void	Engine::loop_input_output(const std::vector<Server> & src)
-{
-	std::vector<Client>::iterator	it;
-
-	for (it = _v.begin(); it != _v.end(); ++it)
-	{
-		if (it->getEvents().events & EPOLLERR || it->getEvents().events & EPOLLHUP)
-		{
-			std::cout << "----------------------------- I CAN SEE CLEARY NOW -------------------------------" << std::endl;
-			it = delete_client(it);
-			if (it == _v.end())
-				break ;
-		}
-		else if (it->getEvents().events & EPOLLIN)
-			myRead(*it);
-		else if (it->getEvents().events & EPOLLOUT)
-		{
-			send_data(src, *it);
-			it = delete_client(it);
-			if (it == _v.end())
-				break ;
-		}
 	}
 }
 
@@ -440,8 +458,10 @@ void	Engine::loop_server(const std::vector<Server> & src)
 		loop_accept(nbr_connexions, src);
 		std::cout << "nbr_connexions\t=\t" << nbr_connexions << std::endl;
 		std::cout << "_v.size()\t=\t" << _v.size() << std::endl;
-		loop_input_output(src);
+		//loop_input_output(src);
 	}
+	for (size_t i = 0; i < _nbr_servers; i++) // close server ports
+		close(_listen_fd[i]);
 }
 
 /*

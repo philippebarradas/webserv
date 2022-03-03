@@ -9,6 +9,18 @@ Client::Client()
 {
 }
 
+Client::Client(int & fd)
+{
+	_parse_head.push_back(Parse_request());
+	_recv_len = 0;
+	_request_header_size = 0;
+	_header_parsed = false;
+	_header_readed = false;
+	_is_sendable = false;
+	_fill_request = "";
+	_fd = fd;
+}
+
 Client::Client(epoll_event & ev)
 {
 	_parse_head.push_back(Parse_request());
@@ -42,6 +54,7 @@ Client&				Client::operator=( Client const & rhs )
 {
 	if (this != &rhs)
 	{
+		this->_fd = rhs._fd;
 		this->_recv_len = rhs._recv_len;
 		this->_is_sendable = rhs._is_sendable;
 		this->_header_parsed = rhs._header_parsed;
@@ -96,6 +109,11 @@ void	Client::setIs_sendable(bool const & is_sendable)
 	this->_is_sendable = is_sendable;
 }
 
+void	Client::setFd(const int & fd)
+{
+	this->_fd = fd;
+}
+
 /*
 ** --------------------------------- GETTERS ----------------------------------
 */
@@ -138,4 +156,9 @@ bool	const & Client::getHeader_readed() const
 bool	const & Client::getIs_sendable() const
 {
 	return (this->_is_sendable);
+}
+
+int		const & Client::getFd() const
+{
+	return (this->_fd);
 }

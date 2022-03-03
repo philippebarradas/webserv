@@ -5,7 +5,7 @@ server{
 	accepted_methods	GET POST DELETE;
 	autoindex on;
 	cgi .php /usr/bin/php-cgi;
-	root /home/user42/Bureau/webserv/www/test;
+	root /home/dodjian/Desktop/42/sixth_circle/webserv/www/test;
 }
 
 server{
@@ -14,7 +14,7 @@ server{
 
 	client_max_body_size 8000000000000;
 	autoindex off;
-	root /home/user42/Bureau/webserv/www;
+	root /home/dodjian/Desktop/42/sixth_circle/webserv/www;
 
 	location / {
 		cgi .php /usr/bin/php-cgi;

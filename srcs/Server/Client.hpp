@@ -12,6 +12,7 @@ class Client
 
 		// CONSTRUCTOR
 		Client(epoll_event & ev);
+		Client(int & fd);
 		Client( Client const & src );
 
 		// DESTRUCTOR
@@ -55,6 +56,7 @@ class Client
 		bool						_header_parsed;
 		bool						_header_readed;
 		bool						_is_sendable;
+		int							_fd;
 };
 
 #endif /* ********************************************************* Client_H */
