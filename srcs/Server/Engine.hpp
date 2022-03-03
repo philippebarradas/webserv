@@ -83,8 +83,6 @@ class Engine
 		std::string	const & GetRemote_Addr() const;
 		int			const & GetAccessPort(void) const;
 
-		std::string	_length_chunk_string;
-		size_t 		_length_chunk;				// TODO WHAT ARE YOU DOING ?
 
 	private:
 
@@ -94,6 +92,8 @@ class Engine
 		//std::vector<int>			_port_already_set;		// is _port_binded
 		struct	epoll_event			_ev;
 
+		std::string					_length_chunk_string;
+		size_t 						_length_chunk;
 		size_t						_i_server_binded;
 		size_t						_nbr_servers;
 		int							_epfd;
