@@ -6,7 +6,7 @@
 /*   By: dodjian <dovdjianpro@gmail.com>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 16:27:13 by dodjian           #+#    #+#             */
-/*   Updated: 2022/03/03 23:59:39 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/03/04 00:00:10 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void signal_to_exit( int ssignum )
 {
-	std::cout << "SIGNALLLLLLLLLLLLLLLLLLLLLLLLL" << std::endl;
 	static_cast<void>(ssignum);
 	throw SignalStop();
 }
@@ -40,7 +39,6 @@ Engine::Engine(const std::vector<Server> & src)
 	{
 		static_cast<void>(e);
 	}
-	std::cout << "--------------------------- LEAVE ---------------------------" << std::endl;
 
 }
 
