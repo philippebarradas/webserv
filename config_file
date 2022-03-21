@@ -5,7 +5,7 @@ server{
 	accepted_methods	GET POST DELETE;
 	autoindex on;
 	cgi .php /usr/bin/php-cgi;
-	root /home/user42/Bureau/webserv/www/test;
+	root /home/xubuntu/Desktop/webserv/www/test;
 }
 
 server{
@@ -14,7 +14,7 @@ server{
 
 	client_max_body_size 8000000000000;
 	autoindex off;
-	root /home/user42/Bureau/webserv/www;
+	root /home/xubuntu/Desktop/webserv/www;
 
 	location / {
 		cgi .php /usr/bin/php-cgi;
@@ -31,13 +31,13 @@ server{
 	location /all_test {
 		cgi .py /usr/bin/python3.7;
 		cgi .php /usr/bin/php-cgi;
-		root /home/user42/Bureau/webserv/www/test;
+		root /home/xubuntu/Desktop/webserv/www/test;
 		accepted_methods	GET POST;
 		autoindex on;
 	}
 
 	location /delete_loc {
-		root /home/user42/Bureau/webserv/www/del;
+		root /home/xubuntu/Desktop/webserv/www/del;
 		accepted_methods	DELETE;
 	}
 
