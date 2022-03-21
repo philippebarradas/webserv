@@ -26,7 +26,7 @@ Knowing its arcane will be useful, even if you won’t be working on a website.
 
  * Start Server
   ```sh
-  Make
+  make
   ./webserv config_file
   ```
   
